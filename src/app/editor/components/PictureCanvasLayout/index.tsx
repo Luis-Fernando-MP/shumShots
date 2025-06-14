@@ -1,11 +1,17 @@
-import { key } from '@/shared/key'
-import { type FC, useMemo, useRef } from 'react'
+import { key } from '@/shared/key';
+import { type FC, useMemo, useRef } from 'react';
 
-import useImagesLayoutStore from '../../store/images/imagesLayout.store'
-import usePicturesStore from '../../store/images/pictures.store'
-import PictureMemo from '../PictureCanvas'
-import ApplyImageStyles from './ApplyImageStyles'
-import './style.scss'
+
+
+import useImagesLayoutStore from '../../store/images/imagesLayout.store';
+import usePicturesStore from '../../store/images/pictures.store';
+import PictureMemo from '../PictureCanvas';
+import ApplyImageStyles from './ApplyImageStyles';
+import './style.scss';
+
+
+
+
 
 const transformImageForLayout = {
   default: ['translate(-50%, -50%)', 'translate(-45%, -45%) rotate(-10deg)', 'translate(-60%, -45%) rotate(10deg)'],
@@ -17,7 +23,7 @@ const transformImageForLayout = {
     'translate(-10%, -10%) rotate(180deg)'
   ],
   grid: [
-    'translate(0, 0)',
+    'translate(-90%, -30%) rotate(-10deg) scale(0.8)',
     'translate(100px, 0)',
     'translate(200px, 0)',
     'translate(0, 100px)',
@@ -44,7 +50,8 @@ const PictureCanvasLayout: FC = () => {
   const $layoutRef = useRef<HTMLElement>(null)
 
   const render = useMemo(() => {
-    const transform = transformImageForLayout[currentLayout] as string[]
+    const transform = transformImageForLayout[currentLayout]
+
     return Array.from({ length: layoutCounter }, (_, i) => {
       const picture = pictures[layoutCounter - (i + 1)] ?? { key: key('black id', i), url: null }
       return <PictureMemo key={picture.key} image={picture.url} addPicture={addPicture} transform={transform[i]} />

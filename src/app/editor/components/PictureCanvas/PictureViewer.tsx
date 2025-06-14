@@ -1,6 +1,6 @@
 import ShumShots from '@/shared/ui/ShumShots'
 import { Image as ImageComponent } from '@unpic/react'
-import React, { CSSProperties, FC, MouseEvent, useEffect, useState } from 'react'
+import React, { CSSProperties, FC, MouseEvent, memo, useEffect, useState } from 'react'
 
 type ImageDimensions = {
   width: number
@@ -10,6 +10,7 @@ type ImageDimensions = {
 
 interface Props {
   imageUrl: string | null
+  transform: string
   handleError: () => void
   isLoading: boolean
   setIsLoading: (isLoading: boolean) => void
@@ -19,17 +20,10 @@ interface Props {
 const MAX_WIDTH = 724
 const MAX_HEIGHT = 516
 
-/**
- * PictureViewer component for displaying an image with loading state.
- *
- * @param {string} imageUrl - The URL of the image to be displayed.
- * @param {function} handleError - Function to handle errors when loading the image.
- * @param {boolean} isLoading - Indicates whether the image is currently loading.
- * @param {function} setIsLoading - Function to set the loading state.
- * @param {function} handleImageClick - Optional function to handle click events on the image.
- */
-const PictureViewer: FC<Props> = ({ handleError, imageUrl, isLoading, setIsLoading, handleImageClick }) => {
+const PictureViewer: FC<Props> = ({ handleError, imageUrl, isLoading, setIsLoading, handleImageClick, transform }) => {
   const [dimensions, setDimensions] = useState<ImageDimensions | null>(null)
+
+  console.log('render ImageViewer')
 
   useEffect(() => {
     if (!imageUrl) return
@@ -62,12 +56,12 @@ const PictureViewer: FC<Props> = ({ handleError, imageUrl, isLoading, setIsLoadi
 
     img.onload = handleImageLoad
     img.onerror = handleError
-  }, [imageUrl])
+  }, [imageUrl, handleError, setIsLoading])
 
   if (!imageUrl || !dimensions) return null
 
   const { width, height, aspectRatio } = dimensions
-  const style: CSSProperties = { width: `${width}px`, minHeight: `${height}px`, aspectRatio }
+  const style: CSSProperties = { width: `${width}px`, minHeight: `${height}px`, aspectRatio, transform }
 
   return (
     <>
@@ -102,4 +96,4 @@ const PictureViewer: FC<Props> = ({ handleError, imageUrl, isLoading, setIsLoadi
   )
 }
 
-export default PictureViewer
+export default memo(PictureViewer)

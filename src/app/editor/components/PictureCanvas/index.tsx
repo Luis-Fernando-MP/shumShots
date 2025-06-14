@@ -15,9 +15,7 @@ interface Props {
 }
 
 const PictureCanvas: FC<Props> = ({ image, addPicture, transform }) => {
-  console.log('update')
   const [upload] = useWorker(uploadImage)
-
   const [currentPicture, setCurrentPicture] = useState(image)
   const [isLoading, setIsLoading] = useState(true)
 
@@ -67,18 +65,25 @@ const PictureCanvas: FC<Props> = ({ image, addPicture, transform }) => {
     )
   }, [handleDropFile, transform])
 
-  return (
-    <>
+  const picture = useMemo(() => {
+    return (
       <PictureViewer
         imageUrl={currentPicture}
         handleError={handleLoadError}
         isLoading={isLoading}
         setIsLoading={setIsLoading}
         handleImageClick={() => {}}
+        transform={transform}
       />
+    )
+  }, [currentPicture, handleLoadError, isLoading, setIsLoading])
+
+  return (
+    <>
+      {currentPicture && picture}
       {!currentPicture && dropZone}
     </>
   )
 }
 
-export default memo(PictureCanvas, (prev, next) => prev.image === next.image)
+export default memo(PictureCanvas)
