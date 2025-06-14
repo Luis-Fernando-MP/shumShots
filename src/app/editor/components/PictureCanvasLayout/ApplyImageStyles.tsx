@@ -5,10 +5,10 @@ import useImagesBorderStore from '../../store/images/useImagesBorderStore'
 import useShadowStore from '../../store/shadow/shadow.store'
 
 interface Props {
-  $containerRef: RefObject<HTMLDivElement | null>
+  $layoutRef: RefObject<HTMLElement | null>
 }
 
-const ApplyImageStyles: FC<Props> = ({ $containerRef }) => {
+const ApplyImageStyles: FC<Props> = ({ $layoutRef }) => {
   const { getStyleBorderRadius } = useImagesRadiusStore()
   const { getBorderStyle } = useImagesBorderStore()
 
@@ -18,12 +18,12 @@ const ApplyImageStyles: FC<Props> = ({ $containerRef }) => {
   const shadowStyle = getShadowStyle()
 
   const $canvasElements = useCallback(() => {
-    const $container = $containerRef?.current
+    const $container = $layoutRef?.current
     if (!$container) return null
     const $images: HTMLImageElement[] = Array.from($container.querySelectorAll('div#picture-image'))
 
     return { $images, $container }
-  }, [$containerRef.current])
+  }, [$layoutRef.current])
 
   useEffect(() => {
     const elements = $canvasElements()

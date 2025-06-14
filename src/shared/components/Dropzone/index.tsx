@@ -27,11 +27,12 @@ interface Props extends Omit<DropzoneOptions, 'onDrop' | 'accept'> {
   onDrop: (paths: DropzoneFile[]) => void
   maxFiles?: number
   children?: (_props: ChildrenProps) => ReactNode
+  className?: string
 }
 
 export type DropzoneFile = File & { preview: string }
 
-const Dropzone: FC<Props> = ({ onDrop, removeAfterUpload = false, maxFiles = 1, children, ...dropzoneProps }) => {
+const Dropzone: FC<Props> = ({ onDrop, removeAfterUpload = false, maxFiles = 1, children, className = '', ...dropzoneProps }) => {
   const [files, setFiles] = useState<DropzoneFile[]>([])
 
   const handleDrop = useCallback(
@@ -125,7 +126,7 @@ const Dropzone: FC<Props> = ({ onDrop, removeAfterUpload = false, maxFiles = 1, 
     <article
       {...getRootProps()}
       aria-label='Zona de arrastre de imágenes'
-      className={`dropzone ${acl(isDragActive, 'dragging')} ${acl(isDragReject && !isDragActive, 'reject')}`}
+      className={`dropzone ${className ?? ''} ${acl(isDragActive, 'dragging')} ${acl(isDragReject && !isDragActive, 'reject')}`}
     >
       <input {...getInputProps()} />
       {renderContent()}

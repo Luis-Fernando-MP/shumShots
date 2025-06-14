@@ -1,20 +1,23 @@
-import { newKey } from '@/shared/key'
 import ShumShots from '@/shared/ui/ShumShots'
 import { Image as ImageComponent } from '@unpic/react'
-import React, { FC, MouseEvent, useEffect } from 'react'
+import React, { CSSProperties, FC, MouseEvent, useEffect, useState } from 'react'
 
-import useImagesStore from '../../store/images/images.store'
+type ImageDimensions = {
+  width: number
+  height: number
+  aspectRatio: number
+}
 
 interface Props {
-  imageUrl?: string
+  imageUrl: string | null
   handleError: () => void
   isLoading: boolean
   setIsLoading: (isLoading: boolean) => void
   handleImageClick?: (e: MouseEvent) => void
 }
 
-const MAX_WIDTH = 624
-const MAX_HEIGHT = 416
+const MAX_WIDTH = 724
+const MAX_HEIGHT = 516
 
 /**
  * PictureViewer component for displaying an image with loading state.
@@ -26,7 +29,7 @@ const MAX_HEIGHT = 416
  * @param {function} handleImageClick - Optional function to handle click events on the image.
  */
 const PictureViewer: FC<Props> = ({ handleError, imageUrl, isLoading, setIsLoading, handleImageClick }) => {
-  const { width, height, aspectRatio, setWidth, setHeight, setAspectRatio } = useImagesStore()
+  const [dimensions, setDimensions] = useState<ImageDimensions | null>(null)
 
   useEffect(() => {
     if (!imageUrl) return
@@ -49,9 +52,11 @@ const PictureViewer: FC<Props> = ({ handleError, imageUrl, isLoading, setIsLoadi
         newWidth = newHeight * aspectRatio
       }
 
-      setWidth(Math.round(newWidth))
-      setHeight(Math.round(newHeight))
-      setAspectRatio(aspectRatio)
+      setDimensions({
+        width: newWidth,
+        height: newHeight,
+        aspectRatio
+      })
       setIsLoading(false)
     }
 
@@ -59,28 +64,26 @@ const PictureViewer: FC<Props> = ({ handleError, imageUrl, isLoading, setIsLoadi
     img.onerror = handleError
   }, [imageUrl])
 
+  if (!imageUrl || !dimensions) return null
+
+  const { width, height, aspectRatio } = dimensions
+  const style: CSSProperties = { width: `${width}px`, minHeight: `${height}px`, aspectRatio }
+
   return (
     <>
-      {imageUrl && isLoading && (
-        <div className='cvnPicture-loader' style={{ width: `${width}px`, minHeight: `${height}px`, aspectRatio }}>
+      {isLoading && (
+        <div className='cvnPicture cvnPicture-loader' style={style}>
           <ShumShots size='lg' radius='none' transparent />
         </div>
       )}
 
-      {imageUrl && !isLoading && (
-        <div
-          className='cvnPicture-container'
-          id='picture-image'
-          style={{ width: `${width}px`, minHeight: `${height}px`, aspectRatio }}
-        >
+      {!isLoading && (
+        <div className='cvnPicture cvnPicture-container' id='picture-image' style={style}>
           <ImageComponent
-            key={newKey('main-image')}
             src={imageUrl}
             className='cvnPicture-image'
             alt='User uploaded image'
-            layout='fixed'
-            width={width}
-            height={height}
+            layout='fullWidth'
             fetchPriority='high'
             cdn='cloudinary'
             onClick={handleImageClick}

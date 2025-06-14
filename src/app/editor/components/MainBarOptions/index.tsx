@@ -6,6 +6,7 @@ import type { FC } from 'react'
 
 import BackgroundConfiguration from '../../Popups/BackgroundConfiguration'
 import CornerConfiguration from '../../Popups/CornerConfiguration'
+import LayoutConfiguration from '../../Popups/LayoutConfiguration'
 import ShadowConfiguration from '../../Popups/ShadowConfiguration'
 
 const MainBarOptions: FC = () => {
@@ -27,6 +28,7 @@ const MainBarOptions: FC = () => {
         <h5>Imágenes: </h5>
         <CornerConfiguration />
         <ShadowConfiguration />
+        <LayoutConfiguration />
 
         <IconButton label='Filtros del fondo' transparent>
           <SlidersHorizontalIcon />

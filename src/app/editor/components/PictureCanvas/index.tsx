@@ -1,46 +1,84 @@
-import Dropzone from '@/shared/components/Dropzone'
-import usePictureCanvas from '@editor/hooks/usePictureCanvas'
-import React, { type FC, useRef } from 'react'
+import Dropzone, { DropzoneFile } from '@/shared/components/Dropzone'
+import { toaster } from '@/shared/components/Toast'
+import { HOST_URL } from '@/shared/constants'
+import { useWorker } from '@koale/useworker'
+import React, { type FC, memo, useCallback, useMemo, useState } from 'react'
 
-import ApplyImageStyles from './ApplyImageStyles'
+import uploadImage from '../../workers/upload.worker'
 import PictureViewer from './PictureViewer'
 import './style.scss'
 
-const PictureCanvas: FC = () => {
-  const $containerRef = useRef<HTMLDivElement>(null)
+interface Props {
+  image: string | null
+  addPicture: (picture: any) => void
+  transform: string
+}
 
-  const {
-    scale,
-    width,
-    height,
-    aspectRatio,
-    currentPicture,
-    isLoading,
-    setIsLoading,
-    handleLoadError,
-    handleNewPicture,
-    handleDropFile
-  } = usePictureCanvas()
+const PictureCanvas: FC<Props> = ({ image, addPicture, transform }) => {
+  console.log('update')
+  const [upload] = useWorker(uploadImage)
+
+  const [currentPicture, setCurrentPicture] = useState(image)
+  const [isLoading, setIsLoading] = useState(true)
+
+  const sendImage = useCallback(
+    async (file: DropzoneFile) => {
+      try {
+        const result = await upload(file, `${HOST_URL}/api/upload`)
+        if (result instanceof Error) throw result
+        addPicture({ url: result.original_image })
+      } catch (error) {
+        toaster({
+          title: 'Error de subida',
+          description: 'Puedes usar la aplicación de forma offline o intenta subir una nueva imagen',
+          type: 'error',
+          id: 'upload-error'
+        })
+      }
+    },
+    [upload, addPicture]
+  )
+
+  const handleLoadError = (): void => {
+    toaster({
+      title: 'Error de carga',
+      description: 'Tu imagen temporal no se pudo cargar, intenta subir una nueva imagen',
+      type: 'warning',
+      id: 'load-error'
+    })
+    setCurrentPicture(null)
+    setIsLoading(false)
+  }
+
+  const handleDropFile = useCallback(
+    (files: DropzoneFile[]) => {
+      setIsLoading(true)
+      setCurrentPicture(files[0].preview)
+      sendImage(files[0])
+    },
+    [sendImage]
+  )
+
+  const dropZone = useMemo(() => {
+    return (
+      <div className='cvnPicture cvnPicture-dropzone' style={{ transform }}>
+        <Dropzone onDrop={handleDropFile} maxFiles={1} removeAfterUpload />
+      </div>
+    )
+  }, [handleDropFile, transform])
 
   return (
-    <section
-      ref={$containerRef}
-      className='editor-image cvnPicture'
-      style={{ transform: `translate(-50%, -50%) scale(${scale})`, width: `${width}px`, height: `${height}px`, aspectRatio }}
-    >
-      <ApplyImageStyles $containerRef={$containerRef} />
-
+    <>
       <PictureViewer
-        imageUrl={currentPicture?.url}
+        imageUrl={currentPicture}
         handleError={handleLoadError}
         isLoading={isLoading}
         setIsLoading={setIsLoading}
-        handleImageClick={handleNewPicture}
+        handleImageClick={() => {}}
       />
-
-      {!currentPicture && <Dropzone onDrop={handleDropFile} maxFiles={1} />}
-    </section>
+      {!currentPicture && dropZone}
+    </>
   )
 }
 
-export default PictureCanvas
+export default memo(PictureCanvas, (prev, next) => prev.image === next.image)

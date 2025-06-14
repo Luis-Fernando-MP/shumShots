@@ -49,16 +49,19 @@
   }
 
   &-content {
+    text-align: left;
+
     @include d.flex($gap: v.$padding * 0.5);
   }
 
   &-description {
-    max-width: 170px;
+    max-width: 220px;
     font-size: 0.8rem;
   }
 
   &-title {
     font-size: v.$fP;
+    font-weight: 500;
     color: rgb(v.$fn1);
   }
 }

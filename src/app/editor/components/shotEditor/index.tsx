@@ -1,14 +1,14 @@
 import { FC, memo } from 'react'
 
 import BackgroundCanvas from '../../components/BackgroundCanvas'
-import PictureCanvas from '../PictureCanvas'
+import PictureCanvasLayout from '../PictureCanvasLayout'
 import './style.scss'
 
 const ShotEditor: FC = () => {
   return (
     <div className='app-board editor' id='editor'>
       <BackgroundCanvas />
-      <PictureCanvas />
+      <PictureCanvasLayout />
 
       {/* <canvas className='editor-image' />
       <canvas className='editor-canvas'></canvas>

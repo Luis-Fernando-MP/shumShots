@@ -1,0 +1,13 @@
+@use '@sass/config/vars' as v;
+@use '@sass/utils/defs' as d;
+@use '@sass/utils/glitch' as g;
+
+.canvasLayout {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+
+  width: fit-content;
+  height: fit-content;
+}

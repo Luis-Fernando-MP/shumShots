@@ -2,15 +2,15 @@ import { DropzoneFile } from '@/shared/components/Dropzone'
 import { toaster } from '@/shared/components/Toast'
 import { HOST_URL } from '@/shared/constants'
 import { useWorker } from '@koale/useworker'
-import { MouseEvent, useCallback, useEffect, useState } from 'react'
+import { MouseEvent, useCallback, useState } from 'react'
 
-import useImagesStore from '../store/images/images.store'
 import usePicturesStore from '../store/images/pictures.store'
 import uploadImage from '../workers/upload.worker'
 
 const usePictureCanvas = () => {
-  const { getCurrentPicture, setFirstPicture, pictures } = usePicturesStore()
-  const { width, height, scale, aspectRatio } = useImagesStore()
+  const { getCurrentPicture, addPicture, pictures } = usePicturesStore()
+
+  console.log('pictures', pictures)
 
   const [currentPicture, setCurrentPicture] = useState(getCurrentPicture())
   const [isLoading, setIsLoading] = useState(true)
@@ -22,12 +22,12 @@ const usePictureCanvas = () => {
       try {
         const result = await upload(file, `${HOST_URL}/api/upload`)
         if (result instanceof Error) throw result
-        setFirstPicture({ url: result.original_image })
+        addPicture({ url: result.original_image })
       } catch (error) {
         toaster({ title: 'Error al subir la imagen', type: 'error', id: 'upload-error' })
       }
     },
-    [upload, setFirstPicture]
+    [upload, addPicture]
   )
 
   const handleLoadError = (): void => {
@@ -52,12 +52,9 @@ const usePictureCanvas = () => {
   )
 
   return {
-    scale,
-    width,
-    height,
-    aspectRatio,
     currentPicture,
     isLoading,
+    pictures,
     setIsLoading,
     handleLoadError,
     handleNewPicture,
