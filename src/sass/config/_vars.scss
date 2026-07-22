@@ -17,6 +17,8 @@
   --h3-font-size: 1rem;
   --h4-font-size: 0.9rem;
   --h5-font-size: 0.9rem;
+  --span-font-size: 0.8rem;
+  --small-font-size: 0.7rem;
   --p-font-size: 0.9rem;
   --s-grid: 15px;
 }
@@ -27,6 +29,8 @@ $fH2: var(--h2-font-size);
 $fH3: var(--h3-font-size);
 $fH4: var(--h4-font-size);
 $fH5: var(--h5-font-size);
+$fSpan: var(--span-font-size);
+$fSmall: var(--small-font-size);
 $fP: var(--p-font-size);
 $bg1: var(--bg-primary);
 $bg2: var(--bg-secondary);

@@ -16,16 +16,26 @@ export interface BoardRef {
 }
 
 const useBoard = ({ isCenter, minScale = false, normalScale = false }: IUseBoardHook) => {
-  const { offset, scale, setOffset, setScale, setPrevChild, setNextChild, setMoveToChild, enableScroll } = useBoardStore()
+  const { offset, scale, setOffset, setScale, setScaleCentered, setPrevChild, setNextChild, setMoveToChild, enableScroll } = useBoardStore()
   const $containerRef = useRef<HTMLDivElement>(null)
   const $childrenRef = useRef<HTMLDivElement>(null)
 
   const [isMoving, setIsMoving] = useState(false)
   const [lastMousePosition, setLastMousePosition] = useState<Positions | null>(null)
   const [childIndex, setChildIndex] = useState(0)
+  const animationFrameRef = useRef<number | undefined>(undefined)
 
   const handleScale = (scale: number): void => {
     setScale(scale)
+  }
+
+  const handleScaleCentered = (direction: 'in' | 'out'): void => {
+    if (!$containerRef.current) {
+      setScaleCentered(direction)
+      return
+    }
+    const rect = $containerRef.current.getBoundingClientRect()
+    setScaleCentered(direction, rect, offset, scale)
   }
 
   const noExistRefs = !$containerRef.current || !$childrenRef.current
@@ -62,7 +72,7 @@ const useBoard = ({ isCenter, minScale = false, normalScale = false }: IUseBoard
     const { newOffsetX, newOffsetY } = centerChildren(scale)
     setScale(scale)
     setOffset({ x: newOffsetX, y: newOffsetY })
-  }, [setOffset, setScale])
+  }, [centerChildren, setScale, setOffset])
 
   const moveToChild = useCallback(
     (index: number, extraScale: number = 1) => {
@@ -80,10 +90,13 @@ const useBoard = ({ isCenter, minScale = false, normalScale = false }: IUseBoard
 
       setOffset({ x: -distance + centerXSpace, y: newOffsetY })
       setChildIndex(index)
-      if (extraScale === 1) $childrenRef.current.classList.add('animate')
-      setTimeout(() => {
-        $childrenRef.current?.classList.remove('animate')
-      }, 300)
+
+      if (extraScale === 1) {
+        $childrenRef.current.classList.add('animate')
+        setTimeout(() => {
+          $childrenRef.current?.classList.remove('animate')
+        }, 300)
+      }
     },
     [setOffset]
   )
@@ -95,7 +108,7 @@ const useBoard = ({ isCenter, minScale = false, normalScale = false }: IUseBoard
     const { minScale: appMinScale, maxScale } = getDynamicScale(paRect, childrenRect)
     setScale(minScale ? appMinScale : maxScale)
     moveToChild(0, minScale ? appMinScale : maxScale)
-  }, [moveToChild, setScale])
+  }, [moveToChild, setScale, minScale])
 
   const handleBoardDown = (e: React.MouseEvent) => {
     if (e.ctrlKey) {
@@ -105,39 +118,53 @@ const useBoard = ({ isCenter, minScale = false, normalScale = false }: IUseBoard
     }
   }
 
-  const handleBoardMove = (e: React.MouseEvent) => {
+  const handleBoardMove = useCallback((e: React.MouseEvent) => {
     if (!isMoving || !lastMousePosition) return
-    const deltaX = e.clientX - lastMousePosition.x
-    const deltaY = e.clientY - lastMousePosition.y
-    setOffset({
-      x: offset.x + deltaX,
-      y: offset.y + deltaY
-    })
-    setLastMousePosition({ x: e.clientX, y: e.clientY })
-  }
 
-  const handleBoardUp = () => {
+    if (animationFrameRef.current) {
+      cancelAnimationFrame(animationFrameRef.current)
+    }
+
+    animationFrameRef.current = requestAnimationFrame(() => {
+      const deltaX = e.clientX - lastMousePosition.x
+      const deltaY = e.clientY - lastMousePosition.y
+      const newX = offset.x + deltaX
+      const newY = offset.y + deltaY
+      setOffset({ x: newX, y: newY })
+      setLastMousePosition({ x: e.clientX, y: e.clientY })
+    })
+  }, [isMoving, lastMousePosition, offset, setOffset])
+
+  const handleBoardUp = useCallback(() => {
     setIsMoving(false)
     setLastMousePosition(null)
-  }
+    if (animationFrameRef.current) {
+      cancelAnimationFrame(animationFrameRef.current)
+    }
+  }, [])
 
   const handleWheel = useCallback(
     (e: WheelEvent) => {
       if (!e.ctrlKey) return
       e.preventDefault()
+
       const zoomFactor = 1.1
       const canvas = $containerRef.current
       if (!canvas) return
+
       const newScale = e.deltaY < 0 ? scale * zoomFactor : scale / zoomFactor
       const clampedScale = Math.max(MIN_SCALE, Math.min(MAX_SCALE, newScale))
+
+      if (Math.abs(clampedScale - scale) < 0.001) return
+
       const rect = canvas.getBoundingClientRect()
       const mouseX = (e.clientX - rect.left - offset.x) / scale
       const mouseY = (e.clientY - rect.top - offset.y) / scale
+
       setScale(clampedScale)
-      setOffset({
-        x: offset.x - mouseX * (clampedScale - scale),
-        y: offset.y - mouseY * (clampedScale - scale)
-      })
+      const newOffsetX = offset.x - mouseX * (clampedScale - scale)
+      const newOffsetY = offset.y - mouseY * (clampedScale - scale)
+      setOffset({ x: newOffsetX, y: newOffsetY })
     },
     [offset, scale, setOffset, setScale]
   )
@@ -175,23 +202,32 @@ const useBoard = ({ isCenter, minScale = false, normalScale = false }: IUseBoard
   }, [scale, offset, enableScroll, handleWheel])
 
   useEffect(() => {
+    // Always start at 100% scale
+    setScale(1)
+
     if (normalScale) {
       const { newOffsetX, newOffsetY } = centerChildren(1)
-      setScale(1)
       setOffset({ x: newOffsetX, y: newOffsetY })
-      return
+    } else if (isCenter) {
+      centerAndFit()
+    } else {
+      centerWithSpacing()
     }
-
-    if (isCenter) return centerAndFit()
-
-    centerWithSpacing()
-  }, [normalScale, centerAndFit, centerWithSpacing, isCenter, centerChildren])
+  }, []) // Run only once on mount
 
   useEffect(() => {
     setPrevChild(prevChild)
     setNextChild(nextChild)
     setMoveToChild(moveToChild)
   }, [setPrevChild, setNextChild, setMoveToChild, prevChild, nextChild, moveToChild])
+
+  useEffect(() => {
+    return () => {
+      if (animationFrameRef.current) {
+        cancelAnimationFrame(animationFrameRef.current)
+      }
+    }
+  }, [])
 
   return {
     $containerRef,
@@ -201,6 +237,7 @@ const useBoard = ({ isCenter, minScale = false, normalScale = false }: IUseBoard
     offset,
     scale,
     handleScale,
+    handleScaleCentered,
     handleBoardDown,
     handleBoardMove,
     handleBoardUp,

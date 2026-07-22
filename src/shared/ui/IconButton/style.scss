@@ -40,38 +40,33 @@
     min-width: fit-content;
     min-height: fit-content;
 
-    visibility: hidden;
     opacity: 0;
     background-color: rgb(v.$bg1);
 
-    transition: all 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+    transition: opacity 0.15s ease;
 
-    &.top,
-    &.bottom {
+    &.top {
+      top: v.$padding * -3;
       left: 50%;
       transform: translateX(-50%);
     }
 
-    &.top {
-      top: 0;
-    }
-
     &.bottom {
-      bottom: 0;
+      bottom: v.$padding * -3;
+      left: 50%;
+      transform: translateX(-50%);
     }
 
-    &.left,
-    &.right {
+    &.left {
+      left: v.$padding * -3;
       top: 50%;
       transform: translateY(-50%);
     }
 
-    &.left {
-      left: 0;
-    }
-
     &.right {
-      left: v.$padding * -3;
+      left: 100%;
+      top: 50%;
+      transform: translateY(-50%);
     }
   }
 
@@ -80,23 +75,6 @@
   }
 
   &:hover &-label {
-    visibility: visible;
-    opacity: 1;
-
-    &.top {
-      top: v.$padding * -3;
-    }
-
-    &.bottom {
-      bottom: v.$padding * -3;
-    }
-
-    &.left {
-      left: v.$padding * -3;
-    }
-
-    &.right {
-      left: 100%;
-    }
+    opacity: 0.95;
   }
 }

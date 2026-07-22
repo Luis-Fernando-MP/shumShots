@@ -30,5 +30,24 @@
 
   &-percentage {
     width: 60px;
+    transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+}
+
+// Zoom controller animations
+.zoom-animating {
+  opacity: 0.7;
+  transform: scale(0.95);
+  transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+  pointer-events: none;
+}
+
+.zoom-disabled {
+  opacity: 0.4;
+  cursor: not-allowed !important;
+  pointer-events: none;
+
+  svg {
+    opacity: 0.5;
   }
 }

@@ -18,7 +18,7 @@ const usePopup = ({ isOpen, clickPosition, onClose }: IUsePopupHook) => {
   const handleMouseMove = useCallback(
     (e: globalThis.MouseEvent) => {
       requestAnimationFrame(() => {
-        if (!isDragging || !$dragPosition.current || !$popupRef.current || !e.ctrlKey || !e.buttons) return
+        if (!isDragging || !$dragPosition.current || !$popupRef.current || !e.buttons) return
         e.preventDefault()
         const rect = $popupRef.current.getBoundingClientRect()
         const deltaX = e.clientX - $dragPosition.current.x
@@ -75,13 +75,21 @@ const usePopup = ({ isOpen, clickPosition, onClose }: IUsePopupHook) => {
       const { width: popupWidth, height: popupHeight } = rect
       const { width: innerWidth, height: innerHeight } = bodyRect
       let { x: newX, y: newY } = clickPosition
+
       if (newX === 0 && newY === 0) {
         newX = innerWidth / 2 - popupWidth / 2
         newY = innerHeight / 2 - popupHeight / 2
+      } else {
+        // Position popup 20px to the right of click position
+        newX = clickPosition.x + 20
+        newY = clickPosition.y
       }
 
-      newX = Math.min(newX, innerWidth - popupWidth)
-      newY = Math.min(newY, innerHeight - popupHeight)
+      // Ensure popup stays within screen boundaries with 20px margin
+      newX = Math.min(newX, innerWidth - popupWidth - 20)
+      newY = Math.min(newY, innerHeight - popupHeight - 20)
+      newX = Math.max(20, newX)
+      newY = Math.max(20, newY)
 
       handleRemoveAnimatedClass()
 

@@ -6,11 +6,11 @@ import { ZoomInIcon } from 'lucide-react'
 import { type FC, memo } from 'react'
 
 const AdjustZoom: FC = memo(() => {
-  const { setScale, moveToChild } = useBoardStore()
+  const { setScaleCentered } = useBoardStore()
   const handleClick = () => {
-    setScale(1)
+    setScaleCentered('in')
     setTimeout(() => {
-      moveToChild(0)
+      // moveToChild(0) - This might need to be updated too
     }, 300)
   }
   return (
@@ -20,6 +20,8 @@ const AdjustZoom: FC = memo(() => {
     </IconButton>
   )
 })
+
+AdjustZoom.displayName = 'AdjustZoom'
 
 const ShadowPositionWrapper: FC = () => {
   const { type, setPosition, setBlur, setSpread, setOpacity } = useShadowStore()

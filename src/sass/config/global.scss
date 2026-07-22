@@ -26,6 +26,22 @@
 
 html {
   font-size: $family-size;
+
+  // Global quality improvements
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  image-rendering: auto;
+  image-rendering: -webkit-optimize-contrast;
+
+  // Hardware acceleration
+  transform: translateZ(0);
+  -webkit-transform: translateZ(0);
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+
+  // High DPI optimizations
+  -webkit-device-pixel-ratio: 1;
 }
 
 @include m.mediumScreen {
@@ -76,9 +92,16 @@ body {
   span,
   input {
     font-family: $font2;
-    font-size: map.get(map.get($typography, 'p'), size);
     font-weight: map.get(map.get($typography, 'p'), weight);
     color: map.get(map.get($typography, 'p'), color);
+  }
+
+  small {
+    font-size: map.get(map.get($typography, 'small'), size);
+  }
+
+  span {
+    font-size: map.get(map.get($typography, 'span'), size);
   }
 
   .icon,

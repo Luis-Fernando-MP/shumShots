@@ -8,7 +8,7 @@ import useBoard from './useBoard'
 type TPositions = { x: number; y: number }
 
 interface BoardProps {
-  children: (offset: TPositions, scale: number) => JSX.Element
+  children: (offset: TPositions, scale: number, handleScaleCentered: (direction: 'in' | 'out') => void) => JSX.Element
   className?: string
   isCenter?: boolean
   minScale?: boolean
@@ -23,6 +23,7 @@ const Board = ({ children, className = '', isCenter = true, minScale, normalScal
     isMoving,
     offset,
     scale,
+    handleScaleCentered,
     handleBoardDown,
     handleBoardMove,
     handleBoardUp,
@@ -57,10 +58,10 @@ const Board = ({ children, className = '', isCenter = true, minScale, normalScal
         style={{
           top: offset.y,
           left: offset.x,
-          transform: `scale(${scale})`
+          transform: `translate3d(0, 0, 0) scale(${scale})`
         }}
       >
-        {children(offset, scale)}
+        {children(offset, scale, handleScaleCentered)}
       </div>
     </article>
   )

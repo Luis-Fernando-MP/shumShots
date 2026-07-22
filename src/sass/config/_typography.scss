@@ -31,6 +31,18 @@ $typography: (
     color: rgb($fn2),
     family: $font2
   ),
+  'span': (
+    size: $fSpan,
+    weight: 400,
+    color: rgb($fn2),
+    family: $font2
+  ),
+  'small': (
+    size: $fSmall,
+    weight: 400,
+    color: rgb($fn2),
+    family: $font2
+  ),
   'p': (
     size: $fP,
     weight: 400,
