@@ -17,27 +17,31 @@ const ThemeController = (): JSX.Element => {
   }
 
   return (
-    <Popup title='Temas' className='flex max-h-[600px] max-w-[320px] flex-row flex-wrap gap-1'>
+    <Popup>
       <Popup.Trigger>
-        <Button tooltip='Tema de la aplicación' tooltipPosition='bottom' status='error'>
+        <Button tooltip='Tema de la aplicación'>
           <ThemeColorDisplay />
           <span className='text-muted-foreground text-xs'>Tema:</span>
           <span className='text-sm font-medium'>{appTheme}</span>
         </Button>
       </Popup.Trigger>
 
-      {Object.entries(THEMES).map(current => {
-        const [key, colors] = current
-        return (
-          <PaletteSphere
-            key={key}
-            title={key}
-            theme={colors}
-            selected={key === appTheme}
-            onClick={e => handleSelectTheme(key, e)}
-          />
-        )
-      })}
+      <Popup.Header>Temas</Popup.Header>
+
+      <Popup.Content className='flex max-h-[600px] max-w-[320px] flex-row flex-wrap gap-1'>
+        {Object.entries(THEMES).map(current => {
+          const [key, colors] = current
+          return (
+            <PaletteSphere
+              key={key}
+              title={key}
+              theme={colors}
+              selected={key === appTheme}
+              onClick={e => handleSelectTheme(key, e)}
+            />
+          )
+        })}
+      </Popup.Content>
     </Popup>
   )
 }

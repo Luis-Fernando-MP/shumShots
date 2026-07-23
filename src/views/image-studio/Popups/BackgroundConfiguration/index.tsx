@@ -11,20 +11,20 @@ import RadiusController from './wrappers/RadiusController'
 
 const BackgroundConfiguration: FC = () => {
   return (
-    <Popup
-      title='Configuration del fondo'
-      className='bgConfig-popup flex h-[700px] w-[350px] flex-col gap-grid-xl'
-    >
+    <Popup className='bgConfig-popup h-[700px] w-[350px]'>
       <Popup.Trigger>
         <Button tooltip='Configuration del fondo'>
           <BlendIcon />
         </Button>
       </Popup.Trigger>
-      <RadiusController />
-      <BackgroundSizeController />
-      <BackgroundColorsController />
-      <BackgroundGradientsController />
-      <BackgroundUploadController />
+      <Popup.Header>Configuration del fondo</Popup.Header>
+      <Popup.Content className='flex flex-col gap-grid-xl'>
+        <RadiusController />
+        <BackgroundSizeController />
+        <BackgroundColorsController />
+        <BackgroundGradientsController />
+        <BackgroundUploadController />
+      </Popup.Content>
     </Popup>
   )
 }

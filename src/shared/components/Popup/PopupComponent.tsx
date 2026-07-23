@@ -21,13 +21,15 @@ import usePopup, { type PopupPositions } from './usePopup'
 
 interface PopupContextValue {
   onTriggerClick: (e: MouseEvent) => void
+  onClose: () => void
+  isDragging: boolean
 }
 
 const PopupContext = createContext<PopupContextValue | null>(null)
 
 const usePopupContext = () => {
   const context = useContext(PopupContext)
-  if (!context) throw new Error('Popup.Trigger must be used within Popup')
+  if (!context) throw new Error('Popup compound parts must be used within Popup')
   return context
 }
 
@@ -61,14 +63,69 @@ const PopupTrigger = ({ children }: PopupTriggerProps) => {
 
 PopupTrigger.displayName = 'Popup.Trigger'
 
-interface IPopup extends Omit<HTMLAttributes<HTMLElement>, 'title'> {
+interface PopupHeaderProps {
   children?: ReactNode
-  title?: string
+  className?: string
+}
+
+const PopupHeader = ({ children, className }: PopupHeaderProps) => {
+  const { onClose, isDragging } = usePopupContext()
+
+  return (
+    <header
+      className={cn('relative flex flex-row items-center gap-2 p-2', className)}
+      id='popup-header'
+      style={{ cursor: isDragging ? 'grabbing' : 'grab' }}
+    >
+      <button type='button' className='bg-primary size-[15px] rounded-full' onClick={onClose} aria-label='Cerrar' />
+      {typeof children === 'string' || typeof children === 'number' ? <p>{children}</p> : children}
+    </header>
+  )
+}
+
+PopupHeader.displayName = 'Popup.Header'
+
+interface PopupContentProps extends HTMLAttributes<HTMLElement> {
+  children?: ReactNode
+}
+
+const PopupContent = ({ children, className, ...props }: PopupContentProps) => {
+  return (
+    <section
+      className={cn(
+        'relative min-h-0 min-w-full flex-1 overflow-x-hidden overflow-y-auto p-2 pb-4 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden',
+        className
+      )}
+      {...props}
+    >
+      {children}
+    </section>
+  )
+}
+
+PopupContent.displayName = 'Popup.Content'
+
+interface PopupFooterProps {
+  children?: ReactNode
+  className?: string
+}
+
+const PopupFooter = ({ children, className }: PopupFooterProps) => {
+  return <footer className={cn('relative flex flex-row items-center gap-2 p-2', className)}>{children}</footer>
+}
+
+PopupFooter.displayName = 'Popup.Footer'
+
+interface IPopup {
+  children?: ReactNode
+  className?: string
 }
 
 const EXIT_MS = 200
 
-const Popup = ({ children, className = '', title, ...props }: IPopup) => {
+const isPopupPart = (child: ReactNode, type: unknown) => isValidElement(child) && child.type === type
+
+const Popup = ({ children, className }: IPopup) => {
   const [isOpen, setIsOpen] = useState(false)
   const [clickPosition, setClickPosition] = useState<PopupPositions>({ x: 0, y: 0 })
   const [mounted, setMounted] = useState(false)
@@ -92,14 +149,26 @@ const Popup = ({ children, className = '', title, ...props }: IPopup) => {
   }
 
   const triggers: ReactNode[] = []
-  const content: ReactNode[] = []
+  const headers: ReactNode[] = []
+  const contents: ReactNode[] = []
+  const footers: ReactNode[] = []
 
   Children.forEach(children, child => {
-    if (isValidElement(child) && child.type === PopupTrigger) {
+    if (isPopupPart(child, PopupTrigger)) {
       triggers.push(child)
       return
     }
-    content.push(child)
+    if (isPopupPart(child, PopupHeader)) {
+      headers.push(child)
+      return
+    }
+    if (isPopupPart(child, PopupContent)) {
+      contents.push(child)
+      return
+    }
+    if (isPopupPart(child, PopupFooter)) {
+      footers.push(child)
+    }
   })
 
   useEffect(() => {
@@ -128,7 +197,7 @@ const Popup = ({ children, className = '', title, ...props }: IPopup) => {
   }
 
   return (
-    <PopupContext.Provider value={{ onTriggerClick: handleTriggerClick }}>
+    <PopupContext.Provider value={{ onTriggerClick: handleTriggerClick, onClose: handleClose, isDragging }}>
       {triggers}
       {mounted &&
         createPortal(
@@ -145,30 +214,17 @@ const Popup = ({ children, className = '', title, ...props }: IPopup) => {
               'popup bg-card/50 fixed z-10 flex min-h-[300px] min-w-[200px] flex-col gap-1 overflow-hidden rounded-lg backdrop-blur-md select-none',
               'origin-top-left transition-[opacity,transform] duration-200 ease-out will-change-[opacity,transform]',
               visible ? 'translate-y-0 scale-100 opacity-100' : 'translate-y-1 scale-[0.97] opacity-0',
-              blockChildren && '[&_*]:pointer-events-none'
+              blockChildren && '[&_*]:pointer-events-none',
+              className
             )}
             style={{
               left: `${position.x}px`,
               top: `${position.y}px`
             }}
           >
-            <header
-              className='relative flex flex-row items-center gap-2 p-2'
-              id='popup-header'
-              style={{ cursor: isDragging ? 'grabbing' : 'grab' }}
-            >
-              <button type='button' className='bg-primary size-[15px] rounded-full' onClick={handleClose} aria-label='Cerrar' />
-              <p>{title}</p>
-            </header>
-            <section
-              className={cn(
-                'relative min-h-full min-w-full overflow-x-hidden overflow-y-auto p-2 pb-4 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden',
-                className
-              )}
-              {...props}
-            >
-              {content}
-            </section>
+            {headers}
+            {contents}
+            {footers}
           </article>,
           document.body
         )}
@@ -177,5 +233,8 @@ const Popup = ({ children, className = '', title, ...props }: IPopup) => {
 }
 
 Popup.Trigger = PopupTrigger
+Popup.Header = PopupHeader
+Popup.Content = PopupContent
+Popup.Footer = PopupFooter
 
 export default Popup

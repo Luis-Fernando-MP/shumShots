@@ -11,19 +11,22 @@ import ImagesRadiusController from './wrappers/ImagesRadiusController'
 
 const CornerConfiguration: FC = () => {
   return (
-    <Popup title='Imágenes - Border' className='borderConfig-popup flex h-[700px] w-[350px] flex-col gap-grid-xl'>
+    <Popup className='borderConfig-popup h-[700px] w-[350px]'>
       <Popup.Trigger>
         <Button tooltip='Estilo de borde'>
           <SquareRoundCornerIcon />
         </Button>
       </Popup.Trigger>
-      <ImagesRadiusController />
-      <BorderStyleController />
-      <BorderSizeController />
-      <BorderBoxSizingController />
-      <BorderColorsController />
-      {/* TODO: Verificar la efectividad de los gradientes
-      <BorderGradientsController /> */}
+      <Popup.Header>Imágenes - Border</Popup.Header>
+      <Popup.Content className='flex flex-col gap-grid-xl'>
+        <ImagesRadiusController />
+        <BorderStyleController />
+        <BorderSizeController />
+        <BorderBoxSizingController />
+        <BorderColorsController />
+        {/* TODO: Verificar la efectividad de los gradientes
+        <BorderGradientsController /> */}
+      </Popup.Content>
     </Popup>
   )
 }
