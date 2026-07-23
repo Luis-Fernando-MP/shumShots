@@ -18,7 +18,7 @@ const MainBarOptions: FC = () => {
   }
 
   return (
-    <section className='flex flex-row items-center gap-grid'>
+    <section className='gap-grid flex flex-row items-center'>
       <Button size='icon' tooltip='Formatear código' onClick={handleFormatCode}>
         <LetterText />
       </Button>

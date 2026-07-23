@@ -2,17 +2,17 @@
 
 import Button from '@/shared/ui/Button'
 import ShumShots from '@/shared/ui/ShumShots'
-import MainBarOptions from '@views/code-studio/components/MainBarOptions'
-import EditorMainBarOptions from '@views/image-studio/components/MainBarOptions'
+import { Separator } from '@common/ui/Separator'
+import { cn } from '@common/utils/cn'
 import { AppWindow, LayersIcon } from 'lucide-react'
-import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import type { FC } from 'react'
+import type { FC, ReactNode } from 'react'
 
 import AboutShumShots from '../AboutShumShots'
 
 interface Props {
   className?: string
+  children?: ReactNode
 }
 
 const pages = [
@@ -26,40 +26,61 @@ const pages = [
     label: 'Editar imagen',
     icon: LayersIcon
   }
-]
+] as const
 
-const mainBarPages = {
-  '/': MainBarOptions,
-  '/editor': EditorMainBarOptions
-}
-
-const MainBar: FC<Props> = ({ className = '' }) => {
+const MainBar: FC<Props> = ({ className = '', children }) => {
   const pathname = usePathname()
-
-  const RenderForPage = mainBarPages[pathname as keyof typeof mainBarPages]
 
   return (
     <article
-      className={`gap-grid-xl bg-background/80 p-grid backdrop-blur-panel flex size-fit flex-row items-center justify-center rounded-lg border ${className}`}
+      className={cn(
+        'gap-grid rounded-radius border-border/50 bg-card/50 p-grid-sm backdrop-blur-panel',
+        'flex size-fit flex-row items-center justify-center border',
+        className
+      )}
     >
-      <Link href='/' aria-label='Volver a la página principal'>
+      <Button
+        href='/'
+        variant='ghost'
+        tooltip='Inicio'
+        aria-label='Volver al inicio'
+        className='size-auto h-auto shrink-0 rounded-full p-1'
+      >
         <ShumShots size='sm' radius='circle' transparent />
-      </Link>
+      </Button>
 
-      {RenderForPage && <RenderForPage />}
+      {children && (
+        <>
+          <Separator />
+          {children}
+        </>
+      )}
 
-      <div className='bg-border h-6 w-px' />
+      <Separator />
 
-      <section className='gap-grid flex flex-row items-center'>
-        {pages.map(page => (
-          <Link key={page.path} href={page.path} aria-label={page.label}>
-            <Button size='icon' tooltip={page.label} active={pathname === page.path}>
-              <page.icon />
+      <nav className='gap-grid-sm flex flex-row items-center'>
+        {pages.map(page => {
+          const Icon = page.icon
+          const isActive = pathname === page.path
+
+          return (
+            <Button
+              key={page.path}
+              href={page.path}
+              size='icon'
+              variant='ghost'
+              tooltip={page.label}
+              isSelected={isActive}
+              aria-label={page.label}
+              aria-current={isActive ? 'page' : undefined}
+            >
+              <Icon />
             </Button>
-          </Link>
-        ))}
+          )
+        })}
+
         <AboutShumShots />
-      </section>
+      </nav>
     </article>
   )
 }
