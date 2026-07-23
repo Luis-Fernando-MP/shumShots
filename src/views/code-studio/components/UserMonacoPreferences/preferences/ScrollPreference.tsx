@@ -2,6 +2,7 @@ import { newKey } from '@/shared/key'
 import Button from '@/shared/ui/Button'
 import { editor } from 'monaco-editor'
 import { type FC, useState } from 'react'
+import Typography from '@common/ui/Typography'
 
 type Monaco = editor.IEditorOptions
 
@@ -45,7 +46,7 @@ const ScrollPreference: FC<Props> = ({ scrollbar, setScrollbar }) => {
 
   return (
     <>
-      <h3 className='paragraph-highlight'># Barra de Scroll</h3>
+      <Typography.Block title='Barra de Scroll' />
 
       <div className='monacoPreferences-switch flex w-full flex-row flex-wrap gap-grid-sm'>
         {[true, false].map(state => (
@@ -64,7 +65,7 @@ const ScrollPreference: FC<Props> = ({ scrollbar, setScrollbar }) => {
       {enabled && (
         <div className='monacoPreferences-subsection flex flex-col border-l-[3px] border-dashed border-primary/50 bg-card/50 px-grid-md py-grid'>
           <div className='monacoPreferences-section flex flex-col gap-grid-lg'>
-            <h5 className='paragraph-emphasis'>Barra vertical</h5>
+            <Typography.Emphasis>Barra vertical</Typography.Emphasis>
             <div className='monacoPreferences-switch flex w-full flex-row flex-wrap gap-grid-sm'>
               {['auto', 'visible', 'hidden'].map(state => (
                 <Button
@@ -79,7 +80,7 @@ const ScrollPreference: FC<Props> = ({ scrollbar, setScrollbar }) => {
           </div>
 
           <div className='monacoPreferences-section flex flex-col gap-grid-lg'>
-            <h5 className='paragraph-emphasis'>Barra horizontal</h5>
+            <Typography.Emphasis>Barra horizontal</Typography.Emphasis>
             <div className='monacoPreferences-switch flex w-full flex-row flex-wrap gap-grid-sm'>
               {['auto', 'visible', 'hidden'].map(state => (
                 <Button
@@ -94,8 +95,8 @@ const ScrollPreference: FC<Props> = ({ scrollbar, setScrollbar }) => {
           </div>
 
           <div className='monacoPreferences-section flex flex-col gap-grid-lg'>
-            <h5 className='paragraph-emphasis'>Sombras</h5>
-            <span className='paragraph-normal'>Se muestra una sombra en la cabecera del editor.</span>
+            <Typography.Emphasis>Sombras</Typography.Emphasis>
+            <Typography.Text tone='secondary'>Se muestra una sombra en la cabecera del editor.</Typography.Text>
             <div className='monacoPreferences-switch flex w-full flex-row flex-wrap gap-grid-sm'>
               {[true, false].map(state => (
                 <Button
@@ -110,10 +111,10 @@ const ScrollPreference: FC<Props> = ({ scrollbar, setScrollbar }) => {
           </div>
 
           <div className='monacoPreferences-section flex flex-col gap-grid-lg'>
-            <h5 className='paragraph-emphasis'>Escuchar eventos</h5>
-            <span className='paragraph-normal'>
-              <i className='paragraph-precaution'>Si se establece en off no se podrá hacer scroll en el editor.</i>
-            </span>
+            <Typography.Emphasis>Escuchar eventos</Typography.Emphasis>
+            <Typography.Text tone='secondary'>
+              <Typography.Precaution>Si se establece en off no se podrá hacer scroll en el editor.</Typography.Precaution>
+            </Typography.Text>
             <div className='monacoPreferences-switch flex w-full flex-row flex-wrap gap-grid-sm'>
               {[true, false].map(state => (
                 <Button
@@ -128,8 +129,8 @@ const ScrollPreference: FC<Props> = ({ scrollbar, setScrollbar }) => {
           </div>
 
           <div className='monacoPreferences-section flex flex-col gap-grid-lg'>
-            <h5 className='paragraph-emphasis'>Tamaño horizontal</h5>
-            <span className='paragraph-normal'>Ajusta el tamaño de la barra horizontal.</span>
+            <Typography.Emphasis>Tamaño horizontal</Typography.Emphasis>
+            <Typography.Text tone='secondary'>Ajusta el tamaño de la barra horizontal.</Typography.Text>
             <div className='monacoPreferences-switch flex w-full flex-row flex-wrap gap-grid-sm'>
               {[5, 8, 10, 15, 20, 25, 30].map(state => {
                 const normal = 10
@@ -148,8 +149,8 @@ const ScrollPreference: FC<Props> = ({ scrollbar, setScrollbar }) => {
           </div>
 
           <div className='monacoPreferences-section flex flex-col gap-grid-lg'>
-            <h5 className='paragraph-emphasis'>Tamaño vertical</h5>
-            <span className='paragraph-normal'>Ajusta el tamaño de la barra vertical.</span>
+            <Typography.Emphasis>Tamaño vertical</Typography.Emphasis>
+            <Typography.Text tone='secondary'>Ajusta el tamaño de la barra vertical.</Typography.Text>
             <div className='monacoPreferences-switch flex w-full flex-row flex-wrap gap-grid-sm'>
               {[5, 8, 10, 15, 20, 25, 30].map(state => {
                 const normal = 10
@@ -168,8 +169,8 @@ const ScrollPreference: FC<Props> = ({ scrollbar, setScrollbar }) => {
           </div>
 
           <div className='monacoPreferences-section flex flex-col gap-grid-lg'>
-            <h5 className='paragraph-emphasis'>Ignorar barra horizontal en el contenido</h5>
-            <span className='paragraph-normal'>Si está activo, la barra horizontal no aumentará la altura del contenido.</span>
+            <Typography.Emphasis>Ignorar barra horizontal en el contenido</Typography.Emphasis>
+            <Typography.Text tone='secondary'>Si está activo, la barra horizontal no aumentará la altura del contenido.</Typography.Text>
             <div className='monacoPreferences-switch flex w-full flex-row flex-wrap gap-grid-sm'>
               {[true, false].map(state => (
                 <Button

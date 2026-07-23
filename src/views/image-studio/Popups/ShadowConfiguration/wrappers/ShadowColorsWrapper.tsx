@@ -1,6 +1,7 @@
 import useShadowStore from '@views/image-studio/store/shadow/shadow.store'
 import ColorsController, { SpreadColor } from '@/shared/components/ColorsController'
 import type { FC } from 'react'
+import Typography from '@common/ui/Typography'
 
 const ShadowColorsWrapper: FC = () => {
   const { color, setColor } = useShadowStore()
@@ -12,10 +13,9 @@ const ShadowColorsWrapper: FC = () => {
   }
 
   return (
-    <section className='shadowConfig-section flex flex-col gap-grid-lg'>
-      <h3 className='paragraph-highlight'># Colores:</h3>
+    <Typography.Block title='Colores:' className='shadowConfig-section flex flex-col gap-grid-lg'>
       <ColorsController background={color} setBackground={handleChangeColor} />
-    </section>
+    </Typography.Block>
   )
 }
 

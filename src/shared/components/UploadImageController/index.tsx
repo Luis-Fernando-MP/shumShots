@@ -1,6 +1,7 @@
 import Button from '@/shared/ui/Button'
 import { ImagePlusIcon } from 'lucide-react'
 import type { FC } from 'react'
+import Typography from '@common/ui/Typography'
 
 interface Props {
   background: string | null
@@ -9,14 +10,12 @@ interface Props {
 
 const UploadImageController: FC<Props> = ({ background, setBackground }) => {
   return (
-    <section className='flex flex-col gap-2'>
-      <h3 className='paragraph-highlight'># Cargar Imagen:</h3>
-
+    <Typography.Block title='Cargar Imagen:' className='flex flex-col gap-2'>
       <Button>
         <ImagePlusIcon />
         <h4>Picar nueva imagen</h4>
       </Button>
-    </section>
+    </Typography.Block>
   )
 }
 

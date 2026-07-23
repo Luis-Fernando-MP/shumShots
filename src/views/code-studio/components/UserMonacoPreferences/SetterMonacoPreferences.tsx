@@ -11,6 +11,7 @@ import MinimapPreference from './preferences/MinimapPreference'
 import ScrollPreference from './preferences/ScrollPreference'
 import ShumShotsPreferences from './preferences/ShumShotsPreferences'
 import StickyScrollPreference from './preferences/StickyScrollPreference'
+import Typography from '@common/ui/Typography'
 
 const SetterMonacoPreferences: FC = () => {
   const monaco = useMonacoStore()
@@ -42,13 +43,11 @@ const SetterMonacoPreferences: FC = () => {
 
       {/* Visual */}
 
-      <div className='paragraph'>
-        <h3 className='paragraph-highlight'># Visual:</h3>
-      </div>
+      <Typography.Block title='Visual:' />
 
       <div className='monacoPreferences-section flex flex-col gap-grid-lg'>
-        <h5 className='paragraph-emphasis'>Margen de glyph</h5>
-        <span className='paragraph-normal'>Mostrar iconos en el margen de glyph.</span>
+        <Typography.Emphasis>Margen de glyph</Typography.Emphasis>
+        <Typography.Text tone='secondary'>Mostrar iconos en el margen de glyph.</Typography.Text>
         <div className='monacoPreferences-switch flex w-full flex-row flex-wrap gap-grid-sm'>
           {[true, false].map(style => (
             <Button key={newKey()} onClick={() => monaco.setGlyphMargin(style)} active={monaco.glyphMargin === style}>
@@ -59,10 +58,10 @@ const SetterMonacoPreferences: FC = () => {
       </div>
 
       <div className='monacoPreferences-section flex flex-col gap-grid-lg'>
-        <h5 className='paragraph-emphasis'>Validación de código</h5>
-        <span className='paragraph-normal'>
-          Resalta los errores de sintaxis <i className='paragraph-precaution'>soportados por monaco.</i>
-        </span>
+        <Typography.Emphasis>Validación de código</Typography.Emphasis>
+        <Typography.Text tone='secondary'>
+          Resalta los errores de sintaxis <Typography.Precaution>soportados por monaco.</Typography.Precaution>
+        </Typography.Text>
         <div className='monacoPreferences-switch flex w-full flex-row flex-wrap gap-grid-sm'>
           {['editable', 'on', 'off'].map(style => (
             <Button
@@ -77,7 +76,7 @@ const SetterMonacoPreferences: FC = () => {
       </div>
 
       <div className='monacoPreferences-section flex flex-col gap-grid-lg'>
-        <h5 className='paragraph-emphasis'>Números de línea</h5>
+        <Typography.Emphasis>Números de línea</Typography.Emphasis>
         <div className='monacoPreferences-switch flex w-full flex-row flex-wrap gap-grid-sm'>
           {['on', 'off', 'relative', 'interval'].map(style => (
             <Button key={newKey()} onClick={() => monaco.setLineNumbers(style as any)} active={monaco.lineNumbers === style}>
@@ -88,8 +87,8 @@ const SetterMonacoPreferences: FC = () => {
       </div>
 
       <div className='monacoPreferences-section flex flex-col gap-grid-lg'>
-        <h5 className='paragraph-emphasis'>Salto de línea</h5>
-        <span className='paragraph-normal'>
+        <Typography.Emphasis>Salto de línea</Typography.Emphasis>
+        <Typography.Text tone='secondary'>
           Permite ajustar el salto de línea de las palabras para mejorar la visualización del código.
           <br />
           - On: siempre
@@ -98,7 +97,7 @@ const SetterMonacoPreferences: FC = () => {
           <br />
           - WordWrapColumn: ajustar por columna
           <br />- Bounded: ajustar por columna y límite
-        </span>
+        </Typography.Text>
         <div className='monacoPreferences-switch flex w-full flex-row flex-wrap gap-grid-sm'>
           {['on', 'off', 'wordWrapColumn', 'bounded'].map(style => (
             <Button key={newKey()} onClick={() => monaco.setWordWrap(style as any)} active={monaco.wordWrap === style}>
@@ -109,11 +108,11 @@ const SetterMonacoPreferences: FC = () => {
       </div>
 
       <div className='monacoPreferences-section flex flex-col gap-grid-lg'>
-        <h5 className='paragraph-emphasis'>Columna de salto de línea</h5>
-        <span className='paragraph-normal'>
+        <Typography.Emphasis>Columna de salto de línea</Typography.Emphasis>
+        <Typography.Text tone='secondary'>
           Limita el ancho de las líneas para dar el salto de línea en el ancho especificado.{' '}
-          <i className='paragraph-precaution'>Depende de la configuración de salto de línea.</i>
-        </span>
+          <Typography.Precaution>Depende de la configuración de salto de línea.</Typography.Precaution>
+        </Typography.Text>
         <div className='monacoPreferences-switch flex w-full flex-row flex-wrap gap-grid-sm'>
           <LabeledInput
             type='number'
@@ -139,15 +138,15 @@ const SetterMonacoPreferences: FC = () => {
       </div>
 
       <div className='monacoPreferences-section flex flex-col gap-grid-lg'>
-        <h5 className='paragraph-emphasis'>Ajuste de saltos</h5>
-        <span className='paragraph-normal'>
+        <Typography.Emphasis>Ajuste de saltos</Typography.Emphasis>
+        <Typography.Text tone='secondary'>
           Ajusta el sangrado de las palabras cuando se da un salto de línea. None: ninguno,{' '}
-          <i className='paragraph-precaution'>Depende de la configuración de salto de línea.</i>
+          <Typography.Precaution>Depende de la configuración de salto de línea.</Typography.Precaution>
           <br />
           <br />- none: ninguno,
           <br />- indent: sangrado
           <br />- deepIndent: sangrado profundo.
-        </span>
+        </Typography.Text>
         <div className='monacoPreferences-switch flex w-full flex-row flex-wrap gap-grid-sm'>
           {['none', 'indent', 'deepIndent'].map(style => (
             <Button
@@ -162,16 +161,16 @@ const SetterMonacoPreferences: FC = () => {
       </div>
 
       <div className='monacoPreferences-section flex flex-col gap-grid-lg'>
-        <h5 className='paragraph-emphasis'>Resaltado de línea</h5>
-        <span className='paragraph-normal'>
+        <Typography.Emphasis>Resaltado de línea</Typography.Emphasis>
+        <Typography.Text tone='secondary'>
           Resalta la línea actual en la que se encuentra el cursor,{' '}
-          <i className='paragraph-precaution'>dependiendo del tema puede ser mas pronunciado o no.</i>
+          <Typography.Precaution>dependiendo del tema puede ser mas pronunciado o no.</Typography.Precaution>
           <br />
           <br />- None: ninguno
           <br />- Gutter: solo el gutter
           <br />- Line: toda la linea
           <br />- Full: todo
-        </span>
+        </Typography.Text>
         <div className='monacoPreferences-switch flex w-full flex-row flex-wrap gap-grid-sm'>
           {['none', 'gutter', 'line', 'full'].map(style => (
             <Button
@@ -187,16 +186,14 @@ const SetterMonacoPreferences: FC = () => {
 
       {/* Tipografía */}
 
-      <div className='paragraph'>
-        <h3 className='paragraph-highlight'># Tipografía:</h3>
-      </div>
+      <Typography.Block title='Tipografía:' />
 
       <div className='monacoPreferences-section flex flex-col gap-grid-lg'>
         <FontSizePreference fontSize={monaco.fontSize} setFontSize={monaco.setFontSize} />
       </div>
 
       <div className='monacoPreferences-section flex flex-col gap-grid-lg'>
-        <h5 className='paragraph-emphasis'>Espaciado entre letras</h5>
+        <Typography.Emphasis>Espaciado entre letras</Typography.Emphasis>
         <div className='monacoPreferences-switch flex w-full flex-row flex-wrap gap-grid-sm'>
           {[-1, -0.5, 0, 0.5, 1, 2, 3].map(style => {
             const normal = 0
@@ -210,11 +207,11 @@ const SetterMonacoPreferences: FC = () => {
       </div>
 
       <div className='monacoPreferences-section flex flex-col gap-grid-lg'>
-        <h5 className='paragraph-emphasis'>Ligaduras</h5>
-        <span className='paragraph-normal'>
+        <Typography.Emphasis>Ligaduras</Typography.Emphasis>
+        <Typography.Text tone='secondary'>
           Activa o desactiva la combinación de caracteres para mejorar la legibilidad.{' '}
-          <i className='paragraph-precaution'>Depende de la tipografía empleada.</i>
-        </span>
+          <Typography.Precaution>Depende de la tipografía empleada.</Typography.Precaution>
+        </Typography.Text>
         <div className='monacoPreferences-switch flex w-full flex-row flex-wrap gap-grid-sm'>
           {[true, false].map(style => (
             <Button
@@ -229,7 +226,7 @@ const SetterMonacoPreferences: FC = () => {
       </div>
 
       <div className='monacoPreferences-section flex flex-col gap-grid-lg'>
-        <h5 className='paragraph-emphasis'>Altura entre líneas</h5>
+        <Typography.Emphasis>Altura entre líneas</Typography.Emphasis>
 
         <div className='monacoPreferences-switch flex w-full flex-row flex-wrap gap-grid-sm'>
           <LabeledInput
@@ -275,12 +272,10 @@ const SetterMonacoPreferences: FC = () => {
 
       {/*  */}
 
-      <div className='paragraph'>
-        <h3 className='paragraph-highlight'># Cursor:</h3>
-      </div>
+      <Typography.Block title='Cursor:' />
 
       <div className='monacoPreferences-section flex flex-col gap-grid-lg'>
-        <h5 className='paragraph-emphasis'>Estilo de parpadeo</h5>
+        <Typography.Emphasis>Estilo de parpadeo</Typography.Emphasis>
         <div className='monacoPreferences-switch flex w-full flex-row flex-wrap gap-grid-sm'>
           {['blink', 'smooth', 'phase', 'expand', 'solid'].map(style => (
             <Button
@@ -295,7 +290,7 @@ const SetterMonacoPreferences: FC = () => {
       </div>
 
       <div className='monacoPreferences-section flex flex-col gap-grid-lg'>
-        <h5 className='paragraph-emphasis'>Estilo del cursor</h5>
+        <Typography.Emphasis>Estilo del cursor</Typography.Emphasis>
         <div className='monacoPreferences-switch flex w-full flex-row flex-wrap gap-grid-sm'>
           {['block', 'block-outline', 'underline', 'underline-thin', 'line', 'line-thin'].map(style => (
             <Button key={newKey()} onClick={() => monaco.setCursorStyle(style as any)} active={monaco.cursorStyle === style}>
@@ -306,8 +301,8 @@ const SetterMonacoPreferences: FC = () => {
       </div>
 
       <div className='monacoPreferences-section flex flex-col gap-grid-lg'>
-        <h5 className='paragraph-emphasis'>Cursor hover</h5>
-        <span className='paragraph-normal'>Estilo del cursor al pasar el mouse por el editor.</span>
+        <Typography.Emphasis>Cursor hover</Typography.Emphasis>
+        <Typography.Text tone='secondary'>Estilo del cursor al pasar el mouse por el editor.</Typography.Text>
         <div className='monacoPreferences-switch flex w-full flex-row flex-wrap gap-grid-sm'>
           {['default', 'copy', 'text'].map(style => (
             <Button key={newKey()} onClick={() => monaco.setMouseStyle(style as any)} active={monaco.mouseStyle === style}>
@@ -318,8 +313,8 @@ const SetterMonacoPreferences: FC = () => {
       </div>
 
       <div className='monacoPreferences-section flex flex-col gap-grid-lg'>
-        <h5 className='paragraph-emphasis'>Rótulo de resumen</h5>
-        <span className='paragraph-normal'>Oculta el cursor en el rótulo derecho de resumen.</span>
+        <Typography.Emphasis>Rótulo de resumen</Typography.Emphasis>
+        <Typography.Text tone='secondary'>Oculta el cursor en el rótulo derecho de resumen.</Typography.Text>
         <div className='monacoPreferences-switch flex w-full flex-row flex-wrap gap-grid-sm'>
           {[true, false].map(style => (
             <Button
@@ -333,13 +328,11 @@ const SetterMonacoPreferences: FC = () => {
         </div>
       </div>
 
-      <div className='paragraph'>
-        <h3 className='paragraph-highlight'># Editor:</h3>
-      </div>
+      <Typography.Block title='Editor:' />
 
       <div className='monacoPreferences-section flex flex-col gap-grid-lg'>
-        <h5 className='paragraph-emphasis'>Plegado de código</h5>
-        <span className='paragraph-normal'>Si está activo, el editor plegará el código automáticamente.</span>
+        <Typography.Emphasis>Plegado de código</Typography.Emphasis>
+        <Typography.Text tone='secondary'>Si está activo, el editor plegará el código automáticamente.</Typography.Text>
         <div className='monacoPreferences-switch flex w-full flex-row flex-wrap gap-grid-sm'>
           {[true, false].map(style => (
             <Button key={newKey()} onClick={() => monaco.setFolding(style)} active={monaco.folding === style}>
@@ -350,8 +343,8 @@ const SetterMonacoPreferences: FC = () => {
       </div>
 
       <div className='monacoPreferences-section flex flex-col gap-grid-lg'>
-        <h5 className='paragraph-emphasis'>Scroll adicional</h5>
-        <span className='paragraph-normal'>Amplia el desplazamiento más allá de la última línea del código.</span>
+        <Typography.Emphasis>Scroll adicional</Typography.Emphasis>
+        <Typography.Text tone='secondary'>Amplia el desplazamiento más allá de la última línea del código.</Typography.Text>
         <div className='monacoPreferences-switch flex w-full flex-row flex-wrap gap-grid-sm'>
           {[true, false].map(style => (
             <Button
@@ -366,8 +359,8 @@ const SetterMonacoPreferences: FC = () => {
       </div>
 
       <div className='monacoPreferences-section flex flex-col gap-grid-lg'>
-        <h5 className='paragraph-emphasis'>Formateo automático</h5>
-        <span className='paragraph-normal'>Formatea el código automáticamente al pegar.</span>
+        <Typography.Emphasis>Formateo automático</Typography.Emphasis>
+        <Typography.Text tone='secondary'>Formatea el código automáticamente al pegar.</Typography.Text>
         <div className='monacoPreferences-switch flex w-full flex-row flex-wrap gap-grid-sm'>
           {[true, false].map(style => (
             <Button key={newKey()} onClick={() => monaco.setFormatOnPaste(style)} active={monaco.formatOnPaste === style}>
@@ -378,8 +371,8 @@ const SetterMonacoPreferences: FC = () => {
       </div>
 
       <div className='monacoPreferences-section flex flex-col gap-grid-lg'>
-        <h5 className='paragraph-emphasis'>Formateo automático</h5>
-        <span className='paragraph-normal'>Formatea el código automáticamente mientras se escribe.</span>
+        <Typography.Emphasis>Formateo automático</Typography.Emphasis>
+        <Typography.Text tone='secondary'>Formatea el código automáticamente mientras se escribe.</Typography.Text>
         <div className='monacoPreferences-switch flex w-full flex-row flex-wrap gap-grid-sm'>
           {[true, false].map(style => (
             <Button key={newKey()} onClick={() => monaco.setFormatOnType(style)} active={monaco.formatOnType === style}>
@@ -390,13 +383,13 @@ const SetterMonacoPreferences: FC = () => {
       </div>
 
       <div className='monacoPreferences-section flex flex-col gap-grid-lg'>
-        <h5 className='paragraph-emphasis'>Coincidencia de paréntesis</h5>
-        <span className='paragraph-normal'>
+        <Typography.Emphasis>Coincidencia de paréntesis</Typography.Emphasis>
+        <Typography.Text tone='secondary'>
           Agrega Coincidencias de paréntesis al código al lado derecho del editor.
           <br />- Never: nunca,
           <br />- Near: cerca,
           <br />- Always: siempre.
-        </span>
+        </Typography.Text>
         <div className='monacoPreferences-switch flex w-full flex-row flex-wrap gap-grid-sm'>
           {['never', 'near', 'always'].map(style => (
             <Button
@@ -411,14 +404,14 @@ const SetterMonacoPreferences: FC = () => {
       </div>
 
       <div className='monacoPreferences-section flex flex-col gap-grid-lg'>
-        <h5 className='paragraph-emphasis'>Cierre de paréntesis</h5>
-        <span className='paragraph-normal'>
+        <Typography.Emphasis>Cierre de paréntesis</Typography.Emphasis>
+        <Typography.Text tone='secondary'>
           Cierra automáticamente paréntesis, corchetes y llaves.
           <br />- Always: siempre,
           <br />- BeforeWhitespace: antes de los espacios,
           <br />- LanguageDefined: definido por el lenguaje,
           <br />- Never: nunca.
-        </span>
+        </Typography.Text>
         <div className='monacoPreferences-switch flex w-full flex-row flex-wrap gap-grid-sm'>
           {['always', 'beforeWhitespace', 'languageDefined', 'never'].map(style => (
             <Button
@@ -433,13 +426,13 @@ const SetterMonacoPreferences: FC = () => {
       </div>
 
       <div className='monacoPreferences-section flex flex-col gap-grid-lg'>
-        <h5 className='paragraph-emphasis'>Cierre de comillas</h5>
-        <span className='paragraph-normal'>
+        <Typography.Emphasis>Cierre de comillas</Typography.Emphasis>
+        <Typography.Text tone='secondary'>
           - Always: siempre,
           <br />- BeforeWhitespace: antes de los espacios,
           <br />- LanguageDefined: definido por el lenguaje,
           <br />- Never: nunca.
-        </span>
+        </Typography.Text>
         <div className='monacoPreferences-switch flex w-full flex-row flex-wrap gap-grid-sm'>
           {['always', 'beforeWhitespace', 'languageDefined', 'never'].map(style => (
             <Button

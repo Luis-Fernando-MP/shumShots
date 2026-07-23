@@ -3,6 +3,7 @@ import { newKey } from '@/shared/key'
 import Button from '@/shared/ui/Button'
 import LabeledInput from '@/shared/ui/LabeledInput'
 import { type FC, useMemo } from 'react'
+import Typography from '@common/ui/Typography'
 
 const ShumShotsPreferences: FC = () => {
   const shots = useShumOptionsStore()
@@ -41,12 +42,10 @@ const ShumShotsPreferences: FC = () => {
 
   return (
     <div className='monacoPreferences-subsection flex flex-col border-l-[3px] border-dashed border-primary/50 bg-card/50 px-grid-md py-grid'>
-      <div className='paragraph'>
-        <h3 className='paragraph-highlight'># Shum shot's:</h3>
-      </div>
+      <Typography.Block title="Shum shot's:" />
 
       <div className='monacoPreferences-section flex flex-col gap-grid-lg'>
-        <h5 className='paragraph-emphasis'>Mostrar icono del lenguaje</h5>
+        <Typography.Emphasis>Mostrar icono del lenguaje</Typography.Emphasis>
         <div className='monacoPreferences-switch flex w-full flex-row flex-wrap gap-grid-sm'>
           {[true, false].map(style => (
             <Button key={newKey()} onClick={() => shots.setShowLanguageIcon(style)} active={shots.showLanguageIcon === style}>
@@ -57,11 +56,11 @@ const ShumShotsPreferences: FC = () => {
       </div>
 
       <div className='monacoPreferences-section flex flex-col gap-grid-lg'>
-        <h5 className='paragraph-emphasis'>Sombrear icono del lenguaje</h5>
-        <p className='paragraph-normal'>
+        <Typography.Emphasis>Sombrear icono del lenguaje</Typography.Emphasis>
+        <Typography.Paragraph tone='secondary'>
           Util para aquellos iconos blancos o muy transparentes.{' '}
-          <i className='paragraph-precaution'>Requiere que se muestre el icono del lenguaje</i>
-        </p>
+          <Typography.Precaution>Requiere que se muestre el icono del lenguaje</Typography.Precaution>
+        </Typography.Paragraph>
         <div className='monacoPreferences-switch flex w-full flex-row flex-wrap gap-grid-sm'>
           {[true, false].map(style => (
             <Button key={newKey()} onClick={() => shots.setShadowLanguage(style)} active={shots.shadowLanguage === style}>
@@ -72,11 +71,11 @@ const ShumShotsPreferences: FC = () => {
       </div>
 
       <div className='monacoPreferences-section flex flex-col gap-grid-lg'>
-        <h5 className='paragraph-emphasis'>Redondeado del editor</h5>
-        <p className='paragraph-normal'>
+        <Typography.Emphasis>Redondeado del editor</Typography.Emphasis>
+        <Typography.Paragraph tone='secondary'>
           Util para aquellos iconos blancos o muy transparentes.{' '}
-          <i className='paragraph-precaution'>Requiere que se muestre el icono del lenguaje</i>
-        </p>
+          <Typography.Precaution>Requiere que se muestre el icono del lenguaje</Typography.Precaution>
+        </Typography.Paragraph>
         <div className='monacoPreferences-switch flex w-full flex-row flex-wrap gap-grid-sm'>
           <LabeledInput
             type='number'
@@ -103,7 +102,7 @@ const ShumShotsPreferences: FC = () => {
       </div>
 
       <div className='monacoPreferences-section flex flex-col gap-grid-lg'>
-        <h5 className='paragraph-emphasis'>Redondeado del contenedor</h5>
+        <Typography.Emphasis>Redondeado del contenedor</Typography.Emphasis>
         <div className='monacoPreferences-switch flex w-full flex-row flex-wrap gap-grid-sm'>
           <LabeledInput
             type='number'
@@ -134,7 +133,7 @@ const ShumShotsPreferences: FC = () => {
       </div>
 
       <div className='monacoPreferences-section flex flex-col gap-grid-lg'>
-        <h5 className='paragraph-emphasis'>Alto del editor</h5>
+        <Typography.Emphasis>Alto del editor</Typography.Emphasis>
         <div className='monacoPreferences-switch flex w-full flex-row flex-wrap gap-grid-sm'>
           <LabeledInput
             type='number'
@@ -161,7 +160,7 @@ const ShumShotsPreferences: FC = () => {
       </div>
 
       <div className='monacoPreferences-section flex flex-col gap-grid-lg'>
-        <h5 className='paragraph-emphasis'>Ancho del editor</h5>
+        <Typography.Emphasis>Ancho del editor</Typography.Emphasis>
         <div className='monacoPreferences-switch flex w-full flex-row flex-wrap gap-grid-sm'>
           <LabeledInput
             type='number'
@@ -188,7 +187,7 @@ const ShumShotsPreferences: FC = () => {
       </div>
 
       <div className='monacoPreferences-section flex flex-col gap-grid-lg'>
-        <h5 className='paragraph-emphasis'>Padding del editor</h5>
+        <Typography.Emphasis>Padding del editor</Typography.Emphasis>
         <div className='monacoPreferences-switch flex w-full flex-row flex-wrap gap-grid-sm'>
           <LabeledInput
             type='number'

@@ -3,6 +3,7 @@
 import Popup from '@/shared/components/Popup'
 import SliceContainer from '@/shared/components/SliceContainer'
 import Button from '@/shared/ui/Button'
+import Typography from '@common/ui/Typography'
 import { Settings } from 'lucide-react'
 import { type FC } from 'react'
 
@@ -21,10 +22,7 @@ const UserMonacoPreferences: FC = () => {
       </Popup.Trigger>
       <Popup.Header>Monaco config</Popup.Header>
       <Popup.Content className='flex flex-col gap-grid-xl'>
-        <div className='monacoPreferences-section flex flex-col gap-grid-lg'>
-          <div className='paragraph'>
-            <h3 className='paragraph-highlight'># Temas:</h3>
-          </div>
+        <Typography.Block title='Temas:' className='monacoPreferences-section flex flex-col gap-grid-lg'>
           <SliceContainer
             maxHeight={100}
             extendedMaxHeight={500}
@@ -32,13 +30,9 @@ const UserMonacoPreferences: FC = () => {
           >
             <ThemeSelectorPreference />
           </SliceContainer>
-        </div>
+        </Typography.Block>
 
-        <div className='monacoPreferences-section flex flex-col gap-grid-lg'>
-          <div className='paragraph'>
-            <h3 className='paragraph-highlight'># Lenguajes de Programación:</h3>
-          </div>
-
+        <Typography.Block title='Lenguajes de Programación:' className='monacoPreferences-section flex flex-col gap-grid-lg'>
           <SliceContainer
             maxHeight={130}
             extendedMaxHeight={500}
@@ -46,13 +40,9 @@ const UserMonacoPreferences: FC = () => {
           >
             <MonacoLanguages />
           </SliceContainer>
-        </div>
+        </Typography.Block>
 
-        <div className='monacoPreferences-section flex flex-col gap-grid-lg'>
-          <div className='paragraph'>
-            <h3 className='paragraph-highlight'># Tipografía:</h3>
-          </div>
-
+        <Typography.Block title='Tipografía:' className='monacoPreferences-section flex flex-col gap-grid-lg'>
           <SliceContainer
             maxHeight={130}
             extendedMaxHeight={500}
@@ -60,7 +50,8 @@ const UserMonacoPreferences: FC = () => {
           >
             <MonacoFonts />
           </SliceContainer>
-        </div>
+        </Typography.Block>
+
         <SetterMonacoPreferences />
       </Popup.Content>
     </Popup>

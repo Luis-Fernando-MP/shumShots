@@ -3,6 +3,7 @@ import type { FC } from 'react'
 
 import useShumOptionsStore from '../../store/shumOptions.store'
 import IconLanguage from './IconLanguage'
+import Typography from '@common/ui/Typography'
 
 interface Props {
   language: [string, { [key: string]: { Icon: React.ElementType; language: string; short: string } }]
@@ -18,8 +19,8 @@ const MonacoLanguage: FC<Props> = ({ language }) => {
   }
 
   return (
-    <div className='monacoThemeCategory paragraph flex flex-col gap-grid-sm'>
-      <h4 className='paragraph-normal'>{section}</h4>
+    <div className='monacoThemeCategory flex flex-col gap-grid-sm'>
+      <Typography.Subheading tone='secondary'>{section}</Typography.Subheading>
 
       <div className='monacoThemeCategory-icons flex flex-row flex-wrap gap-grid-sm'>
         {Object.entries(languages).map(lang => {

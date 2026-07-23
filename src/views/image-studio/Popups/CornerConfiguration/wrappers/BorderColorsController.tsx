@@ -1,6 +1,7 @@
 import UseImagesBorderStore from '@views/image-studio/store/images/useImagesBorderStore'
 import ColorsController from '@/shared/components/ColorsController'
 import type { FC } from 'react'
+import Typography from '@common/ui/Typography'
 
 const BorderColorsController: FC = () => {
   const { color, setColor, setType } = UseImagesBorderStore()
@@ -11,10 +12,9 @@ const BorderColorsController: FC = () => {
   }
 
   return (
-    <section className='bgConfig-section flex flex-col gap-grid-lg'>
-      <h3 className='paragraph-highlight'># Colores:</h3>
+    <Typography.Block title='Colores:' className='bgConfig-section flex flex-col gap-grid-lg'>
       <ColorsController background={color} setBackground={handleChangeColor} />
-    </section>
+    </Typography.Block>
   )
 }
 
