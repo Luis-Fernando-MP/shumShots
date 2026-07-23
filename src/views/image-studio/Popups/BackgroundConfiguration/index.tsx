@@ -13,7 +13,7 @@ const BackgroundConfiguration: FC = () => {
   return (
     <Popup className='bgConfig-popup h-[700px] w-[350px]'>
       <Popup.Trigger>
-        <Button tooltip='Configuration del fondo'>
+        <Button size='icon' tooltip='Configuration del fondo'>
           <BlendIcon />
         </Button>
       </Popup.Trigger>

@@ -60,6 +60,7 @@ const ZoomController: FC = () => {
     <>
       <span className='text-xs text-muted-foreground'>Zoom:</span>
       <Button
+        size='icon'
         tooltip='Aumentar zoom'
         tooltipPosition='bottom'
         onClick={handleZoomIn}
@@ -69,6 +70,7 @@ const ZoomController: FC = () => {
         <PlusIcon />
       </Button>
       <Button
+        size='icon'
         tooltip='Disminuir zoom'
         tooltipPosition='bottom'
         onClick={handleZoomOut}

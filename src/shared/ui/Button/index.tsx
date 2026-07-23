@@ -3,7 +3,7 @@
 import Tooltip from '@common/ui/Tooltip'
 import type { StyleStatus } from '@common/ui/common/types'
 import { cn } from '@common/utils/cn'
-import { cva, type VariantProps } from 'class-variance-authority'
+import { type VariantProps, cva } from 'class-variance-authority'
 import type { ButtonHTMLAttributes, FC, ReactNode } from 'react'
 
 type ButtonVariant = 'soft' | 'solid' | 'outline' | 'ghost' | 'dashed'
@@ -19,14 +19,14 @@ const buttonVariants = cva(
   {
     variants: {
       size: {
-        default: 'h-9 min-w-9 px-4 py-2',
-        sm: 'h-8 min-w-8 px-3 text-xs [&_svg]:size-4',
-        lg: 'h-10 min-w-10 px-5 text-base',
+        default: 'h-9 px-4 py-2',
+        sm: 'h-8 px-3 py-1.5 text-xs [&_svg]:size-4',
+        lg: 'h-10 px-5 py-2.5 text-base',
         icon: 'size-9 p-2'
       }
     },
     defaultVariants: {
-      size: 'icon'
+      size: 'default'
     }
   }
 )
@@ -67,10 +67,8 @@ const statusStyles: Record<ButtonVariant, Record<StyleStatus, string>> = {
   dashed: {
     default: 'border-2 border-dashed border-border bg-transparent text-foreground hover:bg-muted/70',
     primary: 'border-2 border-dashed border-primary bg-transparent text-foreground hover:bg-primary/10',
-    success:
-      'border-2 border-dashed border-semantic-success bg-transparent text-semantic-success hover:bg-semantic-success/10',
-    warning:
-      'border-2 border-dashed border-semantic-warning bg-transparent text-semantic-warning hover:bg-semantic-warning/10',
+    success: 'border-2 border-dashed border-semantic-success bg-transparent text-semantic-success hover:bg-semantic-success/10',
+    warning: 'border-2 border-dashed border-semantic-warning bg-transparent text-semantic-warning hover:bg-semantic-warning/10',
     error: 'border-2 border-dashed border-semantic-error bg-transparent text-semantic-error hover:bg-semantic-error/10',
     info: 'border-2 border-dashed border-semantic-info bg-transparent text-semantic-info hover:bg-semantic-info/10'
   }
@@ -94,7 +92,7 @@ const Button: FC<ButtonProps> = ({
   tooltipPosition = 'top',
   variant = 'soft',
   status = 'default',
-  size = 'icon',
+  size = 'default',
   active = false,
   ...props
 }) => {

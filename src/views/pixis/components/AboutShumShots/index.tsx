@@ -13,7 +13,7 @@ const AboutShumShots: FC = () => {
   return (
     <Popup className='about-popup max-w-[300px]'>
       <Popup.Trigger>
-        <Button tooltip='Acerca de PIXIS'>
+        <Button size='icon' tooltip='Acerca de PIXIS'>
           <CircleHelpIcon />
         </Button>
       </Popup.Trigger>

@@ -1,36 +1,24 @@
 'use client'
 
-import * as React from 'react'
-
-import { InfoIcon } from 'lucide-react'
 import * as TooltipPrimitive from '@radix-ui/react-tooltip'
+import { InfoIcon } from 'lucide-react'
+import * as React from 'react'
 import { twMerge } from 'tailwind-merge'
 
-function TooltipProvider({
-  delayDuration = 200,
-  ...props
-}: React.ComponentProps<typeof TooltipPrimitive.Provider>) {
-  return (
-    <TooltipPrimitive.Provider
-      data-slot='tooltip-provider'
-      delayDuration={delayDuration}
-      {...props}
-    />
-  )
+function TooltipProvider({ delayDuration = 200, ...props }: React.ComponentProps<typeof TooltipPrimitive.Provider>) {
+  return <TooltipPrimitive.Provider data-slot='tooltip-provider' delayDuration={delayDuration} {...props} />
 }
 
 function TooltipRoot({ ...props }: React.ComponentProps<typeof TooltipPrimitive.Root>) {
   return <TooltipPrimitive.Root data-slot='tooltip' {...props} />
 }
 
-function TooltipTrigger({
-  className,
-  ...props
-}: React.ComponentProps<typeof TooltipPrimitive.Trigger>) {
+function TooltipTrigger({ className, asChild, ...props }: React.ComponentProps<typeof TooltipPrimitive.Trigger>) {
   return (
     <TooltipPrimitive.Trigger
       data-slot='tooltip-trigger'
-      className={twMerge('[text-align:initial] size-fit', className)}
+      asChild={asChild}
+      className={twMerge(!asChild && 'size-fit [text-align:initial]', className)}
       {...props}
     />
   )
@@ -55,7 +43,7 @@ function TooltipContent({
         data-slot='tooltip-content'
         sideOffset={sideOffset}
         className={twMerge(
-          'z-[2000] inline-flex w-max max-w-xs origin-(--radix-tooltip-content-transform-origin) items-center gap-1.5 rounded-md border px-3 py-1.5 text-xs leading-snug text-foreground whitespace-nowrap data-[side=bottom]:slide-in-from-top-1 data-[side=left]:slide-in-from-right-1 data-[side=right]:slide-in-from-left-1 data-[side=top]:slide-in-from-bottom-1 data-[state=delayed-open]:animate-in data-[state=delayed-open]:fade-in-0 has-data-[slot=kbd]:pr-1.5',
+          'text-foreground data-[side=bottom]:slide-in-from-top-1 data-[side=left]:slide-in-from-right-1 data-[side=right]:slide-in-from-left-1 data-[side=top]:slide-in-from-bottom-1 data-[state=delayed-open]:animate-in data-[state=delayed-open]:fade-in-0 z-[2000] inline-flex w-max max-w-xs origin-(--radix-tooltip-content-transform-origin) items-center gap-1.5 rounded-md border px-3 py-1.5 text-xs leading-snug whitespace-nowrap has-data-[slot=kbd]:pr-1.5',
           className,
           backgroundColor,
           borderColor
@@ -82,12 +70,12 @@ interface InfoTooltipProps extends TooltipContentProps {
 const InfoTooltip = ({ children, ...props }: InfoTooltipProps) => {
   return (
     <TooltipPrimitive.Root>
-      <TooltipPrimitive.Trigger className='cursor-help text-muted-foreground'>
+      <TooltipPrimitive.Trigger className='text-muted-foreground cursor-help'>
         <InfoIcon className='size-4' />
       </TooltipPrimitive.Trigger>
       <TooltipContent {...props} className={twMerge('whitespace-normal', props.className)}>
         {typeof children === 'string' ? (
-          <p className='max-w-xs text-xs leading-snug text-muted-foreground'>{children}</p>
+          <p className='text-muted-foreground max-w-xs text-xs leading-snug'>{children}</p>
         ) : (
           children
         )}

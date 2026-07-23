@@ -28,6 +28,7 @@ const DetailBar: FC<Props> = ({ className }) => {
       } ${className}`}
     >
       <Button
+        size='icon'
         tooltip={isOpen ? 'Contraer' : 'Expandir'}
         tooltipPosition='left'
         onClick={() => setIsOpen(prev => !prev)}

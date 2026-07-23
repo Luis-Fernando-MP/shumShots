@@ -4,25 +4,25 @@ import Popup from '@/shared/components/Popup'
 import Button from '@/shared/ui/Button'
 import PaletteSphere from '@/shared/ui/PaletteSphere'
 import ThemeColorDisplay from '@/shared/ui/ThemeColorDisplay'
-import { type JSX, MouseEvent } from 'react'
+import { type JSX } from 'react'
 
 import useAppTheme from './useAppTheme'
 
 const ThemeController = (): JSX.Element => {
   const { appTheme, THEMES, handleSetTheme } = useAppTheme()
 
-  const handleSelectTheme = (key: string, e: MouseEvent): void => {
-    if (e.ctrlKey) return
+  const handleSelectTheme = (key: string): void => {
     handleSetTheme(key)
   }
 
   return (
     <Popup>
       <Popup.Trigger>
-        <Button tooltip='Tema de la aplicación'>
+        <Button>
           <ThemeColorDisplay />
+
           <span className='text-muted-foreground text-xs'>Tema:</span>
-          <span className='text-sm font-medium'>{appTheme}</span>
+          <span className='text-sm font-semibold'>{appTheme}</span>
         </Button>
       </Popup.Trigger>
 
@@ -37,7 +37,7 @@ const ThemeController = (): JSX.Element => {
               title={key}
               theme={colors}
               selected={key === appTheme}
-              onClick={e => handleSelectTheme(key, e)}
+              onClick={() => handleSelectTheme(key)}
             />
           )
         })}

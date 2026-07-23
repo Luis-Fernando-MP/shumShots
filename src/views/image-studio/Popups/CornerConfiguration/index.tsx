@@ -13,7 +13,7 @@ const CornerConfiguration: FC = () => {
   return (
     <Popup className='borderConfig-popup h-[700px] w-[350px]'>
       <Popup.Trigger>
-        <Button tooltip='Estilo de borde'>
+        <Button size='icon' tooltip='Estilo de borde'>
           <SquareRoundCornerIcon />
         </Button>
       </Popup.Trigger>

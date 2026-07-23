@@ -51,7 +51,7 @@ const MainBar: FC<Props> = ({ className = '' }) => {
       <section className='flex flex-row items-center gap-grid'>
         {pages.map(page => (
           <Link key={page.path} href={page.path} aria-label={page.label}>
-            <Button tooltip={page.label} active={pathname === page.path}>
+            <Button size='icon' tooltip={page.label} active={pathname === page.path}>
               <page.icon />
             </Button>
           </Link>

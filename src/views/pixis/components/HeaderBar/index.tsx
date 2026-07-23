@@ -14,6 +14,7 @@ const HeaderBar: FC<Props> = ({ className }) => {
       className={`gap-grid rounded-radius bg-card/50 p-grid-sm backdrop-blur-panel flex size-fit flex-row items-center justify-center ${className}`}
     >
       <ThemeController />
+
       <FullScreen />
       <div className='bg-border h-6 w-px' />
       <ZoomController />

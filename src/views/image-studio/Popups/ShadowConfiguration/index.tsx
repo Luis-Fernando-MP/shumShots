@@ -12,7 +12,7 @@ const ShadowConfiguration: FC = () => {
   return (
     <Popup className='shadowConfig-popup h-[700px] w-[350px]'>
       <Popup.Trigger>
-        <Button tooltip='Sombras'>
+        <Button size='icon' tooltip='Sombras'>
           <CloudSunIcon />
         </Button>
       </Popup.Trigger>

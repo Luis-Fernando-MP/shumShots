@@ -26,7 +26,12 @@ const PaletteSphere: FC<Props> = ({ title, theme, className = '', selected = fal
   }
 
   return (
-    <Button className={`relative flex min-h-10 flex-row items-center gap-3 overflow-hidden rounded-md border-2 border-transparent bg-card p-1 ${selected ? 'border-primary' : ''} ${className}`} tooltip={title} {...props}>
+    <Button
+      size='default'
+      className={`relative flex min-h-10 flex-row items-center gap-3 overflow-hidden rounded-md border-2 border-transparent bg-card p-1 ${selected ? 'border-primary' : ''} ${className}`}
+      tooltip={title}
+      {...props}
+    >
       <div className='absolute inset-0 overflow-hidden rounded-md after:absolute after:left-[20%] after:top-1/2 after:size-[60px] after:-translate-x-1/2 after:-translate-y-1/2 after:rounded-full after:bg-background after:blur-lg' />
       <div className='relative z-10 flex flex-row items-center gap-1'>
         <div className='size-5 rounded-full border-[1.5px] border-muted' style={{ backgroundColor: parseColor(theme['tn-primary']) }} />

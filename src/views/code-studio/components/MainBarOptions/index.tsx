@@ -19,7 +19,7 @@ const MainBarOptions: FC = () => {
 
   return (
     <section className='flex flex-row items-center gap-grid'>
-      <Button tooltip='Formatear código' onClick={handleFormatCode}>
+      <Button size='icon' tooltip='Formatear código' onClick={handleFormatCode}>
         <LetterText />
       </Button>
       <ShotFileName />

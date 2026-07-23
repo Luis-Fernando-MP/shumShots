@@ -14,10 +14,10 @@ const MainBarOptions: FC = () => {
       <section className='flex flex-row items-center gap-grid'>
         <span className='text-xs text-muted-foreground'>Fondo:</span>
         <BackgroundConfiguration />
-        <Button tooltip='Imagen del fondo'>
+        <Button size='icon' tooltip='Imagen del fondo'>
           <ImagePlusIcon />
         </Button>
-        <Button tooltip='Filtros del fondo'>
+        <Button size='icon' tooltip='Filtros del fondo'>
           <SlidersHorizontalIcon />
         </Button>
       </section>
@@ -28,7 +28,7 @@ const MainBarOptions: FC = () => {
         <CornerConfiguration />
         <ShadowConfiguration />
 
-        <Button tooltip='Filtros del fondo'>
+        <Button size='icon' tooltip='Filtros del fondo'>
           <SlidersHorizontalIcon />
         </Button>
       </section>

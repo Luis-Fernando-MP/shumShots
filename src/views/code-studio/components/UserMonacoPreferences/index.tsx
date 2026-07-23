@@ -15,7 +15,7 @@ const UserMonacoPreferences: FC = () => {
   return (
     <Popup className='monacoPreferences-popup h-[700px] max-h-[700px] w-[400px]'>
       <Popup.Trigger>
-        <Button tooltip='Configurar monaco'>
+        <Button size='icon' tooltip='Configurar monaco'>
           <Settings />
         </Button>
       </Popup.Trigger>
