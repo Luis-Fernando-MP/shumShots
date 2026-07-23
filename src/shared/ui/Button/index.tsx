@@ -10,7 +10,7 @@ type ButtonVariant = 'soft' | 'solid' | 'outline' | 'ghost' | 'dashed'
 
 const buttonVariants = cva(
   [
-    'relative inline-flex items-center justify-center gap-1 rounded-md text-sm font-medium',
+    'relative inline-flex items-center justify-center gap-1 rounded-md text-base font-medium',
     'transition-colors select-none',
     'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary',
     'disabled:pointer-events-none disabled:opacity-50',

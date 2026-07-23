@@ -1,21 +1,17 @@
-import { Montserrat, Open_Sans, Raleway } from 'next/font/google'
+import { Roboto, Roboto_Condensed } from 'next/font/google'
 
-export const family1 = Montserrat({
+export const fontSans = Roboto({
   subsets: ['latin'],
-  weight: ['700', '600', '500'],
-  variable: '--family1'
+  weight: ['400', '500', '700'],
+  variable: '--font-roboto',
+  display: 'swap'
 })
 
-export const family2 = Open_Sans({
+export const fontDisplay = Roboto_Condensed({
   subsets: ['latin'],
-  weight: ['500', '400'],
-  variable: '--family2'
+  weight: ['400', '500', '600', '700'],
+  variable: '--font-roboto-condensed',
+  display: 'swap'
 })
 
-export const family3 = Raleway({
-  subsets: ['latin'],
-  weight: ['400', '500'],
-  variable: '--family3'
-})
-
-export const bodyFonts = `${family1.variable} ${family2.variable} ${family3.variable}`
+export const bodyFonts = `${fontSans.variable} ${fontDisplay.variable}`
