@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 
-import useBoardStore, { MAX_SCALE, MIN_SCALE, Positions } from './board.store'
+import useBoardStore, { MAX_SCALE, MIN_SCALE, Positions, SCALE_EPSILON, ZoomDirection } from './board.store'
 
 interface IUseBoardHook {
   isCenter: boolean
@@ -22,10 +22,12 @@ const useBoard = ({ isCenter, minScale = false, normalScale = false }: IUseBoard
     setOffset,
     setScale,
     setScaleCentered,
+    setScaleAndOffset,
     setPrevChild,
     setNextChild,
     setMoveToChild,
     setResetZoom,
+    setZoomCentered,
     enableScroll
   } = useBoardStore()
   const $containerRef = useRef<HTMLDivElement>(null)
@@ -36,36 +38,44 @@ const useBoard = ({ isCenter, minScale = false, normalScale = false }: IUseBoard
   const [childIndex, setChildIndex] = useState(0)
   const animationFrameRef = useRef<number | undefined>(undefined)
 
-  const handleScale = (scale: number): void => {
-    setScale(scale)
+  const handleScale = (nextScale: number): void => {
+    setScale(nextScale)
   }
 
-  const handleScaleCentered = (direction: 'in' | 'out'): void => {
-    if (!$containerRef.current) {
-      setScaleCentered(direction)
-      return
+  const handleScaleCentered = useCallback(
+    (direction: ZoomDirection): void => {
+      const container = $containerRef.current
+      if (!container) return
+      setScaleCentered(direction, container.getBoundingClientRect())
+    },
+    [setScaleCentered]
+  )
+
+  const getLayoutSize = () => {
+    if (!$childrenRef.current) return { width: 0, height: 0 }
+    return {
+      width: $childrenRef.current.offsetWidth,
+      height: $childrenRef.current.offsetHeight
     }
-    const rect = $containerRef.current.getBoundingClientRect()
-    setScaleCentered(direction, rect, offset, scale)
   }
 
-  const getDynamicScale = (parent: DOMRect, children: DOMRect) => {
+  const getDynamicScale = (parent: DOMRect, width: number, height: number) => {
+    if (width <= 0 || height <= 0) {
+      return { scale: 1, maxScale: MAX_SCALE, minScale: MIN_SCALE }
+    }
     const paAspect = parent.width / parent.height
-    const chiAspect = children.width / children.height
-    let scale: number
-    if (paAspect > chiAspect) scale = parent.height / children.height
-    else scale = parent.width / children.width
-    const maxScale = Math.max(MIN_SCALE, Math.min(MAX_SCALE, scale))
-    const minScale = Math.min(MIN_SCALE, Math.min(MAX_SCALE, scale))
-    return { scale, maxScale, minScale }
+    const chiAspect = width / height
+    const fitted = paAspect > chiAspect ? parent.height / height : parent.width / width
+    const maxScale = Math.max(MIN_SCALE, Math.min(MAX_SCALE, fitted))
+    const fittedMin = Math.min(MIN_SCALE, Math.min(MAX_SCALE, fitted))
+    return { scale: fitted, maxScale, minScale: fittedMin }
   }
 
   const centerChildren = useCallback(
     (targetScale: number) => {
       if (!$containerRef.current || !$childrenRef.current) return { newOffsetX: 0, newOffsetY: 0 }
       const paRect = $containerRef.current.getBoundingClientRect()
-      const width = $childrenRef.current.offsetWidth
-      const height = $childrenRef.current.offsetHeight
+      const { width, height } = getLayoutSize()
       const newOffsetX = (paRect.width - width * targetScale) / 2
       const newOffsetY = (paRect.height - height * targetScale) / 2
       setOffset({ x: newOffsetX, y: newOffsetY })
@@ -82,12 +92,12 @@ const useBoard = ({ isCenter, minScale = false, normalScale = false }: IUseBoard
   const centerAndFit = useCallback(() => {
     if (!$containerRef.current || !$childrenRef.current) return
     const paRect = $containerRef.current.getBoundingClientRect()
-    const chiRect = $childrenRef.current.getBoundingClientRect()
-    const { scale } = getDynamicScale(paRect, chiRect)
-    const { newOffsetX, newOffsetY } = centerChildren(scale)
-    setScale(scale)
-    setOffset({ x: newOffsetX, y: newOffsetY })
-  }, [centerChildren, setScale, setOffset])
+    const { width, height } = getLayoutSize()
+    const { scale: fitted } = getDynamicScale(paRect, width, height)
+    const nextScale = Math.max(MIN_SCALE, Math.min(MAX_SCALE, fitted))
+    setScale(nextScale)
+    centerChildren(nextScale)
+  }, [centerChildren, setScale])
 
   const moveToChild = useCallback(
     (index: number, extraScale: number = 1) => {
@@ -96,14 +106,13 @@ const useBoard = ({ isCenter, minScale = false, normalScale = false }: IUseBoard
       if (index < 0 || index >= children.length) return
 
       const paRect = $containerRef.current.getBoundingClientRect()
-      const chiRect = children[index].getBoundingClientRect()
-      const childrenRect = $childrenRef.current.getBoundingClientRect()
+      const child = children[index]
+      const surfaceHeight = $childrenRef.current.offsetHeight
+      const distance = child.offsetLeft
+      const centerXSpace = paRect.width / 2 - (child.offsetWidth * extraScale) / 2
+      const newOffsetY = (paRect.height - surfaceHeight * extraScale) / 2
 
-      const distance = chiRect.left - childrenRect.left
-      const centerXSpace = paRect.width / 2 - (chiRect.width * extraScale) / 2
-      const newOffsetY = (paRect.height - childrenRect.height * extraScale) / 2
-
-      setOffset({ x: -distance + centerXSpace, y: newOffsetY })
+      setOffset({ x: -distance * extraScale + centerXSpace, y: newOffsetY })
       setChildIndex(index)
 
       if (extraScale === 1) {
@@ -119,8 +128,8 @@ const useBoard = ({ isCenter, minScale = false, normalScale = false }: IUseBoard
   const centerWithSpacing = useCallback(() => {
     if (!$containerRef.current || !$childrenRef.current) return
     const paRect = $containerRef.current.getBoundingClientRect()
-    const childrenRect = $childrenRef.current.getBoundingClientRect()
-    const { minScale: appMinScale, maxScale } = getDynamicScale(paRect, childrenRect)
+    const { width, height } = getLayoutSize()
+    const { minScale: appMinScale, maxScale } = getDynamicScale(paRect, width, height)
     setScale(minScale ? appMinScale : maxScale)
     moveToChild(0, minScale ? appMinScale : maxScale)
   }, [moveToChild, setScale, minScale])
@@ -133,22 +142,23 @@ const useBoard = ({ isCenter, minScale = false, normalScale = false }: IUseBoard
     }
   }
 
-  const handleBoardMove = useCallback((e: React.MouseEvent) => {
-    if (!isMoving || !lastMousePosition) return
+  const handleBoardMove = useCallback(
+    (e: React.MouseEvent) => {
+      if (!isMoving || !lastMousePosition) return
 
-    if (animationFrameRef.current) {
-      cancelAnimationFrame(animationFrameRef.current)
-    }
+      if (animationFrameRef.current) {
+        cancelAnimationFrame(animationFrameRef.current)
+      }
 
-    animationFrameRef.current = requestAnimationFrame(() => {
-      const deltaX = e.clientX - lastMousePosition.x
-      const deltaY = e.clientY - lastMousePosition.y
-      const newX = offset.x + deltaX
-      const newY = offset.y + deltaY
-      setOffset({ x: newX, y: newY })
-      setLastMousePosition({ x: e.clientX, y: e.clientY })
-    })
-  }, [isMoving, lastMousePosition, offset, setOffset])
+      animationFrameRef.current = requestAnimationFrame(() => {
+        const deltaX = e.clientX - lastMousePosition.x
+        const deltaY = e.clientY - lastMousePosition.y
+        setOffset({ x: offset.x + deltaX, y: offset.y + deltaY })
+        setLastMousePosition({ x: e.clientX, y: e.clientY })
+      })
+    },
+    [isMoving, lastMousePosition, offset, setOffset]
+  )
 
   const handleBoardUp = useCallback(() => {
     setIsMoving(false)
@@ -163,25 +173,28 @@ const useBoard = ({ isCenter, minScale = false, normalScale = false }: IUseBoard
       if (!e.ctrlKey) return
       e.preventDefault()
 
-      const zoomFactor = 1.1
       const canvas = $containerRef.current
       if (!canvas) return
 
-      const newScale = e.deltaY < 0 ? scale * zoomFactor : scale / zoomFactor
-      const clampedScale = Math.max(MIN_SCALE, Math.min(MAX_SCALE, newScale))
+      const zoomingIn = e.deltaY < 0
+      if (zoomingIn && scale >= MAX_SCALE - SCALE_EPSILON) return
+      if (!zoomingIn && scale <= MIN_SCALE + SCALE_EPSILON) return
 
-      if (Math.abs(clampedScale - scale) < 0.001) return
+      const zoomFactor = 1.1
+      const nextScale = zoomingIn ? scale * zoomFactor : scale / zoomFactor
+      const clampedScale = Math.max(MIN_SCALE, Math.min(MAX_SCALE, nextScale))
+      if (Math.abs(clampedScale - scale) < SCALE_EPSILON) return
 
       const rect = canvas.getBoundingClientRect()
       const mouseX = (e.clientX - rect.left - offset.x) / scale
       const mouseY = (e.clientY - rect.top - offset.y) / scale
 
-      setScale(clampedScale)
-      const newOffsetX = offset.x - mouseX * (clampedScale - scale)
-      const newOffsetY = offset.y - mouseY * (clampedScale - scale)
-      setOffset({ x: newOffsetX, y: newOffsetY })
+      setScaleAndOffset(clampedScale, {
+        x: offset.x - mouseX * (clampedScale - scale),
+        y: offset.y - mouseY * (clampedScale - scale)
+      })
     },
-    [offset, scale, setOffset, setScale]
+    [offset, scale, setScaleAndOffset]
   )
 
   const nextChild = useCallback(() => {
@@ -217,25 +230,36 @@ const useBoard = ({ isCenter, minScale = false, normalScale = false }: IUseBoard
   }, [scale, offset, enableScroll, handleWheel])
 
   useEffect(() => {
-    // Always start at 100% scale
     setScale(1)
 
     if (normalScale) {
-      const { newOffsetX, newOffsetY } = centerChildren(1)
-      setOffset({ x: newOffsetX, y: newOffsetY })
+      centerChildren(1)
     } else if (isCenter) {
       centerAndFit()
     } else {
       centerWithSpacing()
     }
-  }, []) // Run only once on mount
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- mount-only init
+  }, [])
 
   useEffect(() => {
     setPrevChild(prevChild)
     setNextChild(nextChild)
     setMoveToChild(moveToChild)
     setResetZoom(resetZoom)
-  }, [setPrevChild, setNextChild, setMoveToChild, setResetZoom, prevChild, nextChild, moveToChild, resetZoom])
+    setZoomCentered(handleScaleCentered)
+  }, [
+    setPrevChild,
+    setNextChild,
+    setMoveToChild,
+    setResetZoom,
+    setZoomCentered,
+    prevChild,
+    nextChild,
+    moveToChild,
+    resetZoom,
+    handleScaleCentered
+  ])
 
   useEffect(() => {
     return () => {

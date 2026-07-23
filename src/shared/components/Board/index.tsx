@@ -57,7 +57,7 @@ const Board = ({ children, className = '', isCenter = true, minScale, normalScal
         style={{
           top: offset.y,
           left: offset.x,
-          transform: `translate3d(0, 0, 0) scale(${scale})`
+          transform: `scale(${scale})`
         }}
       >
         {children(offset, scale, handleScaleCentered)}

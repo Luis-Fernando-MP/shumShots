@@ -6,12 +6,9 @@ import { ZoomInIcon } from 'lucide-react'
 import { type FC, memo } from 'react'
 
 const AdjustZoom: FC = memo(() => {
-  const { setScaleCentered } = useBoardStore()
+  const { zoomCentered } = useBoardStore()
   const handleClick = () => {
-    setScaleCentered('in')
-    setTimeout(() => {
-      // moveToChild(0) - This might need to be updated too
-    }, 300)
+    zoomCentered('in')
   }
   return (
     <Button tooltip='Zoom' onClick={handleClick}>

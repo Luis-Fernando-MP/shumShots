@@ -1,19 +1,19 @@
 'use client'
 
-import useBoardStore, { MAX_SCALE, MIN_SCALE } from '@/shared/components/Board/board.store'
+import useBoardStore, { MAX_SCALE, MIN_SCALE, SCALE_EPSILON } from '@/shared/components/Board/board.store'
 import Button from '@/shared/ui/Button'
 import { MinusIcon, PlusIcon } from 'lucide-react'
 import type { FC } from 'react'
 
 const ZoomController: FC = () => {
-  const { scale, setScaleCentered, resetZoom } = useBoardStore()
+  const { scale, zoomCentered, resetZoom } = useBoardStore()
   const percent = Math.round(scale * 100)
-  const atMin = scale <= MIN_SCALE + 0.001
-  const atMax = scale >= MAX_SCALE - 0.001
+  const atMin = scale <= MIN_SCALE + SCALE_EPSILON
+  const atMax = scale >= MAX_SCALE - SCALE_EPSILON
 
   return (
     <div className='flex items-center overflow-hidden' role='group' aria-label='Zoom'>
-      <Button size='icon' variant='ghost' disabled={atMin} onClick={() => setScaleCentered('out')}>
+      <Button size='icon' variant='ghost' disabled={atMin} onClick={() => zoomCentered('out')}>
         <MinusIcon className='size-4' />
       </Button>
 
@@ -21,7 +21,7 @@ const ZoomController: FC = () => {
         {percent}%
       </Button>
 
-      <Button size='icon' variant='ghost' disabled={atMax} onClick={() => setScaleCentered('in')}>
+      <Button size='icon' variant='ghost' disabled={atMax} onClick={() => zoomCentered('in')}>
         <PlusIcon className='size-4' />
       </Button>
     </div>

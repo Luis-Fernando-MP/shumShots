@@ -2,8 +2,8 @@
   position: absolute;
   inset: 0;
   overflow: hidden;
-  contain: layout style paint;
-  will-change: transform;
+  /* No `paint` containment: it rasterizes then blurs on CSS scale. */
+  contain: layout style;
   opacity: 0;
 }
 
@@ -15,13 +15,16 @@
   cursor: grabbing;
 }
 
+.board.is-grabbing .board-surface {
+  will-change: top, left, transform;
+}
+
 .board-surface {
   position: absolute;
   top: 0;
   left: 0;
   transform-origin: 0 0;
-  contain: layout style paint;
-  will-change: transform, top, left;
+  backface-visibility: hidden;
 }
 
 .board-surface.is-animating {
@@ -29,4 +32,10 @@
     transform 0.25s ease,
     top 0.25s ease,
     left 0.25s ease;
+}
+
+.board-surface img,
+.board-surface canvas,
+.board-surface video {
+  image-rendering: auto;
 }
