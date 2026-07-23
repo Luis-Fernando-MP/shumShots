@@ -11,6 +11,7 @@
   --color-primary-foreground: rgb(var(--fnt-active));
   --color-secondary: rgb(var(--tn-secondary));
   --color-border: rgb(var(--bg-tertiary));
+  --color-semantic-primary: rgb(var(--semantic-primary));
   --color-semantic-success: rgb(var(--semantic-success));
   --color-semantic-success-text: rgb(var(--semantic-success-text));
   --color-semantic-warning: rgb(var(--semantic-warning));
@@ -19,12 +20,12 @@
   --color-semantic-error-text: rgb(var(--semantic-error-text));
   --color-semantic-info: rgb(var(--semantic-info));
   --color-semantic-info-text: rgb(var(--semantic-info-text));
-  --font-sans: var(--font-roboto), ui-sans-serif, system-ui, sans-serif;
-  --font-display: var(--font-roboto-condensed), var(--font-roboto), ui-sans-serif, system-ui, sans-serif;
+  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-display-family), var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
   --font-mono: var(--monaco-font-family), ui-monospace, monospace;
   --font-weight-normal: 400;
   --font-weight-medium: 500;
-  --font-weight-semibold: 700;
+  --font-weight-semibold: 600;
   --font-weight-bold: 700;
   --radius-radius: var(--radius);
   --radius-sm: calc(var(--radius) * 0.5);
@@ -40,6 +41,8 @@
   --text-xs--line-height: 1rem;
   --text-sm: 0.875rem;
   --text-sm--line-height: 1.25rem;
+  --text-md: 1rem;
+  --text-md--line-height: 1.5rem;
   --text-base: 1rem;
   --text-base--line-height: 1.5rem;
   --text-lg: 1.125rem;
@@ -48,6 +51,8 @@
   --text-xl--line-height: 1.75rem;
   --text-2xl: 1.5rem;
   --text-2xl--line-height: 2rem;
+  --text-3xl: 1.875rem;
+  --text-3xl--line-height: 2.25rem;
   --animate-fade-in-up: fade-in-up 0.5s ease both;
   --animate-blurred-fade-in: blurred-fade-in 0.4s ease both;
 }
@@ -86,6 +91,7 @@
   --fnt-active: 255, 255, 255;
   --tn-primary: 164, 47, 238;
   --tn-secondary: 45, 255, 238;
+  --semantic-primary: 255, 255, 255;
   --semantic-success: 52, 211, 153;
   --semantic-success-text: 10, 30, 20;
   --semantic-warning: 251, 191, 36;
@@ -119,58 +125,60 @@ body {
   min-height: 100dvh;
 }
 
-h1,
-h2,
-h3 {
-  font-family: var(--font-display);
-}
+@layer base {
+  h1,
+  h2,
+  h3 {
+    font-family: var(--font-display);
+  }
 
-h1 {
-  font-size: var(--text-2xl);
-  line-height: var(--text-2xl--line-height);
-  font-weight: var(--font-weight-bold);
-}
+  h1 {
+    font-size: var(--text-2xl);
+    line-height: var(--text-2xl--line-height);
+    font-weight: var(--font-weight-bold);
+  }
 
-h2 {
-  font-size: var(--text-xl);
-  line-height: var(--text-xl--line-height);
-  font-weight: var(--font-weight-semibold);
-}
+  h2 {
+    font-size: var(--text-xl);
+    line-height: var(--text-xl--line-height);
+    font-weight: var(--font-weight-semibold);
+  }
 
-h3 {
-  font-size: var(--text-lg);
-  line-height: var(--text-lg--line-height);
-  font-weight: var(--font-weight-medium);
-}
+  h3 {
+    font-size: var(--text-lg);
+    line-height: var(--text-lg--line-height);
+    font-weight: var(--font-weight-medium);
+  }
 
-h4 {
-  font-size: var(--text-sm);
-  line-height: var(--text-sm--line-height);
-  font-weight: var(--font-weight-medium);
-}
+  h4 {
+    font-size: var(--text-md);
+    line-height: var(--text-md--line-height);
+    font-weight: var(--font-weight-medium);
+  }
 
-h5,
-h6 {
-  font-size: var(--text-xs);
-  line-height: var(--text-xs--line-height);
-  font-weight: var(--font-weight-medium);
-}
+  h5,
+  h6 {
+    font-size: var(--text-sm);
+    line-height: var(--text-sm--line-height);
+    font-weight: var(--font-weight-medium);
+  }
 
-p {
-  line-height: var(--text-base--line-height);
-  font-weight: var(--font-weight-normal);
-}
+  p {
+    line-height: var(--text-base--line-height);
+    font-weight: var(--font-weight-normal);
+  }
 
-button,
-input,
-select,
-textarea {
-  font: inherit;
-  color: inherit;
-}
+  button,
+  input,
+  select,
+  textarea {
+    font: inherit;
+    color: inherit;
+  }
 
-button:not(:disabled) {
-  cursor: pointer;
+  button:not(:disabled) {
+    cursor: pointer;
+  }
 }
 
 ::selection {

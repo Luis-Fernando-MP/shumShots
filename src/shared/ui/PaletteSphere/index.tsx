@@ -1,46 +1,38 @@
-import { acl } from '@/shared/acl'
 import { Theme } from '@app/defaults/themes'
+import { cn } from '@common/utils/cn'
 import type { ButtonHTMLAttributes, FC } from 'react'
 
 import Button from '../Button'
+
 interface Props extends ButtonHTMLAttributes<HTMLButtonElement> {
   title: string
   theme: Pick<Theme, 'tn-primary' | 'tn-secondary' | 'bg-primary'>
   selected?: boolean
 }
 
-/**
- * @param {string} title - The title of the palette sphere.
- * @param {Theme} theme - The theme of the palette sphere, type of Theme.
- * @param {boolean} selected - Whether the palette sphere is selected.
- * @param {ButtonHTMLAttributes<HTMLButtonElement>} props - The props of the button palette sphere.
- */
+const toCssColor = (color: string) => (color.startsWith('#') || color.startsWith('rgb') ? color : `rgb(${color})`)
 
-const PaletteSphere: FC<Props> = ({ title, theme, className = '', selected = false, ...props }) => {
-  if (!theme) return null
-
-  const parseColor = (color: string | null) => {
-    if (!color) return ''
-    if (color?.includes('#')) return color
-    return `rgb(${color})`
-  }
+const PaletteSphere: FC<Props> = ({ title, theme, className, selected = false, ...props }) => {
+  const swatches = [theme['tn-primary'], theme['tn-secondary'], theme['bg-primary']]
 
   return (
     <Button
-      size='default'
-      className={`relative flex min-h-10 flex-row items-center gap-3 overflow-hidden rounded-md border-2 border-transparent bg-card p-1 ${selected ? 'border-primary' : ''} ${className}`}
-      tooltip={title}
+      isSelected={selected}
+      className={cn('max-w-40 justify-start border-1 border-transparent', className, selected && 'border-primary')}
       {...props}
     >
-      <div className='absolute inset-0 overflow-hidden rounded-md after:absolute after:left-[20%] after:top-1/2 after:size-[60px] after:-translate-x-1/2 after:-translate-y-1/2 after:rounded-full after:bg-background after:blur-lg' />
-      <div className='relative z-10 flex flex-row items-center gap-1'>
-        <div className='size-5 rounded-full border-[1.5px] border-muted' style={{ backgroundColor: parseColor(theme['tn-primary']) }} />
-        <div className='size-5 rounded-full border-[1.5px] border-muted' style={{ backgroundColor: parseColor(theme['tn-secondary']) }} />
-        <div className='size-5 rounded-full border-[1.5px] border-muted' style={{ backgroundColor: parseColor(theme['bg-primary']) }} />
-      </div>
-
-      <p className='relative z-10 max-w-[55px] overflow-hidden text-ellipsis text-nowrap'>{title}</p>
+      <span className='flex items-center -space-x-1.5'>
+        {swatches.map((color, index) => (
+          <span
+            key={`${title}-${index}`}
+            className='border-border size-4 shrink-0 rounded-full border'
+            style={{ backgroundColor: toCssColor(color), zIndex: swatches.length - index }}
+          />
+        ))}
+      </span>
+      <span className='truncate text-sm font-medium'>{title}</span>
     </Button>
   )
 }
+
 export default PaletteSphere

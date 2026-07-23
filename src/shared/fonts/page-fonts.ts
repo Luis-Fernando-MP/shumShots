@@ -1,16 +1,12 @@
-import { Roboto, Roboto_Condensed } from 'next/font/google'
+import { Plus_Jakarta_Sans } from 'next/font/google'
+import { GeistSans } from 'geist/font/sans'
 
-export const fontSans = Roboto({
-  subsets: ['latin'],
-  weight: ['400', '500', '700'],
-  variable: '--font-roboto',
-  display: 'swap'
-})
+export const fontSans = GeistSans
 
-export const fontDisplay = Roboto_Condensed({
+export const fontDisplay = Plus_Jakarta_Sans({
   subsets: ['latin'],
-  weight: ['400', '500', '600', '700'],
-  variable: '--font-roboto-condensed',
+  weight: ['500', '600', '700'],
+  variable: '--font-display-family',
   display: 'swap'
 })
 

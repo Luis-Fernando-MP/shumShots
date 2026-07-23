@@ -21,14 +21,14 @@ const ThemeController = (): JSX.Element => {
         <Button>
           <ThemeColorDisplay />
 
-          <span className='text-muted-foreground text-xs'>Tema:</span>
+          <span className='text-muted-foreground text-sm'>Tema:</span>
           <span className='text-sm font-semibold'>{appTheme}</span>
         </Button>
       </Popup.Trigger>
 
       <Popup.Header>Temas</Popup.Header>
 
-      <Popup.Content className='flex max-h-[600px] max-w-[320px] flex-row flex-wrap gap-1'>
+      <Popup.Content className='grid max-h-[600px] max-w-[320px] grid-cols-2 gap-1'>
         {Object.entries(THEMES).map(current => {
           const [key, colors] = current
           return (

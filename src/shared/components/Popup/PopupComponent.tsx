@@ -73,12 +73,19 @@ const PopupHeader = ({ children, className }: PopupHeaderProps) => {
 
   return (
     <header
-      className={cn('relative flex flex-row items-center gap-2 p-2', className)}
+      className={cn(
+        'border-border/50 bg-card/90 relative flex shrink-0 flex-row items-center gap-2.5 border-b px-4 py-2.5 backdrop-blur-md',
+        className
+      )}
       id='popup-header'
       style={{ cursor: isDragging ? 'grabbing' : 'grab' }}
     >
-      <button type='button' className='bg-primary size-[15px] rounded-full' onClick={onClose} aria-label='Cerrar' />
-      {typeof children === 'string' || typeof children === 'number' ? <p>{children}</p> : children}
+      <button type='button' className='bg-primary size-3.5 shrink-0 rounded-full' onClick={onClose} aria-label='Cerrar' />
+      {typeof children === 'string' || typeof children === 'number' ? (
+        <h5 className='font-display text-md leading-tight font-medium tracking-wide'>{children}</h5>
+      ) : (
+        children
+      )}
     </header>
   )
 }
@@ -93,7 +100,7 @@ const PopupContent = ({ children, className, ...props }: PopupContentProps) => {
   return (
     <section
       className={cn(
-        'relative min-h-0 min-w-full flex-1 overflow-x-hidden overflow-y-auto p-2 pb-4 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden',
+        'relative min-h-0 min-w-full flex-1 overflow-x-hidden overflow-y-auto px-4 py-3 pb-4 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden',
         className
       )}
       {...props}
@@ -111,7 +118,16 @@ interface PopupFooterProps {
 }
 
 const PopupFooter = ({ children, className }: PopupFooterProps) => {
-  return <footer className={cn('relative flex flex-row items-center gap-2 p-2', className)}>{children}</footer>
+  return (
+    <footer
+      className={cn(
+        'border-border/50 bg-card/90 relative flex shrink-0 flex-row items-center gap-2.5 border-t px-4 py-2.5 backdrop-blur-md',
+        className
+      )}
+    >
+      {children}
+    </footer>
+  )
 }
 
 PopupFooter.displayName = 'Popup.Footer'
@@ -211,7 +227,7 @@ const Popup = ({ children, className }: IPopup) => {
             onMouseDown={handleMouseDown}
             onTransitionEnd={handleTransitionEnd}
             className={cn(
-              'popup bg-card/50 fixed z-10 flex min-h-[300px] min-w-[200px] flex-col gap-1 overflow-hidden rounded-lg backdrop-blur-md select-none',
+              'popup border-border/40 bg-card/40 fixed z-10 flex min-h-[300px] min-w-[200px] flex-col overflow-hidden rounded-lg border backdrop-blur-md select-none',
               'origin-top-left transition-[opacity,transform] duration-200 ease-out will-change-[opacity,transform]',
               visible ? 'translate-y-0 scale-100 opacity-100' : 'translate-y-1 scale-[0.97] opacity-0',
               blockChildren && '[&_*]:pointer-events-none',

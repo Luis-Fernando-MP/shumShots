@@ -7,10 +7,11 @@ const typographyVariants = cva('m-0 p-0', {
     size: {
       xs: 'text-xs leading-none',
       sm: 'text-sm leading-snug',
-      md: 'text-base leading-normal',
+      md: 'text-md leading-normal',
       lg: 'text-lg leading-snug',
       xl: 'text-xl leading-snug',
-      '2xl': 'text-2xl leading-tight'
+      '2xl': 'text-2xl leading-tight',
+      '3xl': 'text-3xl leading-tight'
     },
     tone: {
       primary: '',

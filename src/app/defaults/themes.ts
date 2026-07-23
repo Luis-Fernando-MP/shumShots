@@ -7,6 +7,7 @@ export interface Theme {
   'fnt-active': string
   'tn-primary': string
   'tn-secondary': string
+  'semantic-primary': string
   'semantic-success': string
   'semantic-success-text': string
   'semantic-warning': string
@@ -21,6 +22,7 @@ export type ThemeKeys = keyof typeof THEMES
 
 type ThemeBase = Omit<
   Theme,
+  | 'semantic-primary'
   | 'semantic-success'
   | 'semantic-success-text'
   | 'semantic-warning'
@@ -31,7 +33,7 @@ type ThemeBase = Omit<
   | 'semantic-info-text'
 >
 
-type ThemeSemantic = Pick<
+type ThemeStatus = Pick<
   Theme,
   | 'semantic-success'
   | 'semantic-success-text'
@@ -43,6 +45,8 @@ type ThemeSemantic = Pick<
   | 'semantic-info-text'
 >
 
+type ThemeSemantic = ThemeStatus & Pick<Theme, 'semantic-primary'>
+
 const STATUS_LIGHT = {
   'semantic-success': '5, 150, 105',
   'semantic-success-text': '255, 255, 255',
@@ -52,7 +56,7 @@ const STATUS_LIGHT = {
   'semantic-error-text': '255, 255, 255',
   'semantic-info': '2, 120, 190',
   'semantic-info-text': '255, 255, 255'
-} as const satisfies ThemeSemantic
+} as const satisfies ThemeStatus
 
 const STATUS_DARK = {
   'semantic-success': '52, 211, 153',
@@ -63,16 +67,24 @@ const STATUS_DARK = {
   'semantic-error-text': '40, 10, 20',
   'semantic-info': '56, 189, 248',
   'semantic-info-text': '5, 25, 40'
-} as const satisfies ThemeSemantic
+} as const satisfies ThemeStatus
 
 const luminance = (rgb: string): number => {
   const [r, g, b] = rgb.split(',').map(value => Number(value.trim()))
   return 0.299 * r + 0.587 * g + 0.114 * b
 }
 
+const primaryContrast = (tnPrimary: string): string =>
+  luminance(tnPrimary) > 140 ? '20, 20, 20' : '255, 255, 255'
+
 export const defineTheme = (base: ThemeBase, semantic?: Partial<ThemeSemantic>): Theme => {
   const defaults = luminance(base['bg-primary']) > 140 ? STATUS_LIGHT : STATUS_DARK
-  return { ...base, ...defaults, ...semantic }
+  return {
+    ...base,
+    ...defaults,
+    'semantic-primary': primaryContrast(base['tn-primary']),
+    ...semantic
+  }
 }
 
 export const THEMES: Record<string, Theme> = {
