@@ -34,7 +34,7 @@ const SetterMonacoPreferences: FC = () => {
 
   return (
     <>
-      <Button outline onClick={handleResetPreferences}>
+      <Button variant='dashed' status='primary' size='default' onClick={handleResetPreferences}>
         <h4>Restablecer configuración</h4>
       </Button>
 

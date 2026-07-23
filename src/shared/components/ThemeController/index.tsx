@@ -19,12 +19,13 @@ const ThemeController = (): JSX.Element => {
   return (
     <Popup title='Temas' className='flex max-h-[600px] max-w-[320px] flex-row flex-wrap gap-1'>
       <Popup.Trigger>
-        <Button tooltip='Tema de la aplicación' tooltipPosition='bottom'>
+        <Button tooltip='Tema de la aplicación' tooltipPosition='bottom' status='error'>
           <ThemeColorDisplay />
           <span className='text-muted-foreground text-xs'>Tema:</span>
           <span className='text-sm font-medium'>{appTheme}</span>
         </Button>
       </Popup.Trigger>
+
       {Object.entries(THEMES).map(current => {
         const [key, colors] = current
         return (

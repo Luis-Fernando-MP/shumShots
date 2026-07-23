@@ -11,6 +11,14 @@
   --color-primary-foreground: rgb(var(--fnt-active));
   --color-secondary: rgb(var(--tn-secondary));
   --color-border: rgb(var(--bg-tertiary));
+  --color-semantic-success: rgb(var(--semantic-success));
+  --color-semantic-success-text: rgb(var(--semantic-success-text));
+  --color-semantic-warning: rgb(var(--semantic-warning));
+  --color-semantic-warning-text: rgb(var(--semantic-warning-text));
+  --color-semantic-error: rgb(var(--semantic-error));
+  --color-semantic-error-text: rgb(var(--semantic-error-text));
+  --color-semantic-info: rgb(var(--semantic-info));
+  --color-semantic-info-text: rgb(var(--semantic-info-text));
   --font-sans: var(--family1), ui-sans-serif, system-ui, sans-serif;
   --font-mono: var(--monaco-font-family), ui-monospace, monospace;
   --radius-radius: var(--radius);
@@ -72,6 +80,14 @@
   --fnt-active: 255, 255, 255;
   --tn-primary: 164, 47, 238;
   --tn-secondary: 45, 255, 238;
+  --semantic-success: 52, 211, 153;
+  --semantic-success-text: 10, 30, 20;
+  --semantic-warning: 251, 191, 36;
+  --semantic-warning-text: 30, 20, 0;
+  --semantic-error: 251, 113, 133;
+  --semantic-error-text: 40, 10, 20;
+  --semantic-info: 56, 189, 248;
+  --semantic-info-text: 5, 25, 40;
   --radius: 1.25rem;
   --space-grid: 0.9375rem;
 }

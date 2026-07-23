@@ -43,7 +43,9 @@ const ShotFileName: FC = () => {
     <>
       <Button
         tooltip='Formatear código'
-        outline
+        variant='dashed'
+        status='primary'
+        size='default'
         className={acl(isDownloading, 'opacity-50')}
         onClick={handleDownload}
       >
@@ -52,7 +54,14 @@ const ShotFileName: FC = () => {
         <LabelText>.png</LabelText>
       </Button>
 
-      <Button tooltip='Copiar imagen' className={acl(isDownloading, 'opacity-50')} outline onClick={handleCopy}>
+      <Button
+        tooltip='Copiar imagen'
+        variant='dashed'
+        status='primary'
+        size='icon'
+        className={acl(isDownloading, 'opacity-50')}
+        onClick={handleCopy}
+      >
         <Icon iconNode={copyImage} />
       </Button>
     </>
