@@ -7,6 +7,7 @@ export interface Theme {
   'fnt-active': string
   'tn-primary': string
   'tn-secondary': string
+  'tn-border': string
   'semantic-primary': string
   'semantic-success': string
   'semantic-success-text': string
@@ -22,6 +23,7 @@ export type ThemeKeys = keyof typeof THEMES
 
 type ThemeBase = Omit<
   Theme,
+  | 'tn-border'
   | 'semantic-primary'
   | 'semantic-success'
   | 'semantic-success-text'
@@ -45,7 +47,7 @@ type ThemeStatus = Pick<
   | 'semantic-info-text'
 >
 
-type ThemeSemantic = ThemeStatus & Pick<Theme, 'semantic-primary'>
+type ThemeSemantic = ThemeStatus & Pick<Theme, 'semantic-primary' | 'tn-border'>
 
 const STATUS_LIGHT = {
   'semantic-success': '5, 150, 105',
@@ -74,14 +76,32 @@ const luminance = (rgb: string): number => {
   return 0.299 * r + 0.587 * g + 0.114 * b
 }
 
+const mixToward = (from: string, to: string, amount: number): string => {
+  const [fr, fg, fb] = from.split(',').map(value => Number(value.trim()))
+  const [tr, tg, tb] = to.split(',').map(value => Number(value.trim()))
+  return [
+    Math.round(fr + (tr - fr) * amount),
+    Math.round(fg + (tg - fg) * amount),
+    Math.round(fb + (tb - fb) * amount)
+  ].join(', ')
+}
+
 const primaryContrast = (tnPrimary: string): string =>
   luminance(tnPrimary) > 140 ? '20, 20, 20' : '255, 255, 255'
+
+const borderTone = (base: ThemeBase): string =>
+  mixToward(
+    base['bg-secondary'],
+    base['fnt-primary'],
+    luminance(base['bg-primary']) > 140 ? 0.24 : 0.4
+  )
 
 export const defineTheme = (base: ThemeBase, semantic?: Partial<ThemeSemantic>): Theme => {
   const defaults = luminance(base['bg-primary']) > 140 ? STATUS_LIGHT : STATUS_DARK
   return {
     ...base,
     ...defaults,
+    'tn-border': borderTone(base),
     'semantic-primary': primaryContrast(base['tn-primary']),
     ...semantic
   }

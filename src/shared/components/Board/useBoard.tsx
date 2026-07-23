@@ -16,7 +16,18 @@ export interface BoardRef {
 }
 
 const useBoard = ({ isCenter, minScale = false, normalScale = false }: IUseBoardHook) => {
-  const { offset, scale, setOffset, setScale, setScaleCentered, setPrevChild, setNextChild, setMoveToChild, enableScroll } = useBoardStore()
+  const {
+    offset,
+    scale,
+    setOffset,
+    setScale,
+    setScaleCentered,
+    setPrevChild,
+    setNextChild,
+    setMoveToChild,
+    setResetZoom,
+    enableScroll
+  } = useBoardStore()
   const $containerRef = useRef<HTMLDivElement>(null)
   const $childrenRef = useRef<HTMLDivElement>(null)
 
@@ -50,17 +61,23 @@ const useBoard = ({ isCenter, minScale = false, normalScale = false }: IUseBoard
   }
 
   const centerChildren = useCallback(
-    (scale: number) => {
+    (targetScale: number) => {
       if (!$containerRef.current || !$childrenRef.current) return { newOffsetX: 0, newOffsetY: 0 }
       const paRect = $containerRef.current.getBoundingClientRect()
-      const chiRect = $childrenRef.current.getBoundingClientRect()
-      const newOffsetX = (paRect.width - chiRect.width * scale) / 2
-      const newOffsetY = (paRect.height - chiRect.height * scale) / 2
+      const width = $childrenRef.current.offsetWidth
+      const height = $childrenRef.current.offsetHeight
+      const newOffsetX = (paRect.width - width * targetScale) / 2
+      const newOffsetY = (paRect.height - height * targetScale) / 2
       setOffset({ x: newOffsetX, y: newOffsetY })
       return { newOffsetX, newOffsetY }
     },
     [setOffset]
   )
+
+  const resetZoom = useCallback(() => {
+    setScale(1)
+    centerChildren(1)
+  }, [centerChildren, setScale])
 
   const centerAndFit = useCallback(() => {
     if (!$containerRef.current || !$childrenRef.current) return
@@ -217,7 +234,8 @@ const useBoard = ({ isCenter, minScale = false, normalScale = false }: IUseBoard
     setPrevChild(prevChild)
     setNextChild(nextChild)
     setMoveToChild(moveToChild)
-  }, [setPrevChild, setNextChild, setMoveToChild, prevChild, nextChild, moveToChild])
+    setResetZoom(resetZoom)
+  }, [setPrevChild, setNextChild, setMoveToChild, setResetZoom, prevChild, nextChild, moveToChild, resetZoom])
 
   useEffect(() => {
     return () => {
@@ -235,6 +253,7 @@ const useBoard = ({ isCenter, minScale = false, normalScale = false }: IUseBoard
     scale,
     handleScale,
     handleScaleCentered,
+    resetZoom,
     handleBoardDown,
     handleBoardMove,
     handleBoardUp,

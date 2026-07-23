@@ -10,7 +10,7 @@
   --color-primary: rgb(var(--tn-primary));
   --color-primary-foreground: rgb(var(--fnt-active));
   --color-secondary: rgb(var(--tn-secondary));
-  --color-border: rgb(var(--bg-tertiary));
+  --color-border: rgb(var(--tn-border));
   --color-semantic-primary: rgb(var(--semantic-primary));
   --color-semantic-success: rgb(var(--semantic-success));
   --color-semantic-success-text: rgb(var(--semantic-success-text));
@@ -91,6 +91,7 @@
   --fnt-active: 255, 255, 255;
   --tn-primary: 164, 47, 238;
   --tn-secondary: 45, 255, 238;
+  --tn-border: 90, 90, 96;
   --semantic-primary: 255, 255, 255;
   --semantic-success: 52, 211, 153;
   --semantic-success-text: 10, 30, 20;

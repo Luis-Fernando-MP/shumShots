@@ -1,3 +1,4 @@
+import { Separator } from '@common/ui/Separator'
 import ThemeController from '@/shared/components/ThemeController'
 import { type FC } from 'react'
 
@@ -16,7 +17,7 @@ const HeaderBar: FC<Props> = ({ className }) => {
       <ThemeController />
 
       <FullScreen />
-      <div className='bg-border h-6 w-px' />
+      <Separator />
       <ZoomController />
     </section>
   )

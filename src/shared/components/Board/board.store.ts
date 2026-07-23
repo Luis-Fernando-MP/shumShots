@@ -9,10 +9,12 @@ interface IBoardStore {
   nextChild: () => void
   prevChild: () => void
   moveToChild: (index: number) => void
+  resetZoom: () => void
 
   setNextChild: (fn: IBoardStore['nextChild']) => void
   setPrevChild: (fn: IBoardStore['prevChild']) => void
   setMoveToChild: (fn: IBoardStore['moveToChild']) => void
+  setResetZoom: (fn: IBoardStore['resetZoom']) => void
 
   setScale: (scale: number) => void
   setScaleCentered: (direction: 'in' | 'out', containerRect?: DOMRect, currentOffset?: Positions, currentScale?: number) => void
@@ -31,6 +33,7 @@ const state: StateCreator<IBoardStore> = (set, get) => ({
   nextChild: () => {},
   prevChild: () => {},
   moveToChild: () => {},
+  resetZoom: () => {},
 
   setEnableScroll: enableScroll => set({ enableScroll }),
   setScale: scale => {
@@ -72,7 +75,8 @@ const state: StateCreator<IBoardStore> = (set, get) => ({
   setOffset: offset => set({ offset }),
   setNextChild: nextChild => set({ nextChild }),
   setPrevChild: prevChild => set({ prevChild }),
-  setMoveToChild: moveToChild => set({ moveToChild })
+  setMoveToChild: moveToChild => set({ moveToChild }),
+  setResetZoom: resetZoom => set({ resetZoom })
 })
 
 const useBoardStore = create(state)
