@@ -3,8 +3,6 @@ import { FC } from 'react'
 import hotToast, { LoaderIcon, Toast } from 'react-hot-toast'
 
 import type { IToastProps } from '..'
-import './style.scss'
-
 const Icons = {
   success: CheckIcon,
   error: XIcon,
@@ -62,23 +60,23 @@ const ActionToast: FC<Props> = ({
   }
 
   return (
-    <section className={`actionToast ${type}`}>
-      <div className='actionToast-icon'>{icon || <Icon />}</div>
-      <h2 className='actionToast-title'>{title}</h2>
-      {description && <p className='customToast-description'>{description}</p>}
-      <div className='actionToast-actions'>
-        <button className='actionToast-action' onClick={handleToastDismiss}>
+    <section className='flex min-w-[150px] flex-col justify-center gap-3 rounded-lg p-4 shadow-md'>
+      <div className={`w-fit rounded-full p-[5px] text-white [&>svg]:size-3 [&>svg]:stroke-[2.5] ${type === 'success' ? 'bg-green-500' : type === 'error' ? 'bg-red-500' : type === 'warning' ? 'bg-yellow-500 text-black' : 'bg-blue-500'}`}>{icon || <Icon />}</div>
+      <h2 className='max-w-[150px]'>{title}</h2>
+      {description && <p className='max-w-[150px]'>{description}</p>}
+      <div className='flex flex-col items-start gap-2'>
+        <button className='rounded-md bg-muted px-2 py-1' onClick={handleToastDismiss}>
           Cerrar
         </button>
 
         {actionLabel && (
-          <button className='actionToast-action active' onClick={handleAction}>
+          <button className='rounded-md bg-muted px-2 py-1' onClick={handleAction}>
             {actionLabel}
           </button>
         )}
 
         {secondActionLabel && (
-          <button className='actionToast-action underline' onClick={handleSecondAction}>
+          <button className='rounded-md border-[1.5px] border-dashed border-primary px-2 py-1' onClick={handleSecondAction}>
             {secondActionLabel}
           </button>
         )}

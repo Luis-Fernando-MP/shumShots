@@ -2,8 +2,6 @@ import { acl } from '@/shared/acl'
 import { type FC, type InputHTMLAttributes, type JSX } from 'react'
 
 import LabelText from '../LabelText'
-import './style.scss'
-
 interface Props extends InputHTMLAttributes<HTMLInputElement> {
   value: string | number
   children?: string
@@ -21,9 +19,9 @@ interface Props extends InputHTMLAttributes<HTMLInputElement> {
 
 const LabeledInput: FC<Props> = ({ children, Icon, transparent, className, ...props }) => {
   return (
-    <div className={`labeledInput border ${acl(!!transparent, 'transparent')} ${className}`}>
-      <input {...props} className='labeledInput-input' autoComplete='off' />
-      <div className='labeledInput-label'>{children && <LabelText Icon={Icon}>{children}</LabelText>}</div>
+    <div className={`relative flex size-fit flex-col items-start rounded-md border-[1.5px] border-transparent bg-card p-2 ${acl(!!transparent, 'border-transparent bg-transparent')} ${className}`}>
+      <input {...props} className='min-w-[100px] bg-transparent pl-2 text-foreground outline-none' autoComplete='off' />
+      <div className='absolute right-2 top-1/2 -translate-y-1/2'>{children && <LabelText Icon={Icon}>{children}</LabelText>}</div>
     </div>
   )
 }

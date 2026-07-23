@@ -1,10 +1,8 @@
 import { acl } from '@/shared/acl'
-import { Theme } from '@/shared/themes'
+import { Theme } from '@app/defaults/themes'
 import type { ButtonHTMLAttributes, FC } from 'react'
 
 import IconButton from '../IconButton'
-import './style.scss'
-
 interface Props extends ButtonHTMLAttributes<HTMLButtonElement> {
   title: string
   theme: Pick<Theme, 'tn-primary' | 'tn-secondary' | 'bg-primary'>
@@ -28,15 +26,15 @@ const PaletteSphere: FC<Props> = ({ title, theme, className = '', selected = fal
   }
 
   return (
-    <IconButton className={`paletteSphere ${className} ${acl(selected, 'selected')}`} label={title} {...props}>
-      <div className='paletteSphere-gradient' />
-      <div className='paletteSphere-spheres'>
-        <div className='paletteSphere-sphere' style={{ backgroundColor: parseColor(theme['tn-primary']) }} />
-        <div className='paletteSphere-sphere' style={{ backgroundColor: parseColor(theme['tn-secondary']) }} />
-        <div className='paletteSphere-sphere' style={{ backgroundColor: parseColor(theme['bg-primary']) }} />
+    <IconButton className={`relative flex min-h-10 flex-row items-center gap-3 overflow-hidden rounded-md border-2 border-transparent bg-card p-1 ${selected ? 'border-primary' : ''} ${className}`} label={title} {...props}>
+      <div className='absolute inset-0 overflow-hidden rounded-md after:absolute after:left-[20%] after:top-1/2 after:size-[60px] after:-translate-x-1/2 after:-translate-y-1/2 after:rounded-full after:bg-background after:blur-lg' />
+      <div className='relative z-10 flex flex-row items-center gap-1'>
+        <div className='size-5 rounded-full border-[1.5px] border-muted' style={{ backgroundColor: parseColor(theme['tn-primary']) }} />
+        <div className='size-5 rounded-full border-[1.5px] border-muted' style={{ backgroundColor: parseColor(theme['tn-secondary']) }} />
+        <div className='size-5 rounded-full border-[1.5px] border-muted' style={{ backgroundColor: parseColor(theme['bg-primary']) }} />
       </div>
 
-      <p className='paletteSphere-title'>{title}</p>
+      <p className='relative z-10 max-w-[55px] overflow-hidden text-ellipsis text-nowrap'>{title}</p>
     </IconButton>
   )
 }

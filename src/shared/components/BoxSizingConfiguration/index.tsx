@@ -1,4 +1,4 @@
-import { BoxSizing } from '@/app/editor/store/images/useImagesBorderStore'
+import { BoxSizing } from '@views/image-studio/store/images/useImagesBorderStore'
 import type { FC } from 'react'
 
 interface Props {

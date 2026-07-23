@@ -1,38 +1,35 @@
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://code-scape.vercel.app'),
-  title: "Shum shot's",
+  title: {
+    default: 'PIXIS',
+    template: '%s | PIXIS'
+  },
   description:
-    'Pon a prueba y mejora tu velocidad de escritura con Key Flare, un clon de Monkeytype creado para fines educativos. ¡Compite contra ti mismo y domina el teclado!',
+    'PIXIS es un estudio visual para crear snippets de código e imágenes profesionales con fondos, marcos, efectos y exportación de alta calidad.',
   keywords: [
-    'Code Scape',
-    'monkeytype',
-    'test de velocidad de escritura',
-    'mecanografía',
-    'práctica de escritura',
-    'teclado',
-    'wpm',
-    'cpm',
-    'mejorar velocidad',
-    'juegos de escritura'
+    'PIXIS',
+    'code snippets',
+    'capturas de código',
+    'editor de imágenes',
+    'canvas',
+    'exportación de imágenes'
   ],
   authors: [{ name: 'Luis MP', url: 'luisjp.vercel.app' }],
   creator: 'Luis MP',
-  publisher: 'SHUN',
+  publisher: 'PIXIS',
   icons: {
     icon: '/logo.webp'
   },
   openGraph: {
-    title: 'Key Flare - Mejora tu velocidad de escritura',
+    title: 'PIXIS',
     description:
-      'Pon a prueba y mejora tu velocidad de escritura con Key Flare, un clon de Monkeytype creado para fines educativos. ¡Compite contra ti mismo y domina el teclado!',
-    url: 'https://key-flare.vercel.app',
-    siteName: 'Key Flare',
+      'Estudio visual para crear snippets de código e imágenes profesionales.',
+    siteName: 'PIXIS',
     images: [
       {
         url: '/opengraph.png',
-        alt: 'Key Flare Logo',
+        alt: 'PIXIS Logo',
         width: 1200,
         height: 630
       }
@@ -41,13 +38,13 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Key Flare - Mejora tu velocidad de escritura',
+    title: 'PIXIS',
     description:
-      'Pon a prueba y mejora tu velocidad de escritura con Key Flare, un clon de Monkeytype creado para fines educativos. ¡Compite contra ti mismo y domina el teclado!',
+      'Estudio visual para crear snippets de código e imágenes profesionales.',
     images: [
       {
         url: '/opengraph.png',
-        alt: 'Key Flare Logo'
+        alt: 'PIXIS Logo'
       }
     ]
   }

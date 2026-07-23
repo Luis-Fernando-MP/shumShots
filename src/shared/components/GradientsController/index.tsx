@@ -2,8 +2,6 @@ import { circularGradients, gradients } from '@/shared/backgroundStyle'
 import type { FC } from 'react'
 
 import SliceContainer from '../SliceContainer'
-import './style.scss'
-
 interface Props {
   background: string | null
   blendMode: string
@@ -17,15 +15,15 @@ const GradientsController: FC<Props> = ({ background, setBackground, blendMode, 
     setBlendMode(blendMode ?? 'normal')
   }
   return (
-    <article className='gradientsController'>
-      <div className='gradientsController-section'>
+    <article className='flex flex-wrap gap-3'>
+      <div className='flex flex-col gap-2'>
         <h3 className='paragraph-highlight'># Gradientes:</h3>
-        <SliceContainer maxHeight={105} className='gradientsController-colors'>
+        <SliceContainer maxHeight={105} className='flex flex-row flex-wrap gap-1 overflow-hidden'>
           {gradients.map(item => {
             const { gradient, blendMode } = item
             return (
               <button
-                className='gradientsController-color'
+                className='size-[50px] rounded-lg'
                 style={{ background: gradient, backgroundBlendMode: blendMode }}
                 key={gradient}
                 onClick={() => handleSelectBackground(gradient, blendMode)}
@@ -35,14 +33,14 @@ const GradientsController: FC<Props> = ({ background, setBackground, blendMode, 
         </SliceContainer>
       </div>
 
-      <div className='gradientsController-section'>
+      <div className='flex flex-col gap-2'>
         <h3 className='paragraph-highlight'># Gradientes Circulares:</h3>
-        <SliceContainer maxHeight={105} className='gradientsController-colors'>
+        <SliceContainer maxHeight={105} className='flex flex-row flex-wrap gap-1 overflow-hidden'>
           {circularGradients.map(item => {
             const { gradient } = item
             return (
               <button
-                className='gradientsController-color'
+                className='size-[50px] rounded-lg'
                 style={{ background: gradient }}
                 key={gradient}
                 onClick={() => handleSelectBackground(gradient)}

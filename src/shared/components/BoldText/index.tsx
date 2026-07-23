@@ -1,5 +1,3 @@
-import './style.scss'
-
 interface IBoldText {
   text: string
 }
@@ -7,9 +5,9 @@ interface IBoldText {
 const BoldText = ({ text }: IBoldText) => {
   const [normal, bold] = text.toString().split('/')
   return (
-    <div className='boldText'>
+    <div className='flex flex-row items-end gap-[5px] uppercase'>
       <h3>{normal ?? ''}</h3>
-      <h2>{bold ?? ''}</h2>
+      <h2 className='text-primary'>{bold ?? ''}</h2>
     </div>
   )
 }

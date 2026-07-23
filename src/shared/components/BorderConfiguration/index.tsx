@@ -1,11 +1,9 @@
-import { BorderConfigurationState, BorderType } from '@/app/editor/store/images/useImagesBorderStore'
+import { BorderConfigurationState, BorderType } from '@views/image-studio/store/images/useImagesBorderStore'
 import BorderStyle from '@/shared/ui/BorderStyle'
 import EmptyBlock from '@/shared/ui/EmptyBlock'
 import type { FC } from 'react'
 
 import SliderControl from '../SliderControl'
-import './style.scss'
-
 interface Props {
   borderState: BorderConfigurationState
 }
@@ -66,7 +64,7 @@ const BorderConfiguration: FC<Props> = ({ borderState }) => {
   }
 
   return (
-    <article className='borderConfiguration'>
+    <article className='flex max-w-full flex-row flex-wrap gap-2'>
       <EmptyBlock onClick={() => handleSetBorderType({ type: 'none' })} selected={type === 'none'} />
       {defaultBorders.map(border => {
         return (

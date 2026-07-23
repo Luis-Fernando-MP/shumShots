@@ -1,7 +1,0 @@
-@use '@sass/utils/defs' as d;
-
-.defaultBorders {
-  @include d.flex($dir: row, $ali: center);
-
-  flex-wrap: wrap;
-}

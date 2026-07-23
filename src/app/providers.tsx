@@ -1,5 +1,6 @@
 'use client'
 
+import Tooltip from '@common/ui/Tooltip'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { type JSX, type ReactNode } from 'react'
 
@@ -10,7 +11,11 @@ interface IProviders {
 const queryClient = new QueryClient()
 
 const Providers = ({ children }: IProviders): JSX.Element => {
-  return <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+  return (
+    <QueryClientProvider client={queryClient}>
+      <Tooltip.Provider>{children}</Tooltip.Provider>
+    </QueryClientProvider>
+  )
 }
 
 export default Providers

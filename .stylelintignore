@@ -1,1 +1,3 @@
-src/app/v1
+node_modules
+.next
+tmp

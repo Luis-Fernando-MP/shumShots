@@ -1,23 +1,16 @@
 {
-  "extends": [
-    "stylelint-config-standard",
-    "stylelint-config-standard-scss",
-    "stylelint-config-clean-order",
-    "stylelint-config-two-dash-bem"
-  ],
+  "extends": ["stylelint-config-standard", "stylelint-config-clean-order"],
   "rules": {
-    "scss/at-rule-no-unknown": [
+    "at-rule-no-unknown": [
       true,
       {
-        "ignoreAtRules": ["tailwind"]
+        "ignoreAtRules": ["theme", "utility", "plugin", "custom-variant", "source", "import"]
       }
     ],
-    "scss/at-mixin-pattern": null,
-    "scss/dollar-variable-pattern": null,
     "custom-property-pattern": null,
     "declaration-block-no-redundant-longhand-properties": null,
-    "scss/no-global-function-names": null,
     "declaration-property-value-no-unknown": null,
-    "selector-class-pattern": null
+    "selector-class-pattern": null,
+    "import-notation": null
   }
 }

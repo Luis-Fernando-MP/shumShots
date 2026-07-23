@@ -2,8 +2,6 @@ import IconButton from '@/shared/ui/IconButton'
 import { ImagePlusIcon } from 'lucide-react'
 import type { FC } from 'react'
 
-import './style.scss'
-
 interface Props {
   background: string | null
   setBackground: (background: string) => void
@@ -11,7 +9,7 @@ interface Props {
 
 const UploadImageController: FC<Props> = ({ background, setBackground }) => {
   return (
-    <section className='uploadImageController'>
+    <section className='flex flex-col gap-2'>
       <h3 className='paragraph-highlight'># Cargar Imagen:</h3>
 
       <IconButton>

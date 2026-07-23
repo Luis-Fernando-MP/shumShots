@@ -16,8 +16,8 @@ const UnsplashImage = ({ image }: IUnsplashImage): JSX.Element => {
   }
 
   return (
-    <button className='unsplashCM-image animate-fade-in-up' onClick={handleClick}>
-      <img src={image.urls.thumb} alt={image.slug} />
+    <button className='animate-fade-in-up overflow-hidden p-1' onClick={handleClick}>
+      <img className='max-h-[80px] max-w-[90px] rounded-lg object-contain' src={image.urls.thumb} alt={image.slug} />
     </button>
   )
 }

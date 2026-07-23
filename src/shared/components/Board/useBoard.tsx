@@ -38,8 +38,6 @@ const useBoard = ({ isCenter, minScale = false, normalScale = false }: IUseBoard
     setScaleCentered(direction, rect, offset, scale)
   }
 
-  const noExistRefs = !$containerRef.current || !$childrenRef.current
-
   const getDynamicScale = (parent: DOMRect, children: DOMRect) => {
     const paAspect = parent.width / parent.height
     const chiAspect = children.width / children.height
@@ -232,7 +230,6 @@ const useBoard = ({ isCenter, minScale = false, normalScale = false }: IUseBoard
   return {
     $containerRef,
     $childrenRef,
-    noExistRefs,
     isMoving,
     offset,
     scale,

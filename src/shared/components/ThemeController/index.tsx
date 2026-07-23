@@ -7,7 +7,6 @@ import ThemeColorDisplay from '@/shared/ui/ThemeColorDisplay'
 import { type JSX, MouseEvent, useState } from 'react'
 
 import { PopupPositions } from '../Popup/usePopup'
-import './style.scss'
 import useAppTheme from './useAppTheme'
 
 const ThemeController = (): JSX.Element => {
@@ -19,8 +18,12 @@ const ThemeController = (): JSX.Element => {
   }
 
   const handleOpenPopup = (e: MouseEvent): void => {
-    togglePopup()
+    if (openThemes) {
+      setOpenThemes(false)
+      return
+    }
     setPositions({ x: e.clientX, y: e.clientY })
+    setOpenThemes(true)
   }
 
   const handleSelectTheme = (key: string, e: MouseEvent): void => {
@@ -29,13 +32,13 @@ const ThemeController = (): JSX.Element => {
   }
 
   return (
-    <section className='theme'>
+    <section>
       <IconButton transparent label='Tema de la aplicación' position='bottom' onClick={handleOpenPopup}>
         <ThemeColorDisplay />
-        <p>Tema :</p>
-        <h4>{appTheme}</h4>
+        <span className='text-xs text-muted-foreground'>Tema:</span>
+        <span className='text-sm font-medium'>{appTheme}</span>
       </IconButton>
-      <Popup isOpen={openThemes} onClose={togglePopup} title='Temas' className='theme-popup' clickPosition={positions}>
+      <Popup isOpen={openThemes} onClose={togglePopup} title='Temas' className='flex max-h-[600px] max-w-[320px] flex-row flex-wrap gap-1' clickPosition={positions}>
         {Object.entries(THEMES).map(current => {
           const [key, colors] = current
           return (

@@ -1,9 +1,0 @@
-@use '@sass/config/vars' as v;
-@use '@sass/utils/defs' as d;
-
-.borderConfiguration {
-  flex-wrap: wrap;
-  max-width: 100%;
-
-  @include d.flex($dir: row, $gap: v.$padding * 0.5);
-}

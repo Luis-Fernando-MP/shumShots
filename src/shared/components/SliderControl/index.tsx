@@ -2,8 +2,6 @@
 
 import { ChangeEvent, InputHTMLAttributes, type JSX, memo } from 'react'
 
-import './style.scss'
-
 interface Props extends InputHTMLAttributes<HTMLInputElement> {
   containerClassName?: string
   label?: string
@@ -29,18 +27,18 @@ const SliderControl = ({
   }
 
   return (
-    <section className={`sliderControl border ${containerClassName ?? ''}`} style={{ width: width ?? '100%' }}>
+    <section className={`relative cursor-col-resize overflow-hidden rounded-md py-2 ${containerClassName ?? ''}`} style={{ width: width ?? '100%' }}>
       <input
         {...props}
         type='range'
-        className={`sliderControl-range ${className ?? ''}`}
+        className={`absolute inset-0 size-full cursor-col-resize appearance-none bg-primary/20 outline-none [&::-moz-range-thumb]:h-3/5 [&::-moz-range-thumb]:w-[3px] [&::-moz-range-thumb]:cursor-col-resize [&::-moz-range-thumb]:rounded [&::-moz-range-thumb]:border-0 [&::-moz-range-thumb]:bg-foreground [&::-webkit-slider-thumb]:h-3/5 [&::-webkit-slider-thumb]:w-[3px] [&::-webkit-slider-thumb]:cursor-col-resize [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:rounded [&::-webkit-slider-thumb]:bg-foreground ${className ?? ''}`}
         value={value}
         onChange={handleChange}
         max={max}
       />
-      <div className='sliderControl-info'>
-        <h4 className='sliderControl-label'>{label}</h4>
-        <p className='sliderControl-value'>{relativeRadius}%</p>
+      <div className='pointer-events-none relative flex size-full select-none flex-row items-center justify-between px-2'>
+        <h4 className='text-foreground'>{label}</h4>
+        <p className='text-foreground'>{relativeRadius}%</p>
       </div>
     </section>
   )

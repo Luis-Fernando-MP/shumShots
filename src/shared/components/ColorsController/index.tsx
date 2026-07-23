@@ -4,8 +4,6 @@ import { PipetteIcon } from 'lucide-react'
 import type { FC } from 'react'
 
 import { extractColor } from '../extractColor'
-import './style.scss'
-
 export type SpreadColor = { r: string; g: string; b: string; a: string }
 
 interface Props {
@@ -21,14 +19,14 @@ interface Props {
  */
 const ColorsController: FC<Props> = ({ background, setBackground }) => {
   return (
-    <section className='colorsController'>
-      <div className='colorsController-section'>
+    <section className='flex gap-3'>
+      <div className='flex max-w-[270px] flex-col gap-2'>
         <h5>Default</h5>
-        <div className='colorsController-colors'>
+        <div className='flex flex-row flex-wrap overflow-hidden rounded-lg'>
           {basicColors.map(color => {
             return (
               <button
-                className='colorsController-color'
+                className='size-[30px] aspect-square'
                 style={{ backgroundColor: color }}
                 key={color}
                 onClick={() => setBackground(color, extractColor(color))}

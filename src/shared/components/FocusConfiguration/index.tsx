@@ -1,8 +1,6 @@
-import { ShadowType } from '@/app/editor/store/shadow/shadow.store'
+import { ShadowType } from '@views/image-studio/store/shadow/shadow.store'
 import { SunIcon, TreePineIcon } from 'lucide-react'
 import { type FC, type MouseEvent, useEffect, useRef, useState } from 'react'
-
-import './style.scss'
 
 type Positions = { x: number; y: number }
 interface Props {
@@ -153,13 +151,13 @@ const FocusConfiguration: FC<Props> = ({ shadowType, setPosition, setBlur, setSp
     <section
       role='button'
       tabIndex={0}
-      className='focusConfig border'
+      className='relative flex size-[280px] items-center justify-center overflow-hidden rounded-lg bg-background'
       ref={$containerRef}
       onMouseMove={handleMove}
       onMouseUp={handleUp}
     >
       <button
-        className='focusConfig-sun border'
+        className='z-10 rounded-full bg-muted p-2'
         ref={$sunRef}
         onMouseDown={handleDown}
         style={{
@@ -172,7 +170,7 @@ const FocusConfiguration: FC<Props> = ({ shadowType, setPosition, setBlur, setSp
       </button>
 
       <div
-        className='focusConfig-objective'
+        className='pointer-events-none [&>svg]:size-20'
         ref={$objectiveRef}
         style={{
           filter: shadowStyle

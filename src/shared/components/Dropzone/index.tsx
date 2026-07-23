@@ -6,8 +6,6 @@ import { FC, ReactNode, memo, useCallback, useEffect, useState } from 'react'
 import { DropzoneOptions, useDropzone } from 'react-dropzone'
 
 import { toaster } from '../Toast'
-import './style.scss'
-
 const acceptedFileTypes = {
   'image/jpg': [],
   'image/png': [],
@@ -73,12 +71,12 @@ const Dropzone: FC<Props> = ({ onDrop, removeAfterUpload = false, maxFiles = 1, 
   const renderContent = useCallback(() => {
     if (isDragActive) {
       return (
-        <section className='dropzone-content'>
-          <section className='dropzone-wrapper'>
-            <div className='dropzone-icon'>
+        <section className='flex size-full cursor-pointer flex-col justify-center'>
+          <section className='flex flex-row items-center gap-2'>
+            <div className='grid size-[50px] place-content-center rounded-lg bg-foreground p-[5px] [&>svg]:size-[30px] [&>svg]:stroke-background [&>svg]:stroke-2'>
               <IconDragging />
             </div>
-            <div className='dropzone-contentWrapper'>
+            <div className='flex flex-col gap-1'>
               <h2>{isDragAccept ? '¡Suelta para subir!' : 'Formato no válido'}</h2>
               <h5>{isDragAccept ? 'La subida es automática 🚀' : 'Formatos aceptados:'}</h5>
               {!isDragAccept && <p>PNG, JPG o Webp</p>}
@@ -91,19 +89,19 @@ const Dropzone: FC<Props> = ({ onDrop, removeAfterUpload = false, maxFiles = 1, 
     if (files.length > 0 && children) {
       const missingFiles = files.length < maxFiles
       return (
-        <section className='dropzone-content'>
+        <section className='flex size-full cursor-pointer flex-col justify-center'>
           {children({ missingFiles, openFileExplorer: open, files, removeFile: handleRemoveFile, maxFiles })}
         </section>
       )
     }
 
     return (
-      <section className='dropzone-content'>
-        <section className='dropzone-wrapper'>
-          <div className='dropzone-icon'>
+      <section className='flex size-full cursor-pointer flex-col justify-center'>
+        <section className='flex flex-row items-center gap-2'>
+          <div className='grid size-[50px] place-content-center rounded-lg bg-foreground p-[5px] [&>svg]:size-[30px] [&>svg]:stroke-background [&>svg]:stroke-2'>
             <IconDragging />
           </div>
-          <div className='dropzone-contentWrapper'>
+          <div className='flex flex-col gap-1'>
             <h2>Suelta o pega</h2>
             <h5>{maxFiles > 1 ? 'Tus imágenes' : 'Una imagen'}</h5>
             <p>En: PNG, JPG o Webp</p>
@@ -125,7 +123,7 @@ const Dropzone: FC<Props> = ({ onDrop, removeAfterUpload = false, maxFiles = 1, 
     <article
       {...getRootProps()}
       aria-label='Zona de arrastre de imágenes'
-      className={`dropzone ${acl(isDragActive, 'dragging')} ${acl(isDragReject && !isDragActive, 'reject')}`}
+      className={`relative flex size-full overflow-auto rounded-lg border-[3.5px] border-background bg-background ${acl(isDragActive, 'border-primary border-dashed')} ${acl(isDragReject && !isDragActive, 'bg-red-500/50')}`}
     >
       <input {...getInputProps()} />
       {renderContent()}

@@ -1,11 +1,9 @@
-import { IBorderRadiusStore } from '@/app/editor/store/background/backgroundRadius.store'
+import { IBorderRadiusStore } from '@views/image-studio/store/background/backgroundRadius.store'
 import IconButton from '@/shared/ui/IconButton'
 import { MaximizeIcon, RotateCcwIcon, ScaleIcon } from 'lucide-react'
 import { type FC } from 'react'
 
 import RenderInputBorders from './RenderInputBorders'
-import './style.scss'
-
 interface Props extends Omit<IBorderRadiusStore, 'getStyleBorderRadius'> {}
 
 const IndividualBorderController: FC<Props> = props => {
@@ -30,7 +28,7 @@ const IndividualBorderController: FC<Props> = props => {
   }
 
   return (
-    <section className='individualBorderController'>
+    <section className='flex flex-col gap-2'>
       <h5>Detallado</h5>
       <IconButton
         className='border'
@@ -43,16 +41,16 @@ const IndividualBorderController: FC<Props> = props => {
 
       {activeIndividualBorder && (
         <>
-          <div className='individualBorderController-borders'>
+          <div className='flex flex-row flex-wrap items-center gap-2'>
             <RenderInputBorders {...borders} />
           </div>
 
-          <div className='individualBorderController-extraActions'>
-            <IconButton className='individualBorderController-equals' onClick={handleBalance}>
+          <div className='flex flex-row items-center gap-2'>
+            <IconButton onClick={handleBalance}>
               <ScaleIcon />
               <h5>Equilibrar</h5>
             </IconButton>
-            <IconButton className='individualBorderController-equals' onClick={handleEquals}>
+            <IconButton onClick={handleEquals}>
               <RotateCcwIcon />
               <h5>Restablecer</h5>
             </IconButton>

@@ -2,8 +2,6 @@ import { newKey } from '@/shared/key'
 import IndividualDefaultBorder from '@/shared/ui/IndividualDefaultBorder'
 import type { FC } from 'react'
 
-import './style.scss'
-
 interface Props {
   borderValue: number
   changeBorder: (value: number) => void
@@ -24,7 +22,7 @@ const borders = [
 
 const DefaultBorders: FC<Props> = ({ borderValue, changeBorder }) => {
   return (
-    <section className='defaultBorders'>
+    <section className='flex flex-row flex-wrap items-center gap-2'>
       {borders.map(border => {
         const { label, radius } = border
         return (

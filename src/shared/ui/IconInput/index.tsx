@@ -2,8 +2,6 @@ import type { FC, InputHTMLAttributes, ReactNode } from 'react'
 import { Input } from 'react-field-sizing-content'
 
 import LabelText from '../LabelText'
-import './style.scss'
-
 interface Props extends InputHTMLAttributes<HTMLInputElement> {
   children?: Readonly<ReactNode[]> | null | Readonly<ReactNode>
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void
@@ -43,10 +41,10 @@ const IconInput: FC<Props> = ({
   ...props
 }) => {
   return (
-    <div className='iconInput border'>
-      {Icon && <div className='iconInput-icon'>{Icon}</div>}
+    <div className='flex w-fit max-w-full flex-row flex-wrap items-center gap-2 rounded-md bg-background p-2'>
+      {Icon && <div>{Icon}</div>}
       <Input
-        className={`iconInput-input ${className}`}
+        className={`min-w-[50px] bg-transparent outline-none ${className}`}
         {...props}
         fieldSizing={fieldSizing}
         value={value}

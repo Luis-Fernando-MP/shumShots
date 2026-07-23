@@ -1,0 +1,32 @@
+.board {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  contain: layout style paint;
+  will-change: transform;
+  opacity: 0;
+}
+
+.board.is-ready {
+  opacity: 1;
+}
+
+.board.is-grabbing {
+  cursor: grabbing;
+}
+
+.board-surface {
+  position: absolute;
+  top: 0;
+  left: 0;
+  transform-origin: 0 0;
+  contain: layout style paint;
+  will-change: transform, top, left;
+}
+
+.board-surface.is-animating {
+  transition:
+    transform 0.25s ease,
+    top 0.25s ease,
+    left 0.25s ease;
+}

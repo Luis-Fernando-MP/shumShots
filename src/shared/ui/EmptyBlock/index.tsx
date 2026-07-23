@@ -2,8 +2,6 @@ import { acl } from '@/shared/acl'
 import { CircleOffIcon } from 'lucide-react'
 import type { FC, MouseEvent } from 'react'
 
-import './style.scss'
-
 interface Props {
   onClick: (e: MouseEvent) => void
   className?: string
@@ -20,8 +18,8 @@ interface Props {
 
 const EmptyBlock: FC<Props> = ({ onClick, className = '', selected }) => {
   return (
-    <button className={`emptyBlock ${className} ${acl(selected, 'selected')}`} onClick={onClick}>
-      <div className='emptyBlock-wrapper'>
+    <button className={`size-[50px] w-[100px] ${className}`} onClick={onClick}>
+      <div className={`grid size-full place-content-center rounded-lg border-[3px] border-muted bg-background [&>svg]:size-6 ${acl(selected, 'border-primary')}`}>
         <CircleOffIcon />
       </div>
     </button>

@@ -1,11 +1,9 @@
-import { IBorderRadiusStore } from '@/app/editor/store/background/backgroundRadius.store'
+import { IBorderRadiusStore } from '@views/image-studio/store/background/backgroundRadius.store'
 import type { FC } from 'react'
 
 import DefaultBorders from '../DefaultBorders'
 import IndividualBorderController from '../IndividualBorderController'
 import SliderControl from '../SliderControl'
-import './style.scss'
-
 interface Props {
   borderState: IBorderRadiusStore
 }
@@ -16,7 +14,7 @@ const BorderRadiusConfiguration: FC<Props> = ({ borderState }) => {
   const { borderRadius, setBorderRadius } = borderState
 
   return (
-    <article className='borderRadiusConfiguration'>
+    <article className='flex flex-col gap-2'>
       <DefaultBorders borderValue={borderRadius} changeBorder={setBorderRadius} />
       <SliderControl
         label='Redondeado'

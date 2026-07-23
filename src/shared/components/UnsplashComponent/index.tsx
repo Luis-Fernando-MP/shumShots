@@ -8,7 +8,6 @@ import { useDebounceValue } from 'usehooks-ts'
 
 import UnsplashImages from './UnsplashImages'
 import UnsplashSearch from './UnsplashSearch'
-import './style.scss'
 import { Photos } from './unsplash.type'
 
 type TStatus = 'loading' | 'error' | 'idle'
@@ -60,22 +59,22 @@ const UnsplashComponent = () => {
   }, [])
 
   return (
-    <article className={`unsplashCM ${status.current}`}>
-      <button className='unsplashCM-header pattern-12' onClick={() => setView(!view)}>
+    <article className='flex flex-col items-center gap-2'>
+      <button className='flex w-full flex-row items-center justify-center gap-2 rounded-lg border-2 border-dashed border-muted bg-card p-2 [&>svg]:size-[25px]' onClick={() => setView(!view)}>
         <Unsplash />
         <h3>Unsplash</h3>
       </button>
       {view && (
-        <section className='unsplashCM-contend'>
+        <section className='flex h-auto max-h-[450px] w-full flex-col items-center gap-2 rounded-lg bg-muted py-2 transition-all duration-500'>
           <UnsplashSearch setQuery={setQuery} query={query} />
           <UnsplashImages images={images} setQuery={setQuery} />
           {images.length > 0 && (
-            <div className='unsplashCM-actions'>
-              <button onClick={handleClean} className='unsplashCM-action__clean'>
+            <div className='flex w-full flex-row justify-center gap-2'>
+              <button onClick={handleClean} className='flex flex-row items-center gap-1 rounded-md bg-background px-3 py-2'>
                 <CircleXIcon /> Limpiar
               </button>
               {page.current <= totalPage.current && (
-                <button onClick={loadMore} className='unsplashCM-action__more' disabled={status.current === 'loading'}>
+                <button onClick={loadMore} className='flex flex-row items-center gap-1 rounded-md bg-background px-3 py-2' disabled={status.current === 'loading'}>
                   <CircleEllipsisIcon /> {status.current === 'loading' ? 'Cargando...' : 'Más...'}
                 </button>
               )}

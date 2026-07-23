@@ -1,8 +1,6 @@
 import ShumLogo from '@/shared/assets/ShumLogo'
 import type { FC } from 'react'
 
-import './style.scss'
-
 interface Props {
   size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl'
   radius?: 'circle' | 'rounded' | 'none'
@@ -15,8 +13,8 @@ interface Props {
 
 const ShumDev: FC<Props> = ({ size = 'xs', radius = 'rounded' }) => {
   return (
-    <section className={`shumDev ${size} ${radius}`}>
-      <ShumLogo className='shumDev-logo' />
+    <section className={`grid size-fit place-content-center border-[1.5px] border-[#868686] bg-[#013936e3] ${radius === 'circle' ? 'rounded-full' : radius === 'rounded' ? 'rounded' : 'rounded-none border-0 p-0'} ${size === 'xs' ? 'p-1 [&>svg]:size-[21px]' : size === 'sm' ? 'p-2 [&>svg]:size-7' : size === 'md' ? 'p-2.5 [&>svg]:size-8' : size === 'lg' ? 'p-3 [&>svg]:size-16' : 'p-4 [&>svg]:size-24'}`}>
+      <ShumLogo />
     </section>
   )
 }

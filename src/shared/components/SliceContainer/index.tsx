@@ -2,8 +2,6 @@ import IconButton from '@/shared/ui/IconButton'
 import { MoreHorizontalIcon } from 'lucide-react'
 import { type FC, type HTMLAttributes, type ReactNode, useState } from 'react'
 
-import './style.scss'
-
 interface Props extends HTMLAttributes<HTMLDivElement> {
   children?: Readonly<ReactNode[]> | null | Readonly<ReactNode>
   maxHeight?: number
@@ -30,14 +28,14 @@ const SliceContainer: FC<Props> = ({ children, maxHeight, className, onExtend, e
   }
 
   return (
-    <article className='sliceContainer' {...props}>
-      <IconButton onClick={handleClick} className='sliceContainer-action'>
+    <article className='relative flex min-w-fit flex-col gap-2' {...props}>
+      <IconButton onClick={handleClick} className='sticky top-0 z-10'>
         {isExtended ? 'Contraer' : 'Extender'}
         <MoreHorizontalIcon />
       </IconButton>
 
       <section
-        className={`sliceContainer-content ${className}`}
+        className={`[scrollbar-width:none] [&::-webkit-scrollbar]:hidden ${className}`}
         style={{
           maxHeight: isExtended ? exMaxHeight : `${maxHeight}px`,
           overflow: isExtended ? 'auto' : 'hidden'

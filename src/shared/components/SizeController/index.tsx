@@ -3,8 +3,6 @@ import IconInput from '@/shared/ui/IconInput'
 import { ProportionsIcon } from 'lucide-react'
 import { type FC, useCallback, useMemo, useState } from 'react'
 
-import './style.scss'
-
 interface Props {
   width: number
   height: number
@@ -85,20 +83,20 @@ const SizeController: FC<Props> = ({ width, height, setWidth, setHeight }) => {
   )
 
   return (
-    <section className='sizeController border'>
+    <section className='relative flex size-[300px] aspect-square flex-col rounded-lg bg-background'>
       <IconButton
         transparent
         position='right'
         onClick={toggleAspectRatioLock}
         active={lockAspectRatio}
-        className='sizeController-lock'
+        className='absolute left-2 top-2'
       >
         <ProportionsIcon />
         <h5>{lockAspectRatio ? 'Desbloquear relación' : 'Bloquear relación'}</h5>
       </IconButton>
 
       <div
-        className='sizeController-preview'
+        className='absolute left-1/2 top-[45%] grid max-h-[250px] -translate-x-1/2 -translate-y-1/2 place-content-center rounded-md bg-muted'
         style={{
           width: Math.min(200, Math.max(70, width * 0.1)),
           aspectRatio: aspectRatio
@@ -107,7 +105,7 @@ const SizeController: FC<Props> = ({ width, height, setWidth, setHeight }) => {
         <h2>{aspectRatioFraction}</h2>
       </div>
 
-      <div className='sizeController-controls'>
+      <div className='absolute bottom-0 left-0 flex w-full flex-row items-center justify-between p-2'>
         <div>
           <h4>Ancho</h4>
           <IconInput

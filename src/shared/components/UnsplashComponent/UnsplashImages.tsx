@@ -25,13 +25,13 @@ const recommendations = {
 const UnsplashImages = ({ images, setQuery }: IUnsplashImages): JSX.Element => {
   const RecommendedImages = () => {
     return (
-      <section className='unsplashCM-subSection'>
+      <section className='flex size-full flex-col gap-2 overflow-y-auto px-2 text-center [scrollbar-width:none] [&::-webkit-scrollbar]:hidden'>
         <h4>Opciones Recomendadas</h4>
-        <div className='unsplashCM-recommended'>
+        <div className='flex flex-row flex-wrap items-center justify-center gap-2'>
           {Object.entries(recommendations).map(rec => {
             const [key, value] = rec
             return (
-              <button key={key} className='unsplashCM-recommended__option' onClick={() => setQuery(value)}>
+              <button key={key} className='rounded-[10px] border-2 border-dashed border-background px-3 py-2 text-sm font-medium text-foreground' onClick={() => setQuery(value)}>
                 {key}
               </button>
             )
@@ -43,7 +43,7 @@ const UnsplashImages = ({ images, setQuery }: IUnsplashImages): JSX.Element => {
 
   const ListOfImages = () => {
     return (
-      <section className='unsplashCM-images'>
+      <section className='size-full overflow-auto px-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden'>
         <div>
           {images.map(image => {
             const key = image.id + Date.now()
