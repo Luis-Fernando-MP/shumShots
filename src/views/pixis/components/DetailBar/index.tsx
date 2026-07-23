@@ -1,6 +1,6 @@
 'use client'
 
-import IconButton from '@/shared/ui/IconButton'
+import Button from '@/shared/ui/Button'
 import LabelText from '@/shared/ui/LabelText'
 import ShumShots from '@/shared/ui/ShumShots'
 import { ArrowBigDownDashIcon, ArrowBigUpDashIcon } from 'lucide-react'
@@ -27,15 +27,14 @@ const DetailBar: FC<Props> = ({ className }) => {
           : 'h-14 flex-row items-center overflow-hidden py-2 pr-12 pl-3'
       } ${className}`}
     >
-      <IconButton
-        label={isOpen ? 'Contraer' : 'Expandir'}
+      <Button
+        tooltip={isOpen ? 'Contraer' : 'Expandir'}
+        tooltipPosition='left'
         onClick={() => setIsOpen(prev => !prev)}
         className={`absolute right-2 z-10 ${isOpen ? 'top-2' : 'top-1/2 -translate-y-1/2'}`}
-        position='left'
-        transparent
       >
         {isOpen ? <ArrowBigUpDashIcon /> : <ArrowBigDownDashIcon />}
-      </IconButton>
+      </Button>
 
       <Link href='/' className={`flex items-center gap-2 ${isOpen ? 'flex-col items-start' : 'flex-row'}`}>
         <ShumShots size={isOpen ? 'md' : 'xs'} transparent />

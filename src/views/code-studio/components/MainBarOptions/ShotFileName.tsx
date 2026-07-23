@@ -1,7 +1,7 @@
 import useDownloadImage from '@/app/hooks/useDownloadImage'
 import { acl } from '@/shared/acl'
 import { toaster } from '@/shared/components/Toast'
-import IconButton from '@/shared/ui/IconButton'
+import Button from '@/shared/ui/Button'
 import LabelText from '@/shared/ui/LabelText'
 import { copyImage } from '@lucide/lab'
 import { CloudDownload, Icon } from 'lucide-react'
@@ -41,9 +41,8 @@ const ShotFileName: FC = () => {
 
   return (
     <>
-      <IconButton
-        label='Formatear código'
-        transparent
+      <Button
+        tooltip='Formatear código'
         outline
         className={acl(isDownloading, 'opacity-50')}
         onClick={handleDownload}
@@ -51,11 +50,11 @@ const ShotFileName: FC = () => {
         <CloudDownload />
         <p>{fileName}</p>
         <LabelText>.png</LabelText>
-      </IconButton>
+      </Button>
 
-      <IconButton label='Copiar imagen' className={acl(isDownloading, 'opacity-50')} transparent outline onClick={handleCopy}>
+      <Button tooltip='Copiar imagen' className={acl(isDownloading, 'opacity-50')} outline onClick={handleCopy}>
         <Icon iconNode={copyImage} />
-      </IconButton>
+      </Button>
     </>
   )
 }

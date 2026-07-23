@@ -1,4 +1,4 @@
-import IconButton from '@/shared/ui/IconButton'
+import Button from '@/shared/ui/Button'
 import { ImagePlusIcon } from 'lucide-react'
 import type { FC } from 'react'
 
@@ -12,10 +12,10 @@ const UploadImageController: FC<Props> = ({ background, setBackground }) => {
     <section className='flex flex-col gap-2'>
       <h3 className='paragraph-highlight'># Cargar Imagen:</h3>
 
-      <IconButton>
+      <Button>
         <ImagePlusIcon />
         <h4>Picar nueva imagen</h4>
-      </IconButton>
+      </Button>
     </section>
   )
 }

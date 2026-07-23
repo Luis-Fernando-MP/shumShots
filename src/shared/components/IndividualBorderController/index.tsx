@@ -1,5 +1,5 @@
 import { IBorderRadiusStore } from '@views/image-studio/store/background/backgroundRadius.store'
-import IconButton from '@/shared/ui/IconButton'
+import Button from '@/shared/ui/Button'
 import { MaximizeIcon, RotateCcwIcon, ScaleIcon } from 'lucide-react'
 import { type FC } from 'react'
 
@@ -30,14 +30,14 @@ const IndividualBorderController: FC<Props> = props => {
   return (
     <section className='flex flex-col gap-2'>
       <h5>Detallado</h5>
-      <IconButton
+      <Button
         className='border'
         active={activeIndividualBorder}
         onClick={() => setActiveIndividualBorder(!activeIndividualBorder)}
       >
         <MaximizeIcon />
         <h5>Bordes individuales</h5>
-      </IconButton>
+      </Button>
 
       {activeIndividualBorder && (
         <>
@@ -46,14 +46,14 @@ const IndividualBorderController: FC<Props> = props => {
           </div>
 
           <div className='flex flex-row items-center gap-2'>
-            <IconButton onClick={handleBalance}>
+            <Button onClick={handleBalance}>
               <ScaleIcon />
               <h5>Equilibrar</h5>
-            </IconButton>
-            <IconButton onClick={handleEquals}>
+            </Button>
+            <Button onClick={handleEquals}>
               <RotateCcwIcon />
               <h5>Restablecer</h5>
-            </IconButton>
+            </Button>
           </div>
         </>
       )}

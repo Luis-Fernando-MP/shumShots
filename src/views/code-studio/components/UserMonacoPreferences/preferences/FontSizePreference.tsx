@@ -1,5 +1,5 @@
 import { newKey } from '@/shared/key'
-import IconButton from '@/shared/ui/IconButton'
+import Button from '@/shared/ui/Button'
 import LabeledInput from '@/shared/ui/LabeledInput'
 import type { FC } from 'react'
 
@@ -22,9 +22,9 @@ const FontSizePreference: FC<Props> = ({ fontSize, setFontSize }) => {
         {[10, 14, 16, 18, 20].map(style => {
           const normal = 14
           return (
-            <IconButton key={newKey()} onClick={() => setFontSize(style)} active={fontSize === style}>
+            <Button key={newKey()} onClick={() => setFontSize(style)} active={fontSize === style}>
               {style === normal ? 'Normal' : style}
-            </IconButton>
+            </Button>
           )
         })}
       </div>

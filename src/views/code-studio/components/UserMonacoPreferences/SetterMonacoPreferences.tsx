@@ -1,5 +1,5 @@
 import { newKey } from '@/shared/key'
-import IconButton from '@/shared/ui/IconButton'
+import Button from '@/shared/ui/Button'
 import LabeledInput from '@/shared/ui/LabeledInput'
 import { type FC, useMemo } from 'react'
 
@@ -34,9 +34,9 @@ const SetterMonacoPreferences: FC = () => {
 
   return (
     <>
-      <IconButton outline onClick={handleResetPreferences}>
+      <Button outline onClick={handleResetPreferences}>
         <h4>Restablecer configuración</h4>
-      </IconButton>
+      </Button>
 
       <ShumShotsPreferences />
 
@@ -51,9 +51,9 @@ const SetterMonacoPreferences: FC = () => {
         <span className='paragraph-normal'>Mostrar iconos en el margen de glyph.</span>
         <div className='monacoPreferences-switch flex w-full flex-row flex-wrap gap-grid-sm'>
           {[true, false].map(style => (
-            <IconButton key={newKey()} onClick={() => monaco.setGlyphMargin(style)} active={monaco.glyphMargin === style}>
+            <Button key={newKey()} onClick={() => monaco.setGlyphMargin(style)} active={monaco.glyphMargin === style}>
               {style ? 'On' : 'Off'}
-            </IconButton>
+            </Button>
           ))}
         </div>
       </div>
@@ -65,13 +65,13 @@ const SetterMonacoPreferences: FC = () => {
         </span>
         <div className='monacoPreferences-switch flex w-full flex-row flex-wrap gap-grid-sm'>
           {['editable', 'on', 'off'].map(style => (
-            <IconButton
+            <Button
               key={newKey()}
               onClick={() => monaco.setRenderValidationDecorations(style as any)}
               active={monaco.renderValidationDecorations === style}
             >
               {style}
-            </IconButton>
+            </Button>
           ))}
         </div>
       </div>
@@ -80,9 +80,9 @@ const SetterMonacoPreferences: FC = () => {
         <h5 className='paragraph-emphasis'>Números de línea</h5>
         <div className='monacoPreferences-switch flex w-full flex-row flex-wrap gap-grid-sm'>
           {['on', 'off', 'relative', 'interval'].map(style => (
-            <IconButton key={newKey()} onClick={() => monaco.setLineNumbers(style as any)} active={monaco.lineNumbers === style}>
+            <Button key={newKey()} onClick={() => monaco.setLineNumbers(style as any)} active={monaco.lineNumbers === style}>
               {style}
-            </IconButton>
+            </Button>
           ))}
         </div>
       </div>
@@ -101,9 +101,9 @@ const SetterMonacoPreferences: FC = () => {
         </span>
         <div className='monacoPreferences-switch flex w-full flex-row flex-wrap gap-grid-sm'>
           {['on', 'off', 'wordWrapColumn', 'bounded'].map(style => (
-            <IconButton key={newKey()} onClick={() => monaco.setWordWrap(style as any)} active={monaco.wordWrap === style}>
+            <Button key={newKey()} onClick={() => monaco.setWordWrap(style as any)} active={monaco.wordWrap === style}>
               {style}
-            </IconButton>
+            </Button>
           ))}
         </div>
       </div>
@@ -130,9 +130,9 @@ const SetterMonacoPreferences: FC = () => {
           {[50, 60, 70, 80, 90, 100, 110, 120].map(style => {
             const normal = 80
             return (
-              <IconButton key={newKey()} onClick={() => monaco.setWordWrapColumn(style)} active={monaco.wordWrapColumn === style}>
+              <Button key={newKey()} onClick={() => monaco.setWordWrapColumn(style)} active={monaco.wordWrapColumn === style}>
                 {style === normal ? 'Normal' : style}
-              </IconButton>
+              </Button>
             )
           })}
         </div>
@@ -150,13 +150,13 @@ const SetterMonacoPreferences: FC = () => {
         </span>
         <div className='monacoPreferences-switch flex w-full flex-row flex-wrap gap-grid-sm'>
           {['none', 'indent', 'deepIndent'].map(style => (
-            <IconButton
+            <Button
               key={newKey()}
               onClick={() => monaco.setWrappingIndent(style as any)}
               active={monaco.wrappingIndent === style}
             >
               {style}
-            </IconButton>
+            </Button>
           ))}
         </div>
       </div>
@@ -174,13 +174,13 @@ const SetterMonacoPreferences: FC = () => {
         </span>
         <div className='monacoPreferences-switch flex w-full flex-row flex-wrap gap-grid-sm'>
           {['none', 'gutter', 'line', 'full'].map(style => (
-            <IconButton
+            <Button
               key={newKey()}
               onClick={() => monaco.setRenderLineHighlight(style as any)}
               active={monaco.renderLineHighlight === style}
             >
               {style}
-            </IconButton>
+            </Button>
           ))}
         </div>
       </div>
@@ -201,9 +201,9 @@ const SetterMonacoPreferences: FC = () => {
           {[-1, -0.5, 0, 0.5, 1, 2, 3].map(style => {
             const normal = 0
             return (
-              <IconButton key={newKey()} onClick={() => monaco.setLetterSpacing(style)} active={monaco.letterSpacing === style}>
+              <Button key={newKey()} onClick={() => monaco.setLetterSpacing(style)} active={monaco.letterSpacing === style}>
                 {style === normal ? 'Normal' : style}
-              </IconButton>
+              </Button>
             )
           })}
         </div>
@@ -217,13 +217,13 @@ const SetterMonacoPreferences: FC = () => {
         </span>
         <div className='monacoPreferences-switch flex w-full flex-row flex-wrap gap-grid-sm'>
           {[true, false].map(style => (
-            <IconButton
+            <Button
               key={newKey()}
               onClick={() => monaco.setFontLigatures(style as any)}
               active={monaco.fontLigatures === style}
             >
               {style ? 'On' : 'Off'}
-            </IconButton>
+            </Button>
           ))}
         </div>
       </div>
@@ -248,9 +248,9 @@ const SetterMonacoPreferences: FC = () => {
             const normal = 22
             const factor = (style / normal).toFixed(1)
             return (
-              <IconButton key={newKey()} onClick={() => monaco.setLineHeight(style)} active={monaco.lineHeight === style}>
+              <Button key={newKey()} onClick={() => monaco.setLineHeight(style)} active={monaco.lineHeight === style}>
                 {style === normal ? 'Normal' : `x${factor}`}
-              </IconButton>
+              </Button>
             )
           })}
         </div>
@@ -283,13 +283,13 @@ const SetterMonacoPreferences: FC = () => {
         <h5 className='paragraph-emphasis'>Estilo de parpadeo</h5>
         <div className='monacoPreferences-switch flex w-full flex-row flex-wrap gap-grid-sm'>
           {['blink', 'smooth', 'phase', 'expand', 'solid'].map(style => (
-            <IconButton
+            <Button
               key={newKey()}
               onClick={() => monaco.setCursorBlinking(style as any)}
               active={monaco.cursorBlinking === style}
             >
               {style}
-            </IconButton>
+            </Button>
           ))}
         </div>
       </div>
@@ -298,9 +298,9 @@ const SetterMonacoPreferences: FC = () => {
         <h5 className='paragraph-emphasis'>Estilo del cursor</h5>
         <div className='monacoPreferences-switch flex w-full flex-row flex-wrap gap-grid-sm'>
           {['block', 'block-outline', 'underline', 'underline-thin', 'line', 'line-thin'].map(style => (
-            <IconButton key={newKey()} onClick={() => monaco.setCursorStyle(style as any)} active={monaco.cursorStyle === style}>
+            <Button key={newKey()} onClick={() => monaco.setCursorStyle(style as any)} active={monaco.cursorStyle === style}>
               {style}
-            </IconButton>
+            </Button>
           ))}
         </div>
       </div>
@@ -310,9 +310,9 @@ const SetterMonacoPreferences: FC = () => {
         <span className='paragraph-normal'>Estilo del cursor al pasar el mouse por el editor.</span>
         <div className='monacoPreferences-switch flex w-full flex-row flex-wrap gap-grid-sm'>
           {['default', 'copy', 'text'].map(style => (
-            <IconButton key={newKey()} onClick={() => monaco.setMouseStyle(style as any)} active={monaco.mouseStyle === style}>
+            <Button key={newKey()} onClick={() => monaco.setMouseStyle(style as any)} active={monaco.mouseStyle === style}>
               {style}
-            </IconButton>
+            </Button>
           ))}
         </div>
       </div>
@@ -322,13 +322,13 @@ const SetterMonacoPreferences: FC = () => {
         <span className='paragraph-normal'>Oculta el cursor en el rótulo derecho de resumen.</span>
         <div className='monacoPreferences-switch flex w-full flex-row flex-wrap gap-grid-sm'>
           {[true, false].map(style => (
-            <IconButton
+            <Button
               key={newKey()}
               onClick={() => monaco.setHideCursorInOverviewRuler(style)}
               active={monaco.hideCursorInOverviewRuler === style}
             >
               {style ? 'On' : 'Off'}
-            </IconButton>
+            </Button>
           ))}
         </div>
       </div>
@@ -342,9 +342,9 @@ const SetterMonacoPreferences: FC = () => {
         <span className='paragraph-normal'>Si está activo, el editor plegará el código automáticamente.</span>
         <div className='monacoPreferences-switch flex w-full flex-row flex-wrap gap-grid-sm'>
           {[true, false].map(style => (
-            <IconButton key={newKey()} onClick={() => monaco.setFolding(style)} active={monaco.folding === style}>
+            <Button key={newKey()} onClick={() => monaco.setFolding(style)} active={monaco.folding === style}>
               {style ? 'On' : 'Off'}
-            </IconButton>
+            </Button>
           ))}
         </div>
       </div>
@@ -354,13 +354,13 @@ const SetterMonacoPreferences: FC = () => {
         <span className='paragraph-normal'>Amplia el desplazamiento más allá de la última línea del código.</span>
         <div className='monacoPreferences-switch flex w-full flex-row flex-wrap gap-grid-sm'>
           {[true, false].map(style => (
-            <IconButton
+            <Button
               key={newKey()}
               onClick={() => monaco.setScrollBeyondLastLine(style)}
               active={monaco.scrollBeyondLastLine === style}
             >
               {style ? 'On' : 'Off'}
-            </IconButton>
+            </Button>
           ))}
         </div>
       </div>
@@ -370,9 +370,9 @@ const SetterMonacoPreferences: FC = () => {
         <span className='paragraph-normal'>Formatea el código automáticamente al pegar.</span>
         <div className='monacoPreferences-switch flex w-full flex-row flex-wrap gap-grid-sm'>
           {[true, false].map(style => (
-            <IconButton key={newKey()} onClick={() => monaco.setFormatOnPaste(style)} active={monaco.formatOnPaste === style}>
+            <Button key={newKey()} onClick={() => monaco.setFormatOnPaste(style)} active={monaco.formatOnPaste === style}>
               {style ? 'On' : 'Off'}
-            </IconButton>
+            </Button>
           ))}
         </div>
       </div>
@@ -382,9 +382,9 @@ const SetterMonacoPreferences: FC = () => {
         <span className='paragraph-normal'>Formatea el código automáticamente mientras se escribe.</span>
         <div className='monacoPreferences-switch flex w-full flex-row flex-wrap gap-grid-sm'>
           {[true, false].map(style => (
-            <IconButton key={newKey()} onClick={() => monaco.setFormatOnType(style)} active={monaco.formatOnType === style}>
+            <Button key={newKey()} onClick={() => monaco.setFormatOnType(style)} active={monaco.formatOnType === style}>
               {style ? 'On' : 'Off'}
-            </IconButton>
+            </Button>
           ))}
         </div>
       </div>
@@ -399,13 +399,13 @@ const SetterMonacoPreferences: FC = () => {
         </span>
         <div className='monacoPreferences-switch flex w-full flex-row flex-wrap gap-grid-sm'>
           {['never', 'near', 'always'].map(style => (
-            <IconButton
+            <Button
               key={newKey()}
               onClick={() => monaco.setMatchBrackets(style as any)}
               active={monaco.matchBrackets === style}
             >
               {style}
-            </IconButton>
+            </Button>
           ))}
         </div>
       </div>
@@ -421,13 +421,13 @@ const SetterMonacoPreferences: FC = () => {
         </span>
         <div className='monacoPreferences-switch flex w-full flex-row flex-wrap gap-grid-sm'>
           {['always', 'beforeWhitespace', 'languageDefined', 'never'].map(style => (
-            <IconButton
+            <Button
               key={newKey()}
               onClick={() => monaco.setAutoClosingBrackets(style as any)}
               active={monaco.autoClosingBrackets === style}
             >
               {style}
-            </IconButton>
+            </Button>
           ))}
         </div>
       </div>
@@ -442,13 +442,13 @@ const SetterMonacoPreferences: FC = () => {
         </span>
         <div className='monacoPreferences-switch flex w-full flex-row flex-wrap gap-grid-sm'>
           {['always', 'beforeWhitespace', 'languageDefined', 'never'].map(style => (
-            <IconButton
+            <Button
               key={newKey()}
               onClick={() => monaco.setAutoClosingQuotes(style as any)}
               active={monaco.autoClosingQuotes === style}
             >
               {style}
-            </IconButton>
+            </Button>
           ))}
         </div>
       </div>

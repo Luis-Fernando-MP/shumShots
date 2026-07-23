@@ -2,7 +2,7 @@
 
 import MainBarOptions from '@views/code-studio/components/MainBarOptions'
 import EditorMainBarOptions from '@views/image-studio/components/MainBarOptions'
-import IconButton from '@/shared/ui/IconButton'
+import Button from '@/shared/ui/Button'
 import ShumShots from '@/shared/ui/ShumShots'
 import { AppWindow, LayersIcon } from 'lucide-react'
 import Link from 'next/link'
@@ -51,9 +51,9 @@ const MainBar: FC<Props> = ({ className = '' }) => {
       <section className='flex flex-row items-center gap-grid'>
         {pages.map(page => (
           <Link key={page.path} href={page.path} aria-label={page.label}>
-            <IconButton label={page.label} transparent active={pathname === page.path}>
+            <Button tooltip={page.label} active={pathname === page.path}>
               <page.icon />
-            </IconButton>
+            </Button>
           </Link>
         ))}
         <AboutShumShots />

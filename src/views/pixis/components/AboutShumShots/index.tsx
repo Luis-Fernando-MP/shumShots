@@ -2,7 +2,7 @@
 
 import Popup from '@/shared/components/Popup'
 import { EMAIL_LINK, GITHUB_LINK, INSPIRATION_LINK, ISSUES_GITHUB_LINK, SHUM_DEV } from '@/shared/constants'
-import IconButton from '@/shared/ui/IconButton'
+import Button from '@/shared/ui/Button'
 import ShumDev from '@/shared/ui/ShumDev'
 import ShumShots from '@/shared/ui/ShumShots'
 import { CircleHelpIcon } from 'lucide-react'
@@ -13,9 +13,9 @@ const AboutShumShots: FC = () => {
   return (
     <Popup title='Acerca de PIXIS' className='about-popup flex max-w-[300px] flex-col gap-grid-lg'>
       <Popup.Trigger>
-        <IconButton label='Acerca de PIXIS' transparent>
+        <Button tooltip='Acerca de PIXIS'>
           <CircleHelpIcon />
-        </IconButton>
+        </Button>
       </Popup.Trigger>
       <div className='paragraph'>
         <h4 className='paragraph-normal'>#Desarrolla por: </h4>

@@ -1,6 +1,6 @@
 import useShumOptionsStore from '@views/code-studio/store/shumOptions.store'
 import { newKey } from '@/shared/key'
-import IconButton from '@/shared/ui/IconButton'
+import Button from '@/shared/ui/Button'
 import LabeledInput from '@/shared/ui/LabeledInput'
 import { type FC, useMemo } from 'react'
 
@@ -49,9 +49,9 @@ const ShumShotsPreferences: FC = () => {
         <h5 className='paragraph-emphasis'>Mostrar icono del lenguaje</h5>
         <div className='monacoPreferences-switch flex w-full flex-row flex-wrap gap-grid-sm'>
           {[true, false].map(style => (
-            <IconButton key={newKey()} onClick={() => shots.setShowLanguageIcon(style)} active={shots.showLanguageIcon === style}>
+            <Button key={newKey()} onClick={() => shots.setShowLanguageIcon(style)} active={shots.showLanguageIcon === style}>
               {style ? 'On' : 'Off'}
-            </IconButton>
+            </Button>
           ))}
         </div>
       </div>
@@ -64,9 +64,9 @@ const ShumShotsPreferences: FC = () => {
         </p>
         <div className='monacoPreferences-switch flex w-full flex-row flex-wrap gap-grid-sm'>
           {[true, false].map(style => (
-            <IconButton key={newKey()} onClick={() => shots.setShadowLanguage(style)} active={shots.shadowLanguage === style}>
+            <Button key={newKey()} onClick={() => shots.setShadowLanguage(style)} active={shots.shadowLanguage === style}>
               {style ? 'On' : 'Off'}
-            </IconButton>
+            </Button>
           ))}
         </div>
       </div>
@@ -94,9 +94,9 @@ const ShumShotsPreferences: FC = () => {
           {[0, 5, 10, 15, 20, 25, 30, 35, 40].map(style => {
             const normal = 20
             return (
-              <IconButton key={newKey()} onClick={() => handleChangeBorderRadius(style)} active={shots.borderRadius === style}>
+              <Button key={newKey()} onClick={() => handleChangeBorderRadius(style)} active={shots.borderRadius === style}>
                 {style === normal ? 'Normal' : style}
-              </IconButton>
+              </Button>
             )
           })}
         </div>
@@ -121,13 +121,13 @@ const ShumShotsPreferences: FC = () => {
           {[0, 5, 10, 15, 20, 25, 30, 35, 40].map(style => {
             const normal = 20
             return (
-              <IconButton
+              <Button
                 key={newKey()}
                 onClick={() => handleChangeContainerBorderRadius(style)}
                 active={shots.containerBorderRadius === style}
               >
                 {style === normal ? 'Normal' : style}
-              </IconButton>
+              </Button>
             )
           })}
         </div>
@@ -152,9 +152,9 @@ const ShumShotsPreferences: FC = () => {
           {[300, 400, 500, 600, 700, 800, 900].map(style => {
             const normal = 600
             return (
-              <IconButton key={newKey()} onClick={() => handleChangeHeight(style)} active={shots.containerHeight === style}>
+              <Button key={newKey()} onClick={() => handleChangeHeight(style)} active={shots.containerHeight === style}>
                 {style === normal ? 'Normal' : style}
-              </IconButton>
+              </Button>
             )
           })}
         </div>
@@ -179,9 +179,9 @@ const ShumShotsPreferences: FC = () => {
           {[300, 400, 500, 600, 700, 800, 900, 1000, 1100, 1200].map(style => {
             const normal = 900
             return (
-              <IconButton key={newKey()} onClick={() => handleChangeWidth(style)} active={shots.containerWidth === style}>
+              <Button key={newKey()} onClick={() => handleChangeWidth(style)} active={shots.containerWidth === style}>
                 {style === normal ? 'Normal' : style}
-              </IconButton>
+              </Button>
             )
           })}
         </div>
@@ -206,9 +206,9 @@ const ShumShotsPreferences: FC = () => {
           {[0, 5, 10, 15, 20, 25, 30, 35, 40].map(style => {
             const normal = 10
             return (
-              <IconButton key={newKey()} onClick={() => handleChangePadding(style)} active={shots.containerPadding === style}>
+              <Button key={newKey()} onClick={() => handleChangePadding(style)} active={shots.containerPadding === style}>
                 {style === normal ? 'Normal' : style}
-              </IconButton>
+              </Button>
             )
           })}
         </div>

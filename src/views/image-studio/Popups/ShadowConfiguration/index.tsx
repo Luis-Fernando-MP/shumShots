@@ -1,5 +1,5 @@
 import Popup from '@/shared/components/Popup'
-import IconButton from '@/shared/ui/IconButton'
+import Button from '@/shared/ui/Button'
 import { CloudSunIcon } from 'lucide-react'
 import { type FC } from 'react'
 
@@ -12,9 +12,9 @@ const ShadowConfiguration: FC = () => {
   return (
     <Popup title='Imágenes - Sombras' className='shadowConfig-popup flex h-[700px] w-[350px] flex-col gap-grid-xl'>
       <Popup.Trigger>
-        <IconButton label='Sombras' transparent>
+        <Button tooltip='Sombras'>
           <CloudSunIcon />
-        </IconButton>
+        </Button>
       </Popup.Trigger>
       <ShadowOpacityWrapper />
       <ShadowBlurSpreadWrapper />

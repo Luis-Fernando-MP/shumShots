@@ -1,5 +1,5 @@
 import { newKey } from '@/shared/key'
-import IconButton from '@/shared/ui/IconButton'
+import Button from '@/shared/ui/Button'
 import { editor } from 'monaco-editor'
 import { type FC } from 'react'
 
@@ -25,9 +25,9 @@ const MinimapPreference: FC<Props> = ({ minimap, setMinimap }) => {
 
       <div className='monacoPreferences-switch flex w-full flex-row flex-wrap gap-grid-sm'>
         {[true, false].map(state => (
-          <IconButton key={newKey()} onClick={() => handleChangeMinimap({ enabled: state })} active={enabled === state}>
+          <Button key={newKey()} onClick={() => handleChangeMinimap({ enabled: state })} active={enabled === state}>
             {state ? 'On' : 'Off'}
-          </IconButton>
+          </Button>
         ))}
       </div>
 
@@ -38,9 +38,9 @@ const MinimapPreference: FC<Props> = ({ minimap, setMinimap }) => {
             <span className='paragraph-normal'>Si está activo, el minimapa se oculta cuando el mouse está sobre el editor.</span>
             <div className='monacoPreferences-switch flex w-full flex-row flex-wrap gap-grid-sm'>
               {[true, false].map(state => (
-                <IconButton key={newKey()} onClick={() => handleChangeMinimap({ autohide: state })} active={autohide === state}>
+                <Button key={newKey()} onClick={() => handleChangeMinimap({ autohide: state })} active={autohide === state}>
                   {state ? 'On' : 'Off'}
-                </IconButton>
+                </Button>
               ))}
             </div>
           </div>
@@ -50,9 +50,9 @@ const MinimapPreference: FC<Props> = ({ minimap, setMinimap }) => {
             <span className='paragraph-normal'>Muestra el minimapa en el lado izquierdo o derecho del editor.</span>
             <div className='monacoPreferences-switch flex w-full flex-row flex-wrap gap-grid-sm'>
               {['left', 'right'].map(state => (
-                <IconButton key={newKey()} onClick={() => handleChangeMinimap({ side: state as any })} active={side === state}>
+                <Button key={newKey()} onClick={() => handleChangeMinimap({ side: state as any })} active={side === state}>
                   {state}
-                </IconButton>
+                </Button>
               ))}
             </div>
           </div>
@@ -64,9 +64,9 @@ const MinimapPreference: FC<Props> = ({ minimap, setMinimap }) => {
             </span>
             <div className='monacoPreferences-switch flex w-full flex-row flex-wrap gap-grid-sm'>
               {['proportional', 'fill'].map(state => (
-                <IconButton key={newKey()} onClick={() => handleChangeMinimap({ size: state as any })} active={size === state}>
+                <Button key={newKey()} onClick={() => handleChangeMinimap({ size: state as any })} active={size === state}>
                   {state}
-                </IconButton>
+                </Button>
               ))}
             </div>
           </div>
@@ -79,13 +79,13 @@ const MinimapPreference: FC<Props> = ({ minimap, setMinimap }) => {
             </span>
             <div className='monacoPreferences-switch flex w-full flex-row flex-wrap gap-grid-sm'>
               {['always', 'mouseover'].map(style => (
-                <IconButton
+                <Button
                   key={newKey()}
                   onClick={() => handleChangeMinimap({ showSlider: style as any })}
                   active={showSlider === style}
                 >
                   {style}
-                </IconButton>
+                </Button>
               ))}
             </div>
           </div>
@@ -95,13 +95,13 @@ const MinimapPreference: FC<Props> = ({ minimap, setMinimap }) => {
             <span className='paragraph-normal'>Representa el texto real en una línea (en lugar de bloques de color).</span>
             <div className='monacoPreferences-switch flex w-full flex-row flex-wrap gap-grid-sm'>
               {[true, false].map(state => (
-                <IconButton
+                <Button
                   key={newKey()}
                   onClick={() => handleChangeMinimap({ renderCharacters: state })}
                   active={renderCharacters === state}
                 >
                   {state ? 'On' : 'Off'}
-                </IconButton>
+                </Button>
               ))}
             </div>
           </div>
@@ -114,13 +114,13 @@ const MinimapPreference: FC<Props> = ({ minimap, setMinimap }) => {
                 const normal = 100
                 const factor = (state / normal).toFixed(1)
                 return (
-                  <IconButton
+                  <Button
                     key={newKey()}
                     onClick={() => handleChangeMinimap({ maxColumn: state })}
                     active={maxColumn === state}
                   >
                     {state == normal ? 'normal' : `x${factor}`}
-                  </IconButton>
+                  </Button>
                 )
               })}
             </div>
@@ -134,9 +134,9 @@ const MinimapPreference: FC<Props> = ({ minimap, setMinimap }) => {
                 const normal = 1
                 const factor = (state / normal).toFixed(1)
                 return (
-                  <IconButton key={newKey()} onClick={() => handleChangeMinimap({ scale: state })} active={scale === state}>
+                  <Button key={newKey()} onClick={() => handleChangeMinimap({ scale: state })} active={scale === state}>
                     {state == normal ? 'normal' : `x${factor}`}
-                  </IconButton>
+                  </Button>
                 )
               })}
             </div>

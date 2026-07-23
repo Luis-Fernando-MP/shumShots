@@ -1,6 +1,6 @@
 'use client'
 
-import IconButton from '@/shared/ui/IconButton'
+import Button from '@/shared/ui/Button'
 import { ImagePlusIcon, SlidersHorizontalIcon } from 'lucide-react'
 import type { FC } from 'react'
 
@@ -14,12 +14,12 @@ const MainBarOptions: FC = () => {
       <section className='flex flex-row items-center gap-grid'>
         <span className='text-xs text-muted-foreground'>Fondo:</span>
         <BackgroundConfiguration />
-        <IconButton label='Imagen del fondo' transparent>
+        <Button tooltip='Imagen del fondo'>
           <ImagePlusIcon />
-        </IconButton>
-        <IconButton label='Filtros del fondo' transparent>
+        </Button>
+        <Button tooltip='Filtros del fondo'>
           <SlidersHorizontalIcon />
-        </IconButton>
+        </Button>
       </section>
 
       <section className='flex flex-row items-center gap-grid'>
@@ -28,9 +28,9 @@ const MainBarOptions: FC = () => {
         <CornerConfiguration />
         <ShadowConfiguration />
 
-        <IconButton label='Filtros del fondo' transparent>
+        <Button tooltip='Filtros del fondo'>
           <SlidersHorizontalIcon />
-        </IconButton>
+        </Button>
       </section>
     </>
   )

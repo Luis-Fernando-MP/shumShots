@@ -1,7 +1,7 @@
 'use client'
 
 import { acl } from '@/shared/acl'
-import IconButton from '@/shared/ui/IconButton'
+import Button from '@/shared/ui/Button'
 import { MaximizeIcon, MinimizeIcon } from 'lucide-react'
 import { type FC, useState } from 'react'
 
@@ -17,15 +17,14 @@ const FullScreen: FC = () => {
   }
 
   return (
-    <IconButton
-      transparent
-      label={isFullScreen ? 'Minimizar la aplicación' : 'Maximizar la aplicación'}
-      position='bottom'
+    <Button
+      tooltip={isFullScreen ? 'Minimizar la aplicación' : 'Maximizar la aplicación'}
+      tooltipPosition='bottom'
       className={acl(isFullScreen)}
       onClick={handleScreen}
     >
       {isFullScreen ? <MinimizeIcon /> : <MaximizeIcon />}
-    </IconButton>
+    </Button>
   )
 }
 

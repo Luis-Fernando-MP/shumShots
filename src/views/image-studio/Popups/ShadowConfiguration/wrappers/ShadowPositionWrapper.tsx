@@ -1,7 +1,7 @@
 import useShadowStore from '@views/image-studio/store/shadow/shadow.store'
 import useBoardStore from '@/shared/components/Board/board.store'
 import FocusConfiguration from '@/shared/components/FocusConfiguration'
-import IconButton from '@/shared/ui/IconButton'
+import Button from '@/shared/ui/Button'
 import { ZoomInIcon } from 'lucide-react'
 import { type FC, memo } from 'react'
 
@@ -14,10 +14,10 @@ const AdjustZoom: FC = memo(() => {
     }, 300)
   }
   return (
-    <IconButton label='Zoom' onClick={handleClick}>
+    <Button tooltip='Zoom' onClick={handleClick}>
       <ZoomInIcon />
       <h5 className='shadowConfig-label'>AJustar zoom</h5>
-    </IconButton>
+    </Button>
   )
 })
 

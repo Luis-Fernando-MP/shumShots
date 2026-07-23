@@ -1,5 +1,5 @@
 import Popup from '@/shared/components/Popup'
-import IconButton from '@/shared/ui/IconButton'
+import Button from '@/shared/ui/Button'
 import { BlendIcon } from 'lucide-react'
 import { type FC } from 'react'
 
@@ -16,9 +16,9 @@ const BackgroundConfiguration: FC = () => {
       className='bgConfig-popup flex h-[700px] w-[350px] flex-col gap-grid-xl'
     >
       <Popup.Trigger>
-        <IconButton label='Configuration del fondo' transparent>
+        <Button tooltip='Configuration del fondo'>
           <BlendIcon />
-        </IconButton>
+        </Button>
       </Popup.Trigger>
       <RadiusController />
       <BackgroundSizeController />

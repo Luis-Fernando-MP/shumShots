@@ -1,5 +1,5 @@
 import { newKey } from '@/shared/key'
-import IconButton from '@/shared/ui/IconButton'
+import Button from '@/shared/ui/Button'
 import { editor } from 'monaco-editor'
 import type { FC } from 'react'
 
@@ -25,9 +25,9 @@ const StickyScrollPreference: FC<Props> = ({ stickyScroll, setStickyScroll }) =>
 
       <div className='monacoPreferences-switch flex w-full flex-row flex-wrap gap-grid-sm'>
         {[true, false].map(state => (
-          <IconButton key={newKey()} onClick={() => handleChangeStickyScroll({ enabled: state })} active={enabled === state}>
+          <Button key={newKey()} onClick={() => handleChangeStickyScroll({ enabled: state })} active={enabled === state}>
             {state ? 'On' : 'Off'}
-          </IconButton>
+          </Button>
         ))}
       </div>
 
@@ -40,13 +40,13 @@ const StickyScrollPreference: FC<Props> = ({ stickyScroll, setStickyScroll }) =>
               {[1, 2, 3, 5, 7, 8, 9].map(state => {
                 const normal = 5
                 return (
-                  <IconButton
+                  <Button
                     key={newKey()}
                     onClick={() => handleChangeStickyScroll({ maxLineCount: state })}
                     active={maxLineCount === state}
                   >
                     {state === normal ? 'Normal' : state}
-                  </IconButton>
+                  </Button>
                 )
               })}
             </div>
@@ -63,13 +63,13 @@ const StickyScrollPreference: FC<Props> = ({ stickyScroll, setStickyScroll }) =>
             </span>
             <div className='monacoPreferences-switch flex w-full flex-row flex-wrap gap-grid-sm'>
               {['outlineModel', 'foldingProviderModel', 'indentationModel'].map(state => (
-                <IconButton
+                <Button
                   key={newKey()}
                   onClick={() => handleChangeStickyScroll({ defaultModel: state as any })}
                   active={defaultModel === state}
                 >
                   {state}
-                </IconButton>
+                </Button>
               ))}
             </div>
           </div>
@@ -82,13 +82,13 @@ const StickyScrollPreference: FC<Props> = ({ stickyScroll, setStickyScroll }) =>
             </span>
             <div className='monacoPreferences-switch flex w-full flex-row flex-wrap gap-grid-sm'>
               {[true, false].map(state => (
-                <IconButton
+                <Button
                   key={newKey()}
                   onClick={() => handleChangeStickyScroll({ scrollWithEditor: state })}
                   active={scrollWithEditor === state}
                 >
                   {state ? 'On' : 'Off'}
-                </IconButton>
+                </Button>
               ))}
             </div>
           </div>

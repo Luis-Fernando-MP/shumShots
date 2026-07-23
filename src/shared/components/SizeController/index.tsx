@@ -1,4 +1,4 @@
-import IconButton from '@/shared/ui/IconButton'
+import Button from '@/shared/ui/Button'
 import IconInput from '@/shared/ui/IconInput'
 import { ProportionsIcon } from 'lucide-react'
 import { type FC, useCallback, useMemo, useState } from 'react'
@@ -84,16 +84,15 @@ const SizeController: FC<Props> = ({ width, height, setWidth, setHeight }) => {
 
   return (
     <section className='relative flex size-[300px] aspect-square flex-col rounded-lg bg-background'>
-      <IconButton
-        transparent
-        position='right'
+      <Button
+        tooltipPosition='right'
         onClick={toggleAspectRatioLock}
         active={lockAspectRatio}
         className='absolute left-2 top-2'
       >
         <ProportionsIcon />
         <h5>{lockAspectRatio ? 'Desbloquear relación' : 'Bloquear relación'}</h5>
-      </IconButton>
+      </Button>
 
       <div
         className='absolute left-1/2 top-[45%] grid max-h-[250px] -translate-x-1/2 -translate-y-1/2 place-content-center rounded-md bg-muted'

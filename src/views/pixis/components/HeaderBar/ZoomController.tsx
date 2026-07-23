@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react'
 import useBoardStore from '@/shared/components/Board/board.store'
-import IconButton from '@/shared/ui/IconButton'
+import Button from '@/shared/ui/Button'
 import { MinusIcon, PlusIcon } from 'lucide-react'
 import type { FC } from 'react'
 
@@ -59,26 +59,24 @@ const ZoomController: FC = () => {
   return (
     <>
       <span className='text-xs text-muted-foreground'>Zoom:</span>
-      <IconButton
-        transparent
-        label='Aumentar zoom'
-        position='bottom'
+      <Button
+        tooltip='Aumentar zoom'
+        tooltipPosition='bottom'
         onClick={handleZoomIn}
         onKeyDown={(e) => handleKeyDown(e, handleZoomIn)}
         className={isAnimating ? 'pointer-events-none scale-95 opacity-70 transition-all duration-150' : ''}
       >
         <PlusIcon />
-      </IconButton>
-      <IconButton
-        transparent
-        label='Disminuir zoom'
-        position='bottom'
+      </Button>
+      <Button
+        tooltip='Disminuir zoom'
+        tooltipPosition='bottom'
         onClick={handleZoomOut}
         onKeyDown={(e) => handleKeyDown(e, handleZoomOut)}
         className={isAnimating ? 'pointer-events-none scale-95 opacity-70 transition-all duration-150' : ''}
       >
         <MinusIcon />
-      </IconButton>
+      </Button>
       <span className={`inline-block w-14 text-center text-xs tabular-nums transition-all duration-150 ${isAnimating ? 'pointer-events-none scale-95 opacity-70' : ''}`}>
         {Number(scale * 100).toFixed(0)}%
       </span>

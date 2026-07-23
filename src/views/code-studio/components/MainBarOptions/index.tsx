@@ -1,6 +1,6 @@
 'use client'
 
-import IconButton from '@/shared/ui/IconButton'
+import Button from '@/shared/ui/Button'
 import { LetterText } from 'lucide-react'
 import type { FC } from 'react'
 
@@ -19,9 +19,9 @@ const MainBarOptions: FC = () => {
 
   return (
     <section className='flex flex-row items-center gap-grid'>
-      <IconButton label='Formatear código' transparent onClick={handleFormatCode}>
+      <Button tooltip='Formatear código' onClick={handleFormatCode}>
         <LetterText />
-      </IconButton>
+      </Button>
       <ShotFileName />
       <UserMonacoPreferences />
     </section>

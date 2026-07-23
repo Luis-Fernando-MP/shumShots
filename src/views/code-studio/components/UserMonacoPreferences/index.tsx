@@ -2,7 +2,7 @@
 
 import Popup from '@/shared/components/Popup'
 import SliceContainer from '@/shared/components/SliceContainer'
-import IconButton from '@/shared/ui/IconButton'
+import Button from '@/shared/ui/Button'
 import { Settings } from 'lucide-react'
 import { type FC } from 'react'
 
@@ -18,9 +18,9 @@ const UserMonacoPreferences: FC = () => {
       className='monacoPreferences-popup flex h-[700px] max-h-[700px] w-[400px] flex-col gap-grid-xl'
     >
       <Popup.Trigger>
-        <IconButton label='Configurar monaco' transparent>
+        <Button tooltip='Configurar monaco'>
           <Settings />
-        </IconButton>
+        </Button>
       </Popup.Trigger>
       <div className='monacoPreferences-section flex flex-col gap-grid-lg'>
         <div className='paragraph'>

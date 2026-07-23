@@ -1,4 +1,4 @@
-import IconButton from '@/shared/ui/IconButton'
+import Button from '@/shared/ui/Button'
 import { MoreHorizontalIcon } from 'lucide-react'
 import { type FC, type HTMLAttributes, type ReactNode, useState } from 'react'
 
@@ -29,10 +29,10 @@ const SliceContainer: FC<Props> = ({ children, maxHeight, className, onExtend, e
 
   return (
     <article className='relative flex min-w-fit flex-col gap-2' {...props}>
-      <IconButton onClick={handleClick} className='sticky top-0 z-10'>
+      <Button onClick={handleClick} className='sticky top-0 z-10'>
         {isExtended ? 'Contraer' : 'Extender'}
         <MoreHorizontalIcon />
-      </IconButton>
+      </Button>
 
       <section
         className={`[scrollbar-width:none] [&::-webkit-scrollbar]:hidden ${className}`}

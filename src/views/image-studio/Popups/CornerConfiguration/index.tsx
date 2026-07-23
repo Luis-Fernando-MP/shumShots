@@ -1,5 +1,5 @@
 import Popup from '@/shared/components/Popup'
-import IconButton from '@/shared/ui/IconButton'
+import Button from '@/shared/ui/Button'
 import { SquareRoundCornerIcon } from 'lucide-react'
 import { type FC } from 'react'
 
@@ -13,9 +13,9 @@ const CornerConfiguration: FC = () => {
   return (
     <Popup title='Imágenes - Border' className='borderConfig-popup flex h-[700px] w-[350px] flex-col gap-grid-xl'>
       <Popup.Trigger>
-        <IconButton label='Estilo de borde' transparent>
+        <Button tooltip='Estilo de borde'>
           <SquareRoundCornerIcon />
-        </IconButton>
+        </Button>
       </Popup.Trigger>
       <ImagesRadiusController />
       <BorderStyleController />

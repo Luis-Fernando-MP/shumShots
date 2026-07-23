@@ -1,5 +1,5 @@
 import { newKey } from '@/shared/key'
-import IconButton from '@/shared/ui/IconButton'
+import Button from '@/shared/ui/Button'
 import { editor } from 'monaco-editor'
 import { type FC, useState } from 'react'
 
@@ -49,7 +49,7 @@ const ScrollPreference: FC<Props> = ({ scrollbar, setScrollbar }) => {
 
       <div className='monacoPreferences-switch flex w-full flex-row flex-wrap gap-grid-sm'>
         {[true, false].map(state => (
-          <IconButton
+          <Button
             key={newKey()}
             onClick={() => {
               handleToggleScrollbar(state)
@@ -57,7 +57,7 @@ const ScrollPreference: FC<Props> = ({ scrollbar, setScrollbar }) => {
             active={enabled === state}
           >
             {state ? 'On' : 'Off'}
-          </IconButton>
+          </Button>
         ))}
       </div>
 
@@ -67,13 +67,13 @@ const ScrollPreference: FC<Props> = ({ scrollbar, setScrollbar }) => {
             <h5 className='paragraph-emphasis'>Barra vertical</h5>
             <div className='monacoPreferences-switch flex w-full flex-row flex-wrap gap-grid-sm'>
               {['auto', 'visible', 'hidden'].map(state => (
-                <IconButton
+                <Button
                   key={newKey()}
                   onClick={() => handleChangeScrollbar({ vertical: state as any })}
                   active={vertical === state}
                 >
                   {state}
-                </IconButton>
+                </Button>
               ))}
             </div>
           </div>
@@ -82,13 +82,13 @@ const ScrollPreference: FC<Props> = ({ scrollbar, setScrollbar }) => {
             <h5 className='paragraph-emphasis'>Barra horizontal</h5>
             <div className='monacoPreferences-switch flex w-full flex-row flex-wrap gap-grid-sm'>
               {['auto', 'visible', 'hidden'].map(state => (
-                <IconButton
+                <Button
                   key={newKey()}
                   onClick={() => handleChangeScrollbar({ horizontal: state as any })}
                   active={horizontal === state}
                 >
                   {state}
-                </IconButton>
+                </Button>
               ))}
             </div>
           </div>
@@ -98,13 +98,13 @@ const ScrollPreference: FC<Props> = ({ scrollbar, setScrollbar }) => {
             <span className='paragraph-normal'>Se muestra una sombra en la cabecera del editor.</span>
             <div className='monacoPreferences-switch flex w-full flex-row flex-wrap gap-grid-sm'>
               {[true, false].map(state => (
-                <IconButton
+                <Button
                   key={newKey()}
                   onClick={() => handleChangeScrollbar({ useShadows: state })}
                   active={useShadows === state}
                 >
                   {state ? 'On' : 'Off'}
-                </IconButton>
+                </Button>
               ))}
             </div>
           </div>
@@ -116,13 +116,13 @@ const ScrollPreference: FC<Props> = ({ scrollbar, setScrollbar }) => {
             </span>
             <div className='monacoPreferences-switch flex w-full flex-row flex-wrap gap-grid-sm'>
               {[true, false].map(state => (
-                <IconButton
+                <Button
                   key={newKey()}
                   onClick={() => handleChangeScrollbar({ handleMouseWheel: state })}
                   active={handleMouseWheel === state}
                 >
                   {state ? 'On' : 'Off'}
-                </IconButton>
+                </Button>
               ))}
             </div>
           </div>
@@ -135,13 +135,13 @@ const ScrollPreference: FC<Props> = ({ scrollbar, setScrollbar }) => {
                 const normal = 10
                 const factor = (state / normal).toFixed(1)
                 return (
-                  <IconButton
+                  <Button
                     key={newKey()}
                     onClick={() => handleChangeScrollbar({ horizontalScrollbarSize: state })}
                     active={horizontalScrollbarSize === state}
                   >
                     {state === 10 ? 'Normal' : `x${factor}`}
-                  </IconButton>
+                  </Button>
                 )
               })}
             </div>
@@ -155,13 +155,13 @@ const ScrollPreference: FC<Props> = ({ scrollbar, setScrollbar }) => {
                 const normal = 10
                 const factor = (state / normal).toFixed(1)
                 return (
-                  <IconButton
+                  <Button
                     key={newKey()}
                     onClick={() => handleChangeScrollbar({ verticalScrollbarSize: state })}
                     active={verticalScrollbarSize === state}
                   >
                     {state === 10 ? 'Normal' : `x${factor}`}
-                  </IconButton>
+                  </Button>
                 )
               })}
             </div>
@@ -172,13 +172,13 @@ const ScrollPreference: FC<Props> = ({ scrollbar, setScrollbar }) => {
             <span className='paragraph-normal'>Si está activo, la barra horizontal no aumentará la altura del contenido.</span>
             <div className='monacoPreferences-switch flex w-full flex-row flex-wrap gap-grid-sm'>
               {[true, false].map(state => (
-                <IconButton
+                <Button
                   key={newKey()}
                   onClick={() => handleChangeScrollbar({ ignoreHorizontalScrollbarInContentHeight: state })}
                   active={ignoreHorizontalScrollbarInContentHeight === state}
                 >
                   {state ? 'On' : 'Off'}
-                </IconButton>
+                </Button>
               ))}
             </div>
           </div>

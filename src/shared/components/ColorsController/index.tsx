@@ -1,5 +1,5 @@
 import { basicColors } from '@/app/defaults/colors'
-import IconButton from '@/shared/ui/IconButton'
+import Button from '@/shared/ui/Button'
 import { PipetteIcon } from 'lucide-react'
 import type { FC } from 'react'
 
@@ -36,10 +36,10 @@ const ColorsController: FC<Props> = ({ background, setBackground }) => {
         </div>
       </div>
       {/* TODO: Agregar los colores adaptativos de las imágenes cargadas */}
-      <IconButton>
+      <Button>
         <PipetteIcon />
         <h4>Picar nuevo color</h4>
-      </IconButton>
+      </Button>
     </section>
   )
 }
