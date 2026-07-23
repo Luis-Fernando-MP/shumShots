@@ -1,6 +1,6 @@
 import { cn } from '@common/utils/cn'
 import { type VariantProps, cva } from 'class-variance-authority'
-import type { ElementType, HTMLAttributes } from 'react'
+import type { ElementType, FC, HTMLAttributes } from 'react'
 
 const typographyVariants = cva('m-0 p-0', {
   variants: {
@@ -41,9 +41,76 @@ export interface TypographyProps extends HTMLAttributes<HTMLElement>, VariantPro
   as?: ElementType
 }
 
-const Typography = ({ as: Component = 'p', className, size, tone, weight, face, ...props }: TypographyProps) => {
+type TypographySlotProps = Omit<TypographyProps, 'as' | 'size'>
+
+const TypographyRoot: FC<TypographyProps> = ({
+  as: Component = 'p',
+  className,
+  size,
+  tone,
+  weight,
+  face,
+  ...props
+}) => {
   return <Component className={cn(typographyVariants({ size, tone, weight, face }), className)} {...props} />
 }
+
+/** h1 — page / hero title */
+const Title: FC<TypographySlotProps> = ({ className, weight = 'bold', face = 'display', tone, ...props }) => (
+  <TypographyRoot as='h1' size='2xl' weight={weight} face={face} tone={tone} className={className} {...props} />
+)
+
+/** h2 — section subtitle */
+const Subtitle: FC<TypographySlotProps> = ({ className, weight = 'semibold', face = 'display', tone, ...props }) => (
+  <TypographyRoot as='h2' size='xl' weight={weight} face={face} tone={tone} className={className} {...props} />
+)
+
+/** h3 — block heading */
+const Heading: FC<TypographySlotProps> = ({ className, weight = 'medium', face = 'display', tone, ...props }) => (
+  <TypographyRoot as='h3' size='lg' weight={weight} face={face} tone={tone} className={className} {...props} />
+)
+
+/** h4 — sub-block heading */
+const Subheading: FC<TypographySlotProps> = ({ className, weight = 'medium', face = 'sans', tone, ...props }) => (
+  <TypographyRoot as='h4' size='md' weight={weight} face={face} tone={tone} className={className} {...props} />
+)
+
+/** h5 — compact label heading */
+const Label: FC<TypographySlotProps> = ({ className, weight = 'semibold', face = 'display', tone, ...props }) => (
+  <TypographyRoot as='h5' size='sm' weight={weight} face={face} tone={tone} className={className} {...props} />
+)
+
+/** p — body copy */
+const Paragraph: FC<TypographySlotProps> = ({ className, weight = 'regular', face = 'sans', tone, ...props }) => (
+  <TypographyRoot as='p' size='sm' weight={weight} face={face} tone={tone} className={cn('leading-relaxed', className)} {...props} />
+)
+
+/** span — inline text */
+const Text: FC<TypographySlotProps> = ({ className, weight = 'regular', face = 'sans', tone, ...props }) => (
+  <TypographyRoot as='span' size='sm' weight={weight} face={face} tone={tone} className={className} {...props} />
+)
+
+/** small — fine print */
+const Small: FC<TypographySlotProps> = ({ className, weight = 'regular', face = 'sans', tone = 'secondary', ...props }) => (
+  <TypographyRoot as='small' size='xs' weight={weight} face={face} tone={tone} className={className} {...props} />
+)
+
+/** cite — attribution / source */
+const Cite: FC<TypographySlotProps> = ({ className, weight = 'medium', face = 'sans', tone = 'secondary', ...props }) => (
+  <TypographyRoot as='cite' size='sm' weight={weight} face={face} tone={tone} className={cn('not-italic', className)} {...props} />
+)
+
+const Typography = Object.assign(TypographyRoot, {
+  Title,
+  Subtitle,
+  Heading,
+  Subheading,
+  Label,
+  Paragraph,
+  Text,
+  Small,
+  Cite
+})
 
 export { Typography, typographyVariants }
 export default Typography

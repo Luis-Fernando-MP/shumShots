@@ -4,13 +4,14 @@ import Tooltip from '@common/ui/Tooltip'
 import type { StyleStatus } from '@common/ui/common/types'
 import { cn } from '@common/utils/cn'
 import { type VariantProps, cva } from 'class-variance-authority'
-import type { ButtonHTMLAttributes, FC, ReactNode } from 'react'
+import Link, { type LinkProps } from 'next/link'
+import type { AnchorHTMLAttributes, ButtonHTMLAttributes, ReactNode } from 'react'
 
 type ButtonVariant = 'soft' | 'solid' | 'outline' | 'ghost' | 'dashed'
 
 const buttonVariants = cva(
   [
-    'relative inline-flex rounded-md text-base font-medium',
+    'relative inline-flex rounded-md text-base font-medium no-underline',
     'transition-colors select-none',
     'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary',
     'disabled:pointer-events-none disabled:opacity-50',
@@ -79,9 +80,7 @@ const statusStyles: Record<ButtonVariant, Record<StyleStatus, string>> = {
   }
 }
 
-export interface ButtonProps
-  extends Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'children'>,
-    VariantProps<typeof buttonVariants> {
+type ButtonOwnProps = VariantProps<typeof buttonVariants> & {
   children?: Readonly<ReactNode[]> | null | Readonly<ReactNode>
   tooltip?: string
   tooltipPosition?: 'top' | 'bottom' | 'left' | 'right'
@@ -91,9 +90,23 @@ export interface ButtonProps
   /** @deprecated Prefer `isSelected`. */
   active?: boolean
   center?: boolean
+  className?: string
 }
 
-const Button: FC<ButtonProps> = ({
+type ButtonAsButton = ButtonOwnProps &
+  Omit<ButtonHTMLAttributes<HTMLButtonElement>, keyof ButtonOwnProps | 'href'> & {
+    href?: undefined
+  }
+
+type ButtonAsLink = ButtonOwnProps &
+  Omit<LinkProps, keyof ButtonOwnProps | 'href'> &
+  Omit<AnchorHTMLAttributes<HTMLAnchorElement>, keyof LinkProps | keyof ButtonOwnProps | 'href'> & {
+    href: LinkProps['href']
+  }
+
+export type ButtonProps = ButtonAsButton | ButtonAsLink
+
+const Button = ({
   children,
   className = '',
   tooltip,
@@ -105,28 +118,30 @@ const Button: FC<ButtonProps> = ({
   active = false,
   center = true,
   ...props
-}) => {
+}: ButtonProps) => {
   const selected = isSelected || active
-
-  const button = (
-    <button
-      type='button'
-      className={cn(
-        buttonVariants({ size, center }),
-        selected ? 'bg-primary text-semantic-primary hover:bg-primary/90' : statusStyles[variant][status],
-        className
-      )}
-      {...props}
-    >
-      {children}
-    </button>
+  const classes = cn(
+    buttonVariants({ size, center }),
+    selected ? 'bg-primary text-semantic-primary hover:bg-primary/90' : statusStyles[variant][status],
+    className
   )
 
-  if (!tooltip) return button
+  const content =
+    'href' in props && props.href !== undefined ? (
+      <Link className={classes} {...(props as ButtonAsLink)}>
+        {children}
+      </Link>
+    ) : (
+      <button type='button' className={classes} {...(props as ButtonAsButton)}>
+        {children}
+      </button>
+    )
+
+  if (!tooltip) return content
 
   return (
     <Tooltip>
-      <Tooltip.Trigger asChild>{button}</Tooltip.Trigger>
+      <Tooltip.Trigger asChild>{content}</Tooltip.Trigger>
       <Tooltip.Content side={tooltipPosition} backgroundColor='bg-background' borderColor='border-border'>
         {tooltip}
       </Tooltip.Content>
