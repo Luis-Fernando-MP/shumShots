@@ -15,12 +15,12 @@ const MonacoEditor: FC = () => {
 
   return (
     <article
-      className='flex aspect-[3/2] h-[600px] w-[900px] flex-col overflow-hidden rounded-radius bg-background pt-grid pb-grid-lg'
+      className='rounded-radius bg-background pt-grid pb-grid-lg flex aspect-[3/2] h-[600px] w-[900px] flex-col overflow-hidden'
       style={{ backgroundColor: theme?.colors['editor.background'] }}
       id='monacoEditor'
     >
-      <header className='flex items-center gap-grid-xl'>
-        <div className='flex items-center gap-grid-sm pl-grid-xl'>
+      <header className='gap-grid-xl flex items-center'>
+        <div className='gap-grid-sm pl-grid-xl flex items-center'>
           <span className='size-4 rounded-full bg-[#ff605c]' />
           <span className='size-4 rounded-full bg-[#ffbd44]' />
           <span className='size-4 rounded-full bg-[#00ca4e]' />

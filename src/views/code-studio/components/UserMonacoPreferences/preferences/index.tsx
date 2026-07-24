@@ -1,4 +1,3 @@
-export { default as AspectRatioPreference } from './AspectRatioPreference'
 export { default as MinimapPreference } from './MinimapPreference'
 export { default as MonacoFonts } from './MonacoFonts'
 export {

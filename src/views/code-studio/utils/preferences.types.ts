@@ -3,8 +3,9 @@ import type { editor } from 'monaco-editor'
 
 type Monaco = editor.IEditorOptions
 
-export type PreferenceGroupId =
-  | 'pixis'
+export type PixisPreferenceGroupId = 'pixis'
+
+export type MonacoPreferenceGroupId =
   | 'visual'
   | 'typography'
   | 'minimap'
@@ -12,6 +13,8 @@ export type PreferenceGroupId =
   | 'stickyScroll'
   | 'cursor'
   | 'editor'
+
+export type PreferenceGroupId = PixisPreferenceGroupId | MonacoPreferenceGroupId
 
 export type PreferenceFieldKind = 'boolean' | 'number' | 'string' | 'custom'
 

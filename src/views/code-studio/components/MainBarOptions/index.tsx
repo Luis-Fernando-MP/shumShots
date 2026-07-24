@@ -6,6 +6,7 @@ import type { FC } from 'react'
 
 import useReferenceMonacoStore from '../../store/referenceMonaco'
 import UserMonacoPreferences from '../UserMonacoPreferences'
+import UserPixisPreferences from '../UserPixisPreferences'
 import ShotFileName from './ShotFileName'
 
 const MainBarOptions: FC = () => {
@@ -26,6 +27,7 @@ const MainBarOptions: FC = () => {
       <ShotFileName />
 
       <UserMonacoPreferences />
+      <UserPixisPreferences />
     </section>
   )
 }

@@ -14,7 +14,7 @@ interface PreferenceSearchProps {
 export const PreferenceSearch: FC<PreferenceSearchProps> = ({ value, onChange, className }) => (
   <div className={cn('relative w-full', className)}>
     <Input
-      type='search'
+      type='text'
       size='default'
       variant='outline'
       status='primary'
@@ -35,7 +35,7 @@ export const PreferenceSearch: FC<PreferenceSearchProps> = ({ value, onChange, c
         className={cn(
           'text-muted-foreground hover:text-foreground absolute top-1/2 right-2 inline-flex size-6 -translate-y-1/2 items-center justify-center rounded-md',
           'hover:bg-muted/70 transition-colors',
-          'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary'
+          'focus-visible:outline-primary focus-visible:outline-2 focus-visible:outline-offset-2'
         )}
       >
         <X className='size-3.5' aria-hidden />

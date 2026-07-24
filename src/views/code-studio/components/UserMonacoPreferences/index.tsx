@@ -9,9 +9,9 @@ import { Settings } from 'lucide-react'
 import { type FC, type ReactNode } from 'react'
 
 import MonacoLanguages from '../MonacoLanguages'
+import ThemeSelectorPreference from './ThemeSelectorPreference'
 import MonacoFonts from './preferences/MonacoFonts'
 import SetterMonacoPreferences from './preferences/SetterMonacoPreferences'
-import ThemeSelectorPreference from './ThemeSelectorPreference'
 
 const Section = ({ title, subtitle, children }: { title: string; subtitle: string; children: ReactNode }) => (
   <Typography.Block title={title} className='gap-2.5'>

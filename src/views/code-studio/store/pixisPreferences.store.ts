@@ -25,6 +25,8 @@ interface PixisPreferencesActions {
   setMonaco: <K extends MonacoKey>(key: K, value: MonacoState[K]) => void
   patchPixis: (partial: Partial<PixisState>) => void
   patchMonaco: (partial: Partial<MonacoState>) => void
+  resetPixis: () => void
+  resetMonaco: () => void
   resetPreferences: () => void
 }
 
@@ -111,6 +113,16 @@ const state: StateCreator<PixisPreferencesStore> = set => ({
     set(s => ({
       monaco: { ...s.monaco, ...partial }
     })),
+
+  resetPixis: () => {
+    const pixis = getDefaultState().pixis
+    set({ pixis })
+    applyPixisDom(pixis)
+  },
+
+  resetMonaco: () => {
+    set({ monaco: getDefaultState().monaco })
+  },
 
   resetPreferences: () => {
     const defaults = getDefaultState()

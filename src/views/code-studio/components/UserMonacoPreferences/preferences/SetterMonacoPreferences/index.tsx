@@ -5,7 +5,6 @@ import usePixisPreferencesStore from '@views/code-studio/store/pixisPreferences.
 import { getGroup } from '@views/code-studio/utils/preferences.config'
 import { type FC, type ReactNode } from 'react'
 
-import AspectRatioPreference from '../AspectRatioPreference'
 import MinimapPreference from '../MinimapPreference'
 import { PreferencePanel, PreferenceSearchProvider, PreferenceSection } from '../PreferenceField'
 import { PreferenceSearch, usePreferenceSearchState } from '../PreferenceSearch'
@@ -34,7 +33,7 @@ const Section = ({
 }
 
 const SetterMonacoPreferences: FC = () => {
-  const resetPreferences = usePixisPreferencesStore(s => s.resetPreferences)
+  const resetMonaco = usePixisPreferencesStore(s => s.resetMonaco)
   const { resetTheme } = useMonacoThemeStore()
   const { query, setQuery, deferredQuery } = usePreferenceSearchState()
 
@@ -48,7 +47,7 @@ const SetterMonacoPreferences: FC = () => {
           status='primary'
           className='w-full'
           onClick={() => {
-            resetPreferences()
+            resetMonaco()
             resetTheme()
           }}
         >
@@ -58,17 +57,6 @@ const SetterMonacoPreferences: FC = () => {
 
       <PreferenceSearchProvider query={deferredQuery}>
         <div className='flex flex-col gap-5 has-[[data-preference-field]]:[&>[data-preference-empty]]:hidden'>
-          <Section groupId='pixis'>
-            <SchemaPreferenceField fieldId='showLanguageIcon' />
-            <SchemaPreferenceField fieldId='shadowLanguage' />
-            <SchemaPreferenceField fieldId='borderRadius' />
-            <SchemaPreferenceField fieldId='containerBorderRadius' />
-            <SchemaPreferenceField fieldId='containerHeight' />
-            <SchemaPreferenceField fieldId='containerWidth' />
-            <AspectRatioPreference />
-            <SchemaPreferenceField fieldId='containerPadding' />
-          </Section>
-
           <Section groupId='visual'>
             <SchemaPreferenceField fieldId='glyphMargin' />
             <SchemaPreferenceField fieldId='renderValidationDecorations' />
