@@ -11,7 +11,6 @@ import {
   HEADER_DENSITY_PX,
   MAC_TRAFFIC_PRESETS,
   chromeDefaults,
-  getField,
   matchesChromePreset
 } from '@views/code-studio/utils/preferences.config'
 import type {
@@ -28,7 +27,8 @@ import { type FC, type ReactNode } from 'react'
 
 import {
   PreferenceField,
-  PreferenceToggle
+  PreferenceToggle,
+  usePreferenceSearch
 } from '@views/code-studio/components/preferences/PreferenceField'
 
 const CONTROLS_LABEL: Record<WindowControlsStyle, string> = {
@@ -227,42 +227,37 @@ const ActivityPreview: FC = () => (
   </div>
 )
 
-const Row: FC<{ title: string; description: string; children: ReactNode }> = ({
+const Row: FC<{ title: string; description: string; keywords?: string; children: ReactNode }> = ({
   title,
   description,
+  keywords,
   children
 }) => (
-  <div className='flex flex-col gap-2' data-preference-field>
-    <div className='flex flex-col gap-0.5'>
-      <Typography.Small weight='medium' className='text-foreground/80 leading-snug'>
-        {title}
-      </Typography.Small>
-      <Typography.Paragraph tone='secondary' className='m-0 text-xs leading-snug'>
-        {description}
-      </Typography.Paragraph>
-    </div>
-    <div className='flex flex-wrap gap-2'>{children}</div>
-  </div>
+  <PreferenceField title={title} subtitle={description} keywords={keywords}>
+    {children}
+  </PreferenceField>
 )
 
 const WindowChromePreference: FC = () => {
-  const field = getField('chrome')
   const chromeState = usePixisPreferencesStore(s => s.pixis.chrome)
   const chrome = { ...chromeDefaults, ...chromeState }
   const patchChrome = usePixisPreferencesStore(s => s.patchChrome)
   const activityOrder = useWorkspaceStore(s => s.activityOrder)
   const moveActivityIcon = useWorkspaceStore(s => s.moveActivityIcon)
+  const query = usePreferenceSearch()
+  const searching = query.trim().length > 0
 
   const set = <K extends keyof PixisChromeState>(key: K, value: PixisChromeState[K]) => {
     patchChrome({ [key]: value })
   }
 
   return (
-    <PreferenceField title={field.title} subtitle={field.subtitle} description={field.description}>
+    <>
       <div className='flex flex-col gap-5'>
         <Row
           title='Look presets'
           description='Atajos que aplican varios estilos. El activo queda marcado.'
+          keywords='preset presets look macos vscode windows'
         >
           {CHROME_LOOK_PRESETS.map(preset => (
             <PreviewCard
@@ -286,6 +281,7 @@ const WindowChromePreference: FC = () => {
         <Row
           title='Controles de ventana'
           description='Bolitas Mac, iconos Windows o sin controles.'
+          keywords='controls mac windows traffic lights'
         >
           {(['mac', 'windows', 'none'] as const).map(style => (
             <PreviewCard
@@ -299,8 +295,8 @@ const WindowChromePreference: FC = () => {
           ))}
         </Row>
 
-        {chrome.controls !== 'none' && (
-          <Row title='Lado de controles' description='Izquierda (Mac) o derecha (Windows).'>
+        {(chrome.controls !== 'none' || searching) && (
+          <Row title='Lado de controles' description='Izquierda (Mac) o derecha (Windows).' keywords='side left right'>
             <PreferenceToggle
               value={chrome.controlsSide}
               options={['left', 'right'] as const}
@@ -310,8 +306,8 @@ const WindowChromePreference: FC = () => {
           </Row>
         )}
 
-        {chrome.controls === 'mac' && (
-          <Row title='Colores Mac' description='Paleta de las tres bolitas.'>
+        {(chrome.controls === 'mac' || searching) && (
+          <Row title='Colores Mac' description='Paleta de las tres bolitas.' keywords='macColors classic graphite candy mono'>
             {(Object.keys(MAC_TRAFFIC_PRESETS) as MacTrafficPreset[]).map(preset => (
               <PreviewCard
                 key={preset}
@@ -325,7 +321,7 @@ const WindowChromePreference: FC = () => {
           </Row>
         )}
 
-        <Row title='Densidad del header' description='Altura de la barra de título.'>
+        <Row title='Densidad del header' description='Altura de la barra de título.' keywords='headerDensity header compact tall'>
           <PreferenceToggle
             value={chrome.headerDensity}
             options={['compact', 'comfortable', 'tall'] as const}
@@ -335,7 +331,7 @@ const WindowChromePreference: FC = () => {
           />
         </Row>
 
-        <Row title='Tinte del header' description='Fondo de la barra superior.'>
+        <Row title='Tinte del header' description='Fondo de la barra superior.' keywords='headerTint tint'>
           <PreferenceToggle
             value={chrome.headerTint}
             options={['none', 'subtle', 'solid'] as const}
@@ -344,7 +340,7 @@ const WindowChromePreference: FC = () => {
           />
         </Row>
 
-        <Row title='Línea accent' description='Raya bajo el header.'>
+        <Row title='Línea accent' description='Raya bajo el header.' keywords='headerAccent accent'>
           <PreferenceToggle
             value={chrome.headerAccent}
             options={[true, false] as const}
@@ -352,7 +348,7 @@ const WindowChromePreference: FC = () => {
           />
         </Row>
 
-        <Row title='Estilo de tabs' description='Soft, underline o browser.'>
+        <Row title='Estilo de tabs' description='Soft, underline o browser.' keywords='tabStyle tabs tab'>
           <PreferenceToggle
             value={chrome.tabStyle}
             options={['soft', 'underline', 'browser'] as const}
@@ -361,7 +357,7 @@ const WindowChromePreference: FC = () => {
           />
         </Row>
 
-        <Row title='Badge dirty' description='Puntito en tabs editados.'>
+        <Row title='Badge dirty' description='Puntito en tabs editados.' keywords='tabBadges badge dirty'>
           <PreferenceToggle
             value={chrome.tabBadges}
             options={[true, false] as const}
@@ -369,7 +365,7 @@ const WindowChromePreference: FC = () => {
           />
         </Row>
 
-        <Row title='Botón +' description='Muestra el botón para agregar pestañas.'>
+        <Row title='Botón +' description='Muestra el botón para agregar pestañas.' keywords='showTabAdd add tab'>
           <PreferenceToggle
             value={chrome.showTabAdd}
             options={[true, false] as const}
@@ -380,6 +376,7 @@ const WindowChromePreference: FC = () => {
         <Row
           title='Breadcrumb'
           description='Ruta del archivo activo en el sistema de archivos (solo lectura visual).'
+          keywords='breadcrumb path ruta'
         >
           <PreferenceToggle
             value={chrome.breadcrumb}
@@ -388,10 +385,11 @@ const WindowChromePreference: FC = () => {
           />
         </Row>
 
-        {chrome.breadcrumb && (
+        {(chrome.breadcrumb || searching) && (
           <Row
             title='Separador del breadcrumb'
             description='Cómo se separan las carpetas del path del archivo.'
+            keywords='breadcrumbSeparator separator'
           >
             {BREADCRUMB_SEPARATORS.map(sep => (
               <PreviewCard
@@ -406,7 +404,7 @@ const WindowChromePreference: FC = () => {
           </Row>
         )}
 
-        <Row title='Status bar' description='Franja inferior con cursor y líneas reales.'>
+        <Row title='Status bar' description='Franja inferior con cursor y líneas reales.' keywords='statusBar status barra'>
           <PreferenceToggle
             value={chrome.statusBar}
             options={[true, false] as const}
@@ -414,8 +412,8 @@ const WindowChromePreference: FC = () => {
           />
         </Row>
 
-        {chrome.statusBar && (
-          <Row title='Densidad status bar' description='Vista previa del contenido de la barra.'>
+        {(chrome.statusBar || searching) && (
+          <Row title='Densidad status bar' description='Vista previa del contenido de la barra.' keywords='statusBarDensity'>
             {STATUS_DENSITY.map(({ id, label, compact }) => (
               <PreviewCard
                 key={id}
@@ -429,7 +427,7 @@ const WindowChromePreference: FC = () => {
           </Row>
         )}
 
-        <Row title='Activity bar' description='Columna de iconos a la izquierda.'>
+        <Row title='Activity bar' description='Columna de iconos a la izquierda.' keywords='activityBar activity'>
           <PreferenceToggle
             value={chrome.activityBar}
             options={[true, false] as const}
@@ -442,10 +440,11 @@ const WindowChromePreference: FC = () => {
           )}
         </Row>
 
-        {chrome.activityBar && (
+        {(chrome.activityBar || searching) && (
           <Row
             title='Orden del activity bar'
             description='Reordena los iconos. “Files” abre el explorer.'
+            keywords='activityOrder order iconos'
           >
             <div className='border-border/60 bg-muted/20 flex w-full flex-col gap-1 rounded-md border p-2'>
               {activityOrder.map((id: ActivityIconId, index) => (
@@ -489,6 +488,7 @@ const WindowChromePreference: FC = () => {
         <Row
           title='Sistema de archivos'
           description='Árbol interactivo. El ancho se ajusta arrastrando el borde del panel en el editor.'
+          keywords='fileExplorer explorer archivos files'
         >
           <PreferenceToggle
             value={chrome.fileExplorer}
@@ -497,7 +497,7 @@ const WindowChromePreference: FC = () => {
           />
         </Row>
       </div>
-    </PreferenceField>
+    </>
   )
 }
 

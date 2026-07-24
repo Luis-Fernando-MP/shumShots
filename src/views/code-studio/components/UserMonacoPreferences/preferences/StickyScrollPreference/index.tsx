@@ -2,12 +2,20 @@ import usePixisPreferencesStore from '@views/code-studio/store/pixisPreferences.
 import { getGroup } from '@views/code-studio/utils/preferences.config'
 import type { FC } from 'react'
 
-import { PreferenceField, PreferencePanel, PreferenceSection, PreferenceToggle } from '@views/code-studio/components/preferences/PreferenceField'
+import {
+  PreferenceField,
+  PreferencePanel,
+  PreferenceSection,
+  PreferenceToggle,
+  usePreferenceSearch
+} from '@views/code-studio/components/preferences/PreferenceField'
 
 const StickyScrollPreference: FC = () => {
   const group = getGroup('stickyScroll')
   const stickyScroll = usePixisPreferencesStore(s => s.monaco.stickyScroll)
   const setMonaco = usePixisPreferencesStore(s => s.setMonaco)
+  const query = usePreferenceSearch()
+  const searching = query.trim().length > 0
 
   if (!stickyScroll) return null
 
@@ -18,8 +26,8 @@ const StickyScrollPreference: FC = () => {
   const { enabled, maxLineCount, defaultModel, scrollWithEditor } = stickyScroll
 
   return (
-    <PreferenceSection title={group.title} subtitle={group.subtitle}>
-      <PreferenceField title='Activar' subtitle='Fijar contexto arriba del editor'>
+    <PreferenceSection title={group.title} subtitle={group.subtitle} keywords='sticky stickyScroll pegajoso'>
+      <PreferenceField title='Activar' subtitle='Fijar contexto arriba del editor' keywords='enabled enable'>
         <PreferenceToggle
           value={enabled ?? false}
           options={[true, false] as const}
@@ -27,7 +35,7 @@ const StickyScrollPreference: FC = () => {
         />
       </PreferenceField>
 
-      {enabled && (
+      {(enabled || searching) && (
         <PreferencePanel>
           <PreferenceField
             title='Máximo de líneas'

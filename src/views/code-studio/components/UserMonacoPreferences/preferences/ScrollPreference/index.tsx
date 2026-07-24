@@ -2,13 +2,21 @@ import usePixisPreferencesStore from '@views/code-studio/store/pixisPreferences.
 import { getGroup } from '@views/code-studio/utils/preferences.config'
 import { type FC, useState } from 'react'
 
-import { PreferenceField, PreferencePanel, PreferenceSection, PreferenceToggle } from '@views/code-studio/components/preferences/PreferenceField'
+import {
+  PreferenceField,
+  PreferencePanel,
+  PreferenceSection,
+  PreferenceToggle,
+  usePreferenceSearch
+} from '@views/code-studio/components/preferences/PreferenceField'
 
 const ScrollPreference: FC = () => {
   const group = getGroup('scrollbar')
   const scrollbar = usePixisPreferencesStore(s => s.monaco.scrollbar)
   const setMonaco = usePixisPreferencesStore(s => s.setMonaco)
   const [enabled, setEnabled] = useState(false)
+  const query = usePreferenceSearch()
+  const searching = query.trim().length > 0
 
   if (!scrollbar) return null
 
@@ -42,12 +50,12 @@ const ScrollPreference: FC = () => {
   }
 
   return (
-    <PreferenceSection title={group.title} subtitle={group.subtitle}>
-      <PreferenceField title='Activar' subtitle='Mostrar barras personalizadas'>
+    <PreferenceSection title={group.title} subtitle={group.subtitle} keywords='scrollbar scroll barra'>
+      <PreferenceField title='Activar' subtitle='Mostrar barras personalizadas' keywords='enabled enable'>
         <PreferenceToggle value={enabled} options={[true, false] as const} onChange={handleToggle} />
       </PreferenceField>
 
-      {enabled && (
+      {(enabled || searching) && (
         <PreferencePanel>
           <PreferenceField title='Vertical' subtitle='Barra de la derecha' example='Ej: auto = solo si hace falta'>
             <PreferenceToggle

@@ -17,18 +17,28 @@ export const PreferenceSearchProvider = ({
 
 export const usePreferenceSearch = () => useContext(PreferenceSearchContext)
 
+const normalizeSearchText = (value: string) =>
+  value
+    .normalize('NFD')
+    .replace(/\p{M}/gu, '')
+    .toLowerCase()
+
 const nodeToSearchText = (value: ReactNode): string => {
   if (value == null || typeof value === 'boolean') return ''
   if (typeof value === 'string' || typeof value === 'number') return String(value)
   if (Array.isArray(value)) return value.map(nodeToSearchText).join(' ')
+  if (typeof value === 'object' && 'props' in value) {
+    const props = value.props as { children?: ReactNode }
+    return nodeToSearchText(props.children)
+  }
   return ''
 }
 
-const matchesPreferenceSearch = (query: string, parts: ReactNode[]) => {
-  const q = query.trim().toLowerCase()
+export const matchesPreferenceSearch = (query: string, parts: ReactNode[]) => {
+  const q = normalizeSearchText(query.trim())
   if (!q) return true
-  const haystack = parts.map(nodeToSearchText).join(' ').toLowerCase()
-  return q.split(/\s+/).every(token => haystack.includes(token))
+  const haystack = normalizeSearchText(parts.map(nodeToSearchText).join(' '))
+  return q.split(/\s+/).every(token => token.length > 0 && haystack.includes(token))
 }
 
 interface PreferenceFieldProps {
@@ -108,14 +118,16 @@ export const PreferencePanel = ({ children, className }: PreferencePanelProps) =
 interface PreferenceSectionProps {
   title: string
   subtitle?: ReactNode
+  keywords?: string
   children: ReactNode
   className?: string
 }
 
-export const PreferenceSection = ({ title, subtitle, children, className }: PreferenceSectionProps) => {
+export const PreferenceSection = ({ title, subtitle, keywords, children, className }: PreferenceSectionProps) => {
   const query = usePreferenceSearch()
-  const sectionHit = matchesPreferenceSearch(query, [title, subtitle])
-  const childQuery = sectionHit ? '' : query
+  // Solo el título abre toda la sección; el subtítulo no debe mostrar todos los campos.
+  const titleHit = matchesPreferenceSearch(query, [title, keywords])
+  const childQuery = titleHit ? '' : query
 
   return (
     <PreferenceSearchProvider query={childQuery}>

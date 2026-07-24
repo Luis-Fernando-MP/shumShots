@@ -1,13 +1,8 @@
 'use client'
 
+import { getLanguageMetaFromFileName, languageIdFromFileName, resolveMonacoFontFamily } from '@common/monaco'
 import '@common/monaco/setup'
-
 import Editor from '@monaco-editor/react'
-import {
-  getLanguageMetaFromFileName,
-  languageIdFromFileName,
-  resolveMonacoFontFamily
-} from '@common/monaco'
 import useMonacoEditor from '@views/code-studio/hooks/useMonacoEditor'
 import usePixisPreferencesStore from '@views/code-studio/store/pixisPreferences.store'
 import useReferenceMonacoStore from '@views/code-studio/store/referenceMonaco'
@@ -34,9 +29,7 @@ const EditorComponent: FC = () => {
   })
 
   const skippingSync = useRef(false)
-  const language = activeFile
-    ? languageIdFromFileName(activeFile.name, fallbackLanguage.language)
-    : fallbackLanguage.language
+  const language = activeFile ? languageIdFromFileName(activeFile.name, fallbackLanguage.language) : fallbackLanguage.language
 
   useEffect(() => {
     if (!activeFile || activeFile.kind !== 'file') return
@@ -44,7 +37,7 @@ const EditorComponent: FC = () => {
     if (!meta) return
     if (meta.language === fallbackLanguage.language) return
     setLanguage(meta)
-  }, [activeFile?.id, activeFile?.name, fallbackLanguage.language, setLanguage])
+  }, [activeFile, activeFile.id, activeFile.name, fallbackLanguage.language, setLanguage])
 
   useEffect(() => {
     if (!$editor || !activeFile || activeFile.kind !== 'file') return
@@ -65,7 +58,7 @@ const EditorComponent: FC = () => {
   return (
     <Editor
       loading={<LoaderEditor />}
-      className={`editorComponent [&_.monaco-editor]:!outline-none [&_.monaco-editor_.overflow-guard_*]:!font-[family-name:var(--monaco-font-family)] [&_.monaco-editor_.overflow-guard_*]:!text-[length:var(--monaco-font-size)] [&_.relative-current-line-number]:!text-right [&_.user-monaco-highlight]:!cursor-pointer [&_.user-monaco-highlight]:border [&_.user-monaco-highlight]:border-primary [&_.user-monaco-highlight]:rounded-[3px] [&_.user-monaco-highlight]:bg-primary/20 [&_.user-monaco-highlight]:px-[3px] [&_.user-monaco-icon]:before:absolute [&_.user-monaco-icon]:before:top-1/2 [&_.user-monaco-icon]:before:left-full [&_.user-monaco-icon]:before:inline-block [&_.user-monaco-icon]:before:size-4 [&_.user-monaco-icon]:before:-translate-y-1/2 [&_.user-monaco-icon]:before:content-[''] [&_.user-monaco-icon]:before:bg-[url('/logo.webp')] [&_.user-monaco-icon]:before:bg-cover [&_.user-monaco-icon]:before:bg-center ${moveBoard ? 'zoom pointer-events-none' : ''}`}
+      className={`editorComponent [&_.user-monaco-highlight]:border-primary [&_.user-monaco-highlight]:bg-primary/20 [&_.monaco-editor]:!outline-none [&_.monaco-editor_.overflow-guard_*]:!font-[family-name:var(--monaco-font-family)] [&_.monaco-editor_.overflow-guard_*]:!text-[length:var(--monaco-font-size)] [&_.relative-current-line-number]:!text-right [&_.user-monaco-highlight]:!cursor-pointer [&_.user-monaco-highlight]:rounded-[3px] [&_.user-monaco-highlight]:border [&_.user-monaco-highlight]:px-[3px] [&_.user-monaco-icon]:before:absolute [&_.user-monaco-icon]:before:top-1/2 [&_.user-monaco-icon]:before:left-full [&_.user-monaco-icon]:before:inline-block [&_.user-monaco-icon]:before:size-4 [&_.user-monaco-icon]:before:-translate-y-1/2 [&_.user-monaco-icon]:before:bg-[url('/logo.webp')] [&_.user-monaco-icon]:before:bg-cover [&_.user-monaco-icon]:before:bg-center [&_.user-monaco-icon]:before:content-[''] ${moveBoard ? 'zoom pointer-events-none' : ''}`}
       height='100%'
       options={{
         ...monacoOpts,

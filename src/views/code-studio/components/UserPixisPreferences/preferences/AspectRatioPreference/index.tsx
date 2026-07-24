@@ -140,6 +140,7 @@ const AspectRatioPreference: FC = () => {
       description={field.description}
       example={field.example}
       note={field.note}
+      keywords='aspect ratio proporcion ancho alto default free'
     >
       <div className='flex w-full flex-col gap-2.5'>
         <div className='flex flex-wrap gap-1.5'>

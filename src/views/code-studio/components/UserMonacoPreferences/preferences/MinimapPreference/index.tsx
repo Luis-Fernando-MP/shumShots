@@ -2,12 +2,20 @@ import usePixisPreferencesStore from '@views/code-studio/store/pixisPreferences.
 import { getGroup } from '@views/code-studio/utils/preferences.config'
 import { type FC } from 'react'
 
-import { PreferenceField, PreferencePanel, PreferenceSection, PreferenceToggle } from '@views/code-studio/components/preferences/PreferenceField'
+import {
+  PreferenceField,
+  PreferencePanel,
+  PreferenceSection,
+  PreferenceToggle,
+  usePreferenceSearch
+} from '@views/code-studio/components/preferences/PreferenceField'
 
 const MinimapPreference: FC = () => {
   const group = getGroup('minimap')
   const minimap = usePixisPreferencesStore(s => s.monaco.minimap)
   const setMonaco = usePixisPreferencesStore(s => s.setMonaco)
+  const query = usePreferenceSearch()
+  const searching = query.trim().length > 0
 
   if (!minimap) return null
 
@@ -18,8 +26,8 @@ const MinimapPreference: FC = () => {
   const { enabled, autohide, side, size, showSlider, renderCharacters, maxColumn, scale } = minimap
 
   return (
-    <PreferenceSection title={group.title} subtitle={group.subtitle}>
-      <PreferenceField title='Activar' subtitle='Mostrar u ocultar el minimapa'>
+    <PreferenceSection title={group.title} subtitle={group.subtitle} keywords='minimap mapa'>
+      <PreferenceField title='Activar' subtitle='Mostrar u ocultar el minimapa' keywords='enabled enable'>
         <PreferenceToggle
           value={enabled ?? false}
           options={[true, false] as const}
@@ -27,7 +35,7 @@ const MinimapPreference: FC = () => {
         />
       </PreferenceField>
 
-      {minimap.enabled && (
+      {(minimap.enabled || searching) && (
         <PreferencePanel>
           <PreferenceField
             title='Auto-ocultar'

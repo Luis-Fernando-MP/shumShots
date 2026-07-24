@@ -33,6 +33,7 @@ const SchemaPreferenceField: FC<{ fieldId: PreferenceFieldId }> = ({ fieldId }) 
       description={field.description}
       example={field.example}
       note={field.note}
+      keywords={[field.id, field.path, key].filter(Boolean).join(' ')}
     >
       {field.kind === 'number' && (
         <Input
