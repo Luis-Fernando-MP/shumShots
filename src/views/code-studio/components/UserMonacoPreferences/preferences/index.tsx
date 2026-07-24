@@ -3,11 +3,28 @@ import useShumOptionsStore from '@views/code-studio/store/shumOptions.store'
 import { type FC, useMemo } from 'react'
 
 import { PreferenceField, PreferencePanel, PreferenceSection, PreferenceToggle } from '../PreferenceField'
+import AspectRatioPreference from './AspectRatioPreference'
+import {
+  SIZE_MAX,
+  SIZE_MIN,
+  clampSize,
+  heightFromWidth,
+  isAspectLocked,
+  widthFromHeight
+} from './AspectRatioPreference/aspectRatio'
 
 const ShumShotsPreferences: FC = () => {
   const shots = useShumOptionsStore()
   const $editor = useMemo(() => document.querySelector('#monacoEditor') as HTMLElement, [])
   const $editorContainer = useMemo(() => document.querySelector('#monacoEditor-container') as HTMLElement, [])
+
+  const applyEditorSize = (width: number, height: number) => {
+    if (!$editor) return
+    $editor.style.width = `${width}px`
+    $editor.style.height = `${height}px`
+    shots.setContainerWidth(width)
+    shots.setContainerHeight(height)
+  }
 
   const handleChangeBorderRadius = (style: number): void => {
     if (!$editor) return
@@ -17,14 +34,30 @@ const ShumShotsPreferences: FC = () => {
 
   const handleChangeHeight = (style: number): void => {
     if (!$editor) return
-    $editor.style.height = `${style}px`
-    shots.setContainerHeight(style)
+    const height = clampSize(style)
+    if (isAspectLocked(shots.aspectRatio)) {
+      const width = widthFromHeight(height, shots.aspectRatio)
+      if (width != null) {
+        applyEditorSize(width, height)
+        return
+      }
+    }
+    $editor.style.height = `${height}px`
+    shots.setContainerHeight(height)
   }
 
   const handleChangeWidth = (style: number): void => {
     if (!$editor) return
-    $editor.style.width = `${style}px`
-    shots.setContainerWidth(style)
+    const width = clampSize(style)
+    if (isAspectLocked(shots.aspectRatio)) {
+      const height = heightFromWidth(width, shots.aspectRatio)
+      if (height != null) {
+        applyEditorSize(width, height)
+        return
+      }
+    }
+    $editor.style.width = `${width}px`
+    shots.setContainerWidth(width)
   }
 
   const handleChangeContainerBorderRadius = (style: number): void => {
@@ -60,18 +93,10 @@ const ShumShotsPreferences: FC = () => {
           description='Ayuda cuando el logo es blanco o muy transparente.'
           note='Requiere icono del lenguaje activo.'
         >
-          <PreferenceToggle
-            value={shots.shadowLanguage}
-            options={[true, false] as const}
-            onChange={shots.setShadowLanguage}
-          />
+          <PreferenceToggle value={shots.shadowLanguage} options={[true, false] as const} onChange={shots.setShadowLanguage} />
         </PreferenceField>
 
-        <PreferenceField
-          title='Radio del editor'
-          subtitle='Esquinas del área de código'
-          example='Ej: Normal = 20px'
-        >
+        <PreferenceField title='Radio del editor' subtitle='Esquinas del área de código' example='Ej: Normal = 20px'>
           <Input
             type='number'
             size='sm'
@@ -124,8 +149,8 @@ const ShumShotsPreferences: FC = () => {
             variant='outline'
             suffix='px'
             value={shots.containerHeight}
-            min={200}
-            max={1200}
+            min={SIZE_MIN}
+            max={SIZE_MAX}
             step={50}
             onChange={e => handleChangeHeight(Number(e.target.value))}
             containerClassName='w-[7.5rem]'
@@ -145,8 +170,8 @@ const ShumShotsPreferences: FC = () => {
             variant='outline'
             suffix='px'
             value={shots.containerWidth}
-            min={200}
-            max={1200}
+            min={SIZE_MIN}
+            max={SIZE_MAX}
             step={50}
             onChange={e => handleChangeWidth(Number(e.target.value))}
             containerClassName='w-[7.5rem]'
@@ -159,11 +184,9 @@ const ShumShotsPreferences: FC = () => {
           />
         </PreferenceField>
 
-        <PreferenceField
-          title='Padding'
-          subtitle='Aire interno del marco'
-          example='Ej: Normal = 10px'
-        >
+        <AspectRatioPreference />
+
+        <PreferenceField title='Padding' subtitle='Aire interno del marco' example='Ej: Normal = 10px'>
           <Input
             type='number'
             size='sm'

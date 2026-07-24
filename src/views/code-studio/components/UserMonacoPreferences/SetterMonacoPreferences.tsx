@@ -1,15 +1,15 @@
-import { Input } from '@common/ui/Input'
 import Button from '@/shared/ui/Button'
+import { Input } from '@common/ui/Input'
 import useMonacoStore from '@views/code-studio/store/monaco.store'
 import useMonacoThemeStore from '@views/code-studio/store/monacoTheme.store'
 import useShumOptionsStore from '@views/code-studio/store/shumOptions.store'
 import { type FC, useMemo } from 'react'
 
 import { PreferenceField, PreferenceSection, PreferenceToggle } from './PreferenceField'
+import ShumShotsPreferences from './preferences'
 import FontSizePreference from './preferences/FontSizePreference'
 import MinimapPreference from './preferences/MinimapPreference'
 import ScrollPreference from './preferences/ScrollPreference'
-import ShumShotsPreferences from './preferences/ShumShotsPreferences'
 import StickyScrollPreference from './preferences/StickyScrollPreference'
 
 const SetterMonacoPreferences: FC = () => {
@@ -172,11 +172,7 @@ const SetterMonacoPreferences: FC = () => {
           />
         </PreferenceField>
 
-        <PreferenceField
-          title='Altura entre líneas'
-          subtitle='Line-height del editor'
-          example='Ej: Normal = 22px'
-        >
+        <PreferenceField title='Altura entre líneas' subtitle='Line-height del editor' example='Ej: Normal = 22px'>
           <Input
             type='number'
             size='sm'
@@ -207,11 +203,7 @@ const SetterMonacoPreferences: FC = () => {
       <StickyScrollPreference stickyScroll={monaco.stickyScroll} setStickyScroll={monaco.setStickyScroll} />
 
       <PreferenceSection title='Cursor:' subtitle='Forma, parpadeo y comportamiento del caret.'>
-        <PreferenceField
-          title='Parpadeo'
-          subtitle='Animación del cursor'
-          example='Ej: solid = sin parpadear; smooth = fundido'
-        >
+        <PreferenceField title='Parpadeo' subtitle='Animación del cursor' example='Ej: solid = sin parpadear; smooth = fundido'>
           <PreferenceToggle
             value={monaco.cursorBlinking ?? 'blink'}
             options={['blink', 'smooth', 'phase', 'expand', 'solid'] as const}
@@ -219,11 +211,7 @@ const SetterMonacoPreferences: FC = () => {
           />
         </PreferenceField>
 
-        <PreferenceField
-          title='Estilo'
-          subtitle='Forma visual del caret'
-          example='Ej: block = caja; line-thin = barra fina'
-        >
+        <PreferenceField title='Estilo' subtitle='Forma visual del caret' example='Ej: block = caja; line-thin = barra fina'>
           <PreferenceToggle
             value={monaco.cursorStyle ?? 'line'}
             options={['block', 'block-outline', 'underline', 'underline-thin', 'line', 'line-thin'] as const}
@@ -317,11 +305,7 @@ const SetterMonacoPreferences: FC = () => {
           />
         </PreferenceField>
 
-        <PreferenceField
-          title='Auto-cierre de brackets'
-          subtitle='(), [], {} al escribir'
-          example='Ej: escribes ( y aparece )'
-        >
+        <PreferenceField title='Auto-cierre de brackets' subtitle='(), [], {} al escribir' example='Ej: escribes ( y aparece )'>
           <PreferenceToggle
             value={monaco.autoClosingBrackets ?? 'languageDefined'}
             options={['always', 'beforeWhitespace', 'languageDefined', 'never'] as const}

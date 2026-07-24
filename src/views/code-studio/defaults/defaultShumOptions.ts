@@ -11,5 +11,6 @@ export const defaultShumOptions = {
   containerWidth: 900,
   containerHeight: 600,
   containerPadding: 10,
-  containerBorderRadius: 20
+  containerBorderRadius: 20,
+  aspectRatio: 'default' as string
 }

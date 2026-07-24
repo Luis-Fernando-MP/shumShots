@@ -1,8 +1,7 @@
 import { circularGradients, gradients } from '@/shared/backgroundStyle'
-import type { FC } from 'react'
-
-import SliceContainer from '../SliceContainer'
+import SliceContainer from '@common/ui/SliceContainer'
 import Typography from '@common/ui/Typography'
+import type { FC } from 'react'
 
 interface Props {
   background: string | null

@@ -1,9 +1,9 @@
 'use client'
 
 import Popup from '@/shared/components/Popup'
-import SliceContainer from '@/shared/components/SliceContainer'
 import Button from '@/shared/ui/Button'
 import { Separator } from '@common/ui/Separator'
+import SliceContainer from '@common/ui/SliceContainer'
 import Typography from '@common/ui/Typography'
 import { Settings } from 'lucide-react'
 import { type FC, type ReactNode } from 'react'
@@ -13,15 +13,7 @@ import MonacoFonts from './MonacoFonts'
 import SetterMonacoPreferences from './SetterMonacoPreferences'
 import ThemeSelectorPreference from './ThemeSelectorPreference'
 
-const Section = ({
-  title,
-  subtitle,
-  children
-}: {
-  title: string
-  subtitle: string
-  children: ReactNode
-}) => (
+const Section = ({ title, subtitle, children }: { title: string; subtitle: string; children: ReactNode }) => (
   <Typography.Block title={title} className='gap-2.5'>
     <Typography.Paragraph tone='secondary' className='m-0 -mt-0.5 leading-snug'>
       {subtitle}
@@ -43,7 +35,7 @@ const UserMonacoPreferences: FC = () => {
 
       <Popup.Content className='scrollbar-hidden flex flex-col gap-5'>
         <Section title='Temas:' subtitle='Paleta de sintaxis del editor.'>
-          <SliceContainer maxHeight={112} extendedMaxHeight={480} className='flex w-full flex-row flex-wrap gap-1.5'>
+          <SliceContainer maxHeight={112} extendedMaxHeight={480} className='grid w-full grid-cols-3 flex-row flex-wrap gap-1.5'>
             <ThemeSelectorPreference />
           </SliceContainer>
         </Section>
@@ -59,7 +51,7 @@ const UserMonacoPreferences: FC = () => {
         <Separator orientation='horizontal' className='opacity-60' />
 
         <Section title='Tipografía:' subtitle='Familia tipográfica del código.'>
-          <SliceContainer maxHeight={140} extendedMaxHeight={480} className='flex w-full flex-row flex-wrap gap-1.5'>
+          <SliceContainer maxHeight={160} extendedMaxHeight={520} className='w-full'>
             <MonacoFonts />
           </SliceContainer>
         </Section>

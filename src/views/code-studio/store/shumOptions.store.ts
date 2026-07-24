@@ -1,4 +1,3 @@
-import { monacoFonts } from '@/shared/fonts/monaco-fonts'
 import monacoLanguagesIcons, { MonacoLanguage } from '@/shared/monaco-languages'
 import { StateCreator, create } from 'zustand'
 
@@ -15,6 +14,7 @@ interface IShumOptionsStore {
   containerHeight: number
   containerPadding: number
   containerBorderRadius: number
+  aspectRatio: string
 
   setLanguage: (language: MonacoLanguage) => void
   setTypography: (typography: string) => void
@@ -26,6 +26,7 @@ interface IShumOptionsStore {
   setContainerHeight: (containerHeight: number) => void
   setContainerPadding: (containerPadding: number) => void
   setContainerBorderRadius: (containerBorderRadius: number) => void
+  setAspectRatio: (aspectRatio: string) => void
   resetShumPreferences: () => void
 }
 
@@ -42,6 +43,7 @@ const state: StateCreator<IShumOptionsStore> = set => ({
   setContainerHeight: containerHeight => set({ containerHeight }),
   setContainerPadding: containerPadding => set({ containerPadding }),
   setContainerBorderRadius: containerBorderRadius => set({ containerBorderRadius }),
+  setAspectRatio: aspectRatio => set({ aspectRatio }),
   resetShumPreferences: () => set(defaultShumOptions)
 })
 

@@ -1,9 +1,11 @@
 import { monacoFonts } from '@/shared/fonts/monaco-fonts'
+import Typography from '@common/ui/Typography'
 import { cn } from '@common/utils/cn'
+import { CheckIcon } from 'lucide-react'
 import type { ButtonHTMLAttributes, FC } from 'react'
 
 interface Props extends ButtonHTMLAttributes<HTMLButtonElement> {
-  font: typeof monacoFonts.anonymous_Pro
+  font: (typeof monacoFonts)[keyof typeof monacoFonts]
   title: string
   selected?: boolean
 }
@@ -15,20 +17,46 @@ const TypographyDisplay: FC<Props> = ({ font, title, className = '', selected = 
   return (
     <button
       type='button'
+      aria-pressed={selected}
       className={cn(
-        'flex h-[88px] w-[7.5rem] flex-col items-start justify-center gap-1 rounded-md border border-transparent bg-card px-2.5 py-2 text-left transition-colors',
-        'hover:bg-muted/60',
-        selected && 'border-primary bg-primary/20',
-        fontClassName,
-        'antialiased',
+        'group relative flex min-h-[5.5rem] flex-col items-stretch gap-2 rounded-md border px-2.5 py-2.5 text-left transition-colors',
+        'border-border/50 bg-card/60 hover:bg-muted/50',
+        'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary',
+        selected && 'border-primary bg-primary/15 hover:bg-primary/20',
         className
       )}
       {...props}
     >
-      <span className={cn('text-muted-foreground text-[10px] leading-none', selected && 'text-foreground/80')}>PIXIS</span>
-      <span className={cn('text-foreground text-sm leading-tight font-medium', fontClassName)}>{title}</span>
-      <span className={cn('text-muted-foreground text-[10px] leading-none', selected && 'text-foreground/80')}>
-        {'=> {} [] ()'}
+      {selected && (
+        <span className='bg-primary text-semantic-primary absolute top-1.5 right-1.5 inline-flex size-4 items-center justify-center rounded-full'>
+          <CheckIcon className='size-2.5' strokeWidth={3} aria-hidden />
+        </span>
+      )}
+
+      <Typography.Small
+        weight='medium'
+        className={cn('text-muted-foreground pr-5 leading-none tracking-wide', selected && 'text-foreground/75')}
+      >
+        {title}
+      </Typography.Small>
+
+      <span
+        className={cn(
+          'text-foreground text-[1.35rem] leading-none tracking-tight antialiased',
+          fontClassName
+        )}
+      >
+        Aa
+      </span>
+
+      <span
+        className={cn(
+          'text-muted-foreground text-[11px] leading-tight antialiased',
+          selected && 'text-foreground/80',
+          fontClassName
+        )}
+      >
+        {'=> {} [] ();'}
       </span>
     </button>
   )
