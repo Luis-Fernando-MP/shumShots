@@ -1,6 +1,11 @@
 import { MonacoLanguage as MonacoLanguageType } from '@/shared/monaco-languages'
 import Typography from '@common/ui/Typography'
 import usePixisPreferencesStore from '@views/code-studio/store/pixisPreferences.store'
+import useWorkspaceStore, { selectActiveFile } from '@views/code-studio/store/workspace.store'
+import {
+  getLanguageMetaFromFileName,
+  replaceFileExtension
+} from '@views/code-studio/utils/languageMeta'
 import type { FC } from 'react'
 
 import IconLanguage from './IconLanguage'
@@ -11,11 +16,16 @@ interface Props {
 
 const MonacoLanguage: FC<Props> = ({ language }) => {
   const [section, languages] = language
-  const userLanguage = usePixisPreferencesStore(s => s.pixis.language)
   const setLanguage = usePixisPreferencesStore(s => s.setLanguage)
+  const activeFile = useWorkspaceStore(selectActiveFile)
+  const renameEntry = useWorkspaceStore(s => s.renameEntry)
+  const activeMeta = activeFile ? getLanguageMetaFromFileName(activeFile.name) : null
 
   const handleClick = (next: MonacoLanguageType) => {
-    if (userLanguage.language === next.language) return
+    if (activeFile && activeFile.kind === 'file') {
+      const nextName = replaceFileExtension(activeFile.name, next.short)
+      if (nextName !== activeFile.name) renameEntry(activeFile.id, nextName)
+    }
     setLanguage(next)
   }
 
@@ -31,7 +41,11 @@ const MonacoLanguage: FC<Props> = ({ language }) => {
             key={key}
             language={languageProps}
             onClick={handleClick}
-            selected={userLanguage.language === languageProps.language}
+            selected={Boolean(
+              activeMeta &&
+                activeMeta.short === languageProps.short &&
+                activeMeta.language === languageProps.language
+            )}
           />
         ))}
       </div>

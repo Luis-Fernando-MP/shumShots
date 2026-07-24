@@ -1,5 +1,6 @@
 import { type MonacoLanguage } from '@/shared/monaco-languages'
 import { StateCreator, create } from 'zustand'
+import { persist } from 'zustand/middleware'
 
 import {
   clampSize,
@@ -7,11 +8,15 @@ import {
   isAspectLocked,
   widthFromHeight
 } from '../utils/aspectRatio'
+import { resolveLanguageMeta } from '../utils/languageMeta'
 import {
   type MonacoState,
+  type PixisChromeState,
   type PixisState,
   type PreferencesState,
   applyPixisDom,
+  chromeDefaults,
+  getDefaultMonacoState,
   getDefaultState
 } from '../utils/preferences.config'
 
@@ -24,6 +29,7 @@ interface PixisPreferencesActions {
   setPixis: <K extends PixisKey>(key: K, value: PixisState[K]) => void
   setMonaco: <K extends MonacoKey>(key: K, value: MonacoState[K]) => void
   patchPixis: (partial: Partial<PixisState>) => void
+  patchChrome: (partial: Partial<PixisChromeState>) => void
   patchMonaco: (partial: Partial<MonacoState>) => void
   resetPixis: () => void
   resetMonaco: () => void
@@ -31,6 +37,16 @@ interface PixisPreferencesActions {
 }
 
 export type PixisPreferencesStore = PreferencesState & PixisPreferencesActions
+
+type PersistedPreferences = {
+  pixis: Omit<PixisState, 'language'> & {
+    language: Pick<MonacoLanguage, 'language' | 'short'>
+  }
+  monaco: MonacoState
+}
+
+const PREFERENCES_STORAGE_KEY = 'code-studio-preferences'
+const PREFERENCES_VERSION = 1
 
 const applyPixisDomPatch = (key: PixisKey, value: PixisState[PixisKey], state: PixisState) => {
   const next = { ...state, [key]: value }
@@ -50,7 +66,11 @@ const applyPixisDomPatch = (key: PixisKey, value: PixisState[PixisKey], state: P
   return next
 }
 
-const resolvePixisSize = (key: PixisKey, value: PixisState[PixisKey], state: PixisState): PixisState => {
+const resolvePixisSize = (
+  key: PixisKey,
+  value: PixisState[PixisKey],
+  state: PixisState
+): PixisState => {
   if (key !== 'containerWidth' && key !== 'containerHeight') {
     return applyPixisDomPatch(key, value, state)
   }
@@ -81,6 +101,29 @@ const resolvePixisSize = (key: PixisKey, value: PixisState[PixisKey], state: Pix
   return applyPixisDomPatch(key, size, state)
 }
 
+const mergeMonaco = (persisted?: Partial<MonacoState>): MonacoState => {
+  const defaults = getDefaultMonacoState()
+  if (!persisted) return defaults
+  return {
+    ...defaults,
+    ...persisted,
+    minimap: { ...defaults.minimap, ...persisted.minimap },
+    scrollbar: { ...defaults.scrollbar, ...persisted.scrollbar },
+    stickyScroll: { ...defaults.stickyScroll, ...persisted.stickyScroll }
+  }
+}
+
+const mergePixis = (persisted?: Partial<PersistedPreferences['pixis']>): PixisState => {
+  const defaults = getDefaultState().pixis
+  if (!persisted) return defaults
+  return {
+    ...defaults,
+    ...persisted,
+    chrome: { ...chromeDefaults, ...persisted.chrome },
+    language: resolveLanguageMeta(persisted.language)
+  }
+}
+
 const state: StateCreator<PixisPreferencesStore> = set => ({
   ...getDefaultState(),
 
@@ -109,6 +152,14 @@ const state: StateCreator<PixisPreferencesStore> = set => ({
       return { pixis }
     }),
 
+  patchChrome: partial =>
+    set(s => ({
+      pixis: {
+        ...s.pixis,
+        chrome: { ...s.pixis.chrome, ...partial }
+      }
+    })),
+
   patchMonaco: partial =>
     set(s => ({
       monaco: { ...s.monaco, ...partial }
@@ -131,6 +182,32 @@ const state: StateCreator<PixisPreferencesStore> = set => ({
   }
 })
 
-const usePixisPreferencesStore = create(state)
+const usePixisPreferencesStore = create(
+  persist(state, {
+    name: PREFERENCES_STORAGE_KEY,
+    version: PREFERENCES_VERSION,
+    partialize: (s): PersistedPreferences => ({
+      pixis: {
+        ...s.pixis,
+        language: {
+          language: s.pixis.language.language,
+          short: s.pixis.language.short
+        }
+      },
+      monaco: s.monaco
+    }),
+    merge: (persisted, current) => {
+      const data = persisted as PersistedPreferences | undefined
+      return {
+        ...current,
+        pixis: mergePixis(data?.pixis),
+        monaco: mergeMonaco(data?.monaco)
+      }
+    },
+    onRehydrateStorage: () => state => {
+      if (state?.pixis) applyPixisDom(state.pixis)
+    }
+  })
+)
 
 export default usePixisPreferencesStore

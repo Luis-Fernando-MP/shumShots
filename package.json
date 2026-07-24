@@ -37,6 +37,7 @@
     "jose": "^6.2.4",
     "jspdf": "3.0.0",
     "lucide-react": "0.479.0",
+    "material-icon-theme": "^5.37.0",
     "monaco-themes": "0.4.4",
     "next": "15.2.2",
     "nextjs-toploader": "3.7.15",

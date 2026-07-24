@@ -177,7 +177,7 @@ const monacoLanguagesIcons = {
     dockerfile: {
       Icon: dockerfile,
       language: 'dockerfile',
-      short: 'json'
+      short: 'dockerfile'
     }
   },
 

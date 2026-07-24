@@ -1,10 +1,142 @@
 import { monacoFonts } from '@/shared/fonts/monaco-fonts'
 import monacoLanguagesIcons from '@/shared/monaco-languages'
 
-import type { PreferenceFieldDef, PreferenceGroup, PixisState } from './preferences.types'
+import type {
+  HeaderDensity,
+  MacTrafficPreset,
+  PixisChromeState,
+  PreferenceFieldDef,
+  PreferenceGroup,
+  PixisState
+} from './preferences.types'
 
 const language = monacoLanguagesIcons['Frontend Web'].typescript
 const typography = monacoFonts.monospace.style.fontFamily
+
+export const MAC_TRAFFIC_PRESETS: Record<
+  MacTrafficPreset,
+  { close: string; minimize: string; maximize: string; label: string }
+> = {
+  classic: { close: '#ff605c', minimize: '#ffbd44', maximize: '#00ca4e', label: 'Classic' },
+  graphite: { close: '#8e8e93', minimize: '#aeaeb2', maximize: '#c7c7cc', label: 'Graphite' },
+  candy: { close: '#ff6b9d', minimize: '#ffc857', maximize: '#7bdff2', label: 'Candy' },
+  mono: { close: '#3a3a3c', minimize: '#636366', maximize: '#8e8e93', label: 'Mono' }
+}
+
+export const HEADER_DENSITY_PX: Record<HeaderDensity, number> = {
+  compact: 36,
+  comfortable: 44,
+  tall: 56
+}
+
+export const EXPLORER_WIDTH_MIN = 120
+export const EXPLORER_WIDTH_MAX = 320
+export const EXPLORER_WIDTH_DEFAULT = 176
+
+export const BREADCRUMB_SEPARATORS = ['/', '>', '›', '·'] as const
+
+export const chromeDefaults = {
+  controls: 'mac',
+  controlsSide: 'left',
+  titleAlign: 'center',
+  macColors: 'classic',
+  headerDensity: 'comfortable',
+  headerTint: 'none',
+  headerAccent: false,
+  breadcrumb: false,
+  breadcrumbSeparator: '/',
+  statusBar: false,
+  statusBarDensity: 'full',
+  activityBar: false,
+  fileExplorer: false,
+  explorerWidthPx: EXPLORER_WIDTH_DEFAULT,
+  tabStyle: 'soft',
+  tabBadges: true,
+  showTabAdd: false
+} satisfies PixisChromeState
+
+export const CHROME_LOOK_PRESETS: {
+  id: string
+  label: string
+  description: string
+  patch: Partial<PixisChromeState>
+}[] = [
+  {
+    id: 'macos',
+    label: 'macOS',
+    description: 'Bolitas, título centrado, header suave',
+    patch: {
+      controls: 'mac',
+      controlsSide: 'left',
+      titleAlign: 'center',
+      macColors: 'classic',
+      headerTint: 'subtle',
+      headerAccent: false,
+      activityBar: false,
+      fileExplorer: false,
+      statusBar: false,
+      breadcrumb: false,
+      showTabAdd: false
+    }
+  },
+  {
+    id: 'vscode',
+    label: 'VS Code',
+    description: 'Tabs, explorer, activity y status bar',
+    patch: {
+      controls: 'none',
+      tabStyle: 'underline',
+      tabBadges: true,
+      showTabAdd: true,
+      headerTint: 'solid',
+      headerAccent: true,
+      activityBar: true,
+      fileExplorer: true,
+      explorerWidthPx: EXPLORER_WIDTH_DEFAULT,
+      breadcrumb: true,
+      breadcrumbSeparator: '/',
+      statusBar: true,
+      statusBarDensity: 'full'
+    }
+  },
+  {
+    id: 'windows',
+    label: 'Windows',
+    description: 'Controles a la derecha y tabs browser',
+    patch: {
+      controls: 'windows',
+      controlsSide: 'right',
+      titleAlign: 'left',
+      tabStyle: 'browser',
+      showTabAdd: false,
+      headerTint: 'subtle',
+      headerAccent: false,
+      statusBar: true,
+      statusBarDensity: 'compact',
+      breadcrumb: false
+    }
+  },
+  {
+    id: 'minimal',
+    label: 'Minimal',
+    description: 'Sin chrome extra, solo el código',
+    patch: {
+      controls: 'none',
+      breadcrumb: false,
+      statusBar: false,
+      activityBar: false,
+      fileExplorer: false,
+      headerTint: 'none',
+      headerAccent: false,
+      showTabAdd: false
+    }
+  }
+]
+
+export const matchesChromePreset = (
+  chrome: PixisChromeState,
+  patch: Partial<PixisChromeState>
+) => Object.entries(patch).every(([key, value]) => chrome[key as keyof PixisChromeState] === value)
 
 export const pixisDefaults = {
   showLanguageIcon: true,
@@ -14,11 +146,13 @@ export const pixisDefaults = {
   containerHeight: 600,
   containerPadding: 10,
   containerBorderRadius: 20,
-  aspectRatio: 'default'
+  aspectRatio: 'default',
+  chrome: chromeDefaults
 } satisfies Omit<PixisState, 'language' | 'typography'>
 
 export const getDefaultPixisState = (): PixisState => ({
   ...pixisDefaults,
+  chrome: { ...chromeDefaults },
   language,
   typography
 })
@@ -26,6 +160,12 @@ export const getDefaultPixisState = (): PixisState => ({
 const field = <T>(def: PreferenceFieldDef<T>) => def
 
 export const pixisPreferenceGroups = [
+  {
+    id: 'chrome',
+    title: 'Chrome de ventana:',
+    subtitle: 'Controles, tabs y marcos visuales del shot.',
+    panel: true
+  },
   {
     id: 'pixis',
     title: 'Pixis:',
@@ -35,6 +175,16 @@ export const pixisPreferenceGroups = [
 ] satisfies PreferenceGroup[]
 
 export const pixisPreferenceFields = {
+  chrome: field({
+    id: 'chrome',
+    groupId: 'chrome',
+    path: 'pixis.chrome',
+    kind: 'custom',
+    title: 'Estilo de ventana',
+    subtitle: 'Controles, alineación y chrome decorativo',
+    description: 'Personaliza cómo se ve el marco del editor en el shot.',
+    default: chromeDefaults
+  }),
   showLanguageIcon: field({
     id: 'showLanguageIcon',
     groupId: 'pixis',

@@ -1,6 +1,7 @@
 import Button from '@/shared/ui/Button'
 import Typography from '@common/ui/Typography'
 import usePixisPreferencesStore from '@views/code-studio/store/pixisPreferences.store'
+import useWorkspaceStore from '@views/code-studio/store/workspace.store'
 import { getGroup } from '@views/code-studio/utils/preferences.config'
 import { type FC, type ReactNode } from 'react'
 
@@ -12,6 +13,7 @@ import {
 import { PreferenceSearch, usePreferenceSearchState } from '../../../UserMonacoPreferences/preferences/PreferenceSearch'
 import SchemaPreferenceField from '../../../UserMonacoPreferences/preferences/SchemaPreference'
 import AspectRatioPreference from '../AspectRatioPreference'
+import WindowChromePreference from '../WindowChromePreference'
 
 const Section = ({
   groupId,
@@ -35,20 +37,36 @@ const Section = ({
 
 const SetterPixisPreferences: FC = () => {
   const resetPixis = usePixisPreferencesStore(s => s.resetPixis)
+  const resetPreferences = usePixisPreferencesStore(s => s.resetPreferences)
+  const resetWorkspace = useWorkspaceStore(s => s.resetWorkspace)
   const { query, setQuery, deferredQuery } = usePreferenceSearchState()
+
+  const resetAllChanges = () => {
+    resetPreferences()
+    resetWorkspace()
+  }
 
   return (
     <>
       <div className='sticky top-0 z-10 -mx-0.5 flex flex-col gap-2.5'>
         <PreferenceSearch value={query} onChange={setQuery} />
 
-        <Button variant='dashed' status='primary' className='w-full' onClick={() => resetPixis()}>
-          Restablecer configuración
-        </Button>
+        <div className='flex flex-col gap-1.5'>
+          <Button variant='dashed' status='primary' className='w-full' onClick={() => resetPixis()}>
+            Restablecer configuración
+          </Button>
+          <Button variant='dashed' status='error' className='w-full' onClick={resetAllChanges}>
+            Resetear cambios
+          </Button>
+        </div>
       </div>
 
       <PreferenceSearchProvider query={deferredQuery}>
         <div className='flex flex-col gap-5 has-[[data-preference-field]]:[&>[data-preference-empty]]:hidden'>
+          <Section groupId='chrome'>
+            <WindowChromePreference />
+          </Section>
+
           <Section groupId='pixis'>
             <SchemaPreferenceField fieldId='showLanguageIcon' />
             <SchemaPreferenceField fieldId='shadowLanguage' />
