@@ -2,7 +2,7 @@ import usePixisPreferencesStore from '@views/code-studio/store/pixisPreferences.
 import { getGroup } from '@views/code-studio/utils/preferences.config'
 import { type FC } from 'react'
 
-import { PreferenceField, PreferencePanel, PreferenceSection, PreferenceToggle } from '../PreferenceField'
+import { PreferenceField, PreferencePanel, PreferenceSection, PreferenceToggle } from '@views/code-studio/components/preferences/PreferenceField'
 
 const MinimapPreference: FC = () => {
   const group = getGroup('minimap')

@@ -1,5 +1,5 @@
-import { monacoFonts } from '@/shared/fonts/monaco-fonts'
 import monacoLanguagesIcons from '@/shared/monaco-languages'
+import { DEFAULT_MONACO_FONT_ID } from '@common/monaco'
 
 import type {
   HeaderDensity,
@@ -11,7 +11,7 @@ import type {
 } from './preferences.types'
 
 const language = monacoLanguagesIcons['Frontend Web'].typescript
-const typography = monacoFonts.monospace.style.fontFamily
+const typography = DEFAULT_MONACO_FONT_ID
 
 export const MAC_TRAFFIC_PRESETS: Record<
   MacTrafficPreset,
@@ -139,8 +139,6 @@ export const matchesChromePreset = (
 ) => Object.entries(patch).every(([key, value]) => chrome[key as keyof PixisChromeState] === value)
 
 export const pixisDefaults = {
-  showLanguageIcon: true,
-  shadowLanguage: false,
   borderRadius: 20,
   containerWidth: 900,
   containerHeight: 600,
@@ -169,7 +167,7 @@ export const pixisPreferenceGroups = [
   {
     id: 'pixis',
     title: 'Pixis:',
-    subtitle: 'Detalles visuales del shot: icono, radio y tamaño.',
+    subtitle: 'Detalles visuales del shot: radio y tamaño.',
     panel: true
   }
 ] satisfies PreferenceGroup[]
@@ -184,29 +182,6 @@ export const pixisPreferenceFields = {
     subtitle: 'Controles, alineación y chrome decorativo',
     description: 'Personaliza cómo se ve el marco del editor en el shot.',
     default: chromeDefaults
-  }),
-  showLanguageIcon: field({
-    id: 'showLanguageIcon',
-    groupId: 'pixis',
-    path: 'pixis.showLanguageIcon',
-    kind: 'boolean',
-    title: 'Icono del lenguaje',
-    subtitle: 'Badge sobre el editor',
-    description: 'Muestra el icono del lenguaje actual en el shot.',
-    default: pixisDefaults.showLanguageIcon,
-    options: [true, false]
-  }),
-  shadowLanguage: field({
-    id: 'shadowLanguage',
-    groupId: 'pixis',
-    path: 'pixis.shadowLanguage',
-    kind: 'boolean',
-    title: 'Sombra del icono',
-    subtitle: 'Glow para iconos claros',
-    description: 'Ayuda cuando el logo es blanco o muy transparente.',
-    note: 'Requiere icono del lenguaje activo.',
-    default: pixisDefaults.shadowLanguage,
-    options: [true, false]
   }),
   borderRadius: field({
     id: 'borderRadius',

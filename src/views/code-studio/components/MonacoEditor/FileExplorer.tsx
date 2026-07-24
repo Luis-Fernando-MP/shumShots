@@ -10,7 +10,7 @@ import {
   chromeDefaults
 } from '@views/code-studio/utils/preferences.config'
 import { ROOT_ID, getChildren, type FsEntry } from '@views/code-studio/utils/workspace.types'
-import { FileTypeIcon, FolderTypeIcon } from '@views/code-studio/utils/workspaceIcons'
+import { FileTypeIcon, FolderTypeIcon } from '@views/code-studio/components/workspaceIcons'
 import { ChevronDown, ChevronRight, FilePlus, FolderPlus, Trash2 } from 'lucide-react'
 import {
   type DragEvent,

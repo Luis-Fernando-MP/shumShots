@@ -4,7 +4,7 @@ import { cn } from '@common/utils/cn'
 import { FileCode2 } from 'lucide-react'
 import { type FC, useMemo } from 'react'
 
-import { getLanguageMetaFromFileName } from './languageMeta'
+import { getLanguageMetaFromFileName } from '@common/monaco'
 
 const MATERIAL_ICONS_BASE = '/api/material-icons'
 
@@ -40,8 +40,6 @@ const FOLDER_ICON_BY_NAME: Record<string, string> = {
   documentation: 'folder-docs',
   workspace: 'folder-project'
 }
-
-export { getLanguageMetaFromFileName } from './languageMeta'
 
 export const getMaterialFolderIcon = (folderName: string, expanded: boolean) => {
   const key = folderName.toLowerCase()

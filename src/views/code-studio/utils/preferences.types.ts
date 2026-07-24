@@ -76,8 +76,6 @@ export type PixisChromeState = {
 export type PixisState = {
   language: MonacoLanguage
   typography: string
-  showLanguageIcon: boolean
-  shadowLanguage: boolean
   borderRadius: number
   containerWidth: number
   containerHeight: number

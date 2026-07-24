@@ -28,14 +28,13 @@ const isDockerfileName = (fileName: string) => {
   return DOCKERFILE_NAMES.has(stem)
 }
 
+/** Resuelve metadatos de lenguaje Monaco desde un nombre de archivo. */
 export const getLanguageMetaFromFileName = (fileName: string): MonacoLanguage | null => {
   if (isDockerfileName(fileName)) {
     return languageByShort.get('dockerfile') ?? null
   }
 
-  const ext = fileName.includes('.')
-    ? fileName.split('.').pop()?.toLowerCase()
-    : null
+  const ext = fileName.includes('.') ? fileName.split('.').pop()?.toLowerCase() : null
   if (!ext) return null
   return languageByShort.get(ext) ?? null
 }

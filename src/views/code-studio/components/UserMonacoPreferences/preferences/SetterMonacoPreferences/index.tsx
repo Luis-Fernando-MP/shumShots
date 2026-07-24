@@ -1,14 +1,18 @@
 import Button from '@/shared/ui/Button'
 import Typography from '@common/ui/Typography'
+import {
+  PreferencePanel,
+  PreferenceSearchProvider,
+  PreferenceSection
+} from '@views/code-studio/components/preferences/PreferenceField'
+import { PreferenceSearch, usePreferenceSearchState } from '@views/code-studio/components/preferences/PreferenceSearch'
+import SchemaPreferenceField from '@views/code-studio/components/preferences/SchemaPreference'
 import useMonacoThemeStore from '@views/code-studio/store/monacoTheme.store'
 import usePixisPreferencesStore from '@views/code-studio/store/pixisPreferences.store'
 import { getGroup } from '@views/code-studio/utils/preferences.config'
 import { type FC, type ReactNode } from 'react'
 
 import MinimapPreference from '../MinimapPreference'
-import { PreferencePanel, PreferenceSearchProvider, PreferenceSection } from '../PreferenceField'
-import { PreferenceSearch, usePreferenceSearchState } from '../PreferenceSearch'
-import SchemaPreferenceField from '../SchemaPreference'
 import ScrollPreference from '../ScrollPreference'
 import StickyScrollPreference from '../StickyScrollPreference'
 

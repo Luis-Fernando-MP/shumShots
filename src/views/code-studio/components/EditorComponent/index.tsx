@@ -1,14 +1,17 @@
 'use client'
 
+import '@common/monaco/setup'
+
 import Editor from '@monaco-editor/react'
+import {
+  getLanguageMetaFromFileName,
+  languageIdFromFileName,
+  resolveMonacoFontFamily
+} from '@common/monaco'
 import useMonacoEditor from '@views/code-studio/hooks/useMonacoEditor'
 import usePixisPreferencesStore from '@views/code-studio/store/pixisPreferences.store'
 import useReferenceMonacoStore from '@views/code-studio/store/referenceMonaco'
 import useWorkspaceStore, { selectActiveFile } from '@views/code-studio/store/workspace.store'
-import {
-  getLanguageMetaFromFileName,
-  languageIdFromFileName
-} from '@views/code-studio/utils/languageMeta'
 import { type FC, useEffect, useRef } from 'react'
 
 import LoaderEditor from './LoaderEditor'
@@ -17,7 +20,8 @@ const EditorComponent: FC = () => {
   const monacoOpts = usePixisPreferencesStore(s => s.monaco)
   const fallbackLanguage = usePixisPreferencesStore(s => s.pixis.language)
   const setLanguage = usePixisPreferencesStore(s => s.setLanguage)
-  const typography = usePixisPreferencesStore(s => s.pixis.typography)
+  const typographyId = usePixisPreferencesStore(s => s.pixis.typography)
+  const typography = resolveMonacoFontFamily(typographyId)
   const activeFile = useWorkspaceStore(selectActiveFile)
   const activeFileId = useWorkspaceStore(s => s.activeFileId)
   const setFileContent = useWorkspaceStore(s => s.setFileContent)

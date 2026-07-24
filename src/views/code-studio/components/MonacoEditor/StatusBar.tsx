@@ -1,11 +1,11 @@
 'use client'
 
+import { languageIdFromFileName } from '@common/monaco'
 import { cn } from '@common/utils/cn'
 import useReferenceMonacoStore from '@views/code-studio/store/referenceMonaco'
 import useWorkspaceStore, { selectActiveFile } from '@views/code-studio/store/workspace.store'
 import type { StatusBarDensity } from '@views/code-studio/utils/preferences.types'
-import { FileTypeIcon } from '@views/code-studio/utils/workspaceIcons'
-import { languageFromFileName } from '@views/code-studio/utils/workspace.types'
+import { FileTypeIcon } from '@views/code-studio/components/workspaceIcons'
 import { type FC, useEffect, useState } from 'react'
 
 interface StatusBarProps {
@@ -30,7 +30,7 @@ export const StatusBar: FC<StatusBarProps> = ({
   const $editor = useReferenceMonacoStore(s => s.$editor)
   const [cursor, setCursor] = useState({ line: 1, column: 1 })
 
-  const language = activeFile ? languageFromFileName(activeFile.name) : 'typescript'
+  const language = activeFile ? languageIdFromFileName(activeFile.name) : 'typescript'
   const lineCount = countLines(activeFile?.content ?? '')
   const compact = density === 'compact'
 

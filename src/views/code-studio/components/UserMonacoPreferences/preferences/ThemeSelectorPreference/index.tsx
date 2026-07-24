@@ -1,8 +1,7 @@
 import { ThemeMonacoName, monacoThemes } from '@/shared/themes/monacoThemes'
 import PaletteSphere from '@/shared/ui/PaletteSphere'
+import useMonacoThemeStore from '@views/code-studio/store/monacoTheme.store'
 import type { FC } from 'react'
-
-import useMonacoThemeStore from '../../store/monacoTheme.store'
 
 const PALETTE_KEYS = {
   'tn-primary': 'editor.foreground',

@@ -1,4 +1,4 @@
-import { exampleShotCode } from '../utils/exampleShotCode'
+import { exampleShotCode } from './exampleShotCode'
 
 export type ActivityIconId = 'files' | 'search' | 'git' | 'blocks' | 'settings'
 
@@ -87,5 +87,3 @@ export const getPathSegments = (entries: Record<string, FsEntry>, fileId: string
   }
   return parts
 }
-
-export { languageIdFromFileName as languageFromFileName } from './languageMeta'

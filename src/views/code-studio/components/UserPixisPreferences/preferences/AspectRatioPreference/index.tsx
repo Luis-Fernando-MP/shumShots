@@ -18,7 +18,7 @@ import {
 import { getDefaultState, getField } from '@views/code-studio/utils/preferences.config'
 import { type FC, useState } from 'react'
 
-import { PreferenceField } from '../../../UserMonacoPreferences/preferences/PreferenceField'
+import { PreferenceField } from '@views/code-studio/components/preferences/PreferenceField'
 
 const AspectRatioButton: FC<{
   ratio?: string

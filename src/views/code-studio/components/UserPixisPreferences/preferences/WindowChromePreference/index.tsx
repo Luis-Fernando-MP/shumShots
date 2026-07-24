@@ -29,7 +29,7 @@ import { type FC, type ReactNode } from 'react'
 import {
   PreferenceField,
   PreferenceToggle
-} from '../../../UserMonacoPreferences/preferences/PreferenceField'
+} from '@views/code-studio/components/preferences/PreferenceField'
 
 const CONTROLS_LABEL: Record<WindowControlsStyle, string> = {
   mac: 'Mac',

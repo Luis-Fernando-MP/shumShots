@@ -1,17 +1,17 @@
 import Button from '@/shared/ui/Button'
 import Typography from '@common/ui/Typography'
+import {
+  PreferencePanel,
+  PreferenceSearchProvider,
+  PreferenceSection
+} from '@views/code-studio/components/preferences/PreferenceField'
+import { PreferenceSearch, usePreferenceSearchState } from '@views/code-studio/components/preferences/PreferenceSearch'
+import SchemaPreferenceField from '@views/code-studio/components/preferences/SchemaPreference'
 import usePixisPreferencesStore from '@views/code-studio/store/pixisPreferences.store'
 import useWorkspaceStore from '@views/code-studio/store/workspace.store'
 import { getGroup } from '@views/code-studio/utils/preferences.config'
 import { type FC, type ReactNode } from 'react'
 
-import {
-  PreferencePanel,
-  PreferenceSearchProvider,
-  PreferenceSection
-} from '../../../UserMonacoPreferences/preferences/PreferenceField'
-import { PreferenceSearch, usePreferenceSearchState } from '../../../UserMonacoPreferences/preferences/PreferenceSearch'
-import SchemaPreferenceField from '../../../UserMonacoPreferences/preferences/SchemaPreference'
 import AspectRatioPreference from '../AspectRatioPreference'
 import WindowChromePreference from '../WindowChromePreference'
 
@@ -68,8 +68,6 @@ const SetterPixisPreferences: FC = () => {
           </Section>
 
           <Section groupId='pixis'>
-            <SchemaPreferenceField fieldId='showLanguageIcon' />
-            <SchemaPreferenceField fieldId='shadowLanguage' />
             <SchemaPreferenceField fieldId='borderRadius' />
             <SchemaPreferenceField fieldId='containerBorderRadius' />
             <SchemaPreferenceField fieldId='containerHeight' />

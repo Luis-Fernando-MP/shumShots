@@ -1,4 +1,4 @@
-import { monacoFonts } from '@/shared/fonts/monaco-fonts'
+import { monacoFonts } from '@common/monaco'
 import Typography from '@common/ui/Typography'
 import { cn } from '@common/utils/cn'
 import { CheckIcon } from 'lucide-react'

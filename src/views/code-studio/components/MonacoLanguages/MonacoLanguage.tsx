@@ -5,7 +5,7 @@ import useWorkspaceStore, { selectActiveFile } from '@views/code-studio/store/wo
 import {
   getLanguageMetaFromFileName,
   replaceFileExtension
-} from '@views/code-studio/utils/languageMeta'
+} from '@common/monaco'
 import type { FC } from 'react'
 
 import IconLanguage from './IconLanguage'

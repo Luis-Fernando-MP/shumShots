@@ -8,7 +8,7 @@ import {
   isAspectLocked,
   widthFromHeight
 } from '../utils/aspectRatio'
-import { resolveLanguageMeta } from '../utils/languageMeta'
+import { resolveLanguageMeta, resolveMonacoFontId } from '@common/monaco'
 import {
   type MonacoState,
   type PixisChromeState,
@@ -30,7 +30,6 @@ interface PixisPreferencesActions {
   setMonaco: <K extends MonacoKey>(key: K, value: MonacoState[K]) => void
   patchPixis: (partial: Partial<PixisState>) => void
   patchChrome: (partial: Partial<PixisChromeState>) => void
-  patchMonaco: (partial: Partial<MonacoState>) => void
   resetPixis: () => void
   resetMonaco: () => void
   resetPreferences: () => void
@@ -116,12 +115,18 @@ const mergeMonaco = (persisted?: Partial<MonacoState>): MonacoState => {
 const mergePixis = (persisted?: Partial<PersistedPreferences['pixis']>): PixisState => {
   const defaults = getDefaultState().pixis
   if (!persisted) return defaults
-  return {
+
+  const next = {
     ...defaults,
     ...persisted,
     chrome: { ...chromeDefaults, ...persisted.chrome },
-    language: resolveLanguageMeta(persisted.language)
-  }
+    language: resolveLanguageMeta(persisted.language),
+    typography: resolveMonacoFontId(persisted.typography)
+  } as PixisState & { showLanguageIcon?: boolean; shadowLanguage?: boolean }
+
+  delete next.showLanguageIcon
+  delete next.shadowLanguage
+  return next
 }
 
 const state: StateCreator<PixisPreferencesStore> = set => ({
@@ -158,11 +163,6 @@ const state: StateCreator<PixisPreferencesStore> = set => ({
         ...s.pixis,
         chrome: { ...s.pixis.chrome, ...partial }
       }
-    })),
-
-  patchMonaco: partial =>
-    set(s => ({
-      monaco: { ...s.monaco, ...partial }
     })),
 
   resetPixis: () => {

@@ -1,6 +1,6 @@
 'use client'
 
-import { monacoFonts } from '@/shared/fonts/monaco-fonts'
+import { monacoFonts, resolveMonacoFontId, type MonacoFontId } from '@common/monaco'
 import usePixisPreferencesStore from '@views/code-studio/store/pixisPreferences.store'
 import dynamic from 'next/dynamic'
 import type { FC } from 'react'
@@ -16,12 +16,13 @@ const formatFontName = (key: string) =>
 const MonacoFonts: FC = () => {
   const typography = usePixisPreferencesStore(s => s.pixis.typography)
   const setTypography = usePixisPreferencesStore(s => s.setTypography)
+  const selectedId = resolveMonacoFontId(typography)
 
   return (
     <div className='grid w-full grid-cols-2 gap-1.5 sm:grid-cols-3'>
       {Object.entries(monacoFonts).map(([name, font]) => {
-        const fontFamily = font.style.fontFamily
-        const selected = typography === fontFamily
+        const fontId = name as MonacoFontId
+        const selected = selectedId === fontId
 
         return (
           <TypographyDisplay
@@ -29,7 +30,7 @@ const MonacoFonts: FC = () => {
             font={font}
             title={formatFontName(name)}
             selected={selected}
-            onClick={() => setTypography(fontFamily)}
+            onClick={() => setTypography(fontId)}
             aria-label={`Tipografía ${formatFontName(name)}`}
           />
         )

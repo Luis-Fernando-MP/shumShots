@@ -12,7 +12,7 @@ import { ActivityBar } from './ActivityBar'
 import { EditorBreadcrumb } from './EditorBreadcrumb'
 import { FileExplorer } from './FileExplorer'
 import { StatusBar } from './StatusBar'
-import { EditorTabs } from './VisualTabs'
+import { EditorTabs } from './EditorTabs'
 import { WindowControls, headerHeight } from './WindowControls'
 
 const EditorComponent = dynamic(() => import('../EditorComponent'), { ssr: false })

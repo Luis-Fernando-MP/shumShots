@@ -9,7 +9,7 @@ import { Settings } from 'lucide-react'
 import { type FC, type ReactNode } from 'react'
 
 import MonacoLanguages from '../MonacoLanguages'
-import ThemeSelectorPreference from './ThemeSelectorPreference'
+import ThemeSelectorPreference from './preferences/ThemeSelectorPreference'
 import MonacoFonts from './preferences/MonacoFonts'
 import SetterMonacoPreferences from './preferences/SetterMonacoPreferences'
 
