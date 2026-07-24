@@ -22,6 +22,7 @@ const MainBarOptions: FC = () => {
       <Button size='icon' tooltip='Formatear código' onClick={handleFormatCode}>
         <LetterText />
       </Button>
+
       <ShotFileName />
       <UserMonacoPreferences />
     </section>

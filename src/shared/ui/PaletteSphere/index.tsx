@@ -10,10 +10,16 @@ interface Props extends ButtonHTMLAttributes<HTMLButtonElement> {
   selected?: boolean
 }
 
-const toCssColor = (color: string) => (color.startsWith('#') || color.startsWith('rgb') ? color : `rgb(${color})`)
+const toCssColor = (color?: string) => {
+  if (!color) return 'transparent'
+  if (color.startsWith('#') || color.startsWith('rgb') || color.startsWith('hsl')) return color
+  return `rgb(${color})`
+}
 
 const PaletteSphere: FC<Props> = ({ title, theme, className, selected = false, ...props }) => {
-  const swatches = [theme['tn-primary'], theme['tn-secondary'], theme['bg-primary']]
+  const swatches = [theme['tn-primary'], theme['tn-secondary'], theme['bg-primary']].filter(
+    (color): color is string => Boolean(color)
+  )
 
   return (
     <Button

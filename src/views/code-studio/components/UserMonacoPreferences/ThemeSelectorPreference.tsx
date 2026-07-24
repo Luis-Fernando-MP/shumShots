@@ -20,12 +20,14 @@ const ThemeSelectorPreference: FC = () => {
             selected={name === themeName}
             onClick={() => setThemeName(name as ThemeMonacoName)}
             theme={{
-              'tn-primary': colors['editor.foreground'],
+              'tn-primary': colors['editor.foreground'] ?? colors['editor.background'] ?? '#888888',
               'tn-secondary':
                 colors['activityBarBadge.background'] ??
                 colors['editor.selectionBackground'] ??
-                colors['editor.selectionHighlightBackground'],
-              'bg-primary': colors['editor.background']
+                colors['editor.selectionHighlightBackground'] ??
+                colors['editor.foreground'] ??
+                '#666666',
+              'bg-primary': colors['editor.background'] ?? '#1e1e1e'
             }}
           />
         )

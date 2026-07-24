@@ -39,13 +39,7 @@ const MainBar: FC<Props> = ({ className = '', children }) => {
         className
       )}
     >
-      <Button
-        href='/'
-        variant='ghost'
-        tooltip='Inicio'
-        aria-label='Volver al inicio'
-        className='size-auto h-auto shrink-0 rounded-full p-1'
-      >
+      <Button href='/' variant='ghost' className='size-auto h-auto shrink-0 rounded-full p-1'>
         <ShumShots size='sm' radius='circle' transparent />
       </Button>
 
