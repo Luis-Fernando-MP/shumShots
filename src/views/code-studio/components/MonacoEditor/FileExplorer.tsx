@@ -1,6 +1,7 @@
 'use client'
 
 import { cn } from '@common/utils/cn'
+import { FileTypeIcon, FolderTypeIcon } from '@views/code-studio/components/workspaceIcons'
 import usePixisPreferencesStore from '@views/code-studio/store/pixisPreferences.store'
 import useWorkspaceStore from '@views/code-studio/store/workspace.store'
 import {
@@ -9,18 +10,9 @@ import {
   EXPLORER_WIDTH_MIN,
   chromeDefaults
 } from '@views/code-studio/utils/preferences.config'
-import { ROOT_ID, getChildren, type FsEntry } from '@views/code-studio/utils/workspace.types'
-import { FileTypeIcon, FolderTypeIcon } from '@views/code-studio/components/workspaceIcons'
+import { type FsEntry, ROOT_ID, getChildren } from '@views/code-studio/utils/workspace.types'
 import { ChevronDown, ChevronRight, FilePlus, FolderPlus, Trash2 } from 'lucide-react'
-import {
-  type DragEvent,
-  type FC,
-  type KeyboardEvent,
-  useCallback,
-  useEffect,
-  useRef,
-  useState
-} from 'react'
+import { type DragEvent, type FC, type KeyboardEvent, useCallback, useEffect, useRef, useState } from 'react'
 
 interface FileExplorerProps {
   foreground?: string
@@ -62,9 +54,7 @@ const TreeNode: FC<{
   const children = isFolder && entry.expanded ? getChildren(entries, entry.id) : []
   const isActive = entry.kind === 'file' && entry.id === activeFileId
   const isDropTarget = dropTargetId === entry.id
-  const canDelete = Object.values(entries).some(
-    item => item.kind === 'file' && !isInside(entries, entry.id, item.id)
-  )
+  const canDelete = Object.values(entries).some(item => item.kind === 'file' && !isInside(entries, entry.id, item.id))
 
   useEffect(() => {
     if (!editing) setDraft(entry.name)
@@ -159,9 +149,7 @@ const TreeNode: FC<{
             setEditing(true)
           }}
         >
-          {isFolder && (
-            <FolderTypeIcon folderName={entry.name} expanded={Boolean(entry.expanded)} />
-          )}
+          {isFolder && <FolderTypeIcon folderName={entry.name} expanded={Boolean(entry.expanded)} />}
           {!isFolder && <FileTypeIcon fileName={entry.name} />}
 
           {editing && (
@@ -221,9 +209,7 @@ export const FileExplorer: FC<FileExplorerProps> = ({ foreground, className }) =
   const addFolder = useWorkspaceStore(s => s.addFolder)
   const moveEntry = useWorkspaceStore(s => s.moveEntry)
   const explorerWidthPx =
-    usePixisPreferencesStore(s => s.pixis.chrome.explorerWidthPx) ??
-    chromeDefaults.explorerWidthPx ??
-    EXPLORER_WIDTH_DEFAULT
+    usePixisPreferencesStore(s => s.pixis.chrome.explorerWidthPx) ?? chromeDefaults.explorerWidthPx ?? EXPLORER_WIDTH_DEFAULT
   const patchChrome = usePixisPreferencesStore(s => s.patchChrome)
   const roots = getChildren(entries, ROOT_ID)
   const dragging = useRef(false)
@@ -238,10 +224,7 @@ export const FileExplorer: FC<FileExplorerProps> = ({ foreground, className }) =
 
       const onMove = (ev: globalThis.PointerEvent) => {
         if (!dragging.current) return
-        const next = Math.min(
-          EXPLORER_WIDTH_MAX,
-          Math.max(EXPLORER_WIDTH_MIN, startWidth + (ev.clientX - startX))
-        )
+        const next = Math.min(EXPLORER_WIDTH_MAX, Math.max(EXPLORER_WIDTH_MIN, startWidth + (ev.clientX - startX)))
         patchChrome({ explorerWidthPx: Math.round(next) })
       }
 
@@ -278,9 +261,7 @@ export const FileExplorer: FC<FileExplorerProps> = ({ foreground, className }) =
       style={{ color: foreground, width: explorerWidthPx }}
     >
       <div className='flex h-9 shrink-0 items-center justify-between gap-1 px-3'>
-        <span className='text-[11px] font-semibold tracking-[0.04em] uppercase opacity-60'>
-          Explorer
-        </span>
+        <span className='text-[11px] font-semibold tracking-[0.04em] uppercase opacity-60'>Explorer</span>
         <div className='flex items-center'>
           <button
             type='button'
@@ -304,10 +285,7 @@ export const FileExplorer: FC<FileExplorerProps> = ({ foreground, className }) =
       </div>
 
       <div
-        className={cn(
-          'scrollbar-hidden min-h-0 flex-1 overflow-y-auto py-0.5',
-          dropTargetId === ROOT_ID && 'bg-current/5'
-        )}
+        className={cn('scrollbar-hidden min-h-0 flex-1 overflow-y-auto py-0.5', dropTargetId === ROOT_ID && 'bg-current/5')}
         onDragOver={onRootDragOver}
         onDragLeave={() => setDropTargetId(null)}
         onDrop={onRootDrop}

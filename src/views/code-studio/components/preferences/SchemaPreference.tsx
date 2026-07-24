@@ -57,7 +57,9 @@ const SchemaPreferenceField: FC<{ fieldId: PreferenceFieldId }> = ({ fieldId }) 
           label={
             fieldId === 'lineHeight'
               ? v => (v === field.default ? 'Normal' : `x${(Number(v) / Number(field.default)).toFixed(1)}`)
-              : undefined
+              : fieldId === 'exportScale'
+                ? v => `x${v}`
+                : undefined
           }
         />
       )}

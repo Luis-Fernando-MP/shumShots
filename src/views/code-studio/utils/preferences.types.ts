@@ -5,14 +5,7 @@ type Monaco = editor.IEditorOptions
 
 export type PixisPreferenceGroupId = 'pixis' | 'chrome'
 
-export type MonacoPreferenceGroupId =
-  | 'visual'
-  | 'typography'
-  | 'minimap'
-  | 'scrollbar'
-  | 'stickyScroll'
-  | 'cursor'
-  | 'editor'
+export type MonacoPreferenceGroupId = 'visual' | 'typography' | 'minimap' | 'scrollbar' | 'stickyScroll' | 'cursor' | 'editor'
 
 export type PreferenceGroupId = PixisPreferenceGroupId | MonacoPreferenceGroupId
 
@@ -82,6 +75,7 @@ export type PixisState = {
   containerPadding: number
   containerBorderRadius: number
   aspectRatio: string
+  exportScale: number
   chrome: PixisChromeState
 }
 

@@ -1,10 +1,9 @@
 'use client'
 
+import { getLanguageMetaFromFileName } from '@common/monaco'
 import { cn } from '@common/utils/cn'
 import { FileCode2 } from 'lucide-react'
 import { type FC, useMemo } from 'react'
-
-import { getLanguageMetaFromFileName } from '@common/monaco'
 
 const MATERIAL_ICONS_BASE = '/api/material-icons'
 
@@ -59,12 +58,7 @@ export const FileTypeIcon: FC<FileTypeIconProps> = ({ fileName, className }) => 
   if (meta?.Icon) {
     const Icon = meta.Icon
     return (
-      <span
-        className={cn(
-          'inline-flex size-3.5 shrink-0 items-center justify-center [&_svg]:size-full',
-          className
-        )}
-      >
+      <span className={cn('inline-flex size-3.5 shrink-0 items-center justify-center [&_svg]:size-full', className)}>
         <Icon />
       </span>
     )
@@ -79,12 +73,7 @@ interface FolderTypeIconProps {
   className?: string
 }
 
-export const FolderTypeIcon: FC<FolderTypeIconProps> = ({
-  folderName,
-  expanded = false,
-  className
-}) => (
-  // eslint-disable-next-line @next/next/no-img-element
+export const FolderTypeIcon: FC<FolderTypeIconProps> = ({ folderName, expanded = false, className }) => (
   <img
     src={getMaterialFolderIcon(folderName, expanded)}
     alt=''

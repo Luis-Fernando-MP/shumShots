@@ -5,18 +5,25 @@ import Button from '@/shared/ui/Button'
 import { domCapture } from '@common/lib/snapdom'
 import Input from '@common/ui/Input'
 import { copyImage } from '@lucide/lab'
+import usePixisPreferencesStore from '@views/code-studio/store/pixisPreferences.store'
 import { CloudDownload, Icon } from 'lucide-react'
 import { type ChangeEvent, type FC, useState } from 'react'
 import toast from 'react-hot-toast'
 
 const ILLEGAL = /[\\/:*?"<>|]/g
 const SHOT_TARGET_ID = 'monacoEditor-container'
+const EXPORT_SCALE_MIN = 4
+const EXPORT_SCALE_MAX = 10
 
 const resolveTarget = () => document.getElementById(SHOT_TARGET_ID)
+
+const clampExportScale = (value: number) =>
+  Math.min(EXPORT_SCALE_MAX, Math.max(EXPORT_SCALE_MIN, Math.round(value)))
 
 const ShotFileName: FC = () => {
   const [fileName, setFileName] = useState('pixis')
   const [busy, setBusy] = useState(false)
+  const exportScale = usePixisPreferencesStore(s => clampExportScale(s.pixis.exportScale ?? 5))
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     setFileName(e.target.value.replace(ILLEGAL, ''))
@@ -66,23 +73,30 @@ const ShotFileName: FC = () => {
       />
 
       <Button
-        tooltip='Descargar imagen'
+        tooltip={`Descargar imagen (x${exportScale})`}
         variant='dashed'
         status='primary'
         size='icon'
         disabled={busy}
-        onClick={() => run(el => domCapture.download(el, fileName), 'La descarga ha fallado')}
+        onClick={() =>
+          run(
+            el => domCapture.download(el, fileName, { scale: exportScale }),
+            'La descarga ha fallado'
+          )
+        }
       >
         <CloudDownload />
       </Button>
 
       <Button
-        tooltip='Copiar imagen'
+        tooltip={`Copiar imagen (x${exportScale})`}
         variant='dashed'
         status='primary'
         size='icon'
         disabled={busy}
-        onClick={() => run(el => domCapture.copy(el), 'No se pudo copiar la imagen')}
+        onClick={() =>
+          run(el => domCapture.copy(el, { scale: exportScale }), 'No se pudo copiar la imagen')
+        }
       >
         <Icon iconNode={copyImage} />
       </Button>

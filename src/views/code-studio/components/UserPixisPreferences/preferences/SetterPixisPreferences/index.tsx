@@ -74,6 +74,7 @@ const SetterPixisPreferences: FC = () => {
             <SchemaPreferenceField fieldId='containerWidth' />
             <AspectRatioPreference />
             <SchemaPreferenceField fieldId='containerPadding' />
+            <SchemaPreferenceField fieldId='exportScale' />
           </Section>
 
           {deferredQuery.trim() ? (

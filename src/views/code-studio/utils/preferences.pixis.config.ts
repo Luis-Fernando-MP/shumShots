@@ -145,6 +145,7 @@ export const pixisDefaults = {
   containerPadding: 10,
   containerBorderRadius: 20,
   aspectRatio: 'default',
+  exportScale: 5,
   chrome: chromeDefaults
 } satisfies Omit<PixisState, 'language' | 'typography'>
 
@@ -270,6 +271,22 @@ export const pixisPreferenceFields = {
     max: 100,
     step: 5,
     suffix: 'px'
+  }),
+  exportScale: field({
+    id: 'exportScale',
+    groupId: 'pixis',
+    path: 'pixis.exportScale',
+    kind: 'custom',
+    title: 'Calidad de imagen',
+    subtitle: 'Escala al descargar o copiar',
+    description: 'Multiplica la resolución del PNG exportado.',
+    example: 'Ej: x5 = buena calidad; x10 = máxima (más pesado)',
+    note: 'Valores altos tardan más y generan archivos más grandes.',
+    default: pixisDefaults.exportScale,
+    options: [4, 5, 6, 7, 8, 9, 10],
+    min: 4,
+    max: 10,
+    step: 1
   })
 }
 

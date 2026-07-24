@@ -121,7 +121,8 @@ const mergePixis = (persisted?: Partial<PersistedPreferences['pixis']>): PixisSt
     ...persisted,
     chrome: { ...chromeDefaults, ...persisted.chrome },
     language: resolveLanguageMeta(persisted.language),
-    typography: resolveMonacoFontId(persisted.typography)
+    typography: resolveMonacoFontId(persisted.typography),
+    exportScale: Math.min(10, Math.max(4, Math.round(persisted.exportScale ?? defaults.exportScale)))
   } as PixisState & { showLanguageIcon?: boolean; shadowLanguage?: boolean }
 
   delete next.showLanguageIcon
