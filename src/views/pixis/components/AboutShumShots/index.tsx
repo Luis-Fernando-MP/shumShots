@@ -53,7 +53,7 @@ const AboutShumShots: FC = () => {
               <ShumShots size='md' />
             </BrandLink>
           </div>
-          <Typography.Heading face='display' weight='bold' className='text-lg tracking-wide'>
+          <Typography.Heading face='display' weight='bold' className='tracking-wide'>
             SHUM Dev
           </Typography.Heading>
         </Typography.Block>

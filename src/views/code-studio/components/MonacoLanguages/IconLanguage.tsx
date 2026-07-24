@@ -1,7 +1,7 @@
-import { acl } from '@/shared/acl'
 import { MonacoLanguage } from '@/shared/monaco-languages'
-import SimpleButtonLabel from '@/shared/ui/SimpleButtonLabel'
-import { FC, memo } from 'react'
+import Button from '@/shared/ui/Button'
+import { cn } from '@common/utils/cn'
+import { type FC, memo } from 'react'
 
 interface Props {
   language: MonacoLanguage
@@ -13,14 +13,20 @@ const IconLanguage: FC<Props> = ({ language, onClick, selected }) => {
   const { Icon, language: lang } = language
 
   return (
-    <SimpleButtonLabel
+    <Button
+      size='icon'
+      variant='soft'
+      tooltip={lang}
+      isSelected={selected}
       onClick={() => onClick(language)}
-      label={lang}
-      position='bottom'
-      className={`monacoThemeCategory-languageAction rounded-[5px] border-2 border-transparent p-grid-sm [&_.icon]:size-6 ${acl(selected, 'selected border-primary [&_.icon]:drop-shadow-[0_5px_7px_rgb(var(--tn-primary))]')}`}
+      aria-label={lang}
+      className={cn(
+        'size-10 [&_svg]:size-6',
+        selected && '[&_svg]:drop-shadow-[0_4px_6px_rgb(var(--tn-primary))]'
+      )}
     >
       <Icon />
-    </SimpleButtonLabel>
+    </Button>
   )
 }
 

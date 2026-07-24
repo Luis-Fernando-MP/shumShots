@@ -3,18 +3,36 @@
 import Popup from '@/shared/components/Popup'
 import SliceContainer from '@/shared/components/SliceContainer'
 import Button from '@/shared/ui/Button'
+import { Separator } from '@common/ui/Separator'
 import Typography from '@common/ui/Typography'
 import { Settings } from 'lucide-react'
-import { type FC } from 'react'
+import { type FC, type ReactNode } from 'react'
 
 import MonacoLanguages from '../MonacoLanguages'
 import MonacoFonts from './MonacoFonts'
 import SetterMonacoPreferences from './SetterMonacoPreferences'
 import ThemeSelectorPreference from './ThemeSelectorPreference'
 
+const Section = ({
+  title,
+  subtitle,
+  children
+}: {
+  title: string
+  subtitle: string
+  children: ReactNode
+}) => (
+  <Typography.Block title={title} className='gap-2.5'>
+    <Typography.Paragraph tone='secondary' className='m-0 -mt-0.5 leading-snug'>
+      {subtitle}
+    </Typography.Paragraph>
+    {children}
+  </Typography.Block>
+)
+
 const UserMonacoPreferences: FC = () => {
   return (
-    <Popup className='monacoPreferences-popup h-[700px] max-h-[700px] w-[400px]'>
+    <Popup className='h-[min(700px,85dvh)] w-[min(100vw-2rem,420px)]'>
       <Popup.Trigger>
         <Button size='icon' tooltip='Configurar monaco'>
           <Settings />
@@ -23,32 +41,30 @@ const UserMonacoPreferences: FC = () => {
 
       <Popup.Header>Monaco config</Popup.Header>
 
-      <Popup.Content className='gap-grid-xl flex flex-col'>
-        <Typography.Block title='Temas:' className='monacoPreferences-section gap-grid-lg flex flex-col'>
-          <SliceContainer
-            maxHeight={100}
-            extendedMaxHeight={500}
-            className='monacoPreferences-themes gap-grid-sm flex w-full flex-row flex-wrap'
-          >
+      <Popup.Content className='scrollbar-hidden flex flex-col gap-5'>
+        <Section title='Temas:' subtitle='Paleta de sintaxis del editor.'>
+          <SliceContainer maxHeight={112} extendedMaxHeight={480} className='flex w-full flex-row flex-wrap gap-1.5'>
             <ThemeSelectorPreference />
           </SliceContainer>
-        </Typography.Block>
+        </Section>
 
-        <Typography.Block title='Lenguajes de Programación:' className='monacoPreferences-section gap-grid-lg flex flex-col'>
-          <SliceContainer maxHeight={130} extendedMaxHeight={500} className='monacoPreferences-languages flex w-full flex-col'>
+        <Separator orientation='horizontal' className='opacity-60' />
+
+        <Section title='Lenguajes de Programación:' subtitle='Icono y modo de resaltado del shot.'>
+          <SliceContainer maxHeight={140} extendedMaxHeight={480} className='flex w-full flex-col gap-3'>
             <MonacoLanguages />
           </SliceContainer>
-        </Typography.Block>
+        </Section>
 
-        <Typography.Block title='Tipografía:' className='monacoPreferences-section gap-grid-lg flex flex-col'>
-          <SliceContainer
-            maxHeight={130}
-            extendedMaxHeight={500}
-            className='monacoPreferences-fonts gap-grid-sm flex w-full flex-row flex-wrap'
-          >
+        <Separator orientation='horizontal' className='opacity-60' />
+
+        <Section title='Tipografía:' subtitle='Familia tipográfica del código.'>
+          <SliceContainer maxHeight={140} extendedMaxHeight={480} className='flex w-full flex-row flex-wrap gap-1.5'>
             <MonacoFonts />
           </SliceContainer>
-        </Typography.Block>
+        </Section>
+
+        <Separator orientation='horizontal' className='opacity-60' />
 
         <SetterMonacoPreferences />
       </Popup.Content>

@@ -227,7 +227,7 @@ const Popup = ({ children, className }: IPopup) => {
             onMouseDown={handleMouseDown}
             onTransitionEnd={handleTransitionEnd}
             className={cn(
-              'popup border-border/40 bg-card/40 fixed z-10 flex min-h-[300px] min-w-[200px] flex-col overflow-hidden rounded-lg border backdrop-blur-md select-none',
+              'popup border-border/40 bg-card/80 fixed z-10 flex min-h-[300px] min-w-[200px] flex-col overflow-hidden rounded-lg border backdrop-blur-md select-none',
               'origin-top-left transition-[opacity,transform] duration-200 ease-out will-change-[opacity,transform]',
               visible ? 'translate-y-0 scale-100 opacity-100' : 'translate-y-1 scale-[0.97] opacity-0',
               blockChildren && '[&_*]:pointer-events-none',

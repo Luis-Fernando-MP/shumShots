@@ -2,6 +2,11 @@ import { cn } from '@common/utils/cn'
 import { type VariantProps, cva } from 'class-variance-authority'
 import type { AnchorHTMLAttributes, ElementType, FC, HTMLAttributes, ReactNode } from 'react'
 
+/**
+ * Hierarchy (size + weight — titles heavy, body light):
+ * Title 2xl/bold → Subtitle xl/semibold → Heading lg/semibold →
+ * Subheading md/medium → Label md/semibold → body sm/regular → Small xs
+ */
 const typographyVariants = cva('m-0 p-0', {
   variants: {
     size: {
@@ -37,7 +42,7 @@ const typographyVariants = cva('m-0 p-0', {
     }
   },
   defaultVariants: {
-    size: 'md',
+    size: 'sm',
     tone: 'primary',
     weight: 'regular',
     face: 'sans',
@@ -50,7 +55,7 @@ export interface TypographyProps extends HTMLAttributes<HTMLElement>, VariantPro
   href?: string
 }
 
-type TypographySlotProps = Omit<TypographyProps, 'as' | 'size'>
+type TypographySlotProps = Omit<TypographyProps, 'as'>
 
 export type TypographyLinkProps = TypographySlotProps &
   Omit<AnchorHTMLAttributes<HTMLAnchorElement>, keyof TypographySlotProps | 'color'> & {
@@ -77,56 +82,75 @@ const TypographyRoot: FC<TypographyProps> = ({
   )
 }
 
-const Title: FC<TypographySlotProps> = ({ className, weight = 'bold', face = 'display', tone, mark, ...props }) => (
-  <TypographyRoot as='h1' size='2xl' weight={weight} face={face} tone={tone} mark={mark} className={className} {...props} />
+/** Page / hero title — `2xl` + bold. */
+const Title: FC<TypographySlotProps> = ({
+  className,
+  size = '2xl',
+  weight = 'bold',
+  face = 'display',
+  tone,
+  mark,
+  ...props
+}) => (
+  <TypographyRoot as='h1' size={size} weight={weight} face={face} tone={tone} mark={mark} className={className} {...props} />
 )
 
+/** Section subtitle under a title — `xl` + semibold. */
 const Subtitle: FC<TypographySlotProps> = ({
   className,
+  size = 'xl',
   weight = 'semibold',
   face = 'display',
   tone,
   mark,
   ...props
 }) => (
-  <TypographyRoot as='h2' size='xl' weight={weight} face={face} tone={tone} mark={mark} className={className} {...props} />
+  <TypographyRoot as='h2' size={size} weight={weight} face={face} tone={tone} mark={mark} className={className} {...props} />
 )
 
+/** Mid-level heading — `lg` + semibold. */
 const Heading: FC<TypographySlotProps> = ({
   className,
-  weight = 'medium',
+  size = 'lg',
+  weight = 'semibold',
   face = 'display',
   tone,
   mark,
   ...props
 }) => (
-  <TypographyRoot as='h3' size='lg' weight={weight} face={face} tone={tone} mark={mark} className={className} {...props} />
+  <TypographyRoot as='h3' size={size} weight={weight} face={face} tone={tone} mark={mark} className={className} {...props} />
 )
 
+/** Lower heading / group label — `md` + medium. */
 const Subheading: FC<TypographySlotProps> = ({
   className,
+  size = 'md',
   weight = 'medium',
   face = 'sans',
   tone,
   mark,
   ...props
 }) => (
-  <TypographyRoot as='h4' size='md' weight={weight} face={face} tone={tone} mark={mark} className={className} {...props} />
+  <TypographyRoot as='h4' size={size} weight={weight} face={face} tone={tone} mark={mark} className={className} {...props} />
 )
 
+/** Compact label / block title (`# …`) — `md` + semibold. */
 const Label: FC<TypographySlotProps> = ({
   className,
+  size = 'md',
   weight = 'semibold',
   face = 'display',
   tone,
   mark,
   ...props
 }) => (
-  <TypographyRoot as='h5' size='sm' weight={weight} face={face} tone={tone} mark={mark} className={className} {...props} />
+  <TypographyRoot as='h5' size={size} weight={weight} face={face} tone={tone} mark={mark} className={className} {...props} />
 )
 
+/** Body copy — `sm`. */
 const Paragraph: FC<TypographySlotProps> = ({
   className,
+  size = 'sm',
   weight = 'regular',
   face = 'sans',
   tone,
@@ -135,7 +159,7 @@ const Paragraph: FC<TypographySlotProps> = ({
 }) => (
   <TypographyRoot
     as='p'
-    size='sm'
+    size={size}
     weight={weight}
     face={face}
     tone={tone}
@@ -145,30 +169,36 @@ const Paragraph: FC<TypographySlotProps> = ({
   />
 )
 
+/** Inline body text — `sm`. */
 const Text: FC<TypographySlotProps> = ({
   className,
+  size = 'sm',
   weight = 'regular',
   face = 'sans',
   tone,
   mark,
   ...props
 }) => (
-  <TypographyRoot as='span' size='sm' weight={weight} face={face} tone={tone} mark={mark} className={className} {...props} />
+  <TypographyRoot as='span' size={size} weight={weight} face={face} tone={tone} mark={mark} className={className} {...props} />
 )
 
+/** Fine print / captions — `xs`. */
 const Small: FC<TypographySlotProps> = ({
   className,
+  size = 'xs',
   weight = 'regular',
   face = 'sans',
   tone = 'secondary',
   mark,
   ...props
 }) => (
-  <TypographyRoot as='small' size='xs' weight={weight} face={face} tone={tone} mark={mark} className={className} {...props} />
+  <TypographyRoot as='small' size={size} weight={weight} face={face} tone={tone} mark={mark} className={className} {...props} />
 )
 
+/** Examples / secondary cites — `xs`. */
 const Cite: FC<TypographySlotProps> = ({
   className,
+  size = 'xs',
   weight = 'medium',
   face = 'sans',
   tone = 'secondary',
@@ -177,7 +207,7 @@ const Cite: FC<TypographySlotProps> = ({
 }) => (
   <TypographyRoot
     as='cite'
-    size='sm'
+    size={size}
     weight={weight}
     face={face}
     tone={tone}
@@ -187,8 +217,10 @@ const Cite: FC<TypographySlotProps> = ({
   />
 )
 
+/** Inline link — `sm`. */
 const LinkSlot: FC<TypographyLinkProps> = ({
   className,
+  size = 'sm',
   weight = 'medium',
   face = 'sans',
   tone = 'primary',
@@ -199,7 +231,7 @@ const LinkSlot: FC<TypographyLinkProps> = ({
   <TypographyRoot
     as='a'
     href={href}
-    size='sm'
+    size={size}
     weight={weight}
     face={face}
     tone={tone}
@@ -209,21 +241,23 @@ const LinkSlot: FC<TypographyLinkProps> = ({
   />
 )
 
-/** Inline emphasis — ex `paragraph-emphasis`. */
+/** Field / item emphasis title — `sm` + semibold (heavier than body). */
 const Emphasis: FC<TypographySlotProps> = ({
   className,
-  weight = 'medium',
+  size = 'sm',
+  weight = 'semibold',
   face = 'display',
   tone,
   mark,
   ...props
 }) => (
-  <TypographyRoot as='h5' size='sm' weight={weight} face={face} tone={tone} mark={mark} className={className} {...props} />
+  <TypographyRoot as='h5' size={size} weight={weight} face={face} tone={tone} mark={mark} className={className} {...props} />
 )
 
-/** Inline caution — ex `paragraph-precaution` (`mark="dotted"`). */
+/** Inline caution note — `xs` + dotted mark. */
 const Precaution: FC<TypographySlotProps> = ({
   className,
+  size = 'xs',
   weight = 'medium',
   face = 'display',
   tone,
@@ -232,7 +266,7 @@ const Precaution: FC<TypographySlotProps> = ({
 }) => (
   <TypographyRoot
     as='span'
-    size='sm'
+    size={size}
     weight={weight}
     face={face}
     tone={tone}
@@ -242,11 +276,11 @@ const Precaution: FC<TypographySlotProps> = ({
   />
 )
 
-/** Grouped title + body — section title lives only here via `title`. */
+/** Grouped title + body — section title via `title` (`Label` / md + semibold). */
 const Block: FC<TypographyBlockProps> = ({ title, children, className, ...props }) => (
   <section className={cn('flex flex-col gap-1', className)} {...props}>
     {typeof title === 'string' ? (
-      <Label weight='medium'>{title.startsWith('#') ? title : `# ${title}`}</Label>
+      <Label>{title.startsWith('#') ? title : `# ${title}`}</Label>
     ) : (
       title
     )}

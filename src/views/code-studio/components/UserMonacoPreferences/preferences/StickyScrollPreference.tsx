@@ -1,8 +1,7 @@
-import { newKey } from '@/shared/key'
-import Button from '@/shared/ui/Button'
 import { editor } from 'monaco-editor'
 import type { FC } from 'react'
-import Typography from '@common/ui/Typography'
+
+import { PreferenceField, PreferencePanel, PreferenceSection, PreferenceToggle } from '../PreferenceField'
 
 type Monaco = editor.IEditorOptions
 
@@ -14,88 +13,71 @@ interface Props {
 const StickyScrollPreference: FC<Props> = ({ stickyScroll, setStickyScroll }) => {
   if (!stickyScroll) return null
 
-  const handleChangeStickyScroll = (newProps: Partial<Monaco['stickyScroll']>) => {
+  const handleChange = (newProps: Partial<Monaco['stickyScroll']>) => {
     setStickyScroll({ ...stickyScroll, ...newProps })
   }
 
   const { enabled, maxLineCount, defaultModel, scrollWithEditor } = stickyScroll
 
   return (
-    <>
-      <Typography.Block title='Scroll pegajoso:' />
-
-      <div className='monacoPreferences-switch flex w-full flex-row flex-wrap gap-grid-sm'>
-        {[true, false].map(state => (
-          <Button key={newKey()} onClick={() => handleChangeStickyScroll({ enabled: state })} active={enabled === state}>
-            {state ? 'On' : 'Off'}
-          </Button>
-        ))}
-      </div>
+    <PreferenceSection
+      title='Scroll pegajoso:'
+      subtitle='Mantiene el encabezado del bloque visible al hacer scroll.'
+    >
+      <PreferenceField title='Activar' subtitle='Fijar contexto arriba del editor'>
+        <PreferenceToggle
+          value={enabled ?? false}
+          options={[true, false] as const}
+          onChange={v => handleChange({ enabled: v })}
+        />
+      </PreferenceField>
 
       {enabled && (
-        <div className='monacoPreferences-subsection flex flex-col border-l-[3px] border-dashed border-primary/50 bg-card/50 px-grid-md py-grid'>
-          <div className='monacoPreferences-section flex flex-col gap-grid-lg'>
-            <Typography.Emphasis>Máximo de líneas</Typography.Emphasis>
-            <Typography.Text tone='secondary'>Máximo de líneas que se mostrarán en el scroll pegajoso.</Typography.Text>
-            <div className='monacoPreferences-switch flex w-full flex-row flex-wrap gap-grid-sm'>
-              {[1, 2, 3, 5, 7, 8, 9].map(state => {
-                const normal = 5
-                return (
-                  <Button
-                    key={newKey()}
-                    onClick={() => handleChangeStickyScroll({ maxLineCount: state })}
-                    active={maxLineCount === state}
-                  >
-                    {state === normal ? 'Normal' : state}
-                  </Button>
-                )
-              })}
-            </div>
-          </div>
+        <PreferencePanel>
+          <PreferenceField
+            title='Máximo de líneas'
+            subtitle='Cuántas filas sticky se apilan'
+            example='Ej: Normal = 5 niveles'
+          >
+            <PreferenceToggle
+              value={maxLineCount ?? 5}
+              options={[1, 2, 3, 5, 7, 8, 9] as const}
+              onChange={v => handleChange({ maxLineCount: v })}
+              normal={5}
+            />
+          </PreferenceField>
 
-          <div className='monacoPreferences-section flex flex-col gap-grid-lg'>
-            <Typography.Emphasis>Modelo</Typography.Emphasis>
-            <Typography.Text tone='secondary'>
-              - outlineModel: Muestra la estructura general (clases, funciones, variables).
-              <br />
-              <br /> - foldingProviderModel: Usa la información de plegado para las secciones.
-              <br />
-              <br /> - indentationModel: Utiliza la indentación para guiar en la estructura visual.
-            </Typography.Text>
-            <div className='monacoPreferences-switch flex w-full flex-row flex-wrap gap-grid-sm'>
-              {['outlineModel', 'foldingProviderModel', 'indentationModel'].map(state => (
-                <Button
-                  key={newKey()}
-                  onClick={() => handleChangeStickyScroll({ defaultModel: state as any })}
-                  active={defaultModel === state}
-                >
-                  {state}
-                </Button>
-              ))}
-            </div>
-          </div>
+          <PreferenceField
+            title='Modelo'
+            subtitle='Qué estructura usa para fijar'
+            example='Ej: outlineModel = clases/funciones; indentationModel = por tabs'
+          >
+            <PreferenceToggle
+              value={defaultModel ?? 'outlineModel'}
+              options={['outlineModel', 'foldingProviderModel', 'indentationModel'] as const}
+              onChange={v => handleChange({ defaultModel: v as any })}
+              label={v => {
+                if (v === 'outlineModel') return 'outline'
+                if (v === 'foldingProviderModel') return 'folding'
+                return 'indent'
+              }}
+            />
+          </PreferenceField>
 
-          <div className='monacoPreferences-section flex flex-col gap-grid-lg'>
-            <Typography.Emphasis>Desplazamiento con el editor</Typography.Emphasis>
-            <Typography.Text tone='secondary'>
-              El scroll pegajoso se moverá cuando se desplace el editor horizontalmente.{' '}
-              <Typography.Precaution>Requiere que el scroll horizontal esté activo.</Typography.Precaution>
-            </Typography.Text>
-            <div className='monacoPreferences-switch flex w-full flex-row flex-wrap gap-grid-sm'>
-              {[true, false].map(state => (
-                <Button
-                  key={newKey()}
-                  onClick={() => handleChangeStickyScroll({ scrollWithEditor: state })}
-                  active={scrollWithEditor === state}
-                >
-                  {state ? 'On' : 'Off'}
-                </Button>
-              ))}
-            </div>
-          </div>
-        </div>
+          <PreferenceField
+            title='Seguir scroll horizontal'
+            subtitle='Se mueve con el pan lateral'
+            note='Requiere barra horizontal activa.'
+          >
+            <PreferenceToggle
+              value={scrollWithEditor ?? true}
+              options={[true, false] as const}
+              onChange={v => handleChange({ scrollWithEditor: v })}
+            />
+          </PreferenceField>
+        </PreferencePanel>
       )}
-    </>
+    </PreferenceSection>
   )
 }
 

@@ -1,17 +1,12 @@
 import { monacoFonts } from '@/shared/fonts/monaco-fonts'
+import useShumOptionsStore from '@views/code-studio/store/shumOptions.store'
 import dynamic from 'next/dynamic'
 import type { FC } from 'react'
 
-import useShumOptionsStore from '../../store/shumOptions.store'
-
-const TypographyDisplay = dynamic(() => import('../../ui/TypographyDisplay'), { ssr: false })
+const TypographyDisplay = dynamic(() => import('@views/code-studio/ui/TypographyDisplay'), { ssr: false })
 
 const MonacoFonts: FC = () => {
   const { setTypography, typography } = useShumOptionsStore()
-
-  const handleClick = (fontFamily: string): void => {
-    setTypography(fontFamily)
-  }
 
   return (
     <>
@@ -22,7 +17,7 @@ const MonacoFonts: FC = () => {
             key={name}
             font={font}
             title={name}
-            onClick={() => handleClick(fontFamily)}
+            onClick={() => setTypography(fontFamily)}
             selected={typography === fontFamily}
           />
         )

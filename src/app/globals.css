@@ -82,7 +82,7 @@
 }
 
 :root {
-  --app-font-size: 14px;
+  --app-font-size: 16px;
   --bg-primary: 13, 13, 13;
   --bg-secondary: 19, 20, 23;
   --bg-tertiary: 61, 61, 61;
@@ -148,7 +148,7 @@ body {
   h3 {
     font-size: var(--text-lg);
     line-height: var(--text-lg--line-height);
-    font-weight: var(--font-weight-medium);
+    font-weight: var(--font-weight-semibold);
   }
 
   h4 {
@@ -159,13 +159,20 @@ body {
 
   h5,
   h6 {
-    font-size: var(--text-sm);
-    line-height: var(--text-sm--line-height);
-    font-weight: var(--font-weight-medium);
+    font-size: var(--text-md);
+    line-height: var(--text-md--line-height);
+    font-weight: var(--font-weight-semibold);
   }
 
   p {
-    line-height: var(--text-base--line-height);
+    font-size: var(--text-sm);
+    line-height: var(--text-sm--line-height);
+    font-weight: var(--font-weight-normal);
+  }
+
+  small {
+    font-size: var(--text-xs);
+    line-height: var(--text-xs--line-height);
     font-weight: var(--font-weight-normal);
   }
 

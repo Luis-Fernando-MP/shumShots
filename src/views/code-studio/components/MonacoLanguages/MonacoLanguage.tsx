@@ -1,9 +1,9 @@
 import { MonacoLanguage as MonacoLanguageType } from '@/shared/monaco-languages'
+import Typography from '@common/ui/Typography'
+import useShumOptionsStore from '@views/code-studio/store/shumOptions.store'
 import type { FC } from 'react'
 
-import useShumOptionsStore from '../../store/shumOptions.store'
 import IconLanguage from './IconLanguage'
-import Typography from '@common/ui/Typography'
 
 interface Props {
   language: [string, { [key: string]: { Icon: React.ElementType; language: string; short: string } }]
@@ -13,27 +13,26 @@ const MonacoLanguage: FC<Props> = ({ language }) => {
   const [section, languages] = language
   const { language: userLanguage, setLanguage } = useShumOptionsStore()
 
-  const handleClick = (language: MonacoLanguageType) => {
-    if (userLanguage.language === language.language) return
-    setLanguage(language)
+  const handleClick = (next: MonacoLanguageType) => {
+    if (userLanguage.language === next.language) return
+    setLanguage(next)
   }
 
   return (
-    <div className='monacoThemeCategory flex flex-col gap-grid-sm'>
-      <Typography.Subheading tone='secondary'>{section}</Typography.Subheading>
+    <div className='flex flex-col gap-1.5'>
+      <Typography.Small weight='medium' className='text-muted-foreground tracking-wide uppercase'>
+        {section}
+      </Typography.Small>
 
-      <div className='monacoThemeCategory-icons flex flex-row flex-wrap gap-grid-sm'>
-        {Object.entries(languages).map(lang => {
-          const [key, languageProps] = lang
-          return (
-            <IconLanguage
-              key={key}
-              language={languageProps}
-              onClick={handleClick}
-              selected={userLanguage.language === languageProps.language}
-            />
-          )
-        })}
+      <div className='flex flex-row flex-wrap gap-1.5'>
+        {Object.entries(languages).map(([key, languageProps]) => (
+          <IconLanguage
+            key={key}
+            language={languageProps}
+            onClick={handleClick}
+            selected={userLanguage.language === languageProps.language}
+          />
+        ))}
       </div>
     </div>
   )

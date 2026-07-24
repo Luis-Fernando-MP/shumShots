@@ -1,5 +1,5 @@
-import { acl } from '@/shared/acl'
 import { monacoFonts } from '@/shared/fonts/monaco-fonts'
+import { cn } from '@common/utils/cn'
 import type { ButtonHTMLAttributes, FC } from 'react'
 
 interface Props extends ButtonHTMLAttributes<HTMLButtonElement> {
@@ -8,26 +8,28 @@ interface Props extends ButtonHTMLAttributes<HTMLButtonElement> {
   selected?: boolean
 }
 
-/**
- * @description Display a typography with a font and a title
- * @param font - The font to display
- * @param title - The title to display
- * @param className - The class name to apply
- * @param selected - Whether the typography is selected
- * @param props - The props to apply to the button
- * @returns A typography display
- */
-
+/** Font preview card for Monaco typography selection. */
 const TypographyDisplay: FC<Props> = ({ font, title, className = '', selected = false, ...props }) => {
   const { className: fontClassName } = font
+
   return (
     <button
-      className={`typographyDisplay h-[100px] w-fit rounded-sm border-[1.5px] border-transparent bg-card p-grid ${className} ${fontClassName} antialiased ${acl(selected, 'selected border-primary bg-primary/30 [&_p]:text-foreground [&_h3]:text-foreground')}`}
+      type='button'
+      className={cn(
+        'flex h-[88px] w-[7.5rem] flex-col items-start justify-center gap-1 rounded-md border border-transparent bg-card px-2.5 py-2 text-left transition-colors',
+        'hover:bg-muted/60',
+        selected && 'border-primary bg-primary/20',
+        fontClassName,
+        'antialiased',
+        className
+      )}
       {...props}
     >
-      <p className={`typographyDisplay-extra ${fontClassName}`}>PIXIS</p>
-      <h3 className={`typographyDisplay-title ${fontClassName}`}>{title}</h3>
-      <p className={`typographyDisplay-extra ${fontClassName}`}>{'=> {} [] () <-'}</p>
+      <span className={cn('text-muted-foreground text-[10px] leading-none', selected && 'text-foreground/80')}>PIXIS</span>
+      <span className={cn('text-foreground text-sm leading-tight font-medium', fontClassName)}>{title}</span>
+      <span className={cn('text-muted-foreground text-[10px] leading-none', selected && 'text-foreground/80')}>
+        {'=> {} [] ()'}
+      </span>
     </button>
   )
 }

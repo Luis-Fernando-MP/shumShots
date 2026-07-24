@@ -1,17 +1,16 @@
-import { newKey } from '@/shared/key'
+import { Input } from '@common/ui/Input'
 import Button from '@/shared/ui/Button'
-import LabeledInput from '@/shared/ui/LabeledInput'
+import useMonacoStore from '@views/code-studio/store/monaco.store'
+import useMonacoThemeStore from '@views/code-studio/store/monacoTheme.store'
+import useShumOptionsStore from '@views/code-studio/store/shumOptions.store'
 import { type FC, useMemo } from 'react'
 
-import useMonacoStore from '../../store/monaco.store'
-import useMonacoThemeStore from '../../store/monacoTheme.store'
-import useShumOptionsStore from '../../store/shumOptions.store'
+import { PreferenceField, PreferenceSection, PreferenceToggle } from './PreferenceField'
 import FontSizePreference from './preferences/FontSizePreference'
 import MinimapPreference from './preferences/MinimapPreference'
 import ScrollPreference from './preferences/ScrollPreference'
 import ShumShotsPreferences from './preferences/ShumShotsPreferences'
 import StickyScrollPreference from './preferences/StickyScrollPreference'
-import Typography from '@common/ui/Typography'
 
 const SetterMonacoPreferences: FC = () => {
   const monaco = useMonacoStore()
@@ -35,416 +34,313 @@ const SetterMonacoPreferences: FC = () => {
 
   return (
     <>
-      <Button variant='dashed' status='primary' size='default' onClick={handleResetPreferences}>
-        <h4>Restablecer configuración</h4>
+      <Button variant='dashed' status='primary' className='w-full' onClick={handleResetPreferences}>
+        Restablecer configuración
       </Button>
 
       <ShumShotsPreferences />
 
-      {/* Visual */}
+      <PreferenceSection title='Visual:' subtitle='Aspecto del editor: márgenes, wrap y resaltados.'>
+        <PreferenceField
+          title='Margen de glyph'
+          subtitle='Columna izquierda para iconos'
+          description='Espacio para breakpoints, errores y otras marcas.'
+        >
+          <PreferenceToggle
+            value={monaco.glyphMargin ?? false}
+            options={[true, false] as const}
+            onChange={v => monaco.setGlyphMargin(v)}
+          />
+        </PreferenceField>
 
-      <Typography.Block title='Visual:' />
+        <PreferenceField
+          title='Validación de código'
+          subtitle='Subrayado de errores'
+          description='Muestra avisos de sintaxis que Monaco detecte.'
+          note='Solo lenguajes con soporte de validación.'
+        >
+          <PreferenceToggle
+            value={monaco.renderValidationDecorations ?? 'editable'}
+            options={['editable', 'on', 'off'] as const}
+            onChange={v => monaco.setRenderValidationDecorations(v as any)}
+          />
+        </PreferenceField>
 
-      <div className='monacoPreferences-section flex flex-col gap-grid-lg'>
-        <Typography.Emphasis>Margen de glyph</Typography.Emphasis>
-        <Typography.Text tone='secondary'>Mostrar iconos en el margen de glyph.</Typography.Text>
-        <div className='monacoPreferences-switch flex w-full flex-row flex-wrap gap-grid-sm'>
-          {[true, false].map(style => (
-            <Button key={newKey()} onClick={() => monaco.setGlyphMargin(style)} active={monaco.glyphMargin === style}>
-              {style ? 'On' : 'Off'}
-            </Button>
-          ))}
-        </div>
-      </div>
+        <PreferenceField
+          title='Números de línea'
+          subtitle='Cómo se numeran las filas'
+          example='Ej: relative = distancia al cursor (1, 2, 3...)'
+        >
+          <PreferenceToggle
+            value={(monaco.lineNumbers ?? 'on') as string}
+            options={['on', 'off', 'relative', 'interval'] as const}
+            onChange={v => monaco.setLineNumbers(v as any)}
+          />
+        </PreferenceField>
 
-      <div className='monacoPreferences-section flex flex-col gap-grid-lg'>
-        <Typography.Emphasis>Validación de código</Typography.Emphasis>
-        <Typography.Text tone='secondary'>
-          Resalta los errores de sintaxis <Typography.Precaution>soportados por monaco.</Typography.Precaution>
-        </Typography.Text>
-        <div className='monacoPreferences-switch flex w-full flex-row flex-wrap gap-grid-sm'>
-          {['editable', 'on', 'off'].map(style => (
-            <Button
-              key={newKey()}
-              onClick={() => monaco.setRenderValidationDecorations(style as any)}
-              active={monaco.renderValidationDecorations === style}
-            >
-              {style}
-            </Button>
-          ))}
-        </div>
-      </div>
+        <PreferenceField
+          title='Salto de línea'
+          subtitle='Wrap del texto largo'
+          example='Ej: on = siempre; wordWrapColumn = al llegar a la columna'
+        >
+          <PreferenceToggle
+            value={monaco.wordWrap ?? 'off'}
+            options={['on', 'off', 'wordWrapColumn', 'bounded'] as const}
+            onChange={v => monaco.setWordWrap(v as any)}
+          />
+        </PreferenceField>
 
-      <div className='monacoPreferences-section flex flex-col gap-grid-lg'>
-        <Typography.Emphasis>Números de línea</Typography.Emphasis>
-        <div className='monacoPreferences-switch flex w-full flex-row flex-wrap gap-grid-sm'>
-          {['on', 'off', 'relative', 'interval'].map(style => (
-            <Button key={newKey()} onClick={() => monaco.setLineNumbers(style as any)} active={monaco.lineNumbers === style}>
-              {style}
-            </Button>
-          ))}
-        </div>
-      </div>
-
-      <div className='monacoPreferences-section flex flex-col gap-grid-lg'>
-        <Typography.Emphasis>Salto de línea</Typography.Emphasis>
-        <Typography.Text tone='secondary'>
-          Permite ajustar el salto de línea de las palabras para mejorar la visualización del código.
-          <br />
-          - On: siempre
-          <br />
-          - Off: nunca
-          <br />
-          - WordWrapColumn: ajustar por columna
-          <br />- Bounded: ajustar por columna y límite
-        </Typography.Text>
-        <div className='monacoPreferences-switch flex w-full flex-row flex-wrap gap-grid-sm'>
-          {['on', 'off', 'wordWrapColumn', 'bounded'].map(style => (
-            <Button key={newKey()} onClick={() => monaco.setWordWrap(style as any)} active={monaco.wordWrap === style}>
-              {style}
-            </Button>
-          ))}
-        </div>
-      </div>
-
-      <div className='monacoPreferences-section flex flex-col gap-grid-lg'>
-        <Typography.Emphasis>Columna de salto de línea</Typography.Emphasis>
-        <Typography.Text tone='secondary'>
-          Limita el ancho de las líneas para dar el salto de línea en el ancho especificado.{' '}
-          <Typography.Precaution>Depende de la configuración de salto de línea.</Typography.Precaution>
-        </Typography.Text>
-        <div className='monacoPreferences-switch flex w-full flex-row flex-wrap gap-grid-sm'>
-          <LabeledInput
+        <PreferenceField
+          title='Columna de salto'
+          subtitle='Ancho máximo antes del wrap'
+          example='Ej: 80 ≈ ancho clásico de terminal'
+          note='Solo aplica con wordWrapColumn o bounded.'
+        >
+          <Input
             type='number'
+            size='sm'
+            variant='outline'
+            suffix='px'
             value={monaco.wordWrapColumn ?? 80}
             min={10}
             max={200}
             step={10}
             onChange={e => monaco.setWordWrapColumn(Number(e.target.value))}
-          >
-            px
-          </LabeledInput>
-        </div>
-        <div className='monacoPreferences-switch flex w-full flex-row flex-wrap gap-grid-sm'>
-          {[50, 60, 70, 80, 90, 100, 110, 120].map(style => {
-            const normal = 80
-            return (
-              <Button key={newKey()} onClick={() => monaco.setWordWrapColumn(style)} active={monaco.wordWrapColumn === style}>
-                {style === normal ? 'Normal' : style}
-              </Button>
-            )
-          })}
-        </div>
-      </div>
+            containerClassName='w-[7.5rem]'
+          />
+          <PreferenceToggle
+            value={monaco.wordWrapColumn ?? 80}
+            options={[50, 60, 70, 80, 90, 100, 110, 120] as const}
+            onChange={v => monaco.setWordWrapColumn(v)}
+            normal={80}
+          />
+        </PreferenceField>
 
-      <div className='monacoPreferences-section flex flex-col gap-grid-lg'>
-        <Typography.Emphasis>Ajuste de saltos</Typography.Emphasis>
-        <Typography.Text tone='secondary'>
-          Ajusta el sangrado de las palabras cuando se da un salto de línea. None: ninguno,{' '}
-          <Typography.Precaution>Depende de la configuración de salto de línea.</Typography.Precaution>
-          <br />
-          <br />- none: ninguno,
-          <br />- indent: sangrado
-          <br />- deepIndent: sangrado profundo.
-        </Typography.Text>
-        <div className='monacoPreferences-switch flex w-full flex-row flex-wrap gap-grid-sm'>
-          {['none', 'indent', 'deepIndent'].map(style => (
-            <Button
-              key={newKey()}
-              onClick={() => monaco.setWrappingIndent(style as any)}
-              active={monaco.wrappingIndent === style}
-            >
-              {style}
-            </Button>
-          ))}
-        </div>
-      </div>
+        <PreferenceField
+          title='Sangría al saltar'
+          subtitle='Indent de las líneas wrappeadas'
+          example='Ej: indent = respeta el nivel; deepIndent = un nivel más'
+          note='Requiere salto de línea activo.'
+        >
+          <PreferenceToggle
+            value={monaco.wrappingIndent ?? 'none'}
+            options={['none', 'indent', 'deepIndent'] as const}
+            onChange={v => monaco.setWrappingIndent(v as any)}
+          />
+        </PreferenceField>
 
-      <div className='monacoPreferences-section flex flex-col gap-grid-lg'>
-        <Typography.Emphasis>Resaltado de línea</Typography.Emphasis>
-        <Typography.Text tone='secondary'>
-          Resalta la línea actual en la que se encuentra el cursor,{' '}
-          <Typography.Precaution>dependiendo del tema puede ser mas pronunciado o no.</Typography.Precaution>
-          <br />
-          <br />- None: ninguno
-          <br />- Gutter: solo el gutter
-          <br />- Line: toda la linea
-          <br />- Full: todo
-        </Typography.Text>
-        <div className='monacoPreferences-switch flex w-full flex-row flex-wrap gap-grid-sm'>
-          {['none', 'gutter', 'line', 'full'].map(style => (
-            <Button
-              key={newKey()}
-              onClick={() => monaco.setRenderLineHighlight(style as any)}
-              active={monaco.renderLineHighlight === style}
-            >
-              {style}
-            </Button>
-          ))}
-        </div>
-      </div>
+        <PreferenceField
+          title='Resaltado de línea'
+          subtitle='Marca dónde está el cursor'
+          example='Ej: gutter = solo el margen; full = fila completa'
+          note='La intensidad depende del tema.'
+        >
+          <PreferenceToggle
+            value={monaco.renderLineHighlight ?? 'line'}
+            options={['none', 'gutter', 'line', 'full'] as const}
+            onChange={v => monaco.setRenderLineHighlight(v as any)}
+          />
+        </PreferenceField>
+      </PreferenceSection>
 
-      {/* Tipografía */}
-
-      <Typography.Block title='Tipografía:' />
-
-      <div className='monacoPreferences-section flex flex-col gap-grid-lg'>
+      <PreferenceSection title='Tipografía:' subtitle='Tamaño, ritmo y detalle tipográfico del código.'>
         <FontSizePreference fontSize={monaco.fontSize} setFontSize={monaco.setFontSize} />
-      </div>
 
-      <div className='monacoPreferences-section flex flex-col gap-grid-lg'>
-        <Typography.Emphasis>Espaciado entre letras</Typography.Emphasis>
-        <div className='monacoPreferences-switch flex w-full flex-row flex-wrap gap-grid-sm'>
-          {[-1, -0.5, 0, 0.5, 1, 2, 3].map(style => {
-            const normal = 0
-            return (
-              <Button key={newKey()} onClick={() => monaco.setLetterSpacing(style)} active={monaco.letterSpacing === style}>
-                {style === normal ? 'Normal' : style}
-              </Button>
-            )
-          })}
-        </div>
-      </div>
+        <PreferenceField
+          title='Espaciado entre letras'
+          subtitle='Tracking del texto'
+          example='Ej: 0 = normal; valores altos abren el código'
+        >
+          <PreferenceToggle
+            value={monaco.letterSpacing ?? 0}
+            options={[-1, -0.5, 0, 0.5, 1, 2, 3] as const}
+            onChange={v => monaco.setLetterSpacing(v)}
+            normal={0}
+          />
+        </PreferenceField>
 
-      <div className='monacoPreferences-section flex flex-col gap-grid-lg'>
-        <Typography.Emphasis>Ligaduras</Typography.Emphasis>
-        <Typography.Text tone='secondary'>
-          Activa o desactiva la combinación de caracteres para mejorar la legibilidad.{' '}
-          <Typography.Precaution>Depende de la tipografía empleada.</Typography.Precaution>
-        </Typography.Text>
-        <div className='monacoPreferences-switch flex w-full flex-row flex-wrap gap-grid-sm'>
-          {[true, false].map(style => (
-            <Button
-              key={newKey()}
-              onClick={() => monaco.setFontLigatures(style as any)}
-              active={monaco.fontLigatures === style}
-            >
-              {style ? 'On' : 'Off'}
-            </Button>
-          ))}
-        </div>
-      </div>
+        <PreferenceField
+          title='Ligaduras'
+          subtitle='Une operadores en un solo glifo'
+          example='Ej: => !== >= se ven como un símbolo'
+          note='Depende de la tipografía elegida.'
+        >
+          <PreferenceToggle
+            value={typeof monaco.fontLigatures === 'boolean' ? monaco.fontLigatures : false}
+            options={[true, false] as const}
+            onChange={v => monaco.setFontLigatures(v as any)}
+          />
+        </PreferenceField>
 
-      <div className='monacoPreferences-section flex flex-col gap-grid-lg'>
-        <Typography.Emphasis>Altura entre líneas</Typography.Emphasis>
-
-        <div className='monacoPreferences-switch flex w-full flex-row flex-wrap gap-grid-sm'>
-          <LabeledInput
+        <PreferenceField
+          title='Altura entre líneas'
+          subtitle='Line-height del editor'
+          example='Ej: Normal = 22px'
+        >
+          <Input
             type='number'
+            size='sm'
+            variant='outline'
+            suffix='px'
             value={monaco.lineHeight ?? 22}
             min={8}
             max={32}
             step={2}
             onChange={e => monaco.setLineHeight(Number(e.target.value))}
-          >
-            px
-          </LabeledInput>
-        </div>
-        <div className='monacoPreferences-switch flex w-full flex-row flex-wrap gap-grid-sm'>
-          {[18, 20, 22, 24, 26, 28].map(style => {
-            const normal = 22
-            const factor = (style / normal).toFixed(1)
-            return (
-              <Button key={newKey()} onClick={() => monaco.setLineHeight(style)} active={monaco.lineHeight === style}>
-                {style === normal ? 'Normal' : `x${factor}`}
-              </Button>
-            )
-          })}
-        </div>
-      </div>
+            containerClassName='w-[7.5rem]'
+          />
+          <PreferenceToggle
+            value={monaco.lineHeight ?? 22}
+            options={[18, 20, 22, 24, 26, 28] as const}
+            onChange={v => monaco.setLineHeight(v)}
+            normal={22}
+            label={v => {
+              if (v === 22) return 'Normal'
+              return `x${(v / 22).toFixed(1)}`
+            }}
+          />
+        </PreferenceField>
+      </PreferenceSection>
 
-      {/* Minimap */}
-      <div className='monacoPreferences-section flex flex-col gap-grid-lg'>
-        <MinimapPreference minimap={monaco.minimap} setMinimap={monaco.setMinimap} />
-      </div>
+      <MinimapPreference minimap={monaco.minimap} setMinimap={monaco.setMinimap} />
+      <ScrollPreference scrollbar={monaco.scrollbar} setScrollbar={monaco.setScrollbar} />
+      <StickyScrollPreference stickyScroll={monaco.stickyScroll} setStickyScroll={monaco.setStickyScroll} />
 
-      {/* Scroll */}
+      <PreferenceSection title='Cursor:' subtitle='Forma, parpadeo y comportamiento del caret.'>
+        <PreferenceField
+          title='Parpadeo'
+          subtitle='Animación del cursor'
+          example='Ej: solid = sin parpadear; smooth = fundido'
+        >
+          <PreferenceToggle
+            value={monaco.cursorBlinking ?? 'blink'}
+            options={['blink', 'smooth', 'phase', 'expand', 'solid'] as const}
+            onChange={v => monaco.setCursorBlinking(v as any)}
+          />
+        </PreferenceField>
 
-      <div className='monacoPreferences-section flex flex-col gap-grid-lg'>
-        <ScrollPreference scrollbar={monaco.scrollbar} setScrollbar={monaco.setScrollbar} />
-      </div>
+        <PreferenceField
+          title='Estilo'
+          subtitle='Forma visual del caret'
+          example='Ej: block = caja; line-thin = barra fina'
+        >
+          <PreferenceToggle
+            value={monaco.cursorStyle ?? 'line'}
+            options={['block', 'block-outline', 'underline', 'underline-thin', 'line', 'line-thin'] as const}
+            onChange={v => monaco.setCursorStyle(v as any)}
+          />
+        </PreferenceField>
 
-      {/* Scroll sticky */}
+        <PreferenceField
+          title='Cursor del mouse'
+          subtitle='Pointer al pasar sobre el editor'
+          example='Ej: text = I-beam; copy = indicador de copiar'
+        >
+          <PreferenceToggle
+            value={monaco.mouseStyle ?? 'default'}
+            options={['default', 'copy', 'text'] as const}
+            onChange={v => monaco.setMouseStyle(v as any)}
+          />
+        </PreferenceField>
 
-      <div className='monacoPreferences-section flex flex-col gap-grid-lg'>
-        <StickyScrollPreference stickyScroll={monaco.stickyScroll} setStickyScroll={monaco.setStickyScroll} />
-      </div>
+        <PreferenceField
+          title='Ruler de overview'
+          subtitle='Cursor en la barra derecha'
+          description='Si está On, oculta el caret en el overview ruler.'
+        >
+          <PreferenceToggle
+            value={monaco.hideCursorInOverviewRuler ?? false}
+            options={[true, false] as const}
+            onChange={v => monaco.setHideCursorInOverviewRuler(v)}
+          />
+        </PreferenceField>
+      </PreferenceSection>
 
-      {/*  */}
+      <PreferenceSection title='Editor:' subtitle='Comportamiento al editar, plegar y auto-cerrar.'>
+        <PreferenceField
+          title='Plegado de código'
+          subtitle='Fold de bloques'
+          description='Permite colapsar funciones, clases y regiones.'
+        >
+          <PreferenceToggle
+            value={monaco.folding ?? true}
+            options={[true, false] as const}
+            onChange={v => monaco.setFolding(v)}
+          />
+        </PreferenceField>
 
-      <Typography.Block title='Cursor:' />
+        <PreferenceField
+          title='Scroll extra'
+          subtitle='Espacio bajo la última línea'
+          description='Deja margen vacío al final para bajar el foco.'
+        >
+          <PreferenceToggle
+            value={monaco.scrollBeyondLastLine ?? true}
+            options={[true, false] as const}
+            onChange={v => monaco.setScrollBeyondLastLine(v)}
+          />
+        </PreferenceField>
 
-      <div className='monacoPreferences-section flex flex-col gap-grid-lg'>
-        <Typography.Emphasis>Estilo de parpadeo</Typography.Emphasis>
-        <div className='monacoPreferences-switch flex w-full flex-row flex-wrap gap-grid-sm'>
-          {['blink', 'smooth', 'phase', 'expand', 'solid'].map(style => (
-            <Button
-              key={newKey()}
-              onClick={() => monaco.setCursorBlinking(style as any)}
-              active={monaco.cursorBlinking === style}
-            >
-              {style}
-            </Button>
-          ))}
-        </div>
-      </div>
+        <PreferenceField
+          title='Formatear al pegar'
+          subtitle='Auto-format on paste'
+          example='Ej: pegas un bloque y se indenta solo'
+        >
+          <PreferenceToggle
+            value={monaco.formatOnPaste ?? false}
+            options={[true, false] as const}
+            onChange={v => monaco.setFormatOnPaste(v)}
+          />
+        </PreferenceField>
 
-      <div className='monacoPreferences-section flex flex-col gap-grid-lg'>
-        <Typography.Emphasis>Estilo del cursor</Typography.Emphasis>
-        <div className='monacoPreferences-switch flex w-full flex-row flex-wrap gap-grid-sm'>
-          {['block', 'block-outline', 'underline', 'underline-thin', 'line', 'line-thin'].map(style => (
-            <Button key={newKey()} onClick={() => monaco.setCursorStyle(style as any)} active={monaco.cursorStyle === style}>
-              {style}
-            </Button>
-          ))}
-        </div>
-      </div>
+        <PreferenceField
+          title='Formatear al escribir'
+          subtitle='Auto-format on type'
+          example='Ej: al cerrar } se reordena el bloque'
+        >
+          <PreferenceToggle
+            value={monaco.formatOnType ?? false}
+            options={[true, false] as const}
+            onChange={v => monaco.setFormatOnType(v)}
+          />
+        </PreferenceField>
 
-      <div className='monacoPreferences-section flex flex-col gap-grid-lg'>
-        <Typography.Emphasis>Cursor hover</Typography.Emphasis>
-        <Typography.Text tone='secondary'>Estilo del cursor al pasar el mouse por el editor.</Typography.Text>
-        <div className='monacoPreferences-switch flex w-full flex-row flex-wrap gap-grid-sm'>
-          {['default', 'copy', 'text'].map(style => (
-            <Button key={newKey()} onClick={() => monaco.setMouseStyle(style as any)} active={monaco.mouseStyle === style}>
-              {style}
-            </Button>
-          ))}
-        </div>
-      </div>
+        <PreferenceField
+          title='Match de paréntesis'
+          subtitle='Resalta el cierre emparejado'
+          example='Ej: near = solo si está cerca; always = siempre'
+        >
+          <PreferenceToggle
+            value={monaco.matchBrackets ?? 'always'}
+            options={['never', 'near', 'always'] as const}
+            onChange={v => monaco.setMatchBrackets(v as any)}
+          />
+        </PreferenceField>
 
-      <div className='monacoPreferences-section flex flex-col gap-grid-lg'>
-        <Typography.Emphasis>Rótulo de resumen</Typography.Emphasis>
-        <Typography.Text tone='secondary'>Oculta el cursor en el rótulo derecho de resumen.</Typography.Text>
-        <div className='monacoPreferences-switch flex w-full flex-row flex-wrap gap-grid-sm'>
-          {[true, false].map(style => (
-            <Button
-              key={newKey()}
-              onClick={() => monaco.setHideCursorInOverviewRuler(style)}
-              active={monaco.hideCursorInOverviewRuler === style}
-            >
-              {style ? 'On' : 'Off'}
-            </Button>
-          ))}
-        </div>
-      </div>
+        <PreferenceField
+          title='Auto-cierre de brackets'
+          subtitle='(), [], {} al escribir'
+          example='Ej: escribes ( y aparece )'
+        >
+          <PreferenceToggle
+            value={monaco.autoClosingBrackets ?? 'languageDefined'}
+            options={['always', 'beforeWhitespace', 'languageDefined', 'never'] as const}
+            onChange={v => monaco.setAutoClosingBrackets(v as any)}
+          />
+        </PreferenceField>
 
-      <Typography.Block title='Editor:' />
-
-      <div className='monacoPreferences-section flex flex-col gap-grid-lg'>
-        <Typography.Emphasis>Plegado de código</Typography.Emphasis>
-        <Typography.Text tone='secondary'>Si está activo, el editor plegará el código automáticamente.</Typography.Text>
-        <div className='monacoPreferences-switch flex w-full flex-row flex-wrap gap-grid-sm'>
-          {[true, false].map(style => (
-            <Button key={newKey()} onClick={() => monaco.setFolding(style)} active={monaco.folding === style}>
-              {style ? 'On' : 'Off'}
-            </Button>
-          ))}
-        </div>
-      </div>
-
-      <div className='monacoPreferences-section flex flex-col gap-grid-lg'>
-        <Typography.Emphasis>Scroll adicional</Typography.Emphasis>
-        <Typography.Text tone='secondary'>Amplia el desplazamiento más allá de la última línea del código.</Typography.Text>
-        <div className='monacoPreferences-switch flex w-full flex-row flex-wrap gap-grid-sm'>
-          {[true, false].map(style => (
-            <Button
-              key={newKey()}
-              onClick={() => monaco.setScrollBeyondLastLine(style)}
-              active={monaco.scrollBeyondLastLine === style}
-            >
-              {style ? 'On' : 'Off'}
-            </Button>
-          ))}
-        </div>
-      </div>
-
-      <div className='monacoPreferences-section flex flex-col gap-grid-lg'>
-        <Typography.Emphasis>Formateo automático</Typography.Emphasis>
-        <Typography.Text tone='secondary'>Formatea el código automáticamente al pegar.</Typography.Text>
-        <div className='monacoPreferences-switch flex w-full flex-row flex-wrap gap-grid-sm'>
-          {[true, false].map(style => (
-            <Button key={newKey()} onClick={() => monaco.setFormatOnPaste(style)} active={monaco.formatOnPaste === style}>
-              {style ? 'On' : 'Off'}
-            </Button>
-          ))}
-        </div>
-      </div>
-
-      <div className='monacoPreferences-section flex flex-col gap-grid-lg'>
-        <Typography.Emphasis>Formateo automático</Typography.Emphasis>
-        <Typography.Text tone='secondary'>Formatea el código automáticamente mientras se escribe.</Typography.Text>
-        <div className='monacoPreferences-switch flex w-full flex-row flex-wrap gap-grid-sm'>
-          {[true, false].map(style => (
-            <Button key={newKey()} onClick={() => monaco.setFormatOnType(style)} active={monaco.formatOnType === style}>
-              {style ? 'On' : 'Off'}
-            </Button>
-          ))}
-        </div>
-      </div>
-
-      <div className='monacoPreferences-section flex flex-col gap-grid-lg'>
-        <Typography.Emphasis>Coincidencia de paréntesis</Typography.Emphasis>
-        <Typography.Text tone='secondary'>
-          Agrega Coincidencias de paréntesis al código al lado derecho del editor.
-          <br />- Never: nunca,
-          <br />- Near: cerca,
-          <br />- Always: siempre.
-        </Typography.Text>
-        <div className='monacoPreferences-switch flex w-full flex-row flex-wrap gap-grid-sm'>
-          {['never', 'near', 'always'].map(style => (
-            <Button
-              key={newKey()}
-              onClick={() => monaco.setMatchBrackets(style as any)}
-              active={monaco.matchBrackets === style}
-            >
-              {style}
-            </Button>
-          ))}
-        </div>
-      </div>
-
-      <div className='monacoPreferences-section flex flex-col gap-grid-lg'>
-        <Typography.Emphasis>Cierre de paréntesis</Typography.Emphasis>
-        <Typography.Text tone='secondary'>
-          Cierra automáticamente paréntesis, corchetes y llaves.
-          <br />- Always: siempre,
-          <br />- BeforeWhitespace: antes de los espacios,
-          <br />- LanguageDefined: definido por el lenguaje,
-          <br />- Never: nunca.
-        </Typography.Text>
-        <div className='monacoPreferences-switch flex w-full flex-row flex-wrap gap-grid-sm'>
-          {['always', 'beforeWhitespace', 'languageDefined', 'never'].map(style => (
-            <Button
-              key={newKey()}
-              onClick={() => monaco.setAutoClosingBrackets(style as any)}
-              active={monaco.autoClosingBrackets === style}
-            >
-              {style}
-            </Button>
-          ))}
-        </div>
-      </div>
-
-      <div className='monacoPreferences-section flex flex-col gap-grid-lg'>
-        <Typography.Emphasis>Cierre de comillas</Typography.Emphasis>
-        <Typography.Text tone='secondary'>
-          - Always: siempre,
-          <br />- BeforeWhitespace: antes de los espacios,
-          <br />- LanguageDefined: definido por el lenguaje,
-          <br />- Never: nunca.
-        </Typography.Text>
-        <div className='monacoPreferences-switch flex w-full flex-row flex-wrap gap-grid-sm'>
-          {['always', 'beforeWhitespace', 'languageDefined', 'never'].map(style => (
-            <Button
-              key={newKey()}
-              onClick={() => monaco.setAutoClosingQuotes(style as any)}
-              active={monaco.autoClosingQuotes === style}
-            >
-              {style}
-            </Button>
-          ))}
-        </div>
-      </div>
+        <PreferenceField
+          title='Auto-cierre de comillas'
+          subtitle={`" " y ' ' al escribir`}
+          example='Ej: languageDefined = según el lenguaje'
+        >
+          <PreferenceToggle
+            value={monaco.autoClosingQuotes ?? 'languageDefined'}
+            options={['always', 'beforeWhitespace', 'languageDefined', 'never'] as const}
+            onChange={v => monaco.setAutoClosingQuotes(v as any)}
+          />
+        </PreferenceField>
+      </PreferenceSection>
     </>
   )
 }

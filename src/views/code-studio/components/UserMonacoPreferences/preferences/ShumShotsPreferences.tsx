@@ -1,9 +1,8 @@
+import { Input } from '@common/ui/Input'
 import useShumOptionsStore from '@views/code-studio/store/shumOptions.store'
-import { newKey } from '@/shared/key'
-import Button from '@/shared/ui/Button'
-import LabeledInput from '@/shared/ui/LabeledInput'
 import { type FC, useMemo } from 'react'
-import Typography from '@common/ui/Typography'
+
+import { PreferenceField, PreferencePanel, PreferenceSection, PreferenceToggle } from '../PreferenceField'
 
 const ShumShotsPreferences: FC = () => {
   const shots = useShumOptionsStore()
@@ -41,178 +40,151 @@ const ShumShotsPreferences: FC = () => {
   }
 
   return (
-    <div className='monacoPreferences-subsection flex flex-col border-l-[3px] border-dashed border-primary/50 bg-card/50 px-grid-md py-grid'>
-      <Typography.Block title="Shum shot's:" />
+    <PreferencePanel>
+      <PreferenceSection title="Shum shot's:" subtitle='Detalles visuales del shot: icono, radio y tamaño.'>
+        <PreferenceField
+          title='Icono del lenguaje'
+          subtitle='Badge sobre el editor'
+          description='Muestra el icono del lenguaje actual en el shot.'
+        >
+          <PreferenceToggle
+            value={shots.showLanguageIcon}
+            options={[true, false] as const}
+            onChange={shots.setShowLanguageIcon}
+          />
+        </PreferenceField>
 
-      <div className='monacoPreferences-section flex flex-col gap-grid-lg'>
-        <Typography.Emphasis>Mostrar icono del lenguaje</Typography.Emphasis>
-        <div className='monacoPreferences-switch flex w-full flex-row flex-wrap gap-grid-sm'>
-          {[true, false].map(style => (
-            <Button key={newKey()} onClick={() => shots.setShowLanguageIcon(style)} active={shots.showLanguageIcon === style}>
-              {style ? 'On' : 'Off'}
-            </Button>
-          ))}
-        </div>
-      </div>
+        <PreferenceField
+          title='Sombra del icono'
+          subtitle='Glow para iconos claros'
+          description='Ayuda cuando el logo es blanco o muy transparente.'
+          note='Requiere icono del lenguaje activo.'
+        >
+          <PreferenceToggle
+            value={shots.shadowLanguage}
+            options={[true, false] as const}
+            onChange={shots.setShadowLanguage}
+          />
+        </PreferenceField>
 
-      <div className='monacoPreferences-section flex flex-col gap-grid-lg'>
-        <Typography.Emphasis>Sombrear icono del lenguaje</Typography.Emphasis>
-        <Typography.Paragraph tone='secondary'>
-          Util para aquellos iconos blancos o muy transparentes.{' '}
-          <Typography.Precaution>Requiere que se muestre el icono del lenguaje</Typography.Precaution>
-        </Typography.Paragraph>
-        <div className='monacoPreferences-switch flex w-full flex-row flex-wrap gap-grid-sm'>
-          {[true, false].map(style => (
-            <Button key={newKey()} onClick={() => shots.setShadowLanguage(style)} active={shots.shadowLanguage === style}>
-              {style ? 'On' : 'Off'}
-            </Button>
-          ))}
-        </div>
-      </div>
-
-      <div className='monacoPreferences-section flex flex-col gap-grid-lg'>
-        <Typography.Emphasis>Redondeado del editor</Typography.Emphasis>
-        <Typography.Paragraph tone='secondary'>
-          Util para aquellos iconos blancos o muy transparentes.{' '}
-          <Typography.Precaution>Requiere que se muestre el icono del lenguaje</Typography.Precaution>
-        </Typography.Paragraph>
-        <div className='monacoPreferences-switch flex w-full flex-row flex-wrap gap-grid-sm'>
-          <LabeledInput
+        <PreferenceField
+          title='Radio del editor'
+          subtitle='Esquinas del área de código'
+          example='Ej: Normal = 20px'
+        >
+          <Input
             type='number'
+            size='sm'
+            variant='outline'
+            suffix='px'
             value={shots.borderRadius}
             min={0}
             max={100}
             step={5}
             onChange={e => handleChangeBorderRadius(Number(e.target.value))}
-          >
-            px
-          </LabeledInput>
-        </div>
+            containerClassName='w-[7.5rem]'
+          />
+          <PreferenceToggle
+            value={shots.borderRadius}
+            options={[0, 5, 10, 15, 20, 25, 30, 35, 40] as const}
+            onChange={handleChangeBorderRadius}
+            normal={20}
+          />
+        </PreferenceField>
 
-        <div className='monacoPreferences-switch flex w-full flex-row flex-wrap gap-grid-sm'>
-          {[0, 5, 10, 15, 20, 25, 30, 35, 40].map(style => {
-            const normal = 20
-            return (
-              <Button key={newKey()} onClick={() => handleChangeBorderRadius(style)} active={shots.borderRadius === style}>
-                {style === normal ? 'Normal' : style}
-              </Button>
-            )
-          })}
-        </div>
-      </div>
-
-      <div className='monacoPreferences-section flex flex-col gap-grid-lg'>
-        <Typography.Emphasis>Redondeado del contenedor</Typography.Emphasis>
-        <div className='monacoPreferences-switch flex w-full flex-row flex-wrap gap-grid-sm'>
-          <LabeledInput
+        <PreferenceField
+          title='Radio del contenedor'
+          subtitle='Esquinas del marco exterior'
+          example='Ej: 0 = cuadrado; 20 = suave'
+        >
+          <Input
             type='number'
+            size='sm'
+            variant='outline'
+            suffix='px'
             value={shots.containerBorderRadius}
             min={0}
             max={100}
             step={5}
             onChange={e => handleChangeContainerBorderRadius(Number(e.target.value))}
-          >
-            px
-          </LabeledInput>
-        </div>
+            containerClassName='w-[7.5rem]'
+          />
+          <PreferenceToggle
+            value={shots.containerBorderRadius}
+            options={[0, 5, 10, 15, 20, 25, 30, 35, 40] as const}
+            onChange={handleChangeContainerBorderRadius}
+            normal={20}
+          />
+        </PreferenceField>
 
-        <div className='monacoPreferences-switch flex w-full flex-row flex-wrap gap-grid-sm'>
-          {[0, 5, 10, 15, 20, 25, 30, 35, 40].map(style => {
-            const normal = 20
-            return (
-              <Button
-                key={newKey()}
-                onClick={() => handleChangeContainerBorderRadius(style)}
-                active={shots.containerBorderRadius === style}
-              >
-                {style === normal ? 'Normal' : style}
-              </Button>
-            )
-          })}
-        </div>
-      </div>
-
-      <div className='monacoPreferences-section flex flex-col gap-grid-lg'>
-        <Typography.Emphasis>Alto del editor</Typography.Emphasis>
-        <div className='monacoPreferences-switch flex w-full flex-row flex-wrap gap-grid-sm'>
-          <LabeledInput
+        <PreferenceField title='Alto' subtitle='Altura del editor' example='Ej: Normal = 600px'>
+          <Input
             type='number'
+            size='sm'
+            variant='outline'
+            suffix='px'
             value={shots.containerHeight}
             min={200}
             max={1200}
             step={50}
             onChange={e => handleChangeHeight(Number(e.target.value))}
-          >
-            px
-          </LabeledInput>
-        </div>
+            containerClassName='w-[7.5rem]'
+          />
+          <PreferenceToggle
+            value={shots.containerHeight}
+            options={[300, 400, 500, 600, 700, 800, 900] as const}
+            onChange={handleChangeHeight}
+            normal={600}
+          />
+        </PreferenceField>
 
-        <div className='monacoPreferences-switch flex w-full flex-row flex-wrap gap-grid-sm'>
-          {[300, 400, 500, 600, 700, 800, 900].map(style => {
-            const normal = 600
-            return (
-              <Button key={newKey()} onClick={() => handleChangeHeight(style)} active={shots.containerHeight === style}>
-                {style === normal ? 'Normal' : style}
-              </Button>
-            )
-          })}
-        </div>
-      </div>
-
-      <div className='monacoPreferences-section flex flex-col gap-grid-lg'>
-        <Typography.Emphasis>Ancho del editor</Typography.Emphasis>
-        <div className='monacoPreferences-switch flex w-full flex-row flex-wrap gap-grid-sm'>
-          <LabeledInput
+        <PreferenceField title='Ancho' subtitle='Ancho del editor' example='Ej: Normal = 900px'>
+          <Input
             type='number'
+            size='sm'
+            variant='outline'
+            suffix='px'
             value={shots.containerWidth}
             min={200}
             max={1200}
             step={50}
             onChange={e => handleChangeWidth(Number(e.target.value))}
-          >
-            px
-          </LabeledInput>
-        </div>
+            containerClassName='w-[7.5rem]'
+          />
+          <PreferenceToggle
+            value={shots.containerWidth}
+            options={[300, 400, 500, 600, 700, 800, 900, 1000, 1100, 1200] as const}
+            onChange={handleChangeWidth}
+            normal={900}
+          />
+        </PreferenceField>
 
-        <div className='monacoPreferences-switch flex w-full flex-row flex-wrap gap-grid-sm'>
-          {[300, 400, 500, 600, 700, 800, 900, 1000, 1100, 1200].map(style => {
-            const normal = 900
-            return (
-              <Button key={newKey()} onClick={() => handleChangeWidth(style)} active={shots.containerWidth === style}>
-                {style === normal ? 'Normal' : style}
-              </Button>
-            )
-          })}
-        </div>
-      </div>
-
-      <div className='monacoPreferences-section flex flex-col gap-grid-lg'>
-        <Typography.Emphasis>Padding del editor</Typography.Emphasis>
-        <div className='monacoPreferences-switch flex w-full flex-row flex-wrap gap-grid-sm'>
-          <LabeledInput
+        <PreferenceField
+          title='Padding'
+          subtitle='Aire interno del marco'
+          example='Ej: Normal = 10px'
+        >
+          <Input
             type='number'
+            size='sm'
+            variant='outline'
+            suffix='px'
             value={shots.containerPadding}
             min={0}
             max={100}
             step={5}
             onChange={e => handleChangePadding(Number(e.target.value))}
-          >
-            px
-          </LabeledInput>
-        </div>
-
-        <div className='monacoPreferences-switch flex w-full flex-row flex-wrap gap-grid-sm'>
-          {[0, 5, 10, 15, 20, 25, 30, 35, 40].map(style => {
-            const normal = 10
-            return (
-              <Button key={newKey()} onClick={() => handleChangePadding(style)} active={shots.containerPadding === style}>
-                {style === normal ? 'Normal' : style}
-              </Button>
-            )
-          })}
-        </div>
-      </div>
-    </div>
+            containerClassName='w-[7.5rem]'
+          />
+          <PreferenceToggle
+            value={shots.containerPadding}
+            options={[0, 5, 10, 15, 20, 25, 30, 35, 40] as const}
+            onChange={handleChangePadding}
+            normal={10}
+          />
+        </PreferenceField>
+      </PreferenceSection>
+    </PreferencePanel>
   )
 }
 

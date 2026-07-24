@@ -1,4 +1,3 @@
-import { newKey } from '@/shared/key'
 import monacoLanguagesIcons from '@/shared/monaco-languages'
 import type { FC } from 'react'
 
@@ -6,11 +5,11 @@ import MonacoLanguage from './MonacoLanguage'
 
 const MonacoLanguages: FC = () => {
   return (
-    <>
-      {Object.entries(monacoLanguagesIcons).map(language => {
-        return <MonacoLanguage key={newKey()} language={language} />
-      })}
-    </>
+    <div className='flex flex-col gap-3'>
+      {Object.entries(monacoLanguagesIcons).map(([section, languages]) => (
+        <MonacoLanguage key={section} language={[section, languages]} />
+      ))}
+    </div>
   )
 }
 

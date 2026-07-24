@@ -1,8 +1,7 @@
-import { newKey } from '@/shared/key'
-import Button from '@/shared/ui/Button'
-import LabeledInput from '@/shared/ui/LabeledInput'
+import { Input } from '@common/ui/Input'
 import type { FC } from 'react'
-import Typography from '@common/ui/Typography'
+
+import { PreferenceField, PreferenceToggle } from '../PreferenceField'
 
 interface Props {
   fontSize?: number
@@ -11,25 +10,31 @@ interface Props {
 
 const FontSizePreference: FC<Props> = ({ fontSize, setFontSize }) => {
   if (!fontSize) return null
+
   return (
-    <>
-      <Typography.Emphasis>Tamaño de la fuente</Typography.Emphasis>
-      <div className='monacoPreferences-switch flex w-full flex-row flex-wrap gap-grid-sm'>
-        <LabeledInput value={fontSize} min={10} max={22} type='number' onChange={e => setFontSize(Number(e.target.value))}>
-          px
-        </LabeledInput>
-      </div>
-      <div className='monacoPreferences-switch flex w-full flex-row flex-wrap gap-grid-sm'>
-        {[10, 14, 16, 18, 20].map(style => {
-          const normal = 14
-          return (
-            <Button key={newKey()} onClick={() => setFontSize(style)} active={fontSize === style}>
-              {style === normal ? 'Normal' : style}
-            </Button>
-          )
-        })}
-      </div>
-    </>
+    <PreferenceField
+      title='Tamaño de fuente'
+      subtitle='Escala del código'
+      example='Ej: Normal = 14px'
+    >
+      <Input
+        type='number'
+        size='sm'
+        variant='outline'
+        suffix='px'
+        value={fontSize}
+        min={10}
+        max={22}
+        onChange={e => setFontSize(Number(e.target.value))}
+        containerClassName='w-[7.5rem]'
+      />
+      <PreferenceToggle
+        value={fontSize}
+        options={[10, 14, 16, 18, 20] as const}
+        onChange={setFontSize}
+        normal={14}
+      />
+    </PreferenceField>
   )
 }
 
