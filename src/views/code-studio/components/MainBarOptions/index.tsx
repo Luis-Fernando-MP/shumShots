@@ -24,6 +24,7 @@ const MainBarOptions: FC = () => {
       </Button>
 
       <ShotFileName />
+
       <UserMonacoPreferences />
     </section>
   )

@@ -6,7 +6,7 @@ interface ICodeShotStore {
 }
 
 const state: StateCreator<ICodeShotStore> = set => ({
-  fileName: 'PIXIS',
+  fileName: 'pixis',
   setFileName: fileName => set({ fileName })
 })
 

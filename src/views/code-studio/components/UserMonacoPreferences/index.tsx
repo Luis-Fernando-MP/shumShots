@@ -20,33 +20,31 @@ const UserMonacoPreferences: FC = () => {
           <Settings />
         </Button>
       </Popup.Trigger>
+
       <Popup.Header>Monaco config</Popup.Header>
-      <Popup.Content className='flex flex-col gap-grid-xl'>
-        <Typography.Block title='Temas:' className='monacoPreferences-section flex flex-col gap-grid-lg'>
+
+      <Popup.Content className='gap-grid-xl flex flex-col'>
+        <Typography.Block title='Temas:' className='monacoPreferences-section gap-grid-lg flex flex-col'>
           <SliceContainer
             maxHeight={100}
             extendedMaxHeight={500}
-            className='monacoPreferences-themes flex w-full flex-row flex-wrap gap-grid-sm'
+            className='monacoPreferences-themes gap-grid-sm flex w-full flex-row flex-wrap'
           >
             <ThemeSelectorPreference />
           </SliceContainer>
         </Typography.Block>
 
-        <Typography.Block title='Lenguajes de Programación:' className='monacoPreferences-section flex flex-col gap-grid-lg'>
-          <SliceContainer
-            maxHeight={130}
-            extendedMaxHeight={500}
-            className='monacoPreferences-languages flex w-full flex-col'
-          >
+        <Typography.Block title='Lenguajes de Programación:' className='monacoPreferences-section gap-grid-lg flex flex-col'>
+          <SliceContainer maxHeight={130} extendedMaxHeight={500} className='monacoPreferences-languages flex w-full flex-col'>
             <MonacoLanguages />
           </SliceContainer>
         </Typography.Block>
 
-        <Typography.Block title='Tipografía:' className='monacoPreferences-section flex flex-col gap-grid-lg'>
+        <Typography.Block title='Tipografía:' className='monacoPreferences-section gap-grid-lg flex flex-col'>
           <SliceContainer
             maxHeight={130}
             extendedMaxHeight={500}
-            className='monacoPreferences-fonts flex w-full flex-row flex-wrap gap-grid-sm'
+            className='monacoPreferences-fonts gap-grid-sm flex w-full flex-row flex-wrap'
           >
             <MonacoFonts />
           </SliceContainer>
