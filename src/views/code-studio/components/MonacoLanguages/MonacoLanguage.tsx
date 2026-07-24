@@ -1,6 +1,6 @@
 import { MonacoLanguage as MonacoLanguageType } from '@/shared/monaco-languages'
 import Typography from '@common/ui/Typography'
-import useShumOptionsStore from '@views/code-studio/store/shumOptions.store'
+import usePixisPreferencesStore from '@views/code-studio/store/pixisPreferences.store'
 import type { FC } from 'react'
 
 import IconLanguage from './IconLanguage'
@@ -11,7 +11,8 @@ interface Props {
 
 const MonacoLanguage: FC<Props> = ({ language }) => {
   const [section, languages] = language
-  const { language: userLanguage, setLanguage } = useShumOptionsStore()
+  const userLanguage = usePixisPreferencesStore(s => s.pixis.language)
+  const setLanguage = usePixisPreferencesStore(s => s.setLanguage)
 
   const handleClick = (next: MonacoLanguageType) => {
     if (userLanguage.language === next.language) return

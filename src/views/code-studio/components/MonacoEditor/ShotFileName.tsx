@@ -3,7 +3,7 @@ import { Input } from 'react-field-sizing-content'
 import { useDebounceCallback } from 'usehooks-ts'
 
 import useCodeShotStore from '../../store/codeShot.store'
-import useShumOptionsStore from '../../store/shumOptions.store'
+import usePixisPreferencesStore from '../../store/pixisPreferences.store'
 
 interface Props {
   foreground: string
@@ -11,7 +11,9 @@ interface Props {
 
 const ShotFileName: FC<Props> = ({ foreground }) => {
   const { fileName, setFileName } = useCodeShotStore()
-  const { language, showLanguageIcon, shadowLanguage } = useShumOptionsStore()
+  const language = usePixisPreferencesStore(s => s.pixis.language)
+  const showLanguageIcon = usePixisPreferencesStore(s => s.pixis.showLanguageIcon)
+  const shadowLanguage = usePixisPreferencesStore(s => s.pixis.shadowLanguage)
 
   const debouncedSetFileName = useDebounceCallback(setFileName, 500)
 

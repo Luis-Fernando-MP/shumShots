@@ -1,7 +1,7 @@
 'use client'
 
 import { monacoFonts } from '@/shared/fonts/monaco-fonts'
-import useShumOptionsStore from '@views/code-studio/store/shumOptions.store'
+import usePixisPreferencesStore from '@views/code-studio/store/pixisPreferences.store'
 import dynamic from 'next/dynamic'
 import type { FC } from 'react'
 
@@ -14,7 +14,8 @@ const formatFontName = (key: string) =>
     .replace(/\b\w/g, char => char.toUpperCase())
 
 const MonacoFonts: FC = () => {
-  const { setTypography, typography } = useShumOptionsStore()
+  const typography = usePixisPreferencesStore(s => s.pixis.typography)
+  const setTypography = usePixisPreferencesStore(s => s.setTypography)
 
   return (
     <div className='grid w-full grid-cols-2 gap-1.5 sm:grid-cols-3'>

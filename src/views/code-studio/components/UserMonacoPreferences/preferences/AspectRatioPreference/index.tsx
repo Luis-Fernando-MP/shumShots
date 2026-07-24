@@ -1,12 +1,10 @@
+'use client'
+
 import Button from '@/shared/ui/Button'
 import { Input } from '@common/ui/Input'
 import Typography from '@common/ui/Typography'
 import { cn } from '@common/utils/cn'
-import { defaultShumOptions } from '@views/code-studio/defaults/defaultShumOptions'
-import useShumOptionsStore from '@views/code-studio/store/shumOptions.store'
-import { type FC, useMemo, useState } from 'react'
-
-import { PreferenceField } from '../../PreferenceField'
+import usePixisPreferencesStore from '@views/code-studio/store/pixisPreferences.store'
 import {
   ASPECT_DEFAULT,
   ASPECT_FREE,
@@ -16,7 +14,11 @@ import {
   parseAspect,
   resolveAspectSelection,
   simplifyAspect
-} from './aspectRatio'
+} from '@views/code-studio/utils/aspectRatio'
+import { getDefaultState, getField } from '@views/code-studio/utils/preferences.config'
+import { type FC, useState } from 'react'
+
+import { PreferenceField } from '../PreferenceField'
 
 const AspectRatioButton: FC<{
   ratio?: string
@@ -79,28 +81,28 @@ const AspectRatioButton: FC<{
 }
 
 const AspectRatioPreference: FC = () => {
-  const shots = useShumOptionsStore()
-  const $editor = useMemo(() => document.querySelector('#monacoEditor') as HTMLElement, [])
+  const field = getField('aspectRatio')
+  const pixis = usePixisPreferencesStore(s => s.pixis)
+  const setPixis = usePixisPreferencesStore(s => s.setPixis)
+  const patchPixis = usePixisPreferencesStore(s => s.patchPixis)
+  const defaults = getDefaultState().pixis
 
-  const parsedAspect = parseAspect(shots.aspectRatio)
+  const parsedAspect = parseAspect(pixis.aspectRatio)
   const [customW, setCustomW] = useState(String(parsedAspect?.[0] ?? 16))
   const [customH, setCustomH] = useState(String(parsedAspect?.[1] ?? 9))
 
-  const applyEditorSize = (width: number, height: number) => {
-    if (!$editor) return
-    $editor.style.width = `${width}px`
-    $editor.style.height = `${height}px`
-    shots.setContainerWidth(width)
-    shots.setContainerHeight(height)
-  }
-
   const handleSelectAspect = (ratio: string) => {
-    shots.setAspectRatio(ratio)
-
-    if (ratio === ASPECT_FREE) return
+    if (ratio === ASPECT_FREE) {
+      setPixis('aspectRatio', ratio)
+      return
+    }
 
     if (ratio === ASPECT_DEFAULT) {
-      applyEditorSize(defaultShumOptions.containerWidth, defaultShumOptions.containerHeight)
+      patchPixis({
+        aspectRatio: ratio,
+        containerWidth: defaults.containerWidth,
+        containerHeight: defaults.containerHeight
+      })
       setCustomW('3')
       setCustomH('2')
       return
@@ -112,8 +114,13 @@ const AspectRatioPreference: FC = () => {
       setCustomH(String(parsed[1]))
     }
 
-    const height = heightFromWidth(shots.containerWidth, ratio)
-    if (height != null) applyEditorSize(shots.containerWidth, height)
+    const height = heightFromWidth(pixis.containerWidth, ratio)
+    if (height != null) {
+      patchPixis({ aspectRatio: ratio, containerWidth: pixis.containerWidth, containerHeight: height })
+      return
+    }
+
+    setPixis('aspectRatio', ratio)
   }
 
   const handleApplyCustomAspect = () => {
@@ -128,24 +135,24 @@ const AspectRatioPreference: FC = () => {
 
   return (
     <PreferenceField
-      title='Aspect ratio'
-      subtitle='Proporción ancho × alto'
-      description='La caja grande es el marco; la interna muestra la proporción.'
-      example='Ej: Default = 900×600; Free = ratio personalizado'
-      note='Con ratio activo, al cambiar ancho o alto se ajusta el otro lado.'
+      title={field.title}
+      subtitle={field.subtitle}
+      description={field.description}
+      example={field.example}
+      note={field.note}
     >
       <div className='flex w-full flex-col gap-2.5'>
         <div className='flex flex-wrap gap-1.5'>
           <AspectRatioButton
             ratio={ASPECT_DEFAULT}
             label='Default'
-            selected={shots.aspectRatio === ASPECT_DEFAULT}
+            selected={pixis.aspectRatio === ASPECT_DEFAULT}
             onSelect={() => handleSelectAspect(ASPECT_DEFAULT)}
           />
           <AspectRatioButton
             free
             label='Free'
-            selected={shots.aspectRatio === ASPECT_FREE}
+            selected={pixis.aspectRatio === ASPECT_FREE}
             onSelect={() => handleSelectAspect(ASPECT_FREE)}
           />
           {ASPECT_PRESETS.map(preset => (
@@ -153,13 +160,13 @@ const AspectRatioPreference: FC = () => {
               key={preset.id}
               ratio={preset.id}
               label={preset.label}
-              selected={isAspectSelected(shots.aspectRatio, preset.id)}
+              selected={isAspectSelected(pixis.aspectRatio, preset.id)}
               onSelect={() => handleSelectAspect(preset.id)}
             />
           ))}
         </div>
 
-        {shots.aspectRatio === ASPECT_FREE && (
+        {pixis.aspectRatio === ASPECT_FREE && (
           <div className='flex flex-wrap items-center gap-1.5'>
             <Input
               type='number'

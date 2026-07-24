@@ -1,37 +1,41 @@
 import { ThemeMonacoName, monacoThemes } from '@/shared/themes/monacoThemes'
-import { ThemeColors } from '@/shared/themes/monacoThemes.type'
 import PaletteSphere from '@/shared/ui/PaletteSphere'
 import type { FC } from 'react'
 
 import useMonacoThemeStore from '../../store/monacoTheme.store'
+
+const PALETTE_KEYS = {
+  'tn-primary': 'editor.foreground',
+  'tn-secondary': 'activityBarBadge.background',
+  'bg-primary': 'editor.background'
+} as const
+
+const PALETTE_FALLBACK = {
+  'tn-primary': '#888888',
+  'tn-secondary': '#666666',
+  'bg-primary': '#1e1e1e'
+} as const
+
+const toPaletteTheme = (colors: Record<string, string | undefined>) => ({
+  'tn-primary': colors[PALETTE_KEYS['tn-primary']] ?? PALETTE_FALLBACK['tn-primary'],
+  'tn-secondary': colors[PALETTE_KEYS['tn-secondary']] ?? PALETTE_FALLBACK['tn-secondary'],
+  'bg-primary': colors[PALETTE_KEYS['bg-primary']] ?? PALETTE_FALLBACK['bg-primary']
+})
 
 const ThemeSelectorPreference: FC = () => {
   const { themeName, setThemeName } = useMonacoThemeStore()
 
   return (
     <>
-      {Object.values(monacoThemes).map(theme => {
-        const { name } = theme
-        const colors = theme.colors as ThemeColors
-        return (
-          <PaletteSphere
-            key={name}
-            title={name}
-            selected={name === themeName}
-            onClick={() => setThemeName(name as ThemeMonacoName)}
-            theme={{
-              'tn-primary': colors['editor.foreground'] ?? colors['editor.background'] ?? '#888888',
-              'tn-secondary':
-                colors['activityBarBadge.background'] ??
-                colors['editor.selectionBackground'] ??
-                colors['editor.selectionHighlightBackground'] ??
-                colors['editor.foreground'] ??
-                '#666666',
-              'bg-primary': colors['editor.background'] ?? '#1e1e1e'
-            }}
-          />
-        )
-      })}
+      {Object.values(monacoThemes).map(theme => (
+        <PaletteSphere
+          key={theme.name}
+          title={theme.name}
+          selected={theme.name === themeName}
+          onClick={() => setThemeName(theme.name as ThemeMonacoName)}
+          theme={toPaletteTheme(theme.colors)}
+        />
+      ))}
     </>
   )
 }

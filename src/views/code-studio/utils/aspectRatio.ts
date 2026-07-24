@@ -1,7 +1,6 @@
 export const SIZE_MIN = 200
 export const SIZE_MAX = 1200
 
-/** Sentinel: restore default editor size (900×600). */
 export const ASPECT_DEFAULT = 'default'
 export const ASPECT_FREE = 'free'
 
@@ -27,7 +26,6 @@ const gcd = (a: number, b: number): number => {
   return x || 1
 }
 
-/** Reduce e.g. 16:16 → 1:1, 32:18 → 16:9. */
 export const simplifyAspect = (w: number, h: number): [number, number] => {
   const d = gcd(w, h)
   return [Math.round(w) / d, Math.round(h) / d]
@@ -35,7 +33,6 @@ export const simplifyAspect = (w: number, h: number): [number, number] => {
 
 export const aspectsEqual = (a: [number, number], b: [number, number]) => a[0] * b[1] === a[1] * b[0]
 
-/** Resolve a store value to W:H numbers. `default` → 3:2 (900×600). */
 export const parseAspect = (ratio: string): [number, number] | null => {
   if (!ratio || ratio === ASPECT_FREE) return null
   if (ratio === ASPECT_DEFAULT) return [3, 2]
@@ -47,7 +44,6 @@ export const parseAspect = (ratio: string): [number, number] | null => {
   return [w, h]
 }
 
-/** Map a custom W/H to a preset id when equivalent, else simplified `W:H`. */
 export const resolveAspectSelection = (w: number, h: number): string => {
   const simplified = simplifyAspect(w, h)
   for (const preset of ASPECT_PRESETS) {
@@ -57,7 +53,6 @@ export const resolveAspectSelection = (w: number, h: number): string => {
   return `${simplified[0]}:${simplified[1]}`
 }
 
-/** Whether store ratio matches a preset/id (e.g. `16:16` ≡ `1:1`). */
 export const isAspectSelected = (current: string, candidate: string) => {
   if (current === candidate) return true
   if (candidate === ASPECT_DEFAULT || candidate === ASPECT_FREE) return false

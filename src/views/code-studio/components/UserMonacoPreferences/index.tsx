@@ -9,8 +9,8 @@ import { Settings } from 'lucide-react'
 import { type FC, type ReactNode } from 'react'
 
 import MonacoLanguages from '../MonacoLanguages'
-import MonacoFonts from './MonacoFonts'
-import SetterMonacoPreferences from './SetterMonacoPreferences'
+import MonacoFonts from './preferences/MonacoFonts'
+import SetterMonacoPreferences from './preferences/SetterMonacoPreferences'
 import ThemeSelectorPreference from './ThemeSelectorPreference'
 
 const Section = ({ title, subtitle, children }: { title: string; subtitle: string; children: ReactNode }) => (

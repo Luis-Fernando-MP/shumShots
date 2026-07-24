@@ -1,29 +1,24 @@
-import { editor } from 'monaco-editor'
+import usePixisPreferencesStore from '@views/code-studio/store/pixisPreferences.store'
+import { getGroup } from '@views/code-studio/utils/preferences.config'
 import type { FC } from 'react'
 
 import { PreferenceField, PreferencePanel, PreferenceSection, PreferenceToggle } from '../PreferenceField'
 
-type Monaco = editor.IEditorOptions
+const StickyScrollPreference: FC = () => {
+  const group = getGroup('stickyScroll')
+  const stickyScroll = usePixisPreferencesStore(s => s.monaco.stickyScroll)
+  const setMonaco = usePixisPreferencesStore(s => s.setMonaco)
 
-interface Props {
-  stickyScroll: Monaco['stickyScroll']
-  setStickyScroll: (stickyScroll: Monaco['stickyScroll']) => void
-}
-
-const StickyScrollPreference: FC<Props> = ({ stickyScroll, setStickyScroll }) => {
   if (!stickyScroll) return null
 
-  const handleChange = (newProps: Partial<Monaco['stickyScroll']>) => {
-    setStickyScroll({ ...stickyScroll, ...newProps })
+  const handleChange = (newProps: Partial<NonNullable<typeof stickyScroll>>) => {
+    setMonaco('stickyScroll', { ...stickyScroll, ...newProps })
   }
 
   const { enabled, maxLineCount, defaultModel, scrollWithEditor } = stickyScroll
 
   return (
-    <PreferenceSection
-      title='Scroll pegajoso:'
-      subtitle='Mantiene el encabezado del bloque visible al hacer scroll.'
-    >
+    <PreferenceSection title={group.title} subtitle={group.subtitle}>
       <PreferenceField title='Activar' subtitle='Fijar contexto arriba del editor'>
         <PreferenceToggle
           value={enabled ?? false}
@@ -55,7 +50,11 @@ const StickyScrollPreference: FC<Props> = ({ stickyScroll, setStickyScroll }) =>
             <PreferenceToggle
               value={defaultModel ?? 'outlineModel'}
               options={['outlineModel', 'foldingProviderModel', 'indentationModel'] as const}
-              onChange={v => handleChange({ defaultModel: v as any })}
+              onChange={v =>
+                handleChange({
+                  defaultModel: v as 'outlineModel' | 'foldingProviderModel' | 'indentationModel'
+                })
+              }
               label={v => {
                 if (v === 'outlineModel') return 'outline'
                 if (v === 'foldingProviderModel') return 'folding'

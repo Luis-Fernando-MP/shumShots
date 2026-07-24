@@ -1,26 +1,24 @@
-import { editor } from 'monaco-editor'
+import usePixisPreferencesStore from '@views/code-studio/store/pixisPreferences.store'
+import { getGroup } from '@views/code-studio/utils/preferences.config'
 import { type FC } from 'react'
 
 import { PreferenceField, PreferencePanel, PreferenceSection, PreferenceToggle } from '../PreferenceField'
 
-type Monaco = editor.IEditorOptions
+const MinimapPreference: FC = () => {
+  const group = getGroup('minimap')
+  const minimap = usePixisPreferencesStore(s => s.monaco.minimap)
+  const setMonaco = usePixisPreferencesStore(s => s.setMonaco)
 
-interface Props {
-  minimap: Monaco['minimap']
-  setMinimap: (minimap: Monaco['minimap']) => void
-}
-
-const MinimapPreference: FC<Props> = ({ minimap, setMinimap }) => {
   if (!minimap) return null
 
-  const handleChange = (newProps: Partial<Monaco['minimap']>) => {
-    setMinimap({ ...minimap, ...newProps })
+  const handleChange = (newProps: Partial<NonNullable<typeof minimap>>) => {
+    setMonaco('minimap', { ...minimap, ...newProps })
   }
 
   const { enabled, autohide, side, size, showSlider, renderCharacters, maxColumn, scale } = minimap
 
   return (
-    <PreferenceSection title='Minimapa:' subtitle='Vista previa compacta del archivo a un lado.'>
+    <PreferenceSection title={group.title} subtitle={group.subtitle}>
       <PreferenceField title='Activar' subtitle='Mostrar u ocultar el minimapa'>
         <PreferenceToggle
           value={enabled ?? false}
@@ -29,7 +27,7 @@ const MinimapPreference: FC<Props> = ({ minimap, setMinimap }) => {
         />
       </PreferenceField>
 
-      {minimap?.enabled && (
+      {minimap.enabled && (
         <PreferencePanel>
           <PreferenceField
             title='Auto-ocultar'
@@ -47,7 +45,7 @@ const MinimapPreference: FC<Props> = ({ minimap, setMinimap }) => {
             <PreferenceToggle
               value={side ?? 'right'}
               options={['left', 'right'] as const}
-              onChange={v => handleChange({ side: v as any })}
+              onChange={v => handleChange({ side: v as 'left' | 'right' })}
             />
           </PreferenceField>
 
@@ -59,7 +57,7 @@ const MinimapPreference: FC<Props> = ({ minimap, setMinimap }) => {
             <PreferenceToggle
               value={size ?? 'proportional'}
               options={['proportional', 'fill'] as const}
-              onChange={v => handleChange({ size: v as any })}
+              onChange={v => handleChange({ size: v as 'proportional' | 'fill' })}
             />
           </PreferenceField>
 
@@ -71,7 +69,7 @@ const MinimapPreference: FC<Props> = ({ minimap, setMinimap }) => {
             <PreferenceToggle
               value={showSlider ?? 'always'}
               options={['always', 'mouseover'] as const}
-              onChange={v => handleChange({ showSlider: v as any })}
+              onChange={v => handleChange({ showSlider: v as 'always' | 'mouseover' })}
             />
           </PreferenceField>
 
@@ -87,11 +85,7 @@ const MinimapPreference: FC<Props> = ({ minimap, setMinimap }) => {
             />
           </PreferenceField>
 
-          <PreferenceField
-            title='Columnas máximas'
-            subtitle='Ancho del mapa'
-            example='Ej: Normal = 100 columnas'
-          >
+          <PreferenceField title='Columnas máximas' subtitle='Ancho del mapa' example='Ej: Normal = 100 columnas'>
             <PreferenceToggle
               value={maxColumn ?? 100}
               options={[50, 75, 100, 125, 150, 175, 200] as const}

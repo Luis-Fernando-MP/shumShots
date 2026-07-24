@@ -1,17 +1,15 @@
-import { editor } from 'monaco-editor'
+import usePixisPreferencesStore from '@views/code-studio/store/pixisPreferences.store'
+import { getGroup } from '@views/code-studio/utils/preferences.config'
 import { type FC, useState } from 'react'
 
 import { PreferenceField, PreferencePanel, PreferenceSection, PreferenceToggle } from '../PreferenceField'
 
-type Monaco = editor.IEditorOptions
-
-interface Props {
-  scrollbar: Monaco['scrollbar']
-  setScrollbar: (scrollbar: Monaco['scrollbar']) => void
-}
-
-const ScrollPreference: FC<Props> = ({ scrollbar, setScrollbar }) => {
+const ScrollPreference: FC = () => {
+  const group = getGroup('scrollbar')
+  const scrollbar = usePixisPreferencesStore(s => s.monaco.scrollbar)
+  const setMonaco = usePixisPreferencesStore(s => s.setMonaco)
   const [enabled, setEnabled] = useState(false)
+
   if (!scrollbar) return null
 
   const {
@@ -24,8 +22,8 @@ const ScrollPreference: FC<Props> = ({ scrollbar, setScrollbar }) => {
     ignoreHorizontalScrollbarInContentHeight
   } = scrollbar
 
-  const handleChange = (newProps: Partial<Monaco['scrollbar']>) => {
-    setScrollbar({ ...scrollbar, ...newProps })
+  const handleChange = (newProps: Partial<NonNullable<typeof scrollbar>>) => {
+    setMonaco('scrollbar', { ...scrollbar, ...newProps })
   }
 
   const handleToggle = (state: boolean): void => {
@@ -44,34 +42,26 @@ const ScrollPreference: FC<Props> = ({ scrollbar, setScrollbar }) => {
   }
 
   return (
-    <PreferenceSection title='Barra de Scroll' subtitle='Visibilidad y tamaño de las barras del editor.'>
+    <PreferenceSection title={group.title} subtitle={group.subtitle}>
       <PreferenceField title='Activar' subtitle='Mostrar barras personalizadas'>
         <PreferenceToggle value={enabled} options={[true, false] as const} onChange={handleToggle} />
       </PreferenceField>
 
       {enabled && (
         <PreferencePanel>
-          <PreferenceField
-            title='Vertical'
-            subtitle='Barra de la derecha'
-            example='Ej: auto = solo si hace falta'
-          >
+          <PreferenceField title='Vertical' subtitle='Barra de la derecha' example='Ej: auto = solo si hace falta'>
             <PreferenceToggle
               value={vertical ?? 'auto'}
               options={['auto', 'visible', 'hidden'] as const}
-              onChange={v => handleChange({ vertical: v as any })}
+              onChange={v => handleChange({ vertical: v as 'auto' | 'visible' | 'hidden' })}
             />
           </PreferenceField>
 
-          <PreferenceField
-            title='Horizontal'
-            subtitle='Barra inferior'
-            example='Ej: visible = siempre a la vista'
-          >
+          <PreferenceField title='Horizontal' subtitle='Barra inferior' example='Ej: visible = siempre a la vista'>
             <PreferenceToggle
               value={horizontal ?? 'auto'}
               options={['auto', 'visible', 'hidden'] as const}
-              onChange={v => handleChange({ horizontal: v as any })}
+              onChange={v => handleChange({ horizontal: v as 'auto' | 'visible' | 'hidden' })}
             />
           </PreferenceField>
 
@@ -87,11 +77,7 @@ const ScrollPreference: FC<Props> = ({ scrollbar, setScrollbar }) => {
             />
           </PreferenceField>
 
-          <PreferenceField
-            title='Rueda del mouse'
-            subtitle='Scroll con wheel'
-            note='Off bloquea el scroll con la rueda.'
-          >
+          <PreferenceField title='Rueda del mouse' subtitle='Scroll con wheel' note='Off bloquea el scroll con la rueda.'>
             <PreferenceToggle
               value={handleMouseWheel ?? true}
               options={[true, false] as const}
