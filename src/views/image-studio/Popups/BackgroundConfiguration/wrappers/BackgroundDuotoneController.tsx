@@ -2,7 +2,13 @@
 
 import SliderControl from '@/shared/components/SliderControl'
 import ColorPicker from '@common/ui/ColorPicker'
-import { DUOTONE_PRESETS, resolveDuotoneLayers, resolvePreviewFill } from '@views/image-studio/utils/backgroundStyle'
+import {
+  DEMO_SCENE_FILL,
+  DUOTONE_PRESETS,
+  isImageBackground,
+  resolveDuotoneLayers,
+  resolvePreviewFill
+} from '@views/image-studio/utils/backgroundStyle'
 import useBackgroundStore from '@views/image-studio/store/background/background.store'
 import type { FC } from 'react'
 
@@ -17,14 +23,18 @@ const DuotonePreview: FC<{
 }> = ({ shadow, highlight, intensity, background }) => {
   const active = intensity > 0
   const layers = active ? resolveDuotoneLayers(shadow, highlight, intensity) : null
+  const base =
+    background && isImageBackground(background)
+      ? resolvePreviewFill(background)
+      : DEMO_SCENE_FILL
 
   return (
-    <div className='bg-muted relative h-12 w-full overflow-hidden rounded-md'>
+    <div className='bg-muted relative h-14 w-full overflow-hidden rounded-md'>
       <div
         className='absolute inset-0'
         style={{
-          ...resolvePreviewFill(background),
-          filter: active ? 'grayscale(100%) contrast(1.05)' : undefined
+          ...base,
+          filter: active ? 'grayscale(100%) contrast(1.15)' : 'grayscale(30%) contrast(1.05)'
         }}
       />
       {layers && (
@@ -33,6 +43,7 @@ const DuotonePreview: FC<{
           <div className='absolute inset-0' style={layers.highlight} />
         </>
       )}
+      <div className='pointer-events-none absolute inset-x-0 bottom-0 h-1/3 bg-linear-to-t from-black/25 to-transparent' />
     </div>
   )
 }
@@ -51,7 +62,7 @@ const BackgroundDuotoneController: FC = () => {
   const showFine = duotoneIntensity > 0 || duotonePreset !== 'none'
 
   return (
-    <SectionBlock title='Duotone / Tint' description='Dos colores estilo Spotify sobre el fondo. Mejor con imagen.'>
+    <SectionBlock title='Duotone / Tint' description='Looks de dos colores. La preview usa una escena demo para comparar.'>
       <div className='grid grid-cols-3 gap-1.5'>
         {DUOTONE_PRESETS.map(item => {
           const active =

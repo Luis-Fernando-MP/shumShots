@@ -5,6 +5,15 @@ const THEME_PREVIEW_FILL: CSSProperties = {
     'linear-gradient(135deg, rgba(var(--tn-primary), 0.9), rgb(var(--bg-secondary)), rgba(var(--tn-secondary), 0.75))'
 }
 
+export const DEMO_SCENE_FILL: CSSProperties = {
+  backgroundImage: [
+    'radial-gradient(ellipse 35% 28% at 72% 26%, #d8d8d8 0 10%, transparent 11%)',
+    'radial-gradient(ellipse 80% 45% at 20% 110%, #2a2a2a 0 42%, transparent 43%)',
+    'radial-gradient(ellipse 70% 40% at 85% 115%, #3a3a3a 0 38%, transparent 39%)',
+    'linear-gradient(180deg, #8f98a3 0%, #b0b6bd 32%, #5c646e 33%, #3f464f 58%, #23262b 100%)'
+  ].join(', ')
+}
+
 const IMAGE_PREFIXES = ['url(', '/wallpapers/', 'blob:', 'data:', 'http://', 'https://'] as const
 
 export type BackgroundPositionPreset = 'center' | 'top' | 'bottom' | 'left' | 'right' | 'free'
@@ -65,8 +74,8 @@ export const resolveBackgroundStyle = (fill: string | null, options: ResolveOpti
   return { backgroundColor: value }
 }
 
-export const resolvePreviewFill = (background: string | null): CSSProperties => {
-  if (!background) return THEME_PREVIEW_FILL
+export const resolvePreviewFill = (background: string | null, fallback: CSSProperties = THEME_PREVIEW_FILL): CSSProperties => {
+  if (!background) return fallback
   if (isImageBackground(background)) {
     return {
       backgroundImage: toCssImageUrl(background),
@@ -211,12 +220,12 @@ export const DUOTONE_PRESETS: {
   highlight: string
   intensity: number
 }[] = [
-  { id: 'none', label: 'Sin tint', shadow: '#000000', highlight: '#ffffff', intensity: 0 },
-  { id: 'spotify', label: 'Spotify', shadow: '#1a0533', highlight: '#1ed760', intensity: 85 },
-  { id: 'sunset', label: 'Sunset', shadow: '#2b0a1e', highlight: '#ff7a45', intensity: 80 },
-  { id: 'ocean', label: 'Ocean', shadow: '#041525', highlight: '#2ec4ff', intensity: 80 },
-  { id: 'neon', label: 'Neon', shadow: '#140028', highlight: '#ff2bd6', intensity: 85 },
-  { id: 'ember', label: 'Ember', shadow: '#1c0800', highlight: '#ff6a1a', intensity: 80 }
+  { id: 'none', label: 'Sin tint', shadow: '#1a1a1a', highlight: '#e8e4df', intensity: 0 },
+  { id: 'spotify', label: 'Spotify', shadow: '#1a2230', highlight: '#6fae82', intensity: 72 },
+  { id: 'sunset', label: 'Sunset', shadow: '#2a1c22', highlight: '#d4a08a', intensity: 70 },
+  { id: 'ocean', label: 'Ocean', shadow: '#1a2430', highlight: '#7fa3b5', intensity: 70 },
+  { id: 'neon', label: 'Neon', shadow: '#22182a', highlight: '#c48bb0', intensity: 72 },
+  { id: 'ember', label: 'Ember', shadow: '#261c14', highlight: '#c9a07a', intensity: 70 }
 ]
 
 export const resolveDuotoneLayers = (shadow: string, highlight: string, intensity: number) => {
@@ -226,6 +235,13 @@ export const resolveDuotoneLayers = (shadow: string, highlight: string, intensit
     highlight: { backgroundColor: highlight, mixBlendMode: 'screen' as const, opacity }
   }
 }
+
+export const ROTATION_PRESETS = [
+  { id: 'left-strong', label: '-15°', value: -15 },
+  { id: 'left', label: '-8°', value: -8 },
+  { id: 'none', label: '0°', value: 0, isDefault: true },
+  { id: 'right', label: '+8°', value: 8 }
+] as const
 
 export const rotationCoverScale = (degrees: number) => {
   if (degrees === 0) return 1
@@ -258,12 +274,12 @@ export const buildBackgroundTransform = (options: {
 
 export const BACKGROUND_SIZE_PRESETS = [
   { id: 'default', label: 'Default', width: 900, height: 600, isDefault: true },
-  { id: 'ig-post', label: 'IG Post', width: 1080, height: 1080, isDefault: false },
-  { id: 'story', label: 'Story', width: 1080, height: 1920, isDefault: false },
-  { id: 'youtube', label: 'YouTube', width: 1280, height: 720, isDefault: false },
-  { id: 'x', label: 'X', width: 1600, height: 900, isDefault: false },
-  { id: 'linkedin', label: 'LinkedIn', width: 1200, height: 627, isDefault: false },
-  { id: 'facebook', label: 'Facebook', width: 1200, height: 630, isDefault: false }
+  { id: 'ig-post', label: 'IG Post', width: 900, height: 900, isDefault: false },
+  { id: 'story', label: 'Story', width: 900, height: 1600, isDefault: false },
+  { id: 'youtube', label: 'YouTube', width: 1067, height: 600, isDefault: false },
+  { id: 'x', label: 'X', width: 1067, height: 600, isDefault: false },
+  { id: 'linkedin', label: 'LinkedIn', width: 1146, height: 600, isDefault: false },
+  { id: 'facebook', label: 'Facebook', width: 1143, height: 600, isDefault: false }
 ] as const
 
 export const DEFAULT_BACKGROUND_SIZE = {

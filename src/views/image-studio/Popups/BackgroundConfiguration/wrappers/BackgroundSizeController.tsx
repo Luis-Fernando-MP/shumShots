@@ -11,14 +11,14 @@ import SectionBlock from './SectionBlock'
 
 const AspectThumb: FC<{ width: number; height: number; active: boolean }> = ({ width, height, active }) => {
   const ratio = width / height
-  const max = 28
-  const boxW = ratio >= 1 ? max : Math.max(10, Math.round(max * ratio))
-  const boxH = ratio >= 1 ? Math.max(10, Math.round(max / ratio)) : max
+  const max = 40
+  const boxW = ratio >= 1 ? max : Math.max(14, Math.round(max * ratio))
+  const boxH = ratio >= 1 ? Math.max(14, Math.round(max / ratio)) : max
 
   return (
-    <div className='bg-muted flex h-10 w-full items-center justify-center rounded-md'>
+    <div className='flex h-11 w-full items-center justify-center'>
       <div
-        className={cn('rounded-sm border', active ? 'border-primary bg-primary/25' : 'border-border/70 bg-card/80')}
+        className={cn('rounded-[2px] transition-colors', active ? 'bg-primary' : 'bg-foreground/30')}
         style={{ width: boxW, height: boxH }}
       />
     </div>
@@ -33,7 +33,10 @@ const BackgroundSizeController: FC = () => {
   const setBackgroundSize = useBackgroundStore(s => s.setBackgroundSize)
 
   return (
-    <SectionBlock title='Tamaño' description='Presets de redes o tamaño libre del canvas.'>
+    <SectionBlock
+      title='Tamaño'
+      description='Default (900×600) es la base. Los demás guardan su ratio y nunca quedan más pequeños.'
+    >
       <div className='grid grid-cols-4 gap-1.5'>
         {BACKGROUND_SIZE_PRESETS.map(item => {
           const active = backgroundWidth === item.width && backgroundHeight === item.height
@@ -42,11 +45,10 @@ const BackgroundSizeController: FC = () => {
               key={item.id}
               active={active}
               onClick={() => setBackgroundSize(item.width, item.height)}
-              className='gap-1 px-1 py-1.5'
+              className='gap-0.5 px-1 py-1.5'
             >
               <AspectThumb width={item.width} height={item.height} active={active} />
               <span className='text-[10px] font-medium leading-tight'>{item.label}</span>
-              {item.isDefault && <span className='text-muted-foreground text-[9px]'>Default</span>}
             </PresetCard>
           )
         })}
