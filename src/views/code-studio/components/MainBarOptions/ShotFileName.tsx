@@ -1,6 +1,6 @@
 'use client'
 
-import { toaster } from '@/shared/components/Toast'
+import { toaster } from '@common/ui/Toast'
 import Button from '@/shared/ui/Button'
 import { domCapture } from '@common/lib/snapdom'
 import Input from '@common/ui/Input'
@@ -11,14 +11,18 @@ import { type ChangeEvent, type FC, useState } from 'react'
 import toast from 'react-hot-toast'
 
 const ILLEGAL = /[\\/:*?"<>|]/g
-const SHOT_TARGET_ID = 'monacoEditor-container'
+const SHOT_WITH_BG_ID = 'monacoEditor-container'
+const SHOT_WITHOUT_BG_ID = 'monacoEditor'
 const EXPORT_SCALE_MIN = 4
 const EXPORT_SCALE_MAX = 10
 
-const resolveTarget = () => document.getElementById(SHOT_TARGET_ID)
+type ShotAction = 'download' | 'copy'
 
 const clampExportScale = (value: number) =>
   Math.min(EXPORT_SCALE_MAX, Math.max(EXPORT_SCALE_MIN, Math.round(value)))
+
+const resolveTarget = (withBackground: boolean) =>
+  document.getElementById(withBackground ? SHOT_WITH_BG_ID : SHOT_WITHOUT_BG_ID)
 
 const ShotFileName: FC = () => {
   const [fileName, setFileName] = useState('pixis')
@@ -34,18 +38,23 @@ const ShotFileName: FC = () => {
     if (next !== fileName) setFileName(next)
   }
 
-  const run = async (action: (element: HTMLElement) => Promise<void>, errorTitle: string) => {
+  const run = async (withBackground: boolean, action: ShotAction) => {
     if (busy) return
-    const element = resolveTarget()
+    const element = resolveTarget(withBackground)
     if (!element) {
       toaster({ title: 'No se encontró el editor', type: 'error' })
       return
     }
 
+    const errorTitle = action === 'download' ? 'La descarga ha fallado' : 'No se pudo copiar la imagen'
     const toastId = toaster({ title: 'Procesando imagen...', type: 'pending' })
     setBusy(true)
     try {
-      await action(element)
+      if (action === 'download') {
+        await domCapture.download(element, fileName, { scale: exportScale })
+      } else {
+        await domCapture.copy(element, { scale: exportScale })
+      }
       toaster({ title: 'Completado', type: 'success', id: toastId })
     } catch (error) {
       console.error(error)
@@ -54,6 +63,20 @@ const ShotFileName: FC = () => {
       setTimeout(() => toast.dismiss(toastId), 2500)
       setBusy(false)
     }
+  }
+
+  const askBackground = (action: ShotAction) => {
+    if (busy) return
+    toaster.question({
+      title: action === 'download' ? '¿Cómo descargar?' : '¿Cómo copiar?',
+      description: 'Con el fondo del contenedor, o solo el editor.',
+      type: 'info',
+      duration: Number.POSITIVE_INFINITY,
+      actionLabel: 'Con fondo',
+      onAction: () => void run(true, action),
+      secondActionLabel: 'Sin fondo',
+      onSecondAction: () => void run(false, action)
+    })
   }
 
   return (
@@ -78,12 +101,7 @@ const ShotFileName: FC = () => {
         status='primary'
         size='icon'
         disabled={busy}
-        onClick={() =>
-          run(
-            el => domCapture.download(el, fileName, { scale: exportScale }),
-            'La descarga ha fallado'
-          )
-        }
+        onClick={() => askBackground('download')}
       >
         <CloudDownload />
       </Button>
@@ -94,9 +112,7 @@ const ShotFileName: FC = () => {
         status='primary'
         size='icon'
         disabled={busy}
-        onClick={() =>
-          run(el => domCapture.copy(el, { scale: exportScale }), 'No se pudo copiar la imagen')
-        }
+        onClick={() => askBackground('copy')}
       >
         <Icon iconNode={copyImage} />
       </Button>

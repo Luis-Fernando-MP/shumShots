@@ -1,0 +1,15 @@
+.toast {
+  width: fit-content !important;
+  height: fit-content !important;
+  padding: 0 !important;
+  border: 1px solid rgb(var(--tn-border) / 50%) !important;
+  border-radius: calc(var(--radius) * 0.7) !important;
+  background: rgb(var(--bg-secondary) / 85%) !important;
+  box-shadow: none !important;
+  backdrop-filter: blur(20px);
+  color: rgb(var(--fnt-primary)) !important;
+}
+
+.toast > div {
+  margin: 0 !important;
+}

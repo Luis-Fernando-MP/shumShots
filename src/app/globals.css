@@ -204,21 +204,6 @@ input[type='number']::-webkit-outer-spin-button {
   appearance: none;
 }
 
-.toast {
-  width: fit-content !important;
-  height: fit-content !important;
-  padding: 0 !important;
-  border: 1px solid rgb(var(--bg-tertiary) / 50%) !important;
-  border-radius: calc(var(--radius) * 0.7) !important;
-  background: rgb(var(--bg-secondary) / 70%) !important;
-  box-shadow: none !important;
-  backdrop-filter: blur(20px);
-}
-
-.toast > div {
-  margin: 0 !important;
-}
-
 .animate-fade-in-up {
   animation: var(--animate-fade-in-up);
 }

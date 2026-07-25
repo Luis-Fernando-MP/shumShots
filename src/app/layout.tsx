@@ -1,8 +1,8 @@
 import Offline from '@/shared/components/Offline'
 import { bodyFonts } from '@/shared/fonts/page-fonts'
+import { Toaster } from '@common/ui/Toast'
 import NextTopLoader from 'nextjs-toploader'
 import type { JSX, ReactNode } from 'react'
-import { Toaster } from 'react-hot-toast'
 
 import './globals.css'
 import { metadata, viewport } from './metadata'
@@ -19,7 +19,7 @@ const RootLayout = async ({ children }: IRootLayout): Promise<JSX.Element> => {
         <NextTopLoader color='rgb(var(--tn-primary))' showSpinner={false} />
         <Offline />
         <Providers>{children}</Providers>
-        <Toaster position='top-center' toastOptions={{ className: 'toast' }} />
+        <Toaster />
       </body>
     </html>
   )

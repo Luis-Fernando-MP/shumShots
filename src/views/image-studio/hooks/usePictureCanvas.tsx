@@ -1,5 +1,5 @@
 import { DropzoneFile } from '@/shared/components/Dropzone'
-import { toaster } from '@/shared/components/Toast'
+import { toaster } from '@common/ui/Toast'
 import { HOST_URL } from '@/shared/constants'
 import { useWorker } from '@koale/useworker'
 import { MouseEvent, useCallback, useEffect, useState } from 'react'

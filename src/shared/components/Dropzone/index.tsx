@@ -5,7 +5,7 @@ import { ImagePlusIcon, WandIcon, XIcon } from 'lucide-react'
 import { FC, ReactNode, memo, useCallback, useEffect, useState } from 'react'
 import { DropzoneOptions, useDropzone } from 'react-dropzone'
 
-import { toaster } from '../Toast'
+import { toaster } from '@common/ui/Toast'
 const acceptedFileTypes = {
   'image/jpg': [],
   'image/png': [],
