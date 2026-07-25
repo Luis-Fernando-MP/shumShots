@@ -120,7 +120,7 @@ const ColorPicker: FC<ColorPickerProps> = ({
           aria-label={label}
           className={cn(
             isSwatch &&
-              'border-border size-9 shrink-0 rounded-radius grid place-content-center border shadow-sm transition-opacity hover:opacity-90',
+              'border-border size-9 shrink-0 rounded-md grid place-content-center border shadow-sm transition-opacity hover:opacity-90',
             !isSwatch &&
               'border-border bg-card hover:bg-muted/70 flex h-9 w-full items-center gap-2 rounded-radius border px-2.5 text-sm',
             className

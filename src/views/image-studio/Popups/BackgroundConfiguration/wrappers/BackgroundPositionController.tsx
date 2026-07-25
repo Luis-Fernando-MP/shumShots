@@ -1,6 +1,6 @@
 'use client'
 
-import Typography from '@common/ui/Typography'
+import { Button } from '@common/ui/Button'
 import { cn } from '@common/utils/cn'
 import {
   type BackgroundPositionPreset,
@@ -8,13 +8,9 @@ import {
   isImageBackground
 } from '@views/image-studio/utils/backgroundStyle'
 import useBackgroundStore from '@views/image-studio/store/background/background.store'
-import {
-  type FC,
-  type PointerEvent as ReactPointerEvent,
-  useCallback,
-  useEffect,
-  useRef
-} from 'react'
+import { type FC, type PointerEvent as ReactPointerEvent, useRef } from 'react'
+
+import SectionBlock from './SectionBlock'
 
 const PRESET_OPTIONS: { id: Exclude<BackgroundPositionPreset, 'free'>; label: string }[] = [
   { id: 'center', label: 'Centro' },
@@ -26,9 +22,9 @@ const PRESET_OPTIONS: { id: Exclude<BackgroundPositionPreset, 'free'>; label: st
 
 const PresetVisual: FC<{ x: number; y: number }> = ({ x, y }) => {
   return (
-    <div className='border-border bg-muted/40 relative size-7 rounded-sm border'>
+    <div className='border-border/60 bg-muted/40 relative size-8 overflow-hidden rounded-md'>
       <div
-        className='border-primary bg-primary/30 absolute size-2.5 rounded-[2px] border'
+        className='border-primary/70 bg-primary/20 absolute aspect-[4/3] w-[44%] rounded-sm border backdrop-blur-[1px]'
         style={{
           left: `${x}%`,
           top: `${y}%`,
@@ -48,104 +44,75 @@ const BackgroundPositionController: FC = () => {
   const setPosition = useBackgroundStore(s => s.setPosition)
 
   const padRef = useRef<HTMLDivElement>(null)
-  const draggingRef = useRef(false)
-  const setPositionRef = useRef(setPosition)
-  setPositionRef.current = setPosition
+  const dragRef = useRef<{ x: number; y: number; posX: number; posY: number } | null>(null)
 
   const hasImage = Boolean(background && isImageBackground(background))
-
-  const updateFromPointer = useCallback((clientX: number, clientY: number) => {
-    const node = padRef.current
-    if (!node) return
-    const rect = node.getBoundingClientRect()
-    if (rect.width <= 0 || rect.height <= 0) return
-    const x = ((clientX - rect.left) / rect.width) * 100
-    const y = ((clientY - rect.top) / rect.height) * 100
-    setPositionRef.current(x, y)
-  }, [])
+  if (!hasImage || !background) return null
 
   const handlePointerDown = (event: ReactPointerEvent<HTMLDivElement>) => {
-    if (!hasImage) {
-      setPositionPreset('free')
-      return
+    dragRef.current = {
+      x: event.clientX,
+      y: event.clientY,
+      posX: positionX,
+      posY: positionY
     }
-    draggingRef.current = true
     event.currentTarget.setPointerCapture(event.pointerId)
-    updateFromPointer(event.clientX, event.clientY)
+    setPositionPreset('free')
   }
 
   const handlePointerMove = (event: ReactPointerEvent<HTMLDivElement>) => {
-    if (!draggingRef.current) return
-    updateFromPointer(event.clientX, event.clientY)
+    const drag = dragRef.current
+    const node = padRef.current
+    if (!drag || !node) return
+    const rect = node.getBoundingClientRect()
+    if (rect.width <= 0 || rect.height <= 0) return
+    const dx = ((event.clientX - drag.x) / rect.width) * 100
+    const dy = ((event.clientY - drag.y) / rect.height) * 100
+    setPosition(drag.posX + dx, drag.posY + dy)
   }
 
   const handlePointerUp = (event: ReactPointerEvent<HTMLDivElement>) => {
-    draggingRef.current = false
+    dragRef.current = null
     if (event.currentTarget.hasPointerCapture(event.pointerId)) {
       event.currentTarget.releasePointerCapture(event.pointerId)
     }
   }
 
-  useEffect(() => {
-    if (hasImage) return
-    if (positionPreset === 'center') return
-    setPositionPreset('center')
-  }, [hasImage, positionPreset, setPositionPreset])
-
   return (
-    <Typography.Block title='Posición' className='gap-grid flex flex-col'>
+    <SectionBlock
+      title='Posición'
+      description='Define el punto focal del fondo. Arrastra el encuadre o elige un preset.'
+    >
       <div className='gap-grid grid grid-cols-[1.35fr_1fr]'>
         <div
+          ref={padRef}
           className={cn(
-            'border-border bg-card relative flex aspect-square flex-col overflow-hidden rounded-radius border',
-            positionPreset === 'free' && 'ring-primary ring-2 ring-offset-1'
+            'bg-muted/40 relative aspect-square touch-none overflow-hidden rounded-radius outline-none',
+            'cursor-grab active:cursor-grabbing ring-border/50 ring-1 ring-inset',
+            positionPreset === 'free' && 'ring-primary/70'
           )}
+          onPointerDown={handlePointerDown}
+          onPointerMove={handlePointerMove}
+          onPointerUp={handlePointerUp}
+          onPointerCancel={handlePointerUp}
         >
           <div
-            ref={padRef}
-            role='slider'
-            aria-label='Posición libre del fondo'
-            aria-valuemin={0}
-            aria-valuemax={100}
-            aria-valuenow={Math.round(positionX)}
-            tabIndex={0}
-            className={cn(
-              'bg-muted relative min-h-0 flex-1 touch-none overflow-hidden outline-none',
-              hasImage && 'cursor-grab active:cursor-grabbing'
-            )}
-            onPointerDown={handlePointerDown}
-            onPointerMove={handlePointerMove}
-            onPointerUp={handlePointerUp}
-            onPointerCancel={handlePointerUp}
-          >
-            {hasImage && background && (
-              <div
-                className='absolute inset-0 will-change-[background-position]'
-                style={{
-                  backgroundImage: `url("${background}")`,
-                  backgroundSize: 'cover',
-                  backgroundRepeat: 'no-repeat',
-                  backgroundPosition: `${positionX}% ${positionY}%`
-                }}
-              />
-            )}
-            {!hasImage && (
-              <div className='text-muted-foreground grid size-full place-content-center px-2 text-center text-[10px] leading-tight'>
-                Sube o elige un fondo
-              </div>
-            )}
-            {hasImage && (
-              <div
-                className='border-foreground/80 pointer-events-none absolute size-3 rounded-full border-2 bg-white/30 shadow-sm'
-                style={{
-                  left: `${positionX}%`,
-                  top: `${positionY}%`,
-                  transform: 'translate(-50%, -50%)'
-                }}
-              />
-            )}
-          </div>
-          <span className='text-muted-foreground border-border border-t px-2 py-1 text-[10px] font-medium'>Free</span>
+            className='absolute inset-0'
+            style={{
+              backgroundImage: `url("${background}")`,
+              backgroundSize: 'cover',
+              backgroundRepeat: 'no-repeat',
+              backgroundPosition: `${positionX}% ${positionY}%`
+            }}
+          />
+          <div
+            className='bg-primary/10 pointer-events-none absolute aspect-[4/3] w-[40%] rounded-radius border border-white/50 shadow-[0_0_0_1px_rgba(0,0,0,0.2)] backdrop-blur-md'
+            style={{
+              left: `${positionX}%`,
+              top: `${positionY}%`,
+              transform: 'translate(-50%, -50%)'
+            }}
+          />
         </div>
 
         <div className='grid grid-cols-2 content-start gap-1.5'>
@@ -153,24 +120,25 @@ const BackgroundPositionController: FC = () => {
             const coords = POSITION_PRESETS[option.id]
             const isActive = positionPreset === option.id
             return (
-              <button
+              <Button
                 key={option.id}
                 type='button'
+                variant={isActive ? 'secondary' : 'outline'}
+                size='sm'
                 className={cn(
-                  'border-border bg-card flex aspect-square flex-col items-center justify-center gap-1 rounded-radius border',
-                  isActive && 'ring-primary ring-2 ring-offset-1'
+                  'flex h-auto flex-col gap-1.5 px-1.5 py-2',
+                  isActive && 'ring-primary/50 ring-1'
                 )}
                 onClick={() => setPositionPreset(option.id)}
-                aria-label={option.label}
               >
                 <PresetVisual x={coords.x} y={coords.y} />
-                <span className='text-muted-foreground text-[9px] leading-none'>{option.label}</span>
-              </button>
+                <span className='text-[11px] leading-none font-medium'>{option.label}</span>
+              </Button>
             )
           })}
         </div>
       </div>
-    </Typography.Block>
+    </SectionBlock>
   )
 }
 

@@ -8,6 +8,8 @@ import useBackgroundStore from '@views/image-studio/store/background/background.
 import { Image } from '@unpic/react/nextjs'
 import type { FC } from 'react'
 
+import SectionBlock from './SectionBlock'
+
 const PREVIEW_WIDTH = 120
 const PREVIEW_HEIGHT = 72
 const THUMB_H = 56
@@ -57,7 +59,10 @@ const BackgroundWallpapersController: FC = () => {
   const wallpapers = data?.data ?? []
 
   return (
-    <Typography.Block title='Fondos precargados' className='gap-grid flex flex-col'>
+    <SectionBlock
+      title='Fondos precargados'
+      description='Elige un wallpaper listo para usar como fondo del shot.'
+    >
       {isLoading && <Typography.Small tone='secondary'>Cargando fondos…</Typography.Small>}
       {isError && <Typography.Small tone='secondary'>No se pudieron cargar los fondos</Typography.Small>}
       {!isLoading && !isError && wallpapers.length === 0 && (
@@ -75,7 +80,7 @@ const BackgroundWallpapersController: FC = () => {
           ))}
         </SliceContainer>
       )}
-    </Typography.Block>
+    </SectionBlock>
   )
 }
 

@@ -20,7 +20,10 @@ const GradientsController: FC<Props> = ({ setBackground, setBlendMode }) => {
 
   return (
     <div className='gap-grid-lg flex flex-col'>
-      <Typography.Block title='Lineales' className='gap-grid flex flex-col'>
+      <section className='gap-grid flex flex-col'>
+        <Typography.Label size='xs' weight='semibold'>
+          ## Lineales
+        </Typography.Label>
         <SliceContainer maxHeight={105} className='flex flex-row flex-wrap gap-1 overflow-hidden'>
           {gradients.map(item => {
             const { gradient, blendMode } = item
@@ -35,9 +38,12 @@ const GradientsController: FC<Props> = ({ setBackground, setBlendMode }) => {
             )
           })}
         </SliceContainer>
-      </Typography.Block>
+      </section>
 
-      <Typography.Block title='Circulares' className='gap-grid flex flex-col'>
+      <section className='gap-grid flex flex-col'>
+        <Typography.Label size='xs' weight='semibold'>
+          ## Circulares
+        </Typography.Label>
         <SliceContainer maxHeight={105} className='flex flex-row flex-wrap gap-1 overflow-hidden'>
           {circularGradients.map(item => {
             const { gradient } = item
@@ -52,7 +58,7 @@ const GradientsController: FC<Props> = ({ setBackground, setBlendMode }) => {
             )
           })}
         </SliceContainer>
-      </Typography.Block>
+      </section>
     </div>
   )
 }

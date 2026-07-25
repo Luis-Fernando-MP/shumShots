@@ -1,9 +1,10 @@
 'use client'
 
 import SizeController from '@/shared/components/SizeController'
-import Typography from '@common/ui/Typography'
 import useBackgroundStore from '@views/image-studio/store/background/background.store'
 import type { FC } from 'react'
+
+import SectionBlock from './SectionBlock'
 
 const BackgroundSizeController: FC = () => {
   const backgroundWidth = useBackgroundStore(s => s.backgroundWidth)
@@ -12,14 +13,14 @@ const BackgroundSizeController: FC = () => {
   const setBackgroundHeight = useBackgroundStore(s => s.setBackgroundHeight)
 
   return (
-    <Typography.Block title='Tamaño' className='gap-grid flex flex-col'>
+    <SectionBlock title='Tamaño' description='Ancho y alto del fondo del editor.'>
       <SizeController
         width={backgroundWidth}
         height={backgroundHeight}
         setWidth={setBackgroundWidth}
         setHeight={setBackgroundHeight}
       />
-    </Typography.Block>
+    </SectionBlock>
   )
 }
 

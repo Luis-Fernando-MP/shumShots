@@ -14,6 +14,7 @@ export interface IBorderRadiusStore {
   setBorderRTRadius: (borderRTRadius: number) => void
   setBorderLBRadius: (borderLBRadius: number) => void
   setBorderRBRadius: (borderRBRadius: number) => void
+  resetBackgroundRadius: () => void
 
   getStyleBorderRadius: () => { [key: string]: string }
 }
@@ -32,6 +33,15 @@ const state: StateCreator<IBorderRadiusStore> = (set, get) => ({
   setBorderRTRadius: borderRTRadius => set({ borderRTRadius }),
   setBorderLBRadius: borderLBRadius => set({ borderLBRadius }),
   setBorderRBRadius: borderRBRadius => set({ borderRBRadius }),
+  resetBackgroundRadius: () =>
+    set({
+      activeIndividualBorder: false,
+      borderLTRadius: 20,
+      borderRTRadius: 20,
+      borderLBRadius: 20,
+      borderRBRadius: 20,
+      borderRadius: 20
+    }),
   getStyleBorderRadius: () => {
     const activeIndividualBorder = get().activeIndividualBorder
     if (!activeIndividualBorder) return { borderRadius: `${get().borderRadius}px` }
