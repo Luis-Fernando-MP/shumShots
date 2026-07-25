@@ -36,7 +36,7 @@ const BackgroundConfiguration: FC = () => {
         <h5 className='font-display text-sm leading-tight font-medium tracking-wide'>Configuración del fondo</h5>
       </Popup.Header>
 
-      <Popup.Content className='gap-grid-xl flex flex-col text-xs [&_h5]:text-xs [&_h5]:leading-snug [&_.text-sm]:text-xs'>
+      <Popup.Content className='gap-grid-xl flex flex-col text-xs [&_.text-sm]:text-xs [&_h5]:text-xs [&_h5]:leading-snug'>
         <BackgroundSizeController />
         <BackgroundColorsController />
         <BackgroundGradientsController />

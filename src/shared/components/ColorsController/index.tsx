@@ -14,16 +14,13 @@ interface Props {
 const ColorsController: FC<Props> = ({ background, setBackground, className }) => {
   return (
     <section className={cn('gap-grid flex flex-col', className)}>
-      <div className='border-border/40 grid grid-cols-9 overflow-hidden rounded-md ring-1 ring-border/40'>
+      <div className='border-border/40 ring-border/40 grid grid-cols-9 overflow-hidden rounded-md ring-1'>
         {basicColors.map(color => {
           const isActive = background === color
           return (
             <button
               type='button'
-              className={cn(
-                'aspect-square w-full transition-transform',
-                isActive && 'z-10 ring-2 ring-primary ring-inset'
-              )}
+              className={cn('aspect-square w-full transition-transform', isActive && 'ring-primary z-10 ring-2 ring-inset')}
               style={{ backgroundColor: color }}
               key={color}
               aria-label={`Color ${color}`}

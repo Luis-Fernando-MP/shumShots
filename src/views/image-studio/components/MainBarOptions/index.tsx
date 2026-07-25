@@ -1,7 +1,7 @@
 'use client'
 
-import UnsplashPicker from '@common/components/UnsplashPicker'
 import Button from '@/shared/ui/Button'
+import UnsplashPicker from '@common/components/UnsplashPicker'
 import useBackgroundStore from '@views/image-studio/store/background/background.store'
 import { ImagePlusIcon, SlidersHorizontalIcon } from 'lucide-react'
 import type { FC } from 'react'
@@ -9,6 +9,7 @@ import type { FC } from 'react'
 import BackgroundConfiguration from '../../Popups/BackgroundConfiguration'
 import CanvasBorderConfiguration from '../../Popups/CanvasBorderConfiguration'
 import CornerConfiguration from '../../Popups/CornerConfiguration'
+import ImagesCountConfiguration from '../../Popups/ImagesCountConfiguration'
 import ShadowConfiguration from '../../Popups/ShadowConfiguration'
 
 const MainBarOptions: FC = () => {
@@ -33,8 +34,10 @@ const MainBarOptions: FC = () => {
 
       <section className='gap-grid flex flex-row items-center'>
         <div className='bg-border h-6 w-px' />
+
         <CornerConfiguration />
         <ShadowConfiguration />
+        <ImagesCountConfiguration />
 
         <Button size='icon' tooltip='Filtros de la imagen'>
           <SlidersHorizontalIcon />

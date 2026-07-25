@@ -1,6 +1,7 @@
 'use client'
 
 import { acl } from '@/shared/acl'
+import { cn } from '@common/utils/cn'
 import { ImagePlusIcon, WandIcon, XIcon } from 'lucide-react'
 import { type FC, type ReactNode, memo, useCallback, useEffect, useState } from 'react'
 import { type DropzoneOptions, useDropzone } from 'react-dropzone'
@@ -26,8 +27,8 @@ interface ChildrenProps {
 
 interface Props extends Omit<DropzoneOptions, 'onDrop' | 'accept'> {
   removeAfterUpload?: boolean
-  /** Transparent hit area until drag; keeps replace-by-click/drop available over content. */
   overlay?: boolean
+  compact?: boolean
   onDrop: (paths: DropzoneFile[]) => void
   maxFiles?: number
   children?: (_props: ChildrenProps) => ReactNode
@@ -39,16 +40,41 @@ type PromptProps = {
   icon: typeof ImagePlusIcon
   title: string
   description: string
+  compact?: boolean
 }
 
-const DropzonePrompt: FC<PromptProps> = ({ icon: Icon, title, description }) => (
-  <section className='flex size-full flex-col items-center justify-center gap-3 text-center'>
-    <div className='grid size-12 place-content-center rounded-lg bg-foreground p-2 [&>svg]:size-7 [&>svg]:stroke-background [&>svg]:stroke-2'>
+const DropzonePrompt: FC<PromptProps> = ({ icon: Icon, title, description, compact = false }) => (
+  <section
+    className={cn(
+      'flex size-full min-h-0 flex-col items-center justify-center text-center',
+      compact ? 'gap-1.5 px-2 py-3' : 'gap-3'
+    )}
+  >
+    <div
+      className={cn(
+        'grid shrink-0 place-content-center bg-foreground p-2 [&>svg]:stroke-background [&>svg]:stroke-2',
+        compact ? 'size-8 rounded-sm p-1.5 [&>svg]:size-4' : 'size-12 rounded-lg [&>svg]:size-7'
+      )}
+    >
       <Icon />
     </div>
-    <div className='flex flex-col items-center gap-1'>
-      <h2 className='text-base font-medium text-foreground'>{title}</h2>
-      <p className='text-sm text-muted-foreground'>{description}</p>
+    <div className={cn('flex min-w-0 flex-col items-center', compact ? 'gap-0.5' : 'gap-1')}>
+      <h2
+        className={cn(
+          'font-medium text-foreground',
+          compact ? 'text-[11px] leading-tight' : 'text-base'
+        )}
+      >
+        {title}
+      </h2>
+      <p
+        className={cn(
+          'text-muted-foreground max-w-full',
+          compact ? 'text-[10px] leading-snug' : 'text-sm'
+        )}
+      >
+        {description}
+      </p>
     </div>
   </section>
 )
@@ -57,6 +83,7 @@ const Dropzone: FC<Props> = ({
   onDrop,
   removeAfterUpload = false,
   overlay = false,
+  compact = false,
   maxFiles = 1,
   children,
   ...dropzoneProps
@@ -126,9 +153,10 @@ const Dropzone: FC<Props> = ({
   if (isDragActive) {
     content = (
       <DropzonePrompt
+        compact={compact}
         icon={StatusIcon}
-        title={isDragAccept ? '¡Suelta para cargar!' : 'Formato no válido'}
-        description={isDragAccept ? 'Se usará en local por ahora' : 'PNG, JPG o WebP'}
+        title={isDragAccept ? (compact ? 'Suelta' : '¡Suelta para cargar!') : 'No válido'}
+        description={isDragAccept ? (compact ? 'Cargar imagen' : 'Se usará en local por ahora') : 'PNG, JPG o WebP'}
       />
     )
   } else if (!overlay && files.length > 0 && children) {
@@ -146,16 +174,37 @@ const Dropzone: FC<Props> = ({
   } else if (!overlay) {
     content = (
       <DropzonePrompt
+        compact={compact}
         icon={StatusIcon}
         title='Suelta o pega'
-        description={`${maxFiles > 1 ? 'Tus imágenes' : 'Una imagen'} · PNG, JPG o WebP`}
+        description={
+          compact
+            ? 'PNG · JPG · WebP'
+            : `${maxFiles > 1 ? 'Tus imágenes' : 'Una imagen'} · PNG, JPG o WebP`
+        }
       />
     )
   }
 
   const rootClassName = overlay
-    ? `absolute inset-0 z-10 flex size-full cursor-pointer items-center justify-center ${FOCUS_RESET} ${acl(isDragActive, 'rounded-lg border-[3.5px] border-dashed border-primary bg-background/80')} ${acl(isDragReject && !isDragActive, 'bg-semantic-error/20')}`
-    : `relative flex size-full cursor-pointer items-center justify-center overflow-auto rounded-lg border-[3.5px] border-background bg-background ${FOCUS_RESET} ${acl(isDragActive, 'border-primary border-dashed')} ${acl(isDragReject && !isDragActive, 'bg-semantic-error/20')}`
+    ? cn(
+        'absolute inset-0 z-10 flex size-full cursor-pointer items-center justify-center rounded-none',
+        FOCUS_RESET,
+        acl(isDragActive, 'border-primary bg-background/80 border-dashed'),
+        acl(isDragActive && !compact, 'rounded-lg border-[3.5px]'),
+        acl(isDragActive && compact, 'border-2'),
+        acl(isDragReject && !isDragActive, 'bg-semantic-error/20')
+      )
+    : cn(
+        'relative flex size-full min-h-0 cursor-pointer items-center justify-center overflow-hidden bg-background',
+        FOCUS_RESET,
+        compact
+          ? 'rounded-none border-0'
+          : 'overflow-auto rounded-lg border-[3.5px] border-background',
+        acl(isDragActive && !compact, 'border-primary border-dashed'),
+        acl(isDragActive && compact, 'border-primary border-2 border-dashed'),
+        acl(isDragReject && !isDragActive, 'bg-semantic-error/20')
+      )
 
   return (
     <article

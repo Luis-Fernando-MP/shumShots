@@ -1,25 +1,20 @@
 'use client'
 
 import ShumShots from '@/shared/ui/ShumShots'
-import { Image as ImageComponent } from '@unpic/react'
 import { type FC, useEffect } from 'react'
 
-import useImagesStore from '../../store/images/images.store'
-
 interface Props {
-  imageUrl?: string
-  handleError: () => void
+  imageUrl?: string | null
   isLoading: boolean
   setIsLoading: (isLoading: boolean) => void
+  onError: () => void
+  onSize: (size: { width: number; height: number; aspectRatio: number }) => void
 }
 
 const MAX_WIDTH = 624
 const MAX_HEIGHT = 416
 
-const PictureViewer: FC<Props> = ({ handleError, imageUrl, isLoading, setIsLoading }) => {
-  const { width, height, aspectRatio, setWidth, setHeight, setAspectRatio } = useImagesStore()
-  const isLocal = Boolean(imageUrl?.startsWith('blob:') || imageUrl?.startsWith('data:'))
-
+const PictureViewer: FC<Props> = ({ imageUrl, isLoading, setIsLoading, onError, onSize }) => {
   useEffect(() => {
     if (!imageUrl) return
 
@@ -42,68 +37,41 @@ const PictureViewer: FC<Props> = ({ handleError, imageUrl, isLoading, setIsLoadi
         nextWidth = nextHeight * ratio
       }
 
-      setWidth(Math.round(nextWidth))
-      setHeight(Math.round(nextHeight))
-      setAspectRatio(ratio)
+      onSize({
+        width: Math.round(nextWidth),
+        height: Math.round(nextHeight),
+        aspectRatio: ratio
+      })
       setIsLoading(false)
     }
 
     img.onload = handleImageLoad
-    img.onerror = handleError
+    img.onerror = onError
 
     return () => {
       img.onload = null
       img.onerror = null
     }
-  }, [imageUrl, handleError, setAspectRatio, setHeight, setIsLoading, setWidth])
+  }, [imageUrl, onError, onSize, setIsLoading])
 
   if (!imageUrl) return null
 
   if (isLoading) {
     return (
-      <div
-        className='cvnPicture-loader grid place-content-center rounded-radius bg-background'
-        style={{ width, minHeight: height, aspectRatio }}
-      >
+      <div className='absolute inset-0 grid size-full place-content-center bg-background/40'>
         <ShumShots size='lg' radius='none' transparent />
       </div>
     )
   }
 
-  const imageClassName = 'cvnPicture-image size-full object-contain'
-
   return (
-    <div className='cvnPicture-container size-full overflow-hidden' style={{ width, minHeight: height, aspectRatio }}>
-      {isLocal ? (
-        <img
-          src={imageUrl}
-          className={imageClassName}
-          alt='Imagen del shot'
-          width={width}
-          height={height}
-          onError={handleError}
-        />
-      ) : (
-        <ImageComponent
-          src={imageUrl}
-          className={imageClassName}
-          alt='Imagen del shot'
-          layout='fixed'
-          width={width}
-          height={height}
-          fetchPriority='high'
-          cdn='cloudinary'
-          priority
-          onError={handleError}
-          operations={{
-            cloudinary: {
-              quality: 'auto:best',
-              q: 100
-            }
-          }}
-        />
-      )}
-    </div>
+    // eslint-disable-next-line @next/next/no-img-element
+    <img
+      src={imageUrl}
+      className='pointer-events-none absolute inset-0 size-full object-cover object-center'
+      alt='Imagen del shot'
+      onError={onError}
+    />
   )
 }
 

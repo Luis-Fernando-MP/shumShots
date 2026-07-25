@@ -19,8 +19,8 @@ export const insetBorderRadius = (radiusCss: string, inset: number): string => {
 }
 
 export const buildCanvasFrameStyle = (options: {
-  width: number
-  height: number
+  width?: number | string
+  height?: number | string
   borderRadius: string
   color: string
   size: number
@@ -31,8 +31,8 @@ export const buildCanvasFrameStyle = (options: {
 }): CSSProperties => {
   const { width, height, borderRadius, color, size, type, finish, gradient, blendMode } = options
   const base: CSSProperties = {
-    width,
-    height,
+    ...(width !== undefined ? { width } : {}),
+    ...(height !== undefined ? { height } : {}),
     borderRadius,
     boxSizing: 'border-box',
     padding: 0,
