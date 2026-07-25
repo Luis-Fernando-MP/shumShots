@@ -189,7 +189,7 @@ const KeywordHighlightPreference: FC = () => {
             size='sm'
             variant='outline'
             onClick={() =>
-              setGroups([...groups, createKeywordGroup({ terms: '', style: 'blue', glyph: 'zap' })])
+              setGroups([...groups, createKeywordGroup({ terms: '', style: 'blue', glyph: 'logo' })])
             }
           >
             <Plus className='size-3.5' strokeWidth={1.5} />

@@ -1,6 +1,6 @@
 import usePixisPreferencesStore from '@views/code-studio/store/pixisPreferences.store'
 import { getGroup } from '@views/code-studio/utils/preferences'
-import { type FC, useState } from 'react'
+import { type FC } from 'react'
 
 import {
   PreferenceField,
@@ -14,7 +14,6 @@ const ScrollPreference: FC = () => {
   const group = getGroup('scrollbar')
   const scrollbar = usePixisPreferencesStore(s => s.monaco.scrollbar)
   const setMonaco = usePixisPreferencesStore(s => s.setMonaco)
-  const [enabled, setEnabled] = useState(false)
   const query = usePreferenceSearch()
   const searching = query.trim().length > 0
 
@@ -30,12 +29,13 @@ const ScrollPreference: FC = () => {
     ignoreHorizontalScrollbarInContentHeight
   } = scrollbar
 
+  const enabled = vertical !== 'hidden' || horizontal !== 'hidden'
+
   const handleChange = (newProps: Partial<NonNullable<typeof scrollbar>>) => {
     setMonaco('scrollbar', { ...scrollbar, ...newProps })
   }
 
   const handleToggle = (state: boolean): void => {
-    setEnabled(state)
     if (state) return handleChange({ vertical: 'visible', horizontal: 'visible' })
 
     handleChange({

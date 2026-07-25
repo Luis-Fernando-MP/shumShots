@@ -169,7 +169,7 @@ const mergeKeywordHighlight = (
     glyph && validGlyphs.has(glyph) ? (glyph as KeywordHighlightGroup['glyph']) : 'logo'
 
   const fallbackGlyph = resolveGlyph(
-    persisted.glyphStyle && persisted.glyphStyle !== 'none' ? persisted.glyphStyle : undefined
+    persisted.glyphStyle && persisted.glyphStyle !== 'none' ? persisted.glyphStyle : 'logo'
   )
 
   if (persisted.groups?.length) {
@@ -260,7 +260,15 @@ const state: StateCreator<PixisPreferencesStore> = set => ({
   },
 
   resetMonaco: () => {
-    set({ monaco: getDefaultState().monaco })
+    const defaults = getDefaultState()
+    set(s => ({
+      monaco: defaults.monaco,
+      pixis: {
+        ...s.pixis,
+        language: defaults.pixis.language,
+        typography: defaults.pixis.typography
+      }
+    }))
   },
 
   resetPreferences: () => {

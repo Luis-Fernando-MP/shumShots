@@ -96,7 +96,7 @@ export const buildKeywordDecorations = (model: editor.ITextModel): editor.IModel
           : `user-monaco-icon user-monaco-icon-lucide user-monaco-icon-${group.glyph} user-monaco-icon-${group.style}`
 
     for (const term of parseKeywordTerms(group.terms)) {
-      for (const match of model.findMatches(term, false, false, true, null, false)) {
+      for (const match of model.findMatches(term, false, false, false, null, false)) {
         decorations.push({
           range: match.range,
           options: {

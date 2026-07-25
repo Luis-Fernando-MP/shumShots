@@ -26,15 +26,21 @@ export const createKeywordGroup = (
   glyph: partial.glyph ?? 'logo'
 })
 
-export const keywordHighlightDefaults = {
+export const createHighlightLinesDefaults = (): HighlightLinesState => ({
+  ...highlightLinesDefaults
+})
+
+export const createKeywordHighlightDefaults = (): KeywordHighlightState => ({
   groups: [
-    createKeywordGroup({ id: 'pixis', terms: 'pixis, PIXIS, Pixis', style: 'primary', glyph: 'logo' }),
-    createKeywordGroup({ id: 'haui', terms: 'HAUI, haui', style: 'amber', glyph: 'star' })
+    createKeywordGroup({ id: 'pixis', terms: 'pixis', style: 'primary', glyph: 'logo' }),
+    createKeywordGroup({ id: 'haui', terms: 'haui', style: 'amber', glyph: 'logo' })
   ]
-} satisfies KeywordHighlightState
+})
+
+export const keywordHighlightDefaults = createKeywordHighlightDefaults()
 
 export const monacoDefaults = {
-  glyphMargin: true,
+  glyphMargin: false,
   renderValidationDecorations: 'off',
   lineNumbers: 'on',
   wordWrap: 'wordWrapColumn',
@@ -85,7 +91,11 @@ export const monacoDefaults = {
   keywordHighlight: keywordHighlightDefaults
 } satisfies MonacoState
 
-export const getDefaultMonacoState = (): MonacoState => structuredClone(monacoDefaults)
+export const getDefaultMonacoState = (): MonacoState => ({
+  ...structuredClone(monacoDefaults),
+  highlightLines: createHighlightLinesDefaults(),
+  keywordHighlight: createKeywordHighlightDefaults()
+})
 
 const field = <T>(def: PreferenceFieldDef<T>) => def
 
@@ -456,8 +466,10 @@ export const parseKeywordTerms = (input: string): string[] => {
   const terms: string[] = []
   for (const part of input.split(',')) {
     const term = part.trim()
-    if (!term || seen.has(term)) continue
-    seen.add(term)
+    if (!term) continue
+    const key = term.toLowerCase()
+    if (seen.has(key)) continue
+    seen.add(key)
     terms.push(term)
   }
   return terms

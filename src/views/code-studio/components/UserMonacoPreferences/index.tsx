@@ -9,6 +9,7 @@ import {
   PreferenceSearchProvider
 } from '@views/code-studio/components/preferences/PreferenceField'
 import { PreferenceSearch, usePreferenceSearchState } from '@views/code-studio/components/preferences/PreferenceSearch'
+import useDiffHistoryStore from '@views/code-studio/store/diffHistory.store'
 import useMonacoThemeStore from '@views/code-studio/store/monacoTheme.store'
 import usePixisPreferencesStore from '@views/code-studio/store/pixisPreferences.store'
 import { Settings } from 'lucide-react'
@@ -46,6 +47,7 @@ const StudioSection = ({
 
 const UserMonacoPreferences: FC = () => {
   const resetMonaco = usePixisPreferencesStore(s => s.resetMonaco)
+  const resetDiffHistory = useDiffHistoryStore(s => s.resetDiffHistory)
   const { resetTheme } = useMonacoThemeStore()
   const { query, setQuery } = usePreferenceSearchState()
 
@@ -140,6 +142,7 @@ const UserMonacoPreferences: FC = () => {
           onClick={() => {
             resetMonaco()
             resetTheme()
+            resetDiffHistory()
           }}
         >
           Restablecer configuración
