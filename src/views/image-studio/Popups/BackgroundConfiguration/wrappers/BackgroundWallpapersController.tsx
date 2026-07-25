@@ -8,9 +8,12 @@ import useBackgroundStore from '@views/image-studio/store/background/background.
 import { Image } from '@unpic/react/nextjs'
 import type { FC } from 'react'
 
-const PREVIEW_WIDTH = 160
-const PREVIEW_HEIGHT = 90
-const ROW_HEIGHT = 80
+const PREVIEW_WIDTH = 120
+const PREVIEW_HEIGHT = 72
+const THUMB_H = 56
+const GAP = 8
+const COLLAPSED_ROWS = 2
+const COLLAPSED_MAX = THUMB_H * COLLAPSED_ROWS + GAP * (COLLAPSED_ROWS - 1)
 
 const WallpaperThumb: FC<{ item: Wallpaper; isActive: boolean; onSelect: (path: string) => void }> = ({
   item,
@@ -21,7 +24,7 @@ const WallpaperThumb: FC<{ item: Wallpaper; isActive: boolean; onSelect: (path: 
     <button
       type='button'
       className={cn(
-        'border-border box-border h-20 overflow-hidden rounded-radius border text-left transition-opacity hover:opacity-90',
+        'border-border box-border h-14 w-full overflow-hidden rounded-radius border text-left transition-opacity hover:opacity-90',
         isActive && 'ring-primary ring-2 ring-offset-1'
       )}
       onClick={() => onSelect(item.path)}
@@ -61,7 +64,7 @@ const BackgroundWallpapersController: FC = () => {
         <Typography.Small tone='secondary'>No hay wallpapers en /public/wallpapers</Typography.Small>
       )}
       {wallpapers.length > 0 && (
-        <SliceContainer maxHeight={ROW_HEIGHT} className='gap-grid grid grid-cols-2'>
+        <SliceContainer maxHeight={COLLAPSED_MAX} className='grid grid-cols-3 gap-2'>
           {wallpapers.map(item => (
             <WallpaperThumb
               key={item.id}

@@ -13,6 +13,8 @@ const BackgroundCanvas: FC = () => {
   const overlayColor = useBackgroundStore(s => s.overlayColor)
   const overlayOpacity = useBackgroundStore(s => s.overlayOpacity)
   const blur = useBackgroundStore(s => s.blur)
+  const positionX = useBackgroundStore(s => s.positionX)
+  const positionY = useBackgroundStore(s => s.positionY)
 
   const activeIndividualBorder = useBackgroundRadiusStore(s => s.activeIndividualBorder)
   const borderRadiusValue = useBackgroundRadiusStore(s => s.borderRadius)
@@ -45,7 +47,7 @@ const BackgroundCanvas: FC = () => {
 
   const fillStyle = useMemo((): CSSProperties => {
     const style: CSSProperties = {
-      ...resolveBackgroundStyle(background, blendMode)
+      ...resolveBackgroundStyle(background, { blendMode, positionX, positionY })
     }
 
     if (blur > 0) {
@@ -54,7 +56,7 @@ const BackgroundCanvas: FC = () => {
     }
 
     return style
-  }, [background, blendMode, blur])
+  }, [background, blendMode, blur, positionX, positionY])
 
   const overlayStyle = useMemo(
     (): CSSProperties => ({

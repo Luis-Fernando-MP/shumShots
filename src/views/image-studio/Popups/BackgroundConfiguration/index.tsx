@@ -9,6 +9,7 @@ import BackgroundBlurController from './wrappers/BackgroundBlurController'
 import BackgroundColorsController from './wrappers/BackgroundColorsController'
 import BackgroundGradientsController from './wrappers/BackgroundGradientsController'
 import BackgroundOverlayController from './wrappers/BackgroundOverlayController'
+import BackgroundPositionController from './wrappers/BackgroundPositionController'
 import BackgroundSizeController from './wrappers/BackgroundSizeController'
 import BackgroundUploadController from './wrappers/BackgroundUploadController'
 import BackgroundWallpapersController from './wrappers/BackgroundWallpapersController'
@@ -32,6 +33,7 @@ const BackgroundConfiguration: FC = () => {
         <BackgroundGradientsController />
         <BackgroundWallpapersController />
         <BackgroundUploadController />
+        <BackgroundPositionController />
         <BackgroundOverlayController />
         <BackgroundBlurController />
       </Popup.Content>

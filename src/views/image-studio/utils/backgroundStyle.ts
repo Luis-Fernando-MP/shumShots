@@ -2,6 +2,16 @@ import type { CSSProperties } from 'react'
 
 const DEFAULT_FILL = 'rgb(var(--tn-primary))'
 
+export type BackgroundPositionPreset = 'center' | 'top' | 'bottom' | 'left' | 'right' | 'free'
+
+export const POSITION_PRESETS: Record<Exclude<BackgroundPositionPreset, 'free'>, { x: number; y: number }> = {
+  center: { x: 50, y: 50 },
+  top: { x: 50, y: 0 },
+  bottom: { x: 50, y: 100 },
+  left: { x: 0, y: 50 },
+  right: { x: 100, y: 50 }
+}
+
 export const isImageBackground = (value: string) => {
   if (value.startsWith('url(')) return true
   if (value.startsWith('/wallpapers/')) return true
@@ -35,26 +45,44 @@ export const normalizeBackgroundValue = (value: string) => {
   return value
 }
 
-export const resolveBackgroundStyle = (fill: string | null, blendMode: string): CSSProperties => {
+export const clampPercent = (value: number) => {
+  if (value < 0) return 0
+  if (value > 100) return 100
+  return value
+}
+
+type ResolveOptions = {
+  blendMode: string
+  positionX?: number
+  positionY?: number
+}
+
+export const resolveBackgroundStyle = (fill: string | null, options: ResolveOptions | string): CSSProperties => {
+  const opts: ResolveOptions =
+    typeof options === 'string' ? { blendMode: options, positionX: 50, positionY: 50 } : options
+
   const value = fill ?? DEFAULT_FILL
+  const positionX = opts.positionX ?? 50
+  const positionY = opts.positionY ?? 50
+  const backgroundPosition = `${positionX}% ${positionY}%`
 
   if (value.includes('gradient')) {
     return {
       backgroundImage: value,
-      backgroundBlendMode: blendMode,
+      backgroundBlendMode: opts.blendMode,
       backgroundSize: 'cover',
       backgroundRepeat: 'no-repeat',
-      backgroundPosition: 'center'
+      backgroundPosition
     }
   }
 
   if (isImageBackground(value)) {
     return {
       backgroundImage: toCssImageUrl(value),
-      backgroundBlendMode: blendMode,
+      backgroundBlendMode: opts.blendMode,
       backgroundSize: 'cover',
       backgroundRepeat: 'no-repeat',
-      backgroundPosition: 'center'
+      backgroundPosition
     }
   }
 
