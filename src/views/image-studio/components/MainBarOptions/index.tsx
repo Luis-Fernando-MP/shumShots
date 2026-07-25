@@ -2,6 +2,7 @@
 
 import Button from '@/shared/ui/Button'
 import UnsplashPicker from '@common/components/UnsplashPicker'
+import ShotCapture from '@common/ui/ShotCapture'
 import useBackgroundStore from '@views/image-studio/store/background/background.store'
 import { ImagePlusIcon, SlidersHorizontalIcon } from 'lucide-react'
 import type { FC } from 'react'
@@ -42,6 +43,11 @@ const MainBarOptions: FC = () => {
         <Button size='icon' tooltip='Filtros de la imagen'>
           <SlidersHorizontalIcon />
         </Button>
+      </section>
+
+      <section className='gap-grid flex flex-row items-center'>
+        <div className='bg-border h-6 w-px' />
+        <ShotCapture target='editor' missingTitle='No se encontró el canvas' />
       </section>
     </>
   )

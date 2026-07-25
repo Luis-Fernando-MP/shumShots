@@ -1,16 +1,18 @@
 'use client'
 
 import Button from '@/shared/ui/Button'
+import ShotCapture from '@common/ui/ShotCapture'
+import usePixisPreferencesStore from '@views/code-studio/store/pixisPreferences.store'
 import { LetterText } from 'lucide-react'
 import type { FC } from 'react'
 
 import useReferenceMonacoStore from '../../store/referenceMonaco'
 import UserMonacoPreferences from '../UserMonacoPreferences'
 import UserPixisPreferences from '../UserPixisPreferences'
-import ShotFileName from './ShotFileName'
 
 const MainBarOptions: FC = () => {
   const { $editor } = useReferenceMonacoStore()
+  const exportScale = usePixisPreferencesStore(s => s.pixis.exportScale ?? 5)
 
   const handleFormatCode = () => {
     if ($editor) {
@@ -24,7 +26,17 @@ const MainBarOptions: FC = () => {
         <LetterText />
       </Button>
 
-      <ShotFileName />
+      <ShotCapture
+        target='monacoEditor-container'
+        alternateTarget='monacoEditor'
+        scale={exportScale}
+        missingTitle='No se encontró el editor'
+        alternatePrompt={{
+          description: 'Con el fondo del contenedor, o solo el editor.',
+          primaryLabel: 'Con fondo',
+          secondaryLabel: 'Sin fondo'
+        }}
+      />
 
       <UserMonacoPreferences />
       <UserPixisPreferences />

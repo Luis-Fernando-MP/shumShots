@@ -191,10 +191,9 @@ const PictureSlot: FC<SlotProps> = ({ picture, layout, canvasWidth, canvasHeight
         }
       }}
       className={cn(
-        'absolute cursor-pointer overflow-hidden',
+        'absolute cursor-pointer overflow-hidden outline-none',
         !hasDeviceFrame && 'rounded-sm',
-        selected && !hasDeviceFrame && 'ring-primary z-10 ring-2 ring-offset-2 ring-offset-transparent',
-        selected && hasDeviceFrame && 'z-10'
+        selected && 'z-10'
       )}
       style={{ left, top, width: boxWidth, height: boxHeight }}
     >
