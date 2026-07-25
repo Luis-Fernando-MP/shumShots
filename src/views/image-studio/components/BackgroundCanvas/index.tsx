@@ -1,8 +1,10 @@
 'use client'
 
 import {
+  buildBackgroundTransform,
   buildFilterCss,
   resolveBackgroundStyle,
+  resolveDuotoneLayers,
   resolveVignetteStyle
 } from '@views/image-studio/utils/backgroundStyle'
 import useBackgroundStore from '@views/image-studio/store/background/background.store'
@@ -17,6 +19,7 @@ const BackgroundCanvas: FC = () => {
   const overlayColor = useBackgroundStore(s => s.overlayColor)
   const overlayOpacity = useBackgroundStore(s => s.overlayOpacity)
   const blur = useBackgroundStore(s => s.blur)
+  const rotation = useBackgroundStore(s => s.rotation)
   const positionX = useBackgroundStore(s => s.positionX)
   const positionY = useBackgroundStore(s => s.positionY)
   const scale = useBackgroundStore(s => s.scale)
@@ -26,6 +29,9 @@ const BackgroundCanvas: FC = () => {
   const grayscale = useBackgroundStore(s => s.grayscale)
   const sepia = useBackgroundStore(s => s.sepia)
   const hue = useBackgroundStore(s => s.hue)
+  const duotoneIntensity = useBackgroundStore(s => s.duotoneIntensity)
+  const duotoneShadow = useBackgroundStore(s => s.duotoneShadow)
+  const duotoneHighlight = useBackgroundStore(s => s.duotoneHighlight)
   const vignettePreset = useBackgroundStore(s => s.vignettePreset)
   const vignetteIntensity = useBackgroundStore(s => s.vignetteIntensity)
   const vignetteSize = useBackgroundStore(s => s.vignetteSize)
@@ -33,25 +39,20 @@ const BackgroundCanvas: FC = () => {
   const vignetteColor = useBackgroundStore(s => s.vignetteColor)
   const vignetteFocusX = useBackgroundStore(s => s.vignetteFocusX)
   const vignetteFocusY = useBackgroundStore(s => s.vignetteFocusY)
-
   const activeIndividualBorder = useBackgroundRadiusStore(s => s.activeIndividualBorder)
-  const borderRadiusValue = useBackgroundRadiusStore(s => s.borderRadius)
+  const borderRadius = useBackgroundRadiusStore(s => s.borderRadius)
   const borderLTRadius = useBackgroundRadiusStore(s => s.borderLTRadius)
   const borderRTRadius = useBackgroundRadiusStore(s => s.borderRTRadius)
   const borderRBRadius = useBackgroundRadiusStore(s => s.borderRBRadius)
   const borderLBRadius = useBackgroundRadiusStore(s => s.borderLBRadius)
 
-  const frameStyle = useMemo((): CSSProperties => {
-    let borderRadius = `${borderRadiusValue}px`
-    if (activeIndividualBorder) {
-      borderRadius = `${borderLTRadius}px ${borderRTRadius}px ${borderRBRadius}px ${borderLBRadius}px`
-    }
+  const duotoneActive = duotoneIntensity > 0
 
-    return {
-      width: backgroundWidth,
-      height: backgroundHeight,
-      borderRadius
-    }
+  const frameStyle = useMemo((): CSSProperties => {
+    const radius = activeIndividualBorder
+      ? `${borderLTRadius}px ${borderRTRadius}px ${borderRBRadius}px ${borderLBRadius}px`
+      : `${borderRadius}px`
+    return { width: backgroundWidth, height: backgroundHeight, borderRadius: radius }
   }, [
     activeIndividualBorder,
     backgroundHeight,
@@ -60,36 +61,35 @@ const BackgroundCanvas: FC = () => {
     borderLTRadius,
     borderRBRadius,
     borderRTRadius,
-    borderRadiusValue
+    borderRadius
   ])
 
   const fillStyle = useMemo((): CSSProperties => {
     const style: CSSProperties = {
       ...resolveBackgroundStyle(background, { blendMode, positionX, positionY, scale })
     }
-
     const filter = buildFilterCss({
       blur,
       brightness,
       contrast,
-      saturate,
-      grayscale,
-      sepia,
-      hue
+      saturate: duotoneActive ? 100 : saturate,
+      grayscale: duotoneActive ? 100 : grayscale,
+      sepia: duotoneActive ? 0 : sepia,
+      hue: duotoneActive ? 0 : hue
     })
-
     if (filter) style.filter = filter
-
-    // Continuous zoom from cover. Blur edge bleed scales with blur px (no sudden jump at 1%).
-    const zoom = Math.max(1, scale / 100)
-    const minDim = Math.max(1, Math.min(backgroundWidth, backgroundHeight))
-    const blurPad = blur <= 0 ? 1 : 1 + (2 * blur) / minDim
-    const combined = zoom * blurPad
-    if (combined !== 1) {
-      style.transform = `scale(${combined})`
-      style.transformOrigin = `${positionX}% ${positionY}%`
-    }
-
+    Object.assign(
+      style,
+      buildBackgroundTransform({
+        scale,
+        blur,
+        rotation,
+        width: backgroundWidth,
+        height: backgroundHeight,
+        originX: positionX,
+        originY: positionY
+      })
+    )
     return style
   }, [
     background,
@@ -99,21 +99,25 @@ const BackgroundCanvas: FC = () => {
     blur,
     brightness,
     contrast,
+    duotoneActive,
     grayscale,
     hue,
     positionX,
     positionY,
+    rotation,
     saturate,
     scale,
     sepia
   ])
 
   const overlayStyle = useMemo(
-    (): CSSProperties => ({
-      backgroundColor: overlayColor,
-      opacity: overlayOpacity / 100
-    }),
+    (): CSSProperties => ({ backgroundColor: overlayColor, opacity: overlayOpacity / 100 }),
     [overlayColor, overlayOpacity]
+  )
+
+  const duotoneLayers = useMemo(
+    () => (duotoneActive ? resolveDuotoneLayers(duotoneShadow, duotoneHighlight, duotoneIntensity) : null),
+    [duotoneActive, duotoneHighlight, duotoneIntensity, duotoneShadow]
   )
 
   const vignetteStyle = useMemo(
@@ -141,6 +145,12 @@ const BackgroundCanvas: FC = () => {
   return (
     <div className='editor-background relative overflow-hidden' style={frameStyle}>
       <div className='absolute inset-0' style={fillStyle} />
+      {duotoneLayers && (
+        <>
+          <div className='pointer-events-none absolute inset-0' style={duotoneLayers.shadow} />
+          <div className='pointer-events-none absolute inset-0' style={duotoneLayers.highlight} />
+        </>
+      )}
       {overlayOpacity > 0 && <div className='pointer-events-none absolute inset-0' style={overlayStyle} />}
       {vignetteStyle && <div className='pointer-events-none absolute inset-0' style={vignetteStyle} />}
     </div>

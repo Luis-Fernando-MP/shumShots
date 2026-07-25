@@ -2,11 +2,12 @@
 
 import { Button } from '@common/ui/Button'
 import { cn } from '@common/utils/cn'
-import { clampRange, isImageBackground } from '@views/image-studio/utils/backgroundStyle'
+import { clampRange, isImageBackground, toCssImageUrl } from '@views/image-studio/utils/backgroundStyle'
 import useBackgroundStore from '@views/image-studio/store/background/background.store'
 import { type FC, type PointerEvent as ReactPointerEvent, useRef } from 'react'
 
 import SectionBlock from './SectionBlock'
+import { releasePointerCapture } from './useIncrementalPadDrag'
 
 const SCALE_PRESETS = [
   { label: '1×', value: 100, isDefault: true },
@@ -31,8 +32,7 @@ const BackgroundScaleController: FC = () => {
   scaleRef.current = scale
   const draggingRef = useRef(false)
 
-  const hasImage = Boolean(background && isImageBackground(background))
-  if (!hasImage || !background) return null
+  if (!background || !isImageBackground(background)) return null
 
   const handlePointerDown = (event: ReactPointerEvent<HTMLDivElement>) => {
     draggingRef.current = true
@@ -52,9 +52,7 @@ const BackgroundScaleController: FC = () => {
 
   const handlePointerUp = (event: ReactPointerEvent<HTMLDivElement>) => {
     draggingRef.current = false
-    if (event.currentTarget.hasPointerCapture(event.pointerId)) {
-      event.currentTarget.releasePointerCapture(event.pointerId)
-    }
+    releasePointerCapture(event)
   }
 
   return (
@@ -73,7 +71,7 @@ const BackgroundScaleController: FC = () => {
           <div
             className='absolute inset-0'
             style={{
-              backgroundImage: `url("${background}")`,
+              backgroundImage: toCssImageUrl(background),
               backgroundRepeat: 'no-repeat',
               backgroundPosition: `${positionX}% ${positionY}%`,
               backgroundSize: 'cover',

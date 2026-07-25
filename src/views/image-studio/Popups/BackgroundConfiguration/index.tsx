@@ -10,10 +10,12 @@ import { type FC } from 'react'
 
 import BackgroundBlurController from './wrappers/BackgroundBlurController'
 import BackgroundColorsController from './wrappers/BackgroundColorsController'
+import BackgroundDuotoneController from './wrappers/BackgroundDuotoneController'
 import BackgroundFiltersController from './wrappers/BackgroundFiltersController'
 import BackgroundGradientsController from './wrappers/BackgroundGradientsController'
 import BackgroundOverlayController from './wrappers/BackgroundOverlayController'
 import BackgroundPositionController from './wrappers/BackgroundPositionController'
+import BackgroundRotationController from './wrappers/BackgroundRotationController'
 import BackgroundScaleController from './wrappers/BackgroundScaleController'
 import BackgroundSizeController from './wrappers/BackgroundSizeController'
 import BackgroundUploadController from './wrappers/BackgroundUploadController'
@@ -27,7 +29,7 @@ const BackgroundConfiguration: FC = () => {
 
   const handleReset = () => {
     resetBackground()
-    resetBackgroundRadius()
+    resetBackgroundRadius?.()
   }
 
   return (
@@ -51,8 +53,10 @@ const BackgroundConfiguration: FC = () => {
         <BackgroundUploadController />
         <BackgroundPositionController />
         <BackgroundScaleController />
+        <BackgroundRotationController />
         <BackgroundOverlayController />
         <BackgroundBlurController />
+        <BackgroundDuotoneController />
         <BackgroundFiltersController />
         <BackgroundVignetteController />
       </Popup.Content>

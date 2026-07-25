@@ -2,43 +2,20 @@
 
 import SliderControl from '@/shared/components/SliderControl'
 import ColorPicker from '@common/ui/ColorPicker'
-import { Button } from '@common/ui/Button'
 import Typography from '@common/ui/Typography'
-import { cn } from '@common/utils/cn'
 import {
-  type VignettePreset,
   VIGNETTE_PRESETS,
+  clampPercent,
   resolveBackgroundStyle,
+  resolvePreviewFill,
   resolveVignetteStyle
 } from '@views/image-studio/utils/backgroundStyle'
 import useBackgroundStore from '@views/image-studio/store/background/background.store'
-import { type CSSProperties, type FC, type PointerEvent as ReactPointerEvent, useMemo, useRef } from 'react'
+import { type FC, useMemo, useRef } from 'react'
 
+import PresetCard from './PresetCard'
 import SectionBlock from './SectionBlock'
-
-const VignettePreview: FC<{
-  preset: VignettePreset
-  label: string
-  active: boolean
-  onSelect: () => void
-  previewStyle?: CSSProperties | null
-}> = ({ label, active, onSelect, previewStyle }) => {
-  return (
-    <Button
-      type='button'
-      variant={active ? 'secondary' : 'outline'}
-      size='sm'
-      onClick={onSelect}
-      className={cn('flex h-auto flex-col gap-1.5 px-1 py-2', active && 'ring-primary/40 ring-1')}
-    >
-      <div className='bg-muted relative h-12 w-full overflow-hidden rounded-md'>
-        <div className='from-card via-muted to-secondary/30 absolute inset-0 bg-linear-to-br' />
-        {previewStyle && <div className='absolute inset-0' style={previewStyle} />}
-      </div>
-      <span className='text-[11px] font-medium'>{label}</span>
-    </Button>
-  )
-}
+import { useIncrementalPadDrag } from './useIncrementalPadDrag'
 
 const BackgroundVignetteController: FC = () => {
   const background = useBackgroundStore(s => s.background)
@@ -61,11 +38,15 @@ const BackgroundVignetteController: FC = () => {
   const setVignetteColor = useBackgroundStore(s => s.setVignetteColor)
   const setVignetteFocus = useBackgroundStore(s => s.setVignetteFocus)
 
-  const padRef = useRef<HTMLDivElement>(null)
-  const lastRef = useRef({ x: 0, y: 0 })
   const focusRef = useRef({ x: vignetteFocusX, y: vignetteFocusY })
   focusRef.current = { x: vignetteFocusX, y: vignetteFocusY }
-  const draggingRef = useRef(false)
+
+  const { padRef, padHandlers } = useIncrementalPadDrag((dxPct, dyPct) => {
+    const nextX = clampPercent(focusRef.current.x + dxPct)
+    const nextY = clampPercent(focusRef.current.y + dyPct)
+    focusRef.current = { x: nextX, y: nextY }
+    setVignetteFocus(nextX, nextY)
+  })
 
   const showEditor = vignettePreset !== 'none'
 
@@ -95,50 +76,25 @@ const BackgroundVignetteController: FC = () => {
     vignetteSoftness
   ])
 
-  const handlePointerDown = (event: ReactPointerEvent<HTMLDivElement>) => {
-    draggingRef.current = true
-    lastRef.current = { x: event.clientX, y: event.clientY }
-    event.currentTarget.setPointerCapture(event.pointerId)
-  }
-
-  const handlePointerMove = (event: ReactPointerEvent<HTMLDivElement>) => {
-    if (!draggingRef.current) return
-    const node = padRef.current
-    if (!node) return
-    const rect = node.getBoundingClientRect()
-    if (rect.width <= 0 || rect.height <= 0) return
-    const dx = ((event.clientX - lastRef.current.x) / rect.width) * 100
-    const dy = ((event.clientY - lastRef.current.y) / rect.height) * 100
-    lastRef.current = { x: event.clientX, y: event.clientY }
-    const nextX = Math.min(100, Math.max(0, focusRef.current.x + dx))
-    const nextY = Math.min(100, Math.max(0, focusRef.current.y + dy))
-    focusRef.current = { x: nextX, y: nextY }
-    setVignetteFocus(nextX, nextY)
-  }
-
-  const handlePointerUp = (event: ReactPointerEvent<HTMLDivElement>) => {
-    draggingRef.current = false
-    if (event.currentTarget.hasPointerCapture(event.pointerId)) {
-      event.currentTarget.releasePointerCapture(event.pointerId)
-    }
-  }
-
   return (
     <SectionBlock
       title='Viñeta'
       description='Oscurece o modela los bordes. Arrastra el foco y afina alcance/suavizado.'
     >
       <div className='grid grid-cols-3 gap-1.5'>
-        <VignettePreview
-          preset='none'
-          label='Sin viñeta'
+        <PresetCard
           active={vignettePreset === 'none'}
-          onSelect={() => {
+          onClick={() => {
             setVignettePreset('none')
             setVignetteIntensity(0)
           }}
-          previewStyle={null}
-        />
+        >
+          <div className='bg-muted relative h-12 w-full overflow-hidden rounded-md'>
+            <div className='absolute inset-0' style={resolvePreviewFill(null)} />
+          </div>
+          <span className='text-[11px] font-medium'>Sin viñeta</span>
+        </PresetCard>
+
         {VIGNETTE_PRESETS.map(item => {
           const style = resolveVignetteStyle({
             preset: item.id,
@@ -150,59 +106,51 @@ const BackgroundVignetteController: FC = () => {
             focusY: item.values.focusY
           })
           return (
-            <VignettePreview
-              key={item.id}
-              preset={item.id}
-              label={item.label}
-              active={vignettePreset === item.id}
-              onSelect={() => applyVignettePreset(item.id)}
-              previewStyle={style}
-            />
+            <PresetCard key={item.id} active={vignettePreset === item.id} onClick={() => applyVignettePreset(item.id)}>
+              <div className='bg-muted relative h-12 w-full overflow-hidden rounded-md'>
+                <div className='absolute inset-0' style={resolvePreviewFill(null)} />
+                {style && <div className='absolute inset-0' style={style} />}
+              </div>
+              <span className='text-[11px] font-medium'>{item.label}</span>
+            </PresetCard>
           )
         })}
       </div>
 
       {showEditor && (
         <div className='gap-grid flex flex-col rounded-radius bg-muted/20 p-2 ring-1 ring-inset ring-border/40'>
-          <div className='gap-grid flex flex-col'>
-            <Typography.Label size='xs' weight='semibold' className='text-foreground tracking-wide'>
-              ## Ajuste fino
-            </Typography.Label>
+          <Typography.Label size='xs' weight='semibold' className='text-foreground tracking-wide'>
+            ## Ajuste fino
+          </Typography.Label>
+          <div
+            ref={padRef}
+            className='relative aspect-[4/3] touch-none overflow-hidden rounded-radius ring-1 ring-inset ring-border/40 cursor-grab active:cursor-grabbing'
+            {...padHandlers}
+          >
             <div
-              ref={padRef}
-              className='relative aspect-[4/3] touch-none overflow-hidden rounded-radius ring-1 ring-inset ring-border/40 cursor-grab active:cursor-grabbing'
-              onPointerDown={handlePointerDown}
-              onPointerMove={handlePointerMove}
-              onPointerUp={handlePointerUp}
-              onPointerCancel={handlePointerUp}
-            >
-              <div
-                className='absolute inset-0'
-                style={{
-                  ...bgFill,
-                  transform: scale > 100 ? `scale(${scale / 100})` : undefined,
-                  transformOrigin: `${positionX}% ${positionY}%`
-                }}
-              />
-              {liveStyle && <div className='absolute inset-0' style={liveStyle} />}
-              <div
-                className='bg-primary/10 pointer-events-none absolute size-8 rounded-md border border-white/50 backdrop-blur-sm'
-                style={{
-                  left: `${vignetteFocusX}%`,
-                  top: `${vignetteFocusY}%`,
-                  transform: 'translate(-50%, -50%)'
-                }}
-              />
-            </div>
+              className='absolute inset-0'
+              style={{
+                ...bgFill,
+                transform: scale > 100 ? `scale(${scale / 100})` : undefined,
+                transformOrigin: `${positionX}% ${positionY}%`
+              }}
+            />
+            {liveStyle && <div className='absolute inset-0' style={liveStyle} />}
+            <div
+              className='bg-primary/10 pointer-events-none absolute size-8 rounded-md border border-white/50 backdrop-blur-sm'
+              style={{
+                left: `${vignetteFocusX}%`,
+                top: `${vignetteFocusY}%`,
+                transform: 'translate(-50%, -50%)'
+              }}
+            />
           </div>
 
           <div className='gap-grid flex items-end'>
             <ColorPicker
               variant='swatch'
               value={vignetteColor}
-              onChange={color => {
-                setVignetteColor(color)
-              }}
+              onChange={setVignetteColor}
               label='Color viñeta'
               disableAlpha
               className='rounded-md'

@@ -3,11 +3,12 @@
 import SliderControl from '@/shared/components/SliderControl'
 import { Button } from '@common/ui/Button'
 import { cn } from '@common/utils/cn'
-import { FILTER_PRESETS, buildFilterCss, isImageBackground } from '@views/image-studio/utils/backgroundStyle'
+import { FILTER_PRESETS, FILTER_SLIDERS, buildFilterCss, resolvePreviewFill } from '@views/image-studio/utils/backgroundStyle'
 import useBackgroundStore from '@views/image-studio/store/background/background.store'
 import { ChevronDownIcon } from 'lucide-react'
 import { type FC, useState } from 'react'
 
+import PresetCard from './PresetCard'
 import SectionBlock from './SectionBlock'
 
 const BackgroundFiltersController: FC = () => {
@@ -29,7 +30,15 @@ const BackgroundFiltersController: FC = () => {
   const resetFilters = useBackgroundStore(s => s.resetFilters)
 
   const [openAdvanced, setOpenAdvanced] = useState(false)
-  const previewSrc = background && isImageBackground(background) ? background : null
+  const values = { brightness, contrast, saturate, grayscale, sepia, hue }
+  const setters = {
+    brightness: setBrightness,
+    contrast: setContrast,
+    saturate: setSaturate,
+    grayscale: setGrayscale,
+    sepia: setSepia,
+    hue: setHue
+  }
 
   return (
     <SectionBlock
@@ -38,54 +47,28 @@ const BackgroundFiltersController: FC = () => {
     >
       <div className='grid grid-cols-3 gap-1.5'>
         {FILTER_PRESETS.map(item => {
-          const active = filterPreset === item.id
           const filter = buildFilterCss({ ...item.values, blur: 0 })
           return (
-            <Button
-              key={item.id}
-              type='button'
-              variant={active ? 'secondary' : 'outline'}
-              size='sm'
-              className={cn('flex h-auto flex-col gap-1.5 px-1 py-2', active && 'ring-primary/40 ring-1')}
-              onClick={() => applyFilterPreset(item.id)}
-            >
+            <PresetCard key={item.id} active={filterPreset === item.id} onClick={() => applyFilterPreset(item.id)}>
               <div className='bg-muted relative h-12 w-full overflow-hidden rounded-md'>
-                {previewSrc && (
-                  <div
-                    className='absolute inset-0'
-                    style={{
-                      backgroundImage: `url("${previewSrc}")`,
-                      backgroundSize: 'cover',
-                      backgroundPosition: 'center',
-                      filter
-                    }}
-                  />
-                )}
-                {!previewSrc && (
-                  <div
-                    className='from-primary/40 via-card to-secondary/40 absolute inset-0 bg-linear-to-br'
-                    style={{ filter }}
-                  />
-                )}
+                <div className='absolute inset-0' style={{ ...resolvePreviewFill(background), filter }} />
               </div>
               <span className='text-[11px] font-medium'>{item.label}</span>
-            </Button>
+            </PresetCard>
           )
         })}
       </div>
 
-      <div>
-        <Button
-          type='button'
-          variant='outline'
-          size='sm'
-          className='h-8 w-fit gap-1.5 px-3 text-xs'
-          onClick={() => setOpenAdvanced(prev => !prev)}
-        >
-          <span>Control avanzado</span>
-          <ChevronDownIcon className={cn('size-3.5', openAdvanced && 'rotate-180')} />
-        </Button>
-      </div>
+      <Button
+        type='button'
+        variant='outline'
+        size='sm'
+        className='h-8 w-fit gap-1.5 px-3 text-xs'
+        onClick={() => setOpenAdvanced(prev => !prev)}
+      >
+        <span>Control avanzado</span>
+        <ChevronDownIcon className={cn('size-3.5', openAdvanced && 'rotate-180')} />
+      </Button>
 
       {openAdvanced && (
         <div className='gap-grid flex flex-col'>
@@ -98,12 +81,17 @@ const BackgroundFiltersController: FC = () => {
               Reset
             </button>
           </div>
-          <SliderControl label='Brillo' value={brightness} onChangeRange={setBrightness} min={0} max={200} step={1} />
-          <SliderControl label='Contraste' value={contrast} onChangeRange={setContrast} min={0} max={200} step={1} />
-          <SliderControl label='Saturación' value={saturate} onChangeRange={setSaturate} min={0} max={200} step={1} />
-          <SliderControl label='Escala de grises' value={grayscale} onChangeRange={setGrayscale} min={0} max={100} step={1} />
-          <SliderControl label='Sepia' value={sepia} onChangeRange={setSepia} min={0} max={100} step={1} />
-          <SliderControl label='Matiz' value={hue} onChangeRange={setHue} min={0} max={360} step={1} />
+          {FILTER_SLIDERS.map(item => (
+            <SliderControl
+              key={item.key}
+              label={item.label}
+              value={values[item.key]}
+              onChangeRange={setters[item.key]}
+              min={item.min}
+              max={item.max}
+              step={1}
+            />
+          ))}
         </div>
       )}
     </SectionBlock>

@@ -8,6 +8,7 @@ interface Props extends Omit<InputHTMLAttributes<HTMLInputElement>, 'value' | 'o
   label?: string
   value: number
   onChangeRange: (value: number) => void
+  displayValue?: string
 }
 
 const SliderControl = ({
@@ -19,6 +20,7 @@ const SliderControl = ({
   className,
   min = 0,
   max = 100,
+  displayValue,
   ...props
 }: Props): JSX.Element => {
   const minNum = Number(min)
@@ -43,7 +45,9 @@ const SliderControl = ({
     >
       <div className='flex items-center justify-between px-0.5'>
         {label && <span className='text-muted-foreground text-xs font-medium'>{label}</span>}
-        <span className='text-foreground ml-auto text-xs tabular-nums'>{Math.round(percent)}%</span>
+        <span className='text-foreground ml-auto text-xs tabular-nums'>
+          {displayValue ?? `${Math.round(percent)}%`}
+        </span>
       </div>
 
       <div className='relative h-5 w-full'>

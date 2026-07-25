@@ -1,10 +1,16 @@
 import type { CSSProperties } from 'react'
 
-const DEFAULT_FILL = 'rgb(var(--tn-primary))'
+const THEME_PREVIEW_FILL: CSSProperties = {
+  backgroundImage:
+    'linear-gradient(135deg, rgba(var(--tn-primary), 0.9), rgb(var(--bg-secondary)), rgba(var(--tn-secondary), 0.75))'
+}
+
+const IMAGE_PREFIXES = ['url(', '/wallpapers/', 'blob:', 'data:', 'http://', 'https://'] as const
 
 export type BackgroundPositionPreset = 'center' | 'top' | 'bottom' | 'left' | 'right' | 'free'
-
 export type VignettePreset = 'none' | 'soft' | 'hard' | 'light' | 'cinema' | 'corners' | 'custom'
+export type DuotonePresetId = 'none' | 'spotify' | 'sunset' | 'ocean' | 'neon' | 'ember' | 'custom'
+export type FilterPresetId = 'original' | 'vivid' | 'soft' | 'mono' | 'warm' | 'cool'
 
 export const POSITION_PRESETS: Record<Exclude<BackgroundPositionPreset, 'free'>, { x: number; y: number }> = {
   center: { x: 50, y: 50 },
@@ -14,50 +20,23 @@ export const POSITION_PRESETS: Record<Exclude<BackgroundPositionPreset, 'free'>,
   right: { x: 100, y: 50 }
 }
 
-export const isImageBackground = (value: string) => {
-  if (value.startsWith('url(')) return true
-  if (value.startsWith('/wallpapers/')) return true
-  if (value.startsWith('blob:')) return true
-  if (value.startsWith('data:')) return true
-  if (value.startsWith('http://')) return true
-  if (value.startsWith('https://')) return true
-  return false
-}
+export const isImageBackground = (value: string) => IMAGE_PREFIXES.some(prefix => value.startsWith(prefix))
 
-export const toCssImageUrl = (value: string) => {
-  if (value.startsWith('url(')) return value
-  return `url("${value}")`
-}
+export const toCssImageUrl = (value: string) => (value.startsWith('url(') ? value : `url("${value}")`)
 
 export const normalizeBackgroundValue = (value: string) => {
-  if (value.startsWith('/wallpapers/')) return value
-  if (value.startsWith('blob:')) return value
-  if (value.startsWith('data:')) return value
-  if (value.startsWith('http://')) return value
-  if (value.startsWith('https://')) return value
-  if (value.startsWith('url("') && value.endsWith('")')) {
-    return value.slice(5, -2)
-  }
-  if (value.startsWith("url('") && value.endsWith("')")) {
-    return value.slice(5, -2)
-  }
+  if (isImageBackground(value) && !value.startsWith('url(')) return value
+  if (value.startsWith('url("') && value.endsWith('")')) return value.slice(5, -2)
+  if (value.startsWith("url('") && value.endsWith("')")) return value.slice(5, -2)
   if (value.startsWith('url(') && value.endsWith(')')) {
     return value.slice(4, -1).replace(/^["']|["']$/g, '')
   }
   return value
 }
 
-export const clampPercent = (value: number) => {
-  if (value < 0) return 0
-  if (value > 100) return 100
-  return value
-}
+export const clampPercent = (value: number) => Math.min(100, Math.max(0, value))
 
-export const clampRange = (value: number, min: number, max: number) => {
-  if (value < min) return min
-  if (value > max) return max
-  return value
-}
+export const clampRange = (value: number, min: number, max: number) => Math.min(max, Math.max(min, value))
 
 type ResolveOptions = {
   blendMode: string
@@ -70,34 +49,34 @@ export const resolveBackgroundStyle = (fill: string | null, options: ResolveOpti
   const opts: ResolveOptions =
     typeof options === 'string' ? { blendMode: options, positionX: 50, positionY: 50, scale: 100 } : options
 
-  const value = fill ?? DEFAULT_FILL
+  const value = fill ?? 'rgb(var(--tn-primary))'
   const positionX = opts.positionX ?? 50
   const positionY = opts.positionY ?? 50
   const backgroundPosition = `${positionX}% ${positionY}%`
-
-  // Always `cover` as the base fill. Zoom above 100% is applied via transform
-  // (see BackgroundCanvas) so we never jump between `cover` and `%` sizing.
-  if (value.includes('gradient')) {
-    return {
-      backgroundImage: value,
-      backgroundBlendMode: opts.blendMode,
-      backgroundSize: 'cover',
-      backgroundRepeat: 'no-repeat',
-      backgroundPosition
-    }
+  const shared = {
+    backgroundBlendMode: opts.blendMode,
+    backgroundSize: 'cover' as const,
+    backgroundRepeat: 'no-repeat' as const,
+    backgroundPosition
   }
 
-  if (isImageBackground(value)) {
-    return {
-      backgroundImage: toCssImageUrl(value),
-      backgroundBlendMode: opts.blendMode,
-      backgroundSize: 'cover',
-      backgroundRepeat: 'no-repeat',
-      backgroundPosition
-    }
-  }
-
+  if (value.includes('gradient')) return { backgroundImage: value, ...shared }
+  if (isImageBackground(value)) return { backgroundImage: toCssImageUrl(value), ...shared }
   return { backgroundColor: value }
+}
+
+export const resolvePreviewFill = (background: string | null): CSSProperties => {
+  if (!background) return THEME_PREVIEW_FILL
+  if (isImageBackground(background)) {
+    return {
+      backgroundImage: toCssImageUrl(background),
+      backgroundSize: 'cover',
+      backgroundPosition: 'center',
+      backgroundRepeat: 'no-repeat'
+    }
+  }
+  if (background.includes('gradient')) return { backgroundImage: background }
+  return { backgroundColor: background }
 }
 
 export type FilterState = {
@@ -119,47 +98,29 @@ export const buildFilterCss = (filters: FilterState) => {
   if (filters.grayscale > 0) parts.push(`grayscale(${filters.grayscale}%)`)
   if (filters.sepia > 0) parts.push(`sepia(${filters.sepia}%)`)
   if (filters.hue !== 0) parts.push(`hue-rotate(${filters.hue}deg)`)
-  if (parts.length === 0) return undefined
-  return parts.join(' ')
+  return parts.length > 0 ? parts.join(' ') : undefined
 }
-
-export type FilterPresetId = 'original' | 'vivid' | 'soft' | 'mono' | 'warm' | 'cool'
 
 export const FILTER_PRESETS: {
   id: FilterPresetId
   label: string
   values: Omit<FilterState, 'blur'>
 }[] = [
-  {
-    id: 'original',
-    label: 'Original',
-    values: { brightness: 100, contrast: 100, saturate: 100, grayscale: 0, sepia: 0, hue: 0 }
-  },
-  {
-    id: 'vivid',
-    label: 'Vivid',
-    values: { brightness: 108, contrast: 118, saturate: 140, grayscale: 0, sepia: 0, hue: 0 }
-  },
-  {
-    id: 'soft',
-    label: 'Soft',
-    values: { brightness: 110, contrast: 90, saturate: 85, grayscale: 0, sepia: 8, hue: 0 }
-  },
-  {
-    id: 'mono',
-    label: 'Mono',
-    values: { brightness: 102, contrast: 110, saturate: 0, grayscale: 100, sepia: 0, hue: 0 }
-  },
-  {
-    id: 'warm',
-    label: 'Warm',
-    values: { brightness: 105, contrast: 105, saturate: 115, grayscale: 0, sepia: 28, hue: 12 }
-  },
-  {
-    id: 'cool',
-    label: 'Cool',
-    values: { brightness: 100, contrast: 108, saturate: 110, grayscale: 0, sepia: 0, hue: 198 }
-  }
+  { id: 'original', label: 'Original', values: { brightness: 100, contrast: 100, saturate: 100, grayscale: 0, sepia: 0, hue: 0 } },
+  { id: 'vivid', label: 'Vivid', values: { brightness: 108, contrast: 118, saturate: 140, grayscale: 0, sepia: 0, hue: 0 } },
+  { id: 'soft', label: 'Soft', values: { brightness: 110, contrast: 90, saturate: 85, grayscale: 0, sepia: 8, hue: 0 } },
+  { id: 'mono', label: 'Mono', values: { brightness: 102, contrast: 110, saturate: 0, grayscale: 100, sepia: 0, hue: 0 } },
+  { id: 'warm', label: 'Warm', values: { brightness: 105, contrast: 105, saturate: 115, grayscale: 0, sepia: 28, hue: 12 } },
+  { id: 'cool', label: 'Cool', values: { brightness: 100, contrast: 108, saturate: 110, grayscale: 0, sepia: 0, hue: 198 } }
+]
+
+export const FILTER_SLIDERS = [
+  { key: 'brightness' as const, label: 'Brillo', min: 0, max: 200 },
+  { key: 'contrast' as const, label: 'Contraste', min: 0, max: 200 },
+  { key: 'saturate' as const, label: 'Saturación', min: 0, max: 200 },
+  { key: 'grayscale' as const, label: 'Escala de grises', min: 0, max: 100 },
+  { key: 'sepia' as const, label: 'Sepia', min: 0, max: 100 },
+  { key: 'hue' as const, label: 'Matiz', min: 0, max: 360 }
 ]
 
 export type VignetteState = {
@@ -174,62 +135,47 @@ export type VignetteState = {
 
 export const resolveVignetteStyle = (state: VignetteState): CSSProperties | null => {
   if (state.preset === 'none') return null
-
   const intensity = state.intensity / 100
   if (intensity <= 0) return null
 
-  const color = state.color
+  const { color, focusX, focusY } = state
   const soft = Math.max(1, state.softness)
   const size = Math.max(5, Math.min(95, state.size))
   const outer = Math.min(100, size + soft * 0.45)
-  const at = `${state.focusX}% ${state.focusY}%`
+  const at = `${focusX}% ${focusY}%`
 
   if (state.preset === 'corners') {
     const clearHalf = Math.max(12, (100 - size) * 0.55 + soft * 0.12)
     const softPad = Math.max(4, soft * 0.22)
-    const left = Math.max(0, Math.min(100, state.focusX - clearHalf))
-    const right = Math.max(0, Math.min(100, state.focusX + clearHalf))
-    const top = Math.max(0, Math.min(100, state.focusY - clearHalf))
-    const bottom = Math.max(0, Math.min(100, state.focusY + clearHalf))
-    const leftFade = Math.max(0, left - softPad)
-    const rightFade = Math.min(100, right + softPad)
-    const topFade = Math.max(0, top - softPad)
-    const bottomFade = Math.min(100, bottom + softPad)
-
+    const left = clampPercent(focusX - clearHalf)
+    const right = clampPercent(focusX + clearHalf)
+    const top = clampPercent(focusY - clearHalf)
+    const bottom = clampPercent(focusY + clearHalf)
     return {
       opacity: intensity,
       background: `
-        linear-gradient(to right, ${color} 0%, ${color} ${leftFade}%, transparent ${left}%, transparent ${right}%, ${color} ${rightFade}%, ${color} 100%),
-        linear-gradient(to bottom, ${color} 0%, ${color} ${topFade}%, transparent ${top}%, transparent ${bottom}%, ${color} ${bottomFade}%, ${color} 100%)
+        linear-gradient(to right, ${color} 0%, ${color} ${Math.max(0, left - softPad)}%, transparent ${left}%, transparent ${right}%, ${color} ${Math.min(100, right + softPad)}%, ${color} 100%),
+        linear-gradient(to bottom, ${color} 0%, ${color} ${Math.max(0, top - softPad)}%, transparent ${top}%, transparent ${bottom}%, ${color} ${Math.min(100, bottom + softPad)}%, ${color} 100%)
       `
     }
   }
 
   if (state.preset === 'cinema') {
-    return {
-      opacity: intensity,
-      background: `radial-gradient(ellipse 70% 55% at ${at}, transparent ${size}%, ${color} ${outer}%)`
-    }
+    return { opacity: intensity, background: `radial-gradient(ellipse 70% 55% at ${at}, transparent ${size}%, ${color} ${outer}%)` }
   }
-
   if (state.preset === 'light') {
     return {
       opacity: intensity,
       background: `radial-gradient(circle at ${at}, rgba(255,255,255,0.28) 0%, transparent ${size}%, ${color} ${outer}%)`
     }
   }
-
   if (state.preset === 'hard') {
     return {
       opacity: intensity,
       background: `radial-gradient(circle at ${at}, transparent ${Math.max(10, size - 12)}%, ${color} ${size}%)`
     }
   }
-
-  return {
-    opacity: intensity,
-    background: `radial-gradient(circle at ${at}, transparent ${size}%, ${color} ${outer}%)`
-  }
+  return { opacity: intensity, background: `radial-gradient(circle at ${at}, transparent ${size}%, ${color} ${outer}%)` }
 }
 
 export const VIGNETTE_PRESETS: {
@@ -250,3 +196,79 @@ export const BLUR_PRESETS = [
   { id: 'medium', label: 'Medio', value: 14 },
   { id: 'strong', label: 'Fuerte', value: 26 }
 ] as const
+
+export type DuotoneState = {
+  preset: DuotonePresetId
+  intensity: number
+  shadow: string
+  highlight: string
+}
+
+export const DUOTONE_PRESETS: {
+  id: Exclude<DuotonePresetId, 'custom'>
+  label: string
+  shadow: string
+  highlight: string
+  intensity: number
+}[] = [
+  { id: 'none', label: 'Sin tint', shadow: '#000000', highlight: '#ffffff', intensity: 0 },
+  { id: 'spotify', label: 'Spotify', shadow: '#1a0533', highlight: '#1ed760', intensity: 85 },
+  { id: 'sunset', label: 'Sunset', shadow: '#2b0a1e', highlight: '#ff7a45', intensity: 80 },
+  { id: 'ocean', label: 'Ocean', shadow: '#041525', highlight: '#2ec4ff', intensity: 80 },
+  { id: 'neon', label: 'Neon', shadow: '#140028', highlight: '#ff2bd6', intensity: 85 },
+  { id: 'ember', label: 'Ember', shadow: '#1c0800', highlight: '#ff6a1a', intensity: 80 }
+]
+
+export const resolveDuotoneLayers = (shadow: string, highlight: string, intensity: number) => {
+  const opacity = intensity / 100
+  return {
+    shadow: { backgroundColor: shadow, mixBlendMode: 'multiply' as const, opacity },
+    highlight: { backgroundColor: highlight, mixBlendMode: 'screen' as const, opacity }
+  }
+}
+
+export const rotationCoverScale = (degrees: number) => {
+  if (degrees === 0) return 1
+  const rad = (Math.abs(degrees) * Math.PI) / 180
+  return Math.abs(Math.cos(rad)) + Math.abs(Math.sin(rad))
+}
+
+export const buildBackgroundTransform = (options: {
+  scale: number
+  blur: number
+  rotation: number
+  width: number
+  height: number
+  originX: number
+  originY: number
+}): Pick<CSSProperties, 'transform' | 'transformOrigin'> | undefined => {
+  const zoom = Math.max(1, options.scale / 100)
+  const minDim = Math.max(1, Math.min(options.width, options.height))
+  const blurPad = options.blur <= 0 ? 1 : 1 + (2 * options.blur) / minDim
+  const combined = zoom * blurPad * rotationCoverScale(options.rotation)
+  const parts: string[] = []
+  if (combined !== 1) parts.push(`scale(${combined})`)
+  if (options.rotation !== 0) parts.push(`rotate(${options.rotation}deg)`)
+  if (parts.length === 0) return undefined
+  return {
+    transform: parts.join(' '),
+    transformOrigin: `${options.originX}% ${options.originY}%`
+  }
+}
+
+export const BACKGROUND_SIZE_PRESETS = [
+  { id: 'default', label: 'Default', width: 900, height: 600, isDefault: true },
+  { id: 'ig-post', label: 'IG Post', width: 1080, height: 1080, isDefault: false },
+  { id: 'story', label: 'Story', width: 1080, height: 1920, isDefault: false },
+  { id: 'youtube', label: 'YouTube', width: 1280, height: 720, isDefault: false },
+  { id: 'x', label: 'X', width: 1600, height: 900, isDefault: false },
+  { id: 'linkedin', label: 'LinkedIn', width: 1200, height: 627, isDefault: false },
+  { id: 'facebook', label: 'Facebook', width: 1200, height: 630, isDefault: false }
+] as const
+
+export const DEFAULT_BACKGROUND_SIZE = {
+  width: BACKGROUND_SIZE_PRESETS[0].width,
+  height: BACKGROUND_SIZE_PRESETS[0].height
+} as const
+
+export type BackgroundSizePresetId = (typeof BACKGROUND_SIZE_PRESETS)[number]['id']
