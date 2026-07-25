@@ -10,14 +10,14 @@ import ShadowPositionWrapper from './wrappers/ShadowPositionWrapper'
 
 const ShadowConfiguration: FC = () => {
   return (
-    <Popup className='shadowConfig-popup h-[700px] w-[350px]'>
+    <Popup className='h-[700px] w-[350px]'>
       <Popup.Trigger>
         <Button size='icon' tooltip='Sombras'>
           <CloudSunIcon />
         </Button>
       </Popup.Trigger>
       <Popup.Header>Imágenes - Sombras</Popup.Header>
-      <Popup.Content className='flex flex-col gap-grid-xl'>
+      <Popup.Content className='gap-grid-xl flex flex-col'>
         <ShadowOpacityWrapper />
         <ShadowBlurSpreadWrapper />
         <ShadowPositionWrapper />

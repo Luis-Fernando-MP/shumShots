@@ -41,6 +41,9 @@ importers:
       '@tanstack/react-query':
         specifier: 5.67.3
         version: 5.67.3(react@19.0.0)
+      '@uiw/color-convert':
+        specifier: 2.4.3
+        version: 2.4.3(@babel/runtime@7.29.7)
       '@uiw/react-color-colorful':
         specifier: 2.4.3
         version: 2.4.3(@babel/runtime@7.29.7)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)

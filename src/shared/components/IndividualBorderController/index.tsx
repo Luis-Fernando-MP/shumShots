@@ -1,9 +1,10 @@
-import { IBorderRadiusStore } from '@views/image-studio/store/background/backgroundRadius.store'
 import Button from '@/shared/ui/Button'
+import { IBorderRadiusStore } from '@views/image-studio/store/background/backgroundRadius.store'
 import { MaximizeIcon, RotateCcwIcon, ScaleIcon } from 'lucide-react'
 import { type FC } from 'react'
 
 import RenderInputBorders from './RenderInputBorders'
+
 interface Props extends Omit<IBorderRadiusStore, 'getStyleBorderRadius'> {}
 
 const IndividualBorderController: FC<Props> = props => {
@@ -30,11 +31,7 @@ const IndividualBorderController: FC<Props> = props => {
   return (
     <section className='flex flex-col gap-2'>
       <h5>Detallado</h5>
-      <Button
-        className='border'
-        active={activeIndividualBorder}
-        onClick={() => setActiveIndividualBorder(!activeIndividualBorder)}
-      >
+      <Button active={activeIndividualBorder} onClick={() => setActiveIndividualBorder(!activeIndividualBorder)}>
         <MaximizeIcon />
         <h5>Bordes individuales</h5>
       </Button>

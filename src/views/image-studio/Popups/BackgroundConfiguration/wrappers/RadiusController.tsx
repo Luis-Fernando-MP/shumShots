@@ -1,12 +1,15 @@
-import useBackgroundRadiusStore from '@views/image-studio/store/background/backgroundRadius.store'
+'use client'
+
 import BorderRadiusConfiguration from '@/shared/components/BorderRadiusConfiguration'
-import { FC } from 'react'
 import Typography from '@common/ui/Typography'
+import useBackgroundRadiusStore from '@views/image-studio/store/background/backgroundRadius.store'
+import type { FC } from 'react'
 
 const RadiusController: FC = () => {
   const borderStore = useBackgroundRadiusStore()
+
   return (
-    <Typography.Block title='Redondeado:' className='bgConfig-section flex flex-col gap-grid-lg'>
+    <Typography.Block title='Redondeado' className='gap-grid flex flex-col'>
       <BorderRadiusConfiguration borderState={borderStore} />
     </Typography.Block>
   )

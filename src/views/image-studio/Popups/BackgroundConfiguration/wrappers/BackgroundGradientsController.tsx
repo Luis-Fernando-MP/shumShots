@@ -1,19 +1,22 @@
-import useBackgroundStore from '@views/image-studio/store/background/background.store'
+'use client'
+
 import GradientsController from '@/shared/components/GradientsController'
+import useBackgroundStore from '@views/image-studio/store/background/background.store'
 import type { FC } from 'react'
 
 const BackgroundGradientsController: FC = () => {
-  const { background, setBackground, blendMode, setBlendMode } = useBackgroundStore()
+  const background = useBackgroundStore(s => s.background)
+  const setBackground = useBackgroundStore(s => s.setBackground)
+  const blendMode = useBackgroundStore(s => s.blendMode)
+  const setBlendMode = useBackgroundStore(s => s.setBlendMode)
 
   return (
-    <section className='bgConfig-section flex flex-col gap-grid-lg'>
-      <GradientsController
-        background={background}
-        setBackground={setBackground}
-        blendMode={blendMode}
-        setBlendMode={setBlendMode}
-      />
-    </section>
+    <GradientsController
+      background={background}
+      setBackground={setBackground}
+      blendMode={blendMode}
+      setBlendMode={setBlendMode}
+    />
   )
 }
 

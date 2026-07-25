@@ -1,3 +1,5 @@
+'use client'
+
 import { circularGradients, gradients } from '@/shared/backgroundStyle'
 import SliceContainer from '@common/ui/SliceContainer'
 import Typography from '@common/ui/Typography'
@@ -10,20 +12,22 @@ interface Props {
   setBackground: (background: string) => void
 }
 
-const GradientsController: FC<Props> = ({ background, setBackground, blendMode, setBlendMode }) => {
-  const handleSelectBackground = (gradient: string, blendMode?: string) => {
+const GradientsController: FC<Props> = ({ setBackground, setBlendMode }) => {
+  const handleSelectBackground = (gradient: string, nextBlendMode?: string) => {
     setBackground(gradient)
-    setBlendMode(blendMode ?? 'normal')
+    setBlendMode(nextBlendMode ?? 'normal')
   }
+
   return (
-    <article className='flex flex-wrap gap-3'>
-      <Typography.Block title='Gradientes:' className='flex flex-col gap-2'>
+    <div className='gap-grid-lg flex flex-col'>
+      <Typography.Block title='Lineales' className='gap-grid flex flex-col'>
         <SliceContainer maxHeight={105} className='flex flex-row flex-wrap gap-1 overflow-hidden'>
           {gradients.map(item => {
             const { gradient, blendMode } = item
             return (
               <button
-                className='size-[50px] rounded-lg'
+                type='button'
+                className='size-[50px] rounded-radius'
                 style={{ background: gradient, backgroundBlendMode: blendMode }}
                 key={gradient}
                 onClick={() => handleSelectBackground(gradient, blendMode)}
@@ -33,13 +37,14 @@ const GradientsController: FC<Props> = ({ background, setBackground, blendMode, 
         </SliceContainer>
       </Typography.Block>
 
-      <Typography.Block title='Gradientes Circulares:' className='flex flex-col gap-2'>
+      <Typography.Block title='Circulares' className='gap-grid flex flex-col'>
         <SliceContainer maxHeight={105} className='flex flex-row flex-wrap gap-1 overflow-hidden'>
           {circularGradients.map(item => {
             const { gradient } = item
             return (
               <button
-                className='size-[50px] rounded-lg'
+                type='button'
+                className='size-[50px] rounded-radius'
                 style={{ background: gradient }}
                 key={gradient}
                 onClick={() => handleSelectBackground(gradient)}
@@ -48,7 +53,7 @@ const GradientsController: FC<Props> = ({ background, setBackground, blendMode, 
           })}
         </SliceContainer>
       </Typography.Block>
-    </article>
+    </div>
   )
 }
 

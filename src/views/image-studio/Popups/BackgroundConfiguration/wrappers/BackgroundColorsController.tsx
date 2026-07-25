@@ -1,13 +1,16 @@
-import useBackgroundStore from '@views/image-studio/store/background/background.store'
+'use client'
+
 import ColorsController from '@/shared/components/ColorsController'
-import type { FC } from 'react'
 import Typography from '@common/ui/Typography'
+import useBackgroundStore from '@views/image-studio/store/background/background.store'
+import type { FC } from 'react'
 
 const BackgroundColorsController: FC = () => {
-  const { background, setBackground } = useBackgroundStore()
+  const background = useBackgroundStore(s => s.background)
+  const setBackground = useBackgroundStore(s => s.setBackground)
 
   return (
-    <Typography.Block title='Colores:' className='bgConfig-section flex flex-col gap-grid-lg'>
+    <Typography.Block title='Colores' className='gap-grid flex flex-col'>
       <ColorsController background={background} setBackground={setBackground} />
     </Typography.Block>
   )
