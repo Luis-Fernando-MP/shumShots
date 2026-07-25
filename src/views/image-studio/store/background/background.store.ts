@@ -23,14 +23,7 @@ const state: StateCreator<Props> = (set, get) => ({
 
   setBackgroundWidth: backgroundWidth => set({ backgroundWidth }),
   setBackgroundHeight: backgroundHeight => set({ backgroundHeight }),
-  setBackground: background => {
-    // TODO: Hacer que el fondo se aplique a todo el documento
-    //  const body = document.body
-    // if (body) {
-    //   body.style.background = background
-    // }
-    set({ background })
-  },
+  setBackground: background => set({ background }),
   setBlendMode: blendMode => set({ blendMode }),
   getBackground: () => {
     const { background, blendMode } = get()

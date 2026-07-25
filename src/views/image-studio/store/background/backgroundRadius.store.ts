@@ -36,7 +36,7 @@ const state: StateCreator<IBorderRadiusStore> = (set, get) => ({
     const activeIndividualBorder = get().activeIndividualBorder
     if (!activeIndividualBorder) return { borderRadius: `${get().borderRadius}px` }
     return {
-      borderRadius: `${get().borderLTRadius}px ${get().borderRTRadius}px ${get().borderLBRadius}px ${get().borderRBRadius}px`
+      borderRadius: `${get().borderLTRadius}px ${get().borderRTRadius}px ${get().borderRBRadius}px ${get().borderLBRadius}px`
     }
   }
 })

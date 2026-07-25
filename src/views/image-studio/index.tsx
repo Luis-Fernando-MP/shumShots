@@ -5,7 +5,7 @@ import MainBar from '@views/pixis/components/MainBar'
 import { type FC } from 'react'
 
 import MainBarOptions from './components/MainBarOptions'
-import ShotEditor from './components/shotEditor'
+import ShotEditor from './components/ShotEditor'
 
 const ImageStudioView: FC = () => {
   return (

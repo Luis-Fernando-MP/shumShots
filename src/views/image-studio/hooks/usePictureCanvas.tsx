@@ -1,66 +1,81 @@
-import { DropzoneFile } from '@/shared/components/Dropzone'
+import type { DropzoneFile } from '@/shared/components/Dropzone'
 import { toaster } from '@common/ui/Toast'
 import { HOST_URL } from '@/shared/constants'
 import { useWorker } from '@koale/useworker'
-import { MouseEvent, useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 
 import useImagesStore from '../store/images/images.store'
 import usePicturesStore from '../store/images/pictures.store'
 import uploadImage from '../workers/upload.worker'
 
 const usePictureCanvas = () => {
-  const { getCurrentPicture, setFirstPicture, pictures } = usePicturesStore()
-  const { width, height, scale, aspectRatio } = useImagesStore()
+  const picture = usePicturesStore(s => s.picture)
+  const setPicture = usePicturesStore(s => s.setPicture)
+  const { width, height, aspectRatio } = useImagesStore()
 
-  const [currentPicture, setCurrentPicture] = useState(getCurrentPicture())
-  const [isLoading, setIsLoading] = useState(true)
-
+  const [isLoading, setIsLoading] = useState(false)
+  const blobUrlRef = useRef<string | null>(null)
   const [upload] = useWorker(uploadImage)
 
+  useEffect(() => {
+    return () => {
+      if (blobUrlRef.current) URL.revokeObjectURL(blobUrlRef.current)
+    }
+  }, [])
+
   const sendImage = useCallback(
-    async (file: DropzoneFile) => {
+    async (file: File, blobUrl: string) => {
       try {
         const result = await upload(file, `${HOST_URL}/api/upload`)
         if (result instanceof Error) throw result
-        setFirstPicture({ url: result.original_image })
-      } catch (error) {
+        setPicture({ url: result.original_image })
+        if (blobUrlRef.current === blobUrl) {
+          URL.revokeObjectURL(blobUrl)
+          blobUrlRef.current = null
+        }
+      } catch {
         toaster({ title: 'Error al subir la imagen', type: 'error', id: 'upload-error' })
+        setPicture(null)
+        if (blobUrlRef.current === blobUrl) {
+          URL.revokeObjectURL(blobUrl)
+          blobUrlRef.current = null
+        }
+        setIsLoading(false)
       }
     },
-    [upload, setFirstPicture]
+    [upload, setPicture]
   )
 
-  const handleLoadError = (): void => {
+  const handleLoadError = useCallback(() => {
     toaster({ title: 'Carga una nueva imagen', type: 'error', id: 'load-error' })
-    setCurrentPicture(null)
+    setPicture(null)
     setIsLoading(false)
-  }
-
-  const handleNewPicture = (e: MouseEvent) => {
-    e.preventDefault()
-    // TODO: Abrir el modal para subir nuevas imágenes
-    console.log('pictures----------------------', pictures)
-  }
+  }, [setPicture])
 
   const handleDropFile = useCallback(
     (files: DropzoneFile[]) => {
+      const file = files[0]
+      if (!file) return
+
+      if (blobUrlRef.current) URL.revokeObjectURL(blobUrlRef.current)
+      const blobUrl = URL.createObjectURL(file)
+      blobUrlRef.current = blobUrl
+
       setIsLoading(true)
-      setCurrentPicture({ url: files[0].preview })
-      sendImage(files[0])
+      setPicture({ url: blobUrl })
+      void sendImage(file, blobUrl)
     },
-    [sendImage]
+    [sendImage, setPicture]
   )
 
   return {
-    scale,
     width,
     height,
     aspectRatio,
-    currentPicture,
+    currentPicture: picture,
     isLoading,
     setIsLoading,
     handleLoadError,
-    handleNewPicture,
     handleDropFile
   }
 }

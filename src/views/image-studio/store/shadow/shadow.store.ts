@@ -42,13 +42,10 @@ const state: StateCreator<Props> = (set, get) => ({
 
   getShadowStyle: () => {
     const { opacity, blur, spread, type, position, color } = get()
-    console.log('color', color)
     if (type === 'none') return 'none'
 
     const shadow1 = `${position.x / 2}px ${position.y / 2}px ${blur / 2}px ${spread / 2}px rgba(${color}, ${Math.min(opacity * 0.6, 0.5).toFixed(2)})`
-
     const shadow2 = `${position.x}px ${position.y}px ${blur}px ${spread}px rgba(${color}, ${opacity.toFixed(2)})`
-
     return `${shadow1}, ${shadow2}`
   }
 })

@@ -1,12 +1,12 @@
 'use client'
 
 import Board from '@/shared/components/Board'
+import usePixisPreferencesStore from '@views/code-studio/store/pixisPreferences.store'
 import MainBar from '@views/pixis/components/MainBar'
 import { type FC } from 'react'
 
 import MainBarOptions from './components/MainBarOptions'
 import MonacoEditor from './components/MonacoEditor'
-import usePixisPreferencesStore from '@views/code-studio/store/pixisPreferences.store'
 
 const CodeStudioView: FC = () => {
   const pixis = usePixisPreferencesStore(s => s.pixis)

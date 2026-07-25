@@ -7,7 +7,7 @@ import { DropzoneOptions, useDropzone } from 'react-dropzone'
 
 import { toaster } from '@common/ui/Toast'
 const acceptedFileTypes = {
-  'image/jpg': [],
+  'image/jpeg': [],
   'image/png': [],
   'image/webp': []
 }
