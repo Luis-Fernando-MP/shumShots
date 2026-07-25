@@ -92,14 +92,16 @@ const PictureCanvas: FC = () => {
       id='picture-image'
       style={frameStyle}
     >
-      <PictureViewer
-        imageUrl={currentPicture?.url}
-        handleError={handleLoadError}
-        isLoading={isLoading}
-        setIsLoading={setIsLoading}
-      />
+      {currentPicture && (
+        <PictureViewer
+          imageUrl={currentPicture.url}
+          handleError={handleLoadError}
+          isLoading={isLoading}
+          setIsLoading={setIsLoading}
+        />
+      )}
 
-      {!currentPicture && <Dropzone onDrop={handleDropFile} maxFiles={1} />}
+      <Dropzone onDrop={handleDropFile} maxFiles={1} overlay={Boolean(currentPicture)} />
     </section>
   )
 }

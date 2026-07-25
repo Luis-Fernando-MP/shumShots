@@ -11,9 +11,9 @@ import ShadowConfiguration from '../../Popups/ShadowConfiguration'
 const MainBarOptions: FC = () => {
   return (
     <>
-      <section className='flex flex-row items-center gap-grid'>
-        <span className='text-xs text-muted-foreground'>Fondo:</span>
+      <section className='gap-grid flex flex-row items-center'>
         <BackgroundConfiguration />
+
         <Button size='icon' tooltip='Imagen del fondo'>
           <ImagePlusIcon />
         </Button>
@@ -22,9 +22,8 @@ const MainBarOptions: FC = () => {
         </Button>
       </section>
 
-      <section className='flex flex-row items-center gap-grid'>
-        <div className='h-6 w-px bg-border' />
-        <span className='text-xs text-muted-foreground'>Imágenes:</span>
+      <section className='gap-grid flex flex-row items-center'>
+        <div className='bg-border h-6 w-px' />
         <CornerConfiguration />
         <ShadowConfiguration />
 

@@ -16,6 +16,7 @@ const ShotEditor: FC = () => {
   return (
     <div id='editor' className='relative size-fit overflow-hidden' style={{ borderRadius }}>
       <BackgroundCanvas />
+
       <PictureCanvas />
     </div>
   )
