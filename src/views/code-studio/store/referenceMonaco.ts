@@ -1,5 +1,5 @@
 import { Monaco } from '@monaco-editor/react'
-import { editor } from 'monaco-editor'
+import type { editor } from 'monaco-editor'
 import { StateCreator, create } from 'zustand'
 
 interface IReferenceMonacoStore {
@@ -7,7 +7,7 @@ interface IReferenceMonacoStore {
   $editor: editor.IStandaloneCodeEditor | null
 
   setMonaco: (monaco: Monaco) => void
-  setEditor: (editor: editor.IStandaloneCodeEditor) => void
+  setEditor: (editor: editor.IStandaloneCodeEditor | null) => void
 }
 
 const state: StateCreator<IReferenceMonacoStore> = set => ({

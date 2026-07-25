@@ -11,16 +11,14 @@ import {
   HEADER_DENSITY_PX,
   MAC_TRAFFIC_PRESETS,
   chromeDefaults,
-  matchesChromePreset
-} from '@views/code-studio/utils/preferences.config'
-import type {
-  BreadcrumbSeparator,
-  ChromeSide,
-  HeaderDensity,
-  MacTrafficPreset,
-  PixisChromeState,
-  WindowControlsStyle
-} from '@views/code-studio/utils/preferences.types'
+  matchesChromePreset,
+  type BreadcrumbSeparator,
+  type ChromeSide,
+  type HeaderDensity,
+  type MacTrafficPreset,
+  type PixisChromeState,
+  type WindowControlsStyle
+} from '../../utils'
 import { ACTIVITY_ICON_META, type ActivityIconId } from '@views/code-studio/utils/workspace.types'
 import { ArrowDown, ArrowUp, Blocks, Files, GitBranch, Search, Settings } from 'lucide-react'
 import { type FC, type ReactNode } from 'react'

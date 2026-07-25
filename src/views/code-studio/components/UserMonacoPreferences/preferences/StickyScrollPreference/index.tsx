@@ -1,5 +1,5 @@
 import usePixisPreferencesStore from '@views/code-studio/store/pixisPreferences.store'
-import { getGroup } from '@views/code-studio/utils/preferences.config'
+import { getGroup } from '@views/code-studio/utils/preferences'
 import type { FC } from 'react'
 
 import {

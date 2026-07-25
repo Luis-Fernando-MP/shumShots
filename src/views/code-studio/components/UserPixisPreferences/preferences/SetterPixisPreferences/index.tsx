@@ -4,7 +4,7 @@ import {
   PreferenceSection
 } from '@views/code-studio/components/preferences/PreferenceField'
 import SchemaPreferenceField from '@views/code-studio/components/preferences/SchemaPreference'
-import { getGroup } from '@views/code-studio/utils/preferences.config'
+import { getGroup } from '@views/code-studio/utils/preferences'
 import { type FC, type ReactNode } from 'react'
 
 import AspectRatioPreference from '../AspectRatioPreference'

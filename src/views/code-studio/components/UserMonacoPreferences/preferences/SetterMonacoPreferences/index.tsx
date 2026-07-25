@@ -4,9 +4,10 @@ import {
   PreferenceSection
 } from '@views/code-studio/components/preferences/PreferenceField'
 import SchemaPreferenceField from '@views/code-studio/components/preferences/SchemaPreference'
-import { getGroup } from '@views/code-studio/utils/preferences.config'
+import { getGroup } from '@views/code-studio/utils/preferences'
 import { type FC, type ReactNode } from 'react'
 
+import HighlightLinesPreference from '../HighlightLinesPreference'
 import MinimapPreference from '../MinimapPreference'
 import ScrollPreference from '../ScrollPreference'
 import StickyScrollPreference from '../StickyScrollPreference'
@@ -56,6 +57,7 @@ const SetterMonacoPreferences: FC<SetterMonacoPreferencesProps> = ({ query }) =>
           <SchemaPreferenceField fieldId='lineHeight' />
         </Section>
 
+        <HighlightLinesPreference />
         <MinimapPreference />
         <ScrollPreference />
         <StickyScrollPreference />

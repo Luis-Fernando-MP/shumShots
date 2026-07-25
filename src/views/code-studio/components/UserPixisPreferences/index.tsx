@@ -17,6 +17,7 @@ const UserPixisPreferences: FC = () => {
   const resetPreferences = usePixisPreferencesStore(s => s.resetPreferences)
   const resetWorkspace = useWorkspaceStore(s => s.resetWorkspace)
   const { query, setQuery } = usePreferenceSearchState()
+  const hasQuery = Boolean(query.trim())
 
   const resetAllChanges = () => {
     resetPreferences()
@@ -38,7 +39,7 @@ const UserPixisPreferences: FC = () => {
           <div className='flex flex-col gap-5 has-[[data-preference-field]]:[&>[data-preference-empty]]:hidden'>
             <SetterPixisPreferences query={query} />
 
-            {query.trim() ? (
+            {hasQuery && (
               <div
                 data-preference-empty
                 className='border-border/50 bg-card/30 flex flex-col items-center gap-1 rounded-md border border-dashed px-4 py-8 text-center'
@@ -48,7 +49,7 @@ const UserPixisPreferences: FC = () => {
                   No hay preferencias que coincidan con “{query.trim()}”.
                 </Typography.Paragraph>
               </div>
-            ) : null}
+            )}
           </div>
         </PreferenceSearchProvider>
       </Popup.Content>

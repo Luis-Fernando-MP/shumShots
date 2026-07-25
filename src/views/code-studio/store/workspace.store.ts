@@ -1,6 +1,7 @@
 import { StateCreator, create } from 'zustand'
 import { persist } from 'zustand/middleware'
 
+import useDiffHistoryStore from './diffHistory.store'
 import {
   DEFAULT_ACTIVITY_ORDER,
   DEFAULT_FILE_ID,
@@ -200,35 +201,38 @@ const state: StateCreator<WorkspaceStore> = (set, get) => ({
     return id
   },
 
-  deleteEntry: id =>
-    set(s => {
-      if (id === ROOT_ID) return s
-      const entry = s.entries[id]
-      if (!entry) return s
+  deleteEntry: id => {
+    const s = get()
+    if (id === ROOT_ID) return
+    const entry = s.entries[id]
+    if (!entry) return
 
-      const toRemove = new Set([id, ...collectDescendants(s.entries, id)])
-      const remainingFiles = remainingFilesAfterRemove(s.entries, toRemove)
-      if (remainingFiles.length === 0) return s
+    const toRemove = new Set([id, ...collectDescendants(s.entries, id)])
+    const remainingFiles = remainingFilesAfterRemove(s.entries, toRemove)
+    if (remainingFiles.length === 0) return
 
-      const entries = { ...s.entries }
-      toRemove.forEach(key => {
-        delete entries[key]
-      })
+    const entries = { ...s.entries }
+    toRemove.forEach(key => {
+      delete entries[key]
+    })
 
-      const openTabIds = s.openTabIds.filter(tabId => !toRemove.has(tabId))
-      let activeFileId = s.activeFileId
-      if (toRemove.has(activeFileId)) {
-        activeFileId = openTabIds[openTabIds.length - 1] ?? remainingFiles[0].id
-        if (!openTabIds.includes(activeFileId)) openTabIds.push(activeFileId)
-      }
+    const openTabIds = s.openTabIds.filter(tabId => !toRemove.has(tabId))
+    let activeFileId = s.activeFileId
+    if (toRemove.has(activeFileId)) {
+      activeFileId = openTabIds[openTabIds.length - 1] ?? remainingFiles[0].id
+      if (!openTabIds.includes(activeFileId)) openTabIds.push(activeFileId)
+    }
 
-      return {
-        entries,
-        openTabIds,
-        activeFileId,
-        dirtyFileIds: s.dirtyFileIds.filter(fileId => !toRemove.has(fileId))
-      }
-    }),
+    const diffHistory = useDiffHistoryStore.getState()
+    toRemove.forEach(fileId => diffHistory.removeFile(fileId))
+
+    set({
+      entries,
+      openTabIds,
+      activeFileId,
+      dirtyFileIds: s.dirtyFileIds.filter(fileId => !toRemove.has(fileId))
+    })
+  },
 
   moveEntry: (id, targetParentId) =>
     set(s => {
@@ -295,7 +299,10 @@ const state: StateCreator<WorkspaceStore> = (set, get) => ({
 
   setActivityOrder: order => set({ activityOrder: order }),
 
-  resetWorkspace: () => set(initial())
+  resetWorkspace: () => {
+    useDiffHistoryStore.getState().resetDiffHistory()
+    set(initial())
+  }
 })
 
 const useWorkspaceStore = create(

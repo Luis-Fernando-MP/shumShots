@@ -4,7 +4,7 @@ import { languageIdFromFileName } from '@common/monaco'
 import { cn } from '@common/utils/cn'
 import useReferenceMonacoStore from '@views/code-studio/store/referenceMonaco'
 import useWorkspaceStore, { selectActiveFile } from '@views/code-studio/store/workspace.store'
-import type { StatusBarDensity } from '@views/code-studio/utils/preferences.types'
+import type { StatusBarDensity } from '@views/code-studio/components/UserPixisPreferences/utils'
 import { FileTypeIcon } from '@views/code-studio/components/workspaceIcons'
 import { type FC, useEffect, useState } from 'react'
 

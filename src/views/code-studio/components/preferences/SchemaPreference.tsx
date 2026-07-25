@@ -2,7 +2,7 @@
 
 import { Input } from '@common/ui/Input'
 import usePixisPreferencesStore from '@views/code-studio/store/pixisPreferences.store'
-import { type PreferenceFieldId, getField } from '@views/code-studio/utils/preferences.config'
+import { type PreferenceFieldId, getField } from '@views/code-studio/utils/preferences'
 import { type FC } from 'react'
 
 import { PreferenceField, PreferenceToggle } from './PreferenceField'

@@ -4,7 +4,7 @@ import { cn } from '@common/utils/cn'
 import useMonacoThemeStore from '@views/code-studio/store/monacoTheme.store'
 import usePixisPreferencesStore from '@views/code-studio/store/pixisPreferences.store'
 import useWorkspaceStore from '@views/code-studio/store/workspace.store'
-import { chromeDefaults } from '@views/code-studio/utils/preferences.config'
+import { chromeDefaults } from '@views/code-studio/components/UserPixisPreferences/utils'
 import dynamic from 'next/dynamic'
 import { type CSSProperties, type FC, memo } from 'react'
 

@@ -1,4 +1,15 @@
-import type { MonacoState, PreferenceFieldDef, PreferenceGroup } from './preferences.types'
+import type { PreferenceFieldDef, PreferenceGroup } from '@views/code-studio/utils/preferences/types'
+
+import type { HighlightLinesState, MonacoState } from './types'
+
+export const highlightLinesDefaults = {
+  enabled: false,
+  ranges: '11-13',
+  showGutterBar: true,
+  style: 'amber',
+  overviewRuler: true,
+  diffView: 'off'
+} satisfies HighlightLinesState
 
 export const monacoDefaults = {
   glyphMargin: false,
@@ -47,7 +58,8 @@ export const monacoDefaults = {
   formatOnType: true,
   matchBrackets: 'never',
   autoClosingBrackets: 'beforeWhitespace',
-  autoClosingQuotes: 'beforeWhitespace'
+  autoClosingQuotes: 'beforeWhitespace',
+  highlightLines: highlightLinesDefaults
 } satisfies MonacoState
 
 export const getDefaultMonacoState = (): MonacoState => structuredClone(monacoDefaults)
@@ -64,6 +76,11 @@ export const monacoPreferenceGroups = [
     id: 'typography',
     title: 'Tipografía:',
     subtitle: 'Tamaño, ritmo y detalle tipográfico del código.'
+  },
+  {
+    id: 'highlightLines',
+    title: 'Highlight Lines:',
+    subtitle: 'Resalta rangos del shot o activa el Diff Editor (paralelo / inline).'
   },
   {
     id: 'minimap',
@@ -233,6 +250,18 @@ export const monacoPreferenceFields = {
     suffix: 'px'
   }),
 
+  highlightLines: field({
+    id: 'highlightLines',
+    groupId: 'highlightLines',
+    path: 'monaco.highlightLines',
+    kind: 'custom',
+    title: 'Highlight Lines',
+    subtitle: 'Rangos resaltados o Diff Editor',
+    description: 'Decoraciones por rango, o Diff Editor nativo (rojo/verde automático).',
+    example: 'Ej: 11-13, 20 — o vista sideBySide / inline',
+    default: monacoDefaults.highlightLines
+  }),
+
   minimap: field({
     id: 'minimap',
     groupId: 'minimap',
@@ -383,3 +412,26 @@ export const monacoPreferenceFields = {
 }
 
 export type MonacoPreferenceFieldId = keyof typeof monacoPreferenceFields
+
+export const parseHighlightLineRanges = (input: string): { start: number; end: number }[] => {
+  const ranges: { start: number; end: number }[] = []
+  for (const part of input.split(/[,;\s]+/)) {
+    const token = part.trim()
+    if (!token) continue
+    const span = /^(\d+)\s*[-–—:]\s*(\d+)$/.exec(token)
+    if (span) {
+      const a = Number(span[1])
+      const b = Number(span[2])
+      if (!Number.isFinite(a) || !Number.isFinite(b) || a < 1 || b < 1) continue
+      ranges.push({ start: Math.min(a, b), end: Math.max(a, b) })
+      continue
+    }
+    const single = /^(\d+)$/.exec(token)
+    if (single) {
+      const line = Number(single[1])
+      if (!Number.isFinite(line) || line < 1) continue
+      ranges.push({ start: line, end: line })
+    }
+  }
+  return ranges
+}

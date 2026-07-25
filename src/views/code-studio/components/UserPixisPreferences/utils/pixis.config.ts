@@ -1,14 +1,13 @@
 import monacoLanguagesIcons from '@/shared/monaco-languages'
 import { DEFAULT_MONACO_FONT_ID } from '@common/monaco'
+import type { PreferenceFieldDef, PreferenceGroup } from '@views/code-studio/utils/preferences/types'
 
 import type {
   HeaderDensity,
   MacTrafficPreset,
   PixisChromeState,
-  PreferenceFieldDef,
-  PreferenceGroup,
   PixisState
-} from './preferences.types'
+} from './types'
 
 const language = monacoLanguagesIcons['Frontend Web'].typescript
 const typography = DEFAULT_MONACO_FONT_ID

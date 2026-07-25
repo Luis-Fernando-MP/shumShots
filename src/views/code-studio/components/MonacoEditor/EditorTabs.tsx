@@ -2,7 +2,7 @@
 
 import { cn } from '@common/utils/cn'
 import useWorkspaceStore from '@views/code-studio/store/workspace.store'
-import type { TabStyle } from '@views/code-studio/utils/preferences.types'
+import type { TabStyle } from '@views/code-studio/components/UserPixisPreferences/utils'
 import { FileTypeIcon } from '@views/code-studio/components/workspaceIcons'
 import { Plus, X } from 'lucide-react'
 import {

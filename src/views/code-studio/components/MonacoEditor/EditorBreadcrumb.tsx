@@ -3,7 +3,7 @@
 import { cn } from '@common/utils/cn'
 import usePixisPreferencesStore from '@views/code-studio/store/pixisPreferences.store'
 import useWorkspaceStore, { selectActivePath } from '@views/code-studio/store/workspace.store'
-import { chromeDefaults } from '@views/code-studio/utils/preferences.config'
+import { chromeDefaults } from '@views/code-studio/components/UserPixisPreferences/utils'
 import { type FC, useMemo } from 'react'
 
 interface EditorBreadcrumbProps {

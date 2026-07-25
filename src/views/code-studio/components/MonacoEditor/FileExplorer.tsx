@@ -9,7 +9,7 @@ import {
   EXPLORER_WIDTH_MAX,
   EXPLORER_WIDTH_MIN,
   chromeDefaults
-} from '@views/code-studio/utils/preferences.config'
+} from '@views/code-studio/components/UserPixisPreferences/utils'
 import { type FsEntry, ROOT_ID, getChildren } from '@views/code-studio/utils/workspace.types'
 import { ChevronDown, ChevronRight, FilePlus, FolderPlus, Trash2 } from 'lucide-react'
 import { type DragEvent, type FC, type KeyboardEvent, useCallback, useEffect, useRef, useState } from 'react'

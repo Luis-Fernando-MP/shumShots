@@ -14,8 +14,8 @@ import {
   parseAspect,
   resolveAspectSelection,
   simplifyAspect
-} from '@views/code-studio/utils/aspectRatio'
-import { getDefaultState, getField } from '@views/code-studio/utils/preferences.config'
+} from '../../utils'
+import { getDefaultState, getField } from '@views/code-studio/utils/preferences'
 import { type FC, useState } from 'react'
 
 import { PreferenceField } from '@views/code-studio/components/preferences/PreferenceField'

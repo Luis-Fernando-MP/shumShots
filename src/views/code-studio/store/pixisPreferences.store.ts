@@ -1,24 +1,24 @@
-import { type MonacoLanguage } from '@/shared/monaco-languages'
-import { StateCreator, create } from 'zustand'
-import { persist } from 'zustand/middleware'
-
+import { resolveLanguageMeta, resolveMonacoFontId } from '@common/monaco'
+import { getDefaultMonacoState } from '@views/code-studio/components/UserMonacoPreferences/utils'
 import {
+  applyPixisDom,
+  chromeDefaults,
   clampSize,
   heightFromWidth,
   isAspectLocked,
   widthFromHeight
-} from '../utils/aspectRatio'
-import { resolveLanguageMeta, resolveMonacoFontId } from '@common/monaco'
+} from '@views/code-studio/components/UserPixisPreferences/utils'
 import {
   type MonacoState,
   type PixisChromeState,
   type PixisState,
   type PreferencesState,
-  applyPixisDom,
-  chromeDefaults,
-  getDefaultMonacoState,
   getDefaultState
-} from '../utils/preferences.config'
+} from '@views/code-studio/utils/preferences'
+import { StateCreator, create } from 'zustand'
+import { persist } from 'zustand/middleware'
+
+import { type MonacoLanguage } from '@/shared/monaco-languages'
 
 type PixisKey = keyof PixisState
 type MonacoKey = keyof MonacoState
@@ -103,12 +103,34 @@ const resolvePixisSize = (
 const mergeMonaco = (persisted?: Partial<MonacoState>): MonacoState => {
   const defaults = getDefaultMonacoState()
   if (!persisted) return defaults
+
+  const persistedHighlight = persisted.highlightLines as
+    | (Partial<MonacoState['highlightLines']> & { diffMode?: string; diffOriginal?: string })
+    | undefined
+
+  const legacyDiff = persistedHighlight?.diffMode
+  const migratedDiffView =
+    persistedHighlight?.diffView ??
+    (legacyDiff === 'sideBySide' || legacyDiff === 'inline' ? legacyDiff : defaults.highlightLines.diffView)
+
+  const highlightSource = persistedHighlight ?? {}
+  const highlightRest = Object.fromEntries(
+    Object.entries(highlightSource).filter(
+      ([key]) => key !== 'diffMode' && key !== 'diffOriginal'
+    )
+  ) as Partial<MonacoState['highlightLines']>
+
   return {
     ...defaults,
     ...persisted,
     minimap: { ...defaults.minimap, ...persisted.minimap },
     scrollbar: { ...defaults.scrollbar, ...persisted.scrollbar },
-    stickyScroll: { ...defaults.stickyScroll, ...persisted.stickyScroll }
+    stickyScroll: { ...defaults.stickyScroll, ...persisted.stickyScroll },
+    highlightLines: {
+      ...defaults.highlightLines,
+      ...highlightRest,
+      diffView: migratedDiffView
+    }
   }
 }
 
