@@ -1,13 +1,13 @@
 'use client'
 
 import BorderStylePresets from '@/shared/components/BorderStylePresets'
-import useImagesBorderStore from '@views/image-studio/store/images/useImagesBorderStore'
+import useBackgroundBorderStore from '@views/image-studio/store/background/backgroundBorder.store'
 import type { FC } from 'react'
 
 import SectionBlock from '../../BackgroundConfiguration/wrappers/SectionBlock'
 
-const BorderStyleController: FC = () => {
-  const borderState = useImagesBorderStore()
+const CanvasBorderStyleController: FC = () => {
+  const borderState = useBackgroundBorderStore()
 
   return (
     <SectionBlock title='Estilo de borde'>
@@ -16,4 +16,4 @@ const BorderStyleController: FC = () => {
   )
 }
 
-export default BorderStyleController
+export default CanvasBorderStyleController

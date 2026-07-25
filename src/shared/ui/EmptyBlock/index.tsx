@@ -1,4 +1,4 @@
-import { acl } from '@/shared/acl'
+import { cn } from '@common/utils/cn'
 import { CircleOffIcon } from 'lucide-react'
 import type { FC, MouseEvent } from 'react'
 
@@ -8,19 +8,16 @@ interface Props {
   selected: boolean
 }
 
-/**
- * EmptyBlock component renders a button that displays an icon.
- *
- * @param {function} onClick - The function to call when the button is clicked.
- * @param {string} [className] - Optional additional class names for styling.
- * @param {boolean} selected - Indicates if the block is selected, which applies a specific style.
- */
-
 const EmptyBlock: FC<Props> = ({ onClick, className = '', selected }) => {
   return (
-    <button className={`size-[50px] w-[100px] ${className}`} onClick={onClick}>
-      <div className={`grid size-full place-content-center rounded-lg border-[3px] border-muted bg-background [&>svg]:size-6 ${acl(selected, 'border-primary')}`}>
-        <CircleOffIcon />
+    <button type='button' className={cn('aspect-[4/3] w-full', className)} onClick={onClick}>
+      <div
+        className={cn(
+          'grid size-full place-content-center rounded-md bg-muted [&>svg]:size-5',
+          selected ? 'ring-primary ring-2' : 'ring-border/40 ring-1'
+        )}
+      >
+        <CircleOffIcon className='text-muted-foreground' />
       </div>
     </button>
   )

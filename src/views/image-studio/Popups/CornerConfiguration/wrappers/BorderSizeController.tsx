@@ -1,32 +1,28 @@
-import UseImagesBorderStore from '@views/image-studio/store/images/useImagesBorderStore'
+'use client'
+
 import SliderControl from '@/shared/components/SliderControl'
-import Button from '@/shared/ui/Button'
-import { RotateCcwIcon } from 'lucide-react'
+import { Button } from '@common/ui/Button'
+import useImagesBorderStore from '@views/image-studio/store/images/useImagesBorderStore'
 import type { FC } from 'react'
-import Typography from '@common/ui/Typography'
+
+import SectionBlock from '../../BackgroundConfiguration/wrappers/SectionBlock'
 
 const BorderSizeController: FC = () => {
-  const { setSize, size } = UseImagesBorderStore()
+  const size = useImagesBorderStore(s => s.size)
+  const type = useImagesBorderStore(s => s.type)
+  const setSize = useImagesBorderStore(s => s.setSize)
+
+  if (type === 'none') return null
 
   return (
-    <Typography.Block title='Tamaño de borde:' className='borderConfig-section flex flex-col gap-grid-lg'>
-      <Typography.Paragraph tone='secondary'>Depende de la selección de un borde seleccionado</Typography.Paragraph>
-      <Button onClick={() => setSize(5)}>
-        <RotateCcwIcon />
-        <h5>Restablecer</h5>
-      </Button>
-      <SliderControl
-        value={size}
-        width={200}
-        label='Tamaño'
-        onChangeRange={v => {
-          setSize(v)
-        }}
-        min={2}
-        max={20}
-        step={1}
-      />
-    </Typography.Block>
+    <SectionBlock title='Grosor' description='Ancho del borde de la imagen.'>
+      <div className='gap-grid flex items-end'>
+        <SliderControl label='Tamaño' value={size} onChangeRange={setSize} min={0} max={40} step={1} />
+        <Button type='button' variant='outline' size='sm' className='h-8 shrink-0 px-2.5 text-xs' onClick={() => setSize(5)}>
+          Reset
+        </Button>
+      </div>
+    </SectionBlock>
   )
 }
 

@@ -8,6 +8,6 @@ import { create } from 'zustand'
 
 export type { BorderConfigurationState, BorderFinish, BorderType }
 
-const useImagesBorderStore = create(createBorderStore({ size: 5 }))
+const useBackgroundBorderStore = create(createBorderStore({ size: 4 }))
 
-export default useImagesBorderStore
+export default useBackgroundBorderStore

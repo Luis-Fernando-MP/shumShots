@@ -7,6 +7,7 @@ import { ImagePlusIcon, SlidersHorizontalIcon } from 'lucide-react'
 import type { FC } from 'react'
 
 import BackgroundConfiguration from '../../Popups/BackgroundConfiguration'
+import CanvasBorderConfiguration from '../../Popups/CanvasBorderConfiguration'
 import CornerConfiguration from '../../Popups/CornerConfiguration'
 import ShadowConfiguration from '../../Popups/ShadowConfiguration'
 
@@ -17,6 +18,7 @@ const MainBarOptions: FC = () => {
     <>
       <section className='gap-grid flex flex-row items-center'>
         <BackgroundConfiguration />
+        <CanvasBorderConfiguration />
 
         <UnsplashPicker onSelect={url => setBackground(url)} title='Fondos Unsplash'>
           <Button size='icon' tooltip='Imagen del fondo'>
@@ -34,7 +36,7 @@ const MainBarOptions: FC = () => {
         <CornerConfiguration />
         <ShadowConfiguration />
 
-        <Button size='icon' tooltip='Filtros del fondo'>
+        <Button size='icon' tooltip='Filtros de la imagen'>
           <SlidersHorizontalIcon />
         </Button>
       </section>

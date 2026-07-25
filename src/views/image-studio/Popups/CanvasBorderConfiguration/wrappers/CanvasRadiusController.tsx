@@ -1,19 +1,19 @@
 'use client'
 
 import BorderRadiusConfiguration from '@/shared/components/BorderRadiusConfiguration'
-import useImagesRadiusStore from '@views/image-studio/store/images/imagesRadius.store'
+import useBackgroundRadiusStore from '@views/image-studio/store/background/backgroundRadius.store'
 import type { FC } from 'react'
 
 import SectionBlock from '../../BackgroundConfiguration/wrappers/SectionBlock'
 
-const ImagesRadiusController: FC = () => {
-  const borderStore = useImagesRadiusStore()
+const CanvasRadiusController: FC = () => {
+  const borderStore = useBackgroundRadiusStore()
 
   return (
-    <SectionBlock title='Redondeado' description='Suaviza las esquinas de la imagen.'>
+    <SectionBlock title='Redondeado' description='Suaviza las esquinas del canvas.'>
       <BorderRadiusConfiguration borderState={borderStore} />
     </SectionBlock>
   )
 }
 
-export default ImagesRadiusController
+export default CanvasRadiusController

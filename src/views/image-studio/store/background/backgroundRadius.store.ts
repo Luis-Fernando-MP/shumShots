@@ -7,12 +7,14 @@ export interface IBorderRadiusStore {
   borderLBRadius: number
   borderRBRadius: number
   borderRadius: number
+  borderSmooth: number
   setActiveIndividualBorder: (activeIndividualBorder: boolean) => void
   setBorderRadius: (borderRadius: number) => void
   setBorderLTRadius: (borderLTRadius: number) => void
   setBorderRTRadius: (borderRTRadius: number) => void
   setBorderLBRadius: (borderLBRadius: number) => void
   setBorderRBRadius: (borderRBRadius: number) => void
+  setBorderSmooth: (borderSmooth: number) => void
   resetBackgroundRadius?: () => void
   getStyleBorderRadius: () => { [key: string]: string }
 }
@@ -23,7 +25,8 @@ const RADIUS_DEFAULTS = {
   borderRTRadius: 20,
   borderLBRadius: 20,
   borderRBRadius: 20,
-  borderRadius: 20
+  borderRadius: 20,
+  borderSmooth: 0
 }
 
 const state: StateCreator<IBorderRadiusStore> = (set, get) => ({
@@ -34,6 +37,7 @@ const state: StateCreator<IBorderRadiusStore> = (set, get) => ({
   setBorderRTRadius: borderRTRadius => set({ borderRTRadius }),
   setBorderLBRadius: borderLBRadius => set({ borderLBRadius }),
   setBorderRBRadius: borderRBRadius => set({ borderRBRadius }),
+  setBorderSmooth: borderSmooth => set({ borderSmooth: Math.min(100, Math.max(0, borderSmooth)) }),
   resetBackgroundRadius: () => set(RADIUS_DEFAULTS),
   getStyleBorderRadius: () => {
     if (!get().activeIndividualBorder) return { borderRadius: `${get().borderRadius}px` }
@@ -46,3 +50,11 @@ const state: StateCreator<IBorderRadiusStore> = (set, get) => ({
 const useBackgroundRadiusStore = create(state)
 
 export default useBackgroundRadiusStore
+
+export const resolveSmoothCornerStyle = (smooth: number): Record<string, string | undefined> => {
+  if (smooth <= 0) return {}
+  const n = 1 + (smooth / 100) * 1.5
+  return {
+    cornerShape: `superellipse(${n.toFixed(2)})`
+  }
+}

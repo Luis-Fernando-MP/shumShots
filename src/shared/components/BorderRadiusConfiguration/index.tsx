@@ -4,6 +4,7 @@ import type { FC } from 'react'
 import DefaultBorders from '../DefaultBorders'
 import IndividualBorderController from '../IndividualBorderController'
 import SliderControl from '../SliderControl'
+
 interface Props {
   borderState: IBorderRadiusStore
 }
@@ -11,10 +12,10 @@ interface Props {
 const MAX_RADIUS = 320
 
 const BorderRadiusConfiguration: FC<Props> = ({ borderState }) => {
-  const { borderRadius, setBorderRadius } = borderState
+  const { borderRadius, setBorderRadius, borderSmooth, setBorderSmooth } = borderState
 
   return (
-    <article className='flex flex-col gap-2'>
+    <article className='gap-grid flex flex-col'>
       <DefaultBorders borderValue={borderRadius} changeBorder={setBorderRadius} />
       <SliderControl
         label='Redondeado'
@@ -23,9 +24,17 @@ const BorderRadiusConfiguration: FC<Props> = ({ borderState }) => {
         min={0}
         max={MAX_RADIUS}
         step={10}
-        width={'280px'}
       />
       <IndividualBorderController {...borderState} />
+      <SliderControl
+        label='Smooth'
+        onChangeRange={setBorderSmooth}
+        value={borderSmooth}
+        min={0}
+        max={100}
+        step={1}
+        displayValue={`${Math.round(borderSmooth)}%`}
+      />
     </article>
   )
 }

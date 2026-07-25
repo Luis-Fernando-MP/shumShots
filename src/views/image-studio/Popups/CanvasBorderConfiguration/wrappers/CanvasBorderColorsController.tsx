@@ -1,16 +1,16 @@
 'use client'
 
 import ColorsController from '@/shared/components/ColorsController'
-import useImagesBorderStore from '@views/image-studio/store/images/useImagesBorderStore'
+import useBackgroundBorderStore from '@views/image-studio/store/background/backgroundBorder.store'
 import type { FC } from 'react'
 
 import SectionBlock from '../../BackgroundConfiguration/wrappers/SectionBlock'
 
-const BorderColorsController: FC = () => {
-  const color = useImagesBorderStore(s => s.color)
-  const type = useImagesBorderStore(s => s.type)
-  const setColor = useImagesBorderStore(s => s.setColor)
-  const setType = useImagesBorderStore(s => s.setType)
+const CanvasBorderColorsController: FC = () => {
+  const color = useBackgroundBorderStore(s => s.color)
+  const type = useBackgroundBorderStore(s => s.type)
+  const setColor = useBackgroundBorderStore(s => s.setColor)
+  const setType = useBackgroundBorderStore(s => s.setType)
 
   return (
     <SectionBlock
@@ -28,4 +28,4 @@ const BorderColorsController: FC = () => {
   )
 }
 
-export default BorderColorsController
+export default CanvasBorderColorsController
