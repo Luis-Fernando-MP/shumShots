@@ -12,8 +12,11 @@ import {
 import useDiffHistoryStore from '@views/code-studio/store/diffHistory.store'
 import usePixisPreferencesStore from '@views/code-studio/store/pixisPreferences.store'
 import useWorkspaceStore, { selectActiveFile } from '@views/code-studio/store/workspace.store'
-import { getGroup } from '@views/code-studio/utils/preferences'
-import type { HighlightLinesDiffView, HighlightLinesStyle } from '../../utils'
+import {
+  getGroup,
+  type HighlightLinesDiffView,
+  type HighlightLinesStyle
+} from '@views/code-studio/utils/preferences'
 import { type FC } from 'react'
 
 const STYLE_OPTIONS: readonly HighlightLinesStyle[] = ['amber', 'blue', 'green', 'pink', 'purple']

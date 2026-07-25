@@ -1,18 +1,3 @@
-export type {
-  BreadcrumbSeparator,
-  ChromeSide,
-  HeaderDensity,
-  HeaderTint,
-  MacTrafficPreset,
-  PixisChromeState,
-  PixisPreferenceGroupId,
-  PixisState,
-  StatusBarDensity,
-  TabStyle,
-  TitleAlign,
-  WindowControlsStyle
-} from './types'
-
 export {
   BREADCRUMB_SEPARATORS,
   CHROME_LOOK_PRESETS,

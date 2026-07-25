@@ -1,5 +1,5 @@
 import { parseHighlightLineRanges } from './monaco.config'
-import type { HighlightLinesState, HighlightLinesStyle } from './types'
+import type { HighlightLinesState, HighlightLinesStyle } from '@views/code-studio/utils/preferences/types'
 
 const OVERVIEW_RULER_CENTER = 2
 

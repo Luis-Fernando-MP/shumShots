@@ -1,11 +1,3 @@
-export type {
-  HighlightLinesDiffView,
-  HighlightLinesState,
-  HighlightLinesStyle,
-  MonacoPreferenceGroupId,
-  MonacoState
-} from './types'
-
 export {
   getDefaultMonacoState,
   monacoPreferenceFields,

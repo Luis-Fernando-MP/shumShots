@@ -3,9 +3,9 @@
 import { cn } from '@common/utils/cn'
 import {
   HEADER_DENSITY_PX,
-  MAC_TRAFFIC_PRESETS,
-  type PixisChromeState
+  MAC_TRAFFIC_PRESETS
 } from '@views/code-studio/components/UserPixisPreferences/utils'
+import type { PixisChromeState } from '@views/code-studio/utils/preferences'
 import { Minus, Square, X } from 'lucide-react'
 import { type FC } from 'react'
 

@@ -1,6 +1,9 @@
-import type { PreferenceFieldDef, PreferenceGroup } from '@views/code-studio/utils/preferences/types'
-
-import type { HighlightLinesState, MonacoState } from './types'
+import type {
+  HighlightLinesState,
+  MonacoState,
+  PreferenceFieldDef,
+  PreferenceGroup
+} from '@views/code-studio/utils/preferences/types'
 
 export const highlightLinesDefaults = {
   enabled: false,
