@@ -9,9 +9,11 @@ import usePixisPreferencesStore from '@views/code-studio/store/pixisPreferences.
 import useReferenceMonacoStore from '@views/code-studio/store/referenceMonaco'
 import useWorkspaceStore, { selectActiveFile } from '@views/code-studio/store/workspace.store'
 import type { FsEntry } from '@views/code-studio/utils/workspace.types'
+import { ensureKeywordGlyphStyles } from '@views/code-studio/components/UserMonacoPreferences/utils'
 import { type FC, useEffect, useMemo, useRef } from 'react'
 
 import LoaderEditor from './LoaderEditor'
+import './monaco.css'
 
 const HIGHLIGHT_LINE_CLASSES = [
   '[&_.pixis-line-highlight.pixis-hl-amber]:bg-[rgba(229,192,123,0.16)]',
@@ -22,7 +24,7 @@ const HIGHLIGHT_LINE_CLASSES = [
 ].join(' ')
 
 const EDITOR_CHROME_CLASSES =
-  'editorComponent [&_.user-monaco-highlight]:border-primary [&_.user-monaco-highlight]:bg-primary/20 [&_.monaco-editor]:!outline-none [&_.monaco-editor_.overflow-guard_*]:!font-[family-name:var(--monaco-font-family)] [&_.monaco-editor_.overflow-guard_*]:!text-[length:var(--monaco-font-size)] [&_.relative-current-line-number]:!text-right [&_.user-monaco-highlight]:!cursor-pointer [&_.user-monaco-highlight]:rounded-[3px] [&_.user-monaco-highlight]:border [&_.user-monaco-highlight]:px-[3px]'
+  'editorComponent [&_.monaco-editor]:!outline-none [&_.monaco-editor_.overflow-guard_*]:!font-[family-name:var(--monaco-font-family)] [&_.monaco-editor_.overflow-guard_*]:!text-[length:var(--monaco-font-size)] [&_.relative-current-line-number]:!text-right'
 
 const applyDiffLayout = (ed: MonacoDiffEditor, sideBySide: boolean) => {
   try {
@@ -78,6 +80,10 @@ const EditorComponent: FC = () => {
   const diffEditorRef = useRef<MonacoDiffEditor | null>(null)
   const sideBySideRef = useRef(sideBySide)
   sideBySideRef.current = sideBySide
+
+  useEffect(() => {
+    ensureKeywordGlyphStyles()
+  }, [])
 
   const language = activeFile
     ? languageIdFromFileName(activeFile.name, fallbackLanguage.language)
@@ -195,15 +201,17 @@ const EditorComponent: FC = () => {
 
   const editorOptions = useMemo(() => {
     const base = Object.fromEntries(
-      Object.entries(monacoOpts).filter(([key]) => key !== 'highlightLines')
+      Object.entries(monacoOpts).filter(
+        ([key]) => key !== 'highlightLines' && key !== 'keywordHighlight'
+      )
     )
     return {
       ...base,
       theme: themeName,
       fontFamily: typography,
       contextmenu: false,
-      lineDecorationsWidth: 0,
-      automaticLayout: true
+      automaticLayout: true,
+      lineDecorationsWidth: 0
     }
   }, [monacoOpts, themeName, typography])
 

@@ -1,8 +1,8 @@
 /** Código de ejemplo del shot por defecto. */
 export const exampleShotCode = `
-import { fetchRandomJoke } from '@/services/shum-shot';
+import { fetchRandomJoke } from '@/services/pixis';
 
-const platformName: string = 'Shum Shot';
+const platformName: string = 'Pixis';
 let userWelcomeMessage: string = \`¡Hola! Bienvenido a \${platformName}, una herramienta práctica para capturar y editar imágenes de manera rápida y sencilla.\`;
 
 const surpriseFeature = () => console.log('Si lees esto al revés, ¡tendrás buena suerte todo el día! 🍀');
@@ -10,7 +10,7 @@ const surpriseFeature = () => console.log('Si lees esto al revés, ¡tendrás bu
 async function showWelcomeMessage() {
   console.log(userWelcomeMessage);
   console.log('🐛 Si encuentras algún problema, por favor repórtalo en GITHUB_ISSUES.');
-  console.log('💡 Tus ideas y sugerencias son bienvenidas. Puedes apoyar al creador LUISMP.');
+  console.log('💡 Tus ideas y sugerencias son bienvenidas. Puedes apoyar al creador HAUI.');
 
   const characteristics: string[] = [
     'Comparte y exporta tu código con estilo',
@@ -38,5 +38,5 @@ async function showWelcomeMessage() {
 showWelcomeMessage();
 surpriseFeature();
 
-// ¡Explora, crea y disfruta con Shum Shot! 🚀
+// ¡Explora, crea y disfruta con Pixis! 🚀
 `.trimStart()

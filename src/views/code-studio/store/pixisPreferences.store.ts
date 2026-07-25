@@ -13,6 +13,7 @@ import {
   type PixisChromeState,
   type PixisState,
   type PreferencesState,
+  type KeywordHighlightGroup,
   getDefaultState
 } from '@views/code-studio/utils/preferences'
 import { StateCreator, create } from 'zustand'
@@ -123,6 +124,11 @@ const mergeMonaco = (persisted?: Partial<MonacoState>): MonacoState => {
   return {
     ...defaults,
     ...persisted,
+    glyphMargin:
+      persisted.glyphMargin ??
+      ((persisted.keywordHighlight as LegacyKeywordHighlight | undefined)?.showGlyph === true
+        ? true
+        : defaults.glyphMargin),
     minimap: { ...defaults.minimap, ...persisted.minimap },
     scrollbar: { ...defaults.scrollbar, ...persisted.scrollbar },
     stickyScroll: { ...defaults.stickyScroll, ...persisted.stickyScroll },
@@ -130,8 +136,67 @@ const mergeMonaco = (persisted?: Partial<MonacoState>): MonacoState => {
       ...defaults.highlightLines,
       ...highlightRest,
       diffView: migratedDiffView
+    },
+    keywordHighlight: mergeKeywordHighlight(persisted.keywordHighlight)
+  }
+}
+
+type LegacyKeywordHighlight = {
+  terms?: string
+  style?: KeywordHighlightGroup['style']
+  glyphStyle?: KeywordHighlightGroup['glyph']
+  showGlyph?: boolean
+  groups?: Partial<KeywordHighlightGroup>[]
+}
+
+const mergeKeywordHighlight = (
+  persisted?: LegacyKeywordHighlight
+): MonacoState['keywordHighlight'] => {
+  const defaults = getDefaultMonacoState().keywordHighlight
+  if (!persisted) return defaults
+
+  const validGlyphs = new Set([
+    'none',
+    'logo',
+    'star',
+    'heart',
+    'zap',
+    'sparkles',
+    'bookmark',
+    'code'
+  ])
+  const resolveGlyph = (glyph?: string): KeywordHighlightGroup['glyph'] =>
+    glyph && validGlyphs.has(glyph) ? (glyph as KeywordHighlightGroup['glyph']) : 'logo'
+
+  const fallbackGlyph = resolveGlyph(
+    persisted.glyphStyle && persisted.glyphStyle !== 'none' ? persisted.glyphStyle : undefined
+  )
+
+  if (persisted.groups?.length) {
+    return {
+      groups: persisted.groups.map(group => ({
+        id: group.id || `kw-${crypto.randomUUID()}`,
+        terms: group.terms ?? '',
+        style: group.style ?? 'primary',
+        glyph: resolveGlyph(group.glyph ?? fallbackGlyph)
+      }))
     }
   }
+
+  if (typeof persisted.terms === 'string') {
+    return {
+      groups: [
+        {
+          id: 'migrated',
+          terms: persisted.terms,
+          style: persisted.style ?? 'primary',
+          glyph: fallbackGlyph
+        }
+      ]
+    }
+  }
+
+  return defaults
 }
 
 const mergePixis = (persisted?: Partial<PersistedPreferences['pixis']>): PixisState => {

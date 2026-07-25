@@ -8,6 +8,7 @@ import { getGroup } from '@views/code-studio/utils/preferences'
 import { type FC, type ReactNode } from 'react'
 
 import HighlightLinesPreference from '../HighlightLinesPreference'
+import KeywordHighlightPreference from '../KeywordHighlightPreference'
 import MinimapPreference from '../MinimapPreference'
 import ScrollPreference from '../ScrollPreference'
 import StickyScrollPreference from '../StickyScrollPreference'
@@ -41,7 +42,6 @@ const SetterMonacoPreferences: FC<SetterMonacoPreferencesProps> = ({ query }) =>
     <PreferenceSearchProvider query={query}>
       <div className='flex flex-col gap-5'>
         <Section groupId='visual'>
-          <SchemaPreferenceField fieldId='glyphMargin' />
           <SchemaPreferenceField fieldId='renderValidationDecorations' />
           <SchemaPreferenceField fieldId='lineNumbers' />
           <SchemaPreferenceField fieldId='wordWrap' />
@@ -58,6 +58,7 @@ const SetterMonacoPreferences: FC<SetterMonacoPreferencesProps> = ({ query }) =>
         </Section>
 
         <HighlightLinesPreference />
+        <KeywordHighlightPreference />
         <MinimapPreference />
         <ScrollPreference />
         <StickyScrollPreference />

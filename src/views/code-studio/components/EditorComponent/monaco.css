@@ -1,0 +1,101 @@
+.editorComponent .user-monaco-highlight {
+  cursor: pointer;
+  border-radius: 3px;
+  border: 1px solid;
+  padding: 0 3px;
+}
+
+.editorComponent .user-monaco-hl-primary {
+  border-color: rgb(var(--tn-primary));
+  background: rgb(var(--tn-primary) / 20%);
+}
+
+.editorComponent .user-monaco-hl-amber {
+  border-color: #e5c07b;
+  background: rgb(229 192 123 / 20%);
+}
+
+.editorComponent .user-monaco-hl-blue {
+  border-color: #61afef;
+  background: rgb(97 175 239 / 20%);
+}
+
+.editorComponent .user-monaco-hl-green {
+  border-color: #98c379;
+  background: rgb(152 195 121 / 20%);
+}
+
+.editorComponent .user-monaco-hl-pink {
+  border-color: #c678dd;
+  background: rgb(198 120 221 / 20%);
+}
+
+.editorComponent .user-monaco-icon::before {
+  position: absolute;
+  top: 50%;
+  left: 100%;
+  display: inline-block;
+  width: 1rem;
+  height: 1rem;
+  content: '';
+  background: url('/logo.webp') center / cover no-repeat;
+  transform: translateY(-50%);
+}
+
+.editorComponent .user-monaco-icon-lucide::before {
+  width: 0.9rem;
+  height: 0.9rem;
+  background-color: transparent;
+  background-size: contain;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.editorComponent .pixis-line-highlight-number {
+  box-sizing: border-box;
+}
+
+.editorComponent .pixis-line-highlight-number.pixis-hl-amber {
+  color: #e5c07b !important;
+  background: rgb(229 192 123 / 22%) !important;
+}
+
+.editorComponent .pixis-line-highlight-number.pixis-hl-blue {
+  color: #61afef !important;
+  background: rgb(97 175 239 / 22%) !important;
+}
+
+.editorComponent .pixis-line-highlight-number.pixis-hl-green {
+  color: #98c379 !important;
+  background: rgb(152 195 121 / 22%) !important;
+}
+
+.editorComponent .pixis-line-highlight-number.pixis-hl-pink {
+  color: #c678dd !important;
+  background: rgb(198 120 221 / 22%) !important;
+}
+
+.editorComponent .pixis-line-highlight-number.pixis-hl-purple {
+  color: #a78bfa !important;
+  background: rgb(167 139 250 / 22%) !important;
+}
+
+.editorComponent .pixis-line-highlight-number.pixis-line-highlight-bar.pixis-hl-amber {
+  box-shadow: inset 3px 0 0 #e5c07b;
+}
+
+.editorComponent .pixis-line-highlight-number.pixis-line-highlight-bar.pixis-hl-blue {
+  box-shadow: inset 3px 0 0 #61afef;
+}
+
+.editorComponent .pixis-line-highlight-number.pixis-line-highlight-bar.pixis-hl-green {
+  box-shadow: inset 3px 0 0 #98c379;
+}
+
+.editorComponent .pixis-line-highlight-number.pixis-line-highlight-bar.pixis-hl-pink {
+  box-shadow: inset 3px 0 0 #c678dd;
+}
+
+.editorComponent .pixis-line-highlight-number.pixis-line-highlight-bar.pixis-hl-purple {
+  box-shadow: inset 3px 0 0 #a78bfa;
+}

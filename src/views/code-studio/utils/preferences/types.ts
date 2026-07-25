@@ -14,6 +14,7 @@ export type MonacoPreferenceGroupId =
   | 'cursor'
   | 'editor'
   | 'highlightLines'
+  | 'keywordHighlight'
 
 export type PreferenceGroupId = PixisPreferenceGroupId | MonacoPreferenceGroupId
 export type PreferenceFieldKind = 'boolean' | 'number' | 'string' | 'custom'
@@ -64,6 +65,28 @@ export type HighlightLinesState = {
   overviewRuler: boolean
   diffView: HighlightLinesDiffView
   showWhitespace: boolean
+}
+
+export type KeywordHighlightStyle = 'primary' | 'amber' | 'blue' | 'green' | 'pink'
+export type KeywordGlyphStyle =
+  | 'none'
+  | 'logo'
+  | 'star'
+  | 'heart'
+  | 'zap'
+  | 'sparkles'
+  | 'bookmark'
+  | 'code'
+
+export type KeywordHighlightGroup = {
+  id: string
+  terms: string
+  style: KeywordHighlightStyle
+  glyph: KeywordGlyphStyle
+}
+
+export type KeywordHighlightState = {
+  groups: KeywordHighlightGroup[]
 }
 
 export type PixisChromeState = {
@@ -126,6 +149,7 @@ export type MonacoState = {
   hideCursorInOverviewRuler: Monaco['hideCursorInOverviewRuler']
   matchBrackets: Monaco['matchBrackets']
   highlightLines: HighlightLinesState
+  keywordHighlight: KeywordHighlightState
 }
 
 export type PreferencesState = {

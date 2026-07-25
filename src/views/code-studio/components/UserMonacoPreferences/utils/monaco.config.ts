@@ -1,5 +1,7 @@
 import type {
   HighlightLinesState,
+  KeywordHighlightGroup,
+  KeywordHighlightState,
   MonacoState,
   PreferenceFieldDef,
   PreferenceGroup
@@ -15,8 +17,24 @@ export const highlightLinesDefaults = {
   showWhitespace: true
 } satisfies HighlightLinesState
 
+export const createKeywordGroup = (
+  partial: Partial<KeywordHighlightGroup> = {}
+): KeywordHighlightGroup => ({
+  id: partial.id ?? `kw-${crypto.randomUUID()}`,
+  terms: partial.terms ?? '',
+  style: partial.style ?? 'primary',
+  glyph: partial.glyph ?? 'logo'
+})
+
+export const keywordHighlightDefaults = {
+  groups: [
+    createKeywordGroup({ id: 'pixis', terms: 'pixis, PIXIS, Pixis', style: 'primary', glyph: 'logo' }),
+    createKeywordGroup({ id: 'haui', terms: 'HAUI, haui', style: 'amber', glyph: 'star' })
+  ]
+} satisfies KeywordHighlightState
+
 export const monacoDefaults = {
-  glyphMargin: false,
+  glyphMargin: true,
   renderValidationDecorations: 'off',
   lineNumbers: 'on',
   wordWrap: 'wordWrapColumn',
@@ -63,7 +81,8 @@ export const monacoDefaults = {
   matchBrackets: 'never',
   autoClosingBrackets: 'beforeWhitespace',
   autoClosingQuotes: 'beforeWhitespace',
-  highlightLines: highlightLinesDefaults
+  highlightLines: highlightLinesDefaults,
+  keywordHighlight: keywordHighlightDefaults
 } satisfies MonacoState
 
 export const getDefaultMonacoState = (): MonacoState => structuredClone(monacoDefaults)
@@ -85,6 +104,11 @@ export const monacoPreferenceGroups = [
     id: 'highlightLines',
     title: 'Highlight Lines:',
     subtitle: 'Rangos en editor normal, o Diff Editor (paralelo / inline).'
+  },
+  {
+    id: 'keywordHighlight',
+    title: 'Palabras clave:',
+    subtitle: 'Términos resaltados e iconos en el margen glyph.'
   },
   {
     id: 'minimap',
@@ -116,12 +140,12 @@ export const monacoPreferenceGroups = [
 export const monacoPreferenceFields = {
   glyphMargin: field({
     id: 'glyphMargin',
-    groupId: 'visual',
+    groupId: 'keywordHighlight',
     path: 'monaco.glyphMargin',
     kind: 'boolean',
     title: 'Margen de glyph',
     subtitle: 'Columna izquierda para iconos',
-    description: 'Espacio para breakpoints, errores y otras marcas.',
+    description: 'Misma franja de Monaco para keywords, breakpoints y marcas.',
     default: monacoDefaults.glyphMargin,
     options: [true, false]
   }),
@@ -264,6 +288,16 @@ export const monacoPreferenceFields = {
     description: 'Rangos en editor normal, o Diff nativo (rojo/verde).',
     example: 'Ej: 11-13, 20 — o vista sideBySide / inline',
     default: monacoDefaults.highlightLines
+  }),
+
+  keywordHighlight: field({
+    id: 'keywordHighlight',
+    groupId: 'keywordHighlight',
+    path: 'monaco.keywordHighlight',
+    kind: 'custom',
+    title: 'Palabras clave',
+    subtitle: 'Términos, color e icono por grupo',
+    default: monacoDefaults.keywordHighlight
   }),
 
   minimap: field({
@@ -416,6 +450,18 @@ export const monacoPreferenceFields = {
 }
 
 export type MonacoPreferenceFieldId = keyof typeof monacoPreferenceFields
+
+export const parseKeywordTerms = (input: string): string[] => {
+  const seen = new Set<string>()
+  const terms: string[] = []
+  for (const part of input.split(',')) {
+    const term = part.trim()
+    if (!term || seen.has(term)) continue
+    seen.add(term)
+    terms.push(term)
+  }
+  return terms
+}
 
 export const parseHighlightLineRanges = (input: string): { start: number; end: number }[] => {
   const ranges: { start: number; end: number }[] = []

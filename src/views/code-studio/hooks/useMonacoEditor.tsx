@@ -1,7 +1,7 @@
 import { SHUM_DEV } from '@/shared/constants'
 import { ThemeMonacoName, monacoThemes } from '@/shared/themes/monacoThemes'
 import { DiffOnMount, Monaco, OnMount } from '@monaco-editor/react'
-import { buildHighlightLineDecorations } from '@views/code-studio/components/UserMonacoPreferences/utils'
+import { buildHighlightLineDecorations, buildKeywordDecorations } from '@views/code-studio/components/UserMonacoPreferences/utils'
 import type { editor } from 'monaco-editor'
 import { useCallback, useEffect, useRef, useState } from 'react'
 
@@ -11,28 +11,12 @@ import useReferenceMonacoStore from '../store/referenceMonaco'
 import useWorkspaceStore from '../store/workspace.store'
 import { exampleShotCode } from '../utils/exampleShotCode'
 
-const hoverMessage = `Te invito a visitar mi sitio web 👋: [luis-mp](${SHUM_DEV})`
-const acceptedList = [
-  'shum-shot',
-  'Shum Shot',
-  'Shots',
-  'shot',
-  'luigfmp@gmail',
-  'luis-mp',
-  'LUIS',
-  'SHOTS',
-  'SHOT',
-  'SHUM',
-  'SHUM-SHOT',
-  'SHUM-SHOTS'
-]
-
 interface Props {
   typography: string
   fontSize: number
 }
 
-let previousDecorations: string[] = []
+let keywordDecorationIds: string[] = []
 
 const safeDeltaDecorations = (
   ed: editor.IStandaloneCodeEditor,
@@ -47,11 +31,25 @@ const safeDeltaDecorations = (
   }
 }
 
+const applyKeywordDecorations = (model: editor.ITextModel) => {
+  if (model.isDisposed()) return
+  try {
+    keywordDecorationIds = model.deltaDecorations(
+      keywordDecorationIds,
+      buildKeywordDecorations(model)
+    )
+  } catch {
+    keywordDecorationIds = []
+  }
+}
+
 const useMonacoEditor = ({ typography, fontSize }: Props) => {
   const { $editor, setMonaco, setEditor } = useReferenceMonacoStore()
   const [moveBoard, setMoveBoard] = useState(false)
   const { themeName } = useMonacoThemeStore()
   const highlightLines = usePixisPreferencesStore(s => s.monaco.highlightLines)
+  const keywordHighlight = usePixisPreferencesStore(s => s.monaco.keywordHighlight)
+  const glyphMargin = usePixisPreferencesStore(s => s.monaco.glyphMargin)
   const highlightDecorationIds = useRef<string[]>([])
   const diffContentSub = useRef<{ dispose: () => void } | null>(null)
   const diffEditorInstance = useRef<editor.IStandaloneDiffEditor | null>(null)
@@ -80,74 +78,30 @@ const useMonacoEditor = ({ typography, fontSize }: Props) => {
     if (e.key === 'Control') setMoveBoard(false)
   }, [])
 
-  const loadAllThemes = useCallback((monaco: Monaco) => {
-    Object.keys(monacoThemes).forEach(name => {
-      monaco.editor.defineTheme(name, monacoThemes[name as ThemeMonacoName] as any)
-    })
-  }, [])
-
   const handleBeforeMount = useCallback(
     (monaco: Monaco) => {
       setMonaco(monaco)
-      loadAllThemes(monaco)
-    },
-    [setMonaco, loadAllThemes]
-  )
-
-  const closureUpdateDecorations = (editorModel: editor.ITextModel) => {
-    if (editorModel.isDisposed()) return
-    try {
-      const newDecorations: editor.IModelDeltaDecoration[] = []
-      acceptedList.forEach(item => {
-        const matches = editorModel.findMatches(item, false, false, true, null, false)
-        matches.forEach(match => {
-          newDecorations.push({
-            range: match.range,
-            options: {
-              stickiness: 1,
-              isWholeLine: false,
-              inlineClassName: 'user-monaco-highlight',
-              glyphMarginClassName: 'user-monaco-icon',
-              shouldFillLineOnLineBreak: false,
-              blockDoesNotCollapse: true,
-              showIfCollapsed: true,
-              hoverMessage: {
-                value: hoverMessage,
-                isTrusted: true
-              }
-            }
-          })
-        })
+      Object.keys(monacoThemes).forEach(name => {
+        monaco.editor.defineTheme(name, monacoThemes[name as ThemeMonacoName] as any)
       })
-      previousDecorations = editorModel.deltaDecorations(previousDecorations, newDecorations)
-    } catch {
-      previousDecorations = []
-    }
-  }
-
-  const updateBrandDecorations = useCallback((model: editor.ITextModel | null) => {
-    if (!model || model.isDisposed()) return
-    closureUpdateDecorations(model)
-    model.onDidChangeContent(() => {
-      if (model.isDisposed()) return
-      closureUpdateDecorations(model)
-    })
-  }, [])
+    },
+    [setMonaco]
+  )
 
   const handleMount: OnMount = useCallback(
     (editorInstance, monaco) => {
       detachDiffEditor()
       setEditor(editorInstance)
       monaco.editor.setTheme(themeName)
-      updateBrandDecorations(editorInstance.getModel())
     },
-    [setEditor, themeName, updateBrandDecorations]
+    [setEditor, themeName]
   )
 
   const handleDiffMount: DiffOnMount = useCallback(
     (diffEditor, monaco) => {
       detachDiffEditor()
       diffEditorInstance.current = diffEditor
+      keywordDecorationIds = []
 
       const modified = diffEditor.getModifiedEditor()
       const original = diffEditor.getOriginalEditor()
@@ -166,6 +120,21 @@ const useMonacoEditor = ({ typography, fontSize }: Props) => {
     },
     [setEditor, themeName]
   )
+
+  useEffect(() => {
+    if (!$editor || diffActive) {
+      keywordDecorationIds = []
+      return
+    }
+
+    $editor.updateOptions({ glyphMargin: Boolean(glyphMargin) })
+    const model = $editor.getModel()
+    if (!model || model.isDisposed()) return
+
+    applyKeywordDecorations(model)
+    const sub = model.onDidChangeContent(() => applyKeywordDecorations(model))
+    return () => sub.dispose()
+  }, [$editor, keywordHighlight, glyphMargin, diffActive])
 
   useEffect(() => {
     if (!$editor) return
