@@ -7,7 +7,7 @@ import type {
   PreferenceGroup
 } from '@views/code-studio/utils/preferences/types'
 
-export const highlightLinesDefaults = {
+const highlightLinesDefaults = {
   enabled: false,
   ranges: '11-13',
   showGutterBar: true,
@@ -26,20 +26,14 @@ export const createKeywordGroup = (
   glyph: partial.glyph ?? 'logo'
 })
 
-export const createHighlightLinesDefaults = (): HighlightLinesState => ({
-  ...highlightLinesDefaults
-})
-
-export const createKeywordHighlightDefaults = (): KeywordHighlightState => ({
+const keywordHighlightDefaults = {
   groups: [
     createKeywordGroup({ id: 'pixis', terms: 'pixis', style: 'primary', glyph: 'logo' }),
     createKeywordGroup({ id: 'haui', terms: 'haui', style: 'amber', glyph: 'logo' })
   ]
-})
+} satisfies KeywordHighlightState
 
-export const keywordHighlightDefaults = createKeywordHighlightDefaults()
-
-export const monacoDefaults = {
+const monacoDefaults = {
   glyphMargin: false,
   renderValidationDecorations: 'off',
   lineNumbers: 'on',
@@ -91,11 +85,7 @@ export const monacoDefaults = {
   keywordHighlight: keywordHighlightDefaults
 } satisfies MonacoState
 
-export const getDefaultMonacoState = (): MonacoState => ({
-  ...structuredClone(monacoDefaults),
-  highlightLines: createHighlightLinesDefaults(),
-  keywordHighlight: createKeywordHighlightDefaults()
-})
+export const getDefaultMonacoState = (): MonacoState => structuredClone(monacoDefaults)
 
 const field = <T>(def: PreferenceFieldDef<T>) => def
 
@@ -148,17 +138,6 @@ export const monacoPreferenceGroups = [
 ] satisfies PreferenceGroup[]
 
 export const monacoPreferenceFields = {
-  glyphMargin: field({
-    id: 'glyphMargin',
-    groupId: 'keywordHighlight',
-    path: 'monaco.glyphMargin',
-    kind: 'boolean',
-    title: 'Margen de glyph',
-    subtitle: 'Columna izquierda para iconos',
-    description: 'Misma franja de Monaco para keywords, breakpoints y marcas.',
-    default: monacoDefaults.glyphMargin,
-    options: [true, false]
-  }),
   renderValidationDecorations: field({
     id: 'renderValidationDecorations',
     groupId: 'visual',
@@ -206,8 +185,7 @@ export const monacoPreferenceFields = {
     options: [50, 60, 70, 80, 90, 100, 110, 120],
     min: 10,
     max: 200,
-    step: 10,
-    suffix: 'px'
+    step: 10
   }),
   wrappingIndent: field({
     id: 'wrappingIndent',
@@ -286,53 +264,6 @@ export const monacoPreferenceFields = {
     max: 32,
     step: 2,
     suffix: 'px'
-  }),
-
-  highlightLines: field({
-    id: 'highlightLines',
-    groupId: 'highlightLines',
-    path: 'monaco.highlightLines',
-    kind: 'custom',
-    title: 'Highlight Lines',
-    subtitle: 'Rangos resaltados o Diff Editor',
-    description: 'Rangos en editor normal, o Diff nativo (rojo/verde).',
-    example: 'Ej: 11-13, 20 — o vista sideBySide / inline',
-    default: monacoDefaults.highlightLines
-  }),
-
-  keywordHighlight: field({
-    id: 'keywordHighlight',
-    groupId: 'keywordHighlight',
-    path: 'monaco.keywordHighlight',
-    kind: 'custom',
-    title: 'Palabras clave',
-    subtitle: 'Términos, color e icono por grupo',
-    default: monacoDefaults.keywordHighlight
-  }),
-
-  minimap: field({
-    id: 'minimap',
-    groupId: 'minimap',
-    path: 'monaco.minimap',
-    kind: 'custom',
-    title: 'Minimapa',
-    default: monacoDefaults.minimap
-  }),
-  scrollbar: field({
-    id: 'scrollbar',
-    groupId: 'scrollbar',
-    path: 'monaco.scrollbar',
-    kind: 'custom',
-    title: 'Barra de Scroll',
-    default: monacoDefaults.scrollbar
-  }),
-  stickyScroll: field({
-    id: 'stickyScroll',
-    groupId: 'stickyScroll',
-    path: 'monaco.stickyScroll',
-    kind: 'custom',
-    title: 'Scroll pegajoso',
-    default: monacoDefaults.stickyScroll
   }),
 
   cursorBlinking: field({

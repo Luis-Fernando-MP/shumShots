@@ -12,7 +12,7 @@ import {
   MAC_TRAFFIC_PRESETS,
   chromeDefaults,
   matchesChromePreset
-} from '../../utils'
+} from '../../utils/pixis.config'
 import type {
   BreadcrumbSeparator,
   ChromeSide,

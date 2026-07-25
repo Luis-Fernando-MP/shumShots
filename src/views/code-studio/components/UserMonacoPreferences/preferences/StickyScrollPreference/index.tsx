@@ -17,9 +17,7 @@ const StickyScrollPreference: FC = () => {
   const query = usePreferenceSearch()
   const searching = query.trim().length > 0
 
-  if (!stickyScroll) return null
-
-  const handleChange = (newProps: Partial<NonNullable<typeof stickyScroll>>) => {
+  const handleChange = (newProps: Partial<typeof stickyScroll>) => {
     setMonaco('stickyScroll', { ...stickyScroll, ...newProps })
   }
 

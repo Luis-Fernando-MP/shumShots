@@ -3,8 +3,6 @@ export {
   getDefaultMonacoState,
   monacoPreferenceFields,
   monacoPreferenceGroups,
-  parseHighlightLineRanges,
-  parseKeywordTerms,
   type MonacoPreferenceFieldId
 } from './monaco.config'
 

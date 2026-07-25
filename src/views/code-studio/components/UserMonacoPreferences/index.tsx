@@ -13,7 +13,7 @@ import useDiffHistoryStore from '@views/code-studio/store/diffHistory.store'
 import useMonacoThemeStore from '@views/code-studio/store/monacoTheme.store'
 import usePixisPreferencesStore from '@views/code-studio/store/pixisPreferences.store'
 import { Settings } from 'lucide-react'
-import { Fragment, type FC, type ReactNode } from 'react'
+import { type FC, type ReactNode } from 'react'
 
 import MonacoLanguages from '../MonacoLanguages'
 import ThemeSelectorPreference from './preferences/ThemeSelectorPreference'
@@ -98,25 +98,24 @@ const UserMonacoPreferences: FC = () => {
         <PreferenceSearchProvider query={query}>
           <div className='flex flex-col gap-5 has-[[data-preference-field]]:[&>[data-preference-empty]]:hidden'>
             {studio.map(section => (
-              <Fragment key={section.key}>
-                <StudioSection
-                  title={section.title}
-                  subtitle={section.subtitle}
-                  keywords={section.keywords}
-                  query={query}
+              <StudioSection
+                key={section.key}
+                title={section.title}
+                subtitle={section.subtitle}
+                keywords={section.keywords}
+                query={query}
+              >
+                <SliceContainer
+                  maxHeight={section.maxHeight}
+                  extendedMaxHeight={section.extendedMaxHeight}
+                  className={section.className}
                 >
-                  <SliceContainer
-                    maxHeight={section.maxHeight}
-                    extendedMaxHeight={section.extendedMaxHeight}
-                    className={section.className}
-                  >
-                    {section.children}
-                  </SliceContainer>
-                </StudioSection>
-              </Fragment>
+                  {section.children}
+                </SliceContainer>
+              </StudioSection>
             ))}
 
-            <SetterMonacoPreferences query={query} />
+            <SetterMonacoPreferences />
 
             {query.trim() ? (
               <div

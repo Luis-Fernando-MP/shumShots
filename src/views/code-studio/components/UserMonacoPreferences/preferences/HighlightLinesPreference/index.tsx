@@ -50,8 +50,6 @@ const HighlightLinesPreference: FC = () => {
   const query = usePreferenceSearch()
   const searching = query.trim().length > 0
 
-  if (!highlightLines) return null
-
   const handleChange = (patch: Partial<typeof highlightLines>) => {
     setMonaco('highlightLines', { ...highlightLines, ...patch })
   }

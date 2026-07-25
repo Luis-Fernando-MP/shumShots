@@ -74,8 +74,6 @@ const KeywordHighlightPreference: FC = () => {
   const glyphMargin = usePixisPreferencesStore(s => s.monaco.glyphMargin)
   const setMonaco = usePixisPreferencesStore(s => s.setMonaco)
 
-  if (!keywordHighlight) return null
-
   const { groups } = keywordHighlight
 
   const setGroups = (next: KeywordHighlightGroup[]) => {

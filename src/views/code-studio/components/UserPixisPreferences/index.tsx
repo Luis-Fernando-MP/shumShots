@@ -37,7 +37,7 @@ const UserPixisPreferences: FC = () => {
       <Popup.Content className='scrollbar-hidden flex flex-col gap-5'>
         <PreferenceSearchProvider query={query}>
           <div className='flex flex-col gap-5 has-[[data-preference-field]]:[&>[data-preference-empty]]:hidden'>
-            <SetterPixisPreferences query={query} />
+            <SetterPixisPreferences />
 
             {hasQuery && (
               <div

@@ -46,7 +46,6 @@ export type PreferenceFieldDef<T = unknown> = {
 
 export type WindowControlsStyle = 'mac' | 'windows' | 'none'
 export type ChromeSide = 'left' | 'right'
-export type TitleAlign = 'left' | 'center' | 'right'
 export type MacTrafficPreset = 'classic' | 'graphite' | 'candy' | 'mono'
 export type HeaderDensity = 'compact' | 'comfortable' | 'tall'
 export type HeaderTint = 'none' | 'subtle' | 'solid'
@@ -92,7 +91,6 @@ export type KeywordHighlightState = {
 export type PixisChromeState = {
   controls: WindowControlsStyle
   controlsSide: ChromeSide
-  titleAlign: TitleAlign
   macColors: MacTrafficPreset
   headerDensity: HeaderDensity
   headerTint: HeaderTint
@@ -124,13 +122,13 @@ export type PixisState = {
 
 export type MonacoState = {
   lineNumbers: Monaco['lineNumbers']
-  minimap: Monaco['minimap']
+  minimap: NonNullable<Monaco['minimap']>
   fontLigatures: Monaco['fontLigatures']
   wordWrap: Monaco['wordWrap']
   wordWrapColumn: Monaco['wordWrapColumn']
   fontSize: Monaco['fontSize']
   lineHeight: Monaco['lineHeight']
-  stickyScroll: Monaco['stickyScroll']
+  stickyScroll: NonNullable<Monaco['stickyScroll']>
   cursorBlinking: Monaco['cursorBlinking']
   mouseStyle: Monaco['mouseStyle']
   cursorStyle: Monaco['cursorStyle']
@@ -143,7 +141,7 @@ export type MonacoState = {
   formatOnType: Monaco['formatOnType']
   scrollBeyondLastLine: Monaco['scrollBeyondLastLine']
   renderLineHighlight: Monaco['renderLineHighlight']
-  scrollbar: Monaco['scrollbar']
+  scrollbar: NonNullable<Monaco['scrollbar']>
   glyphMargin: Monaco['glyphMargin']
   renderValidationDecorations: Monaco['renderValidationDecorations']
   hideCursorInOverviewRuler: Monaco['hideCursorInOverviewRuler']

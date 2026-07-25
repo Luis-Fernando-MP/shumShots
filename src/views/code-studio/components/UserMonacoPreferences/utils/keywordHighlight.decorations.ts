@@ -52,9 +52,7 @@ const embedLogo = async (styleEl: HTMLStyleElement) => {
     styleEl.textContent +=
       `.editorComponent .user-monaco-icon:not(.user-monaco-icon-lucide)::before{` +
       `background-image:url("${dataUrl}");background-size:cover;background-position:center;background-repeat:no-repeat}`
-  } catch {
-    /* CSS fallback /logo.webp */
-  }
+  } catch {}
 }
 
 export const ensureKeywordGlyphStyles = () => {

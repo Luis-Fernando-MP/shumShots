@@ -1,5 +1,5 @@
-export const SIZE_MIN = 200
-export const SIZE_MAX = 1200
+const SIZE_MIN = 200
+const SIZE_MAX = 1200
 
 export const ASPECT_DEFAULT = 'default'
 export const ASPECT_FREE = 'free'
@@ -31,7 +31,7 @@ export const simplifyAspect = (w: number, h: number): [number, number] => {
   return [Math.round(w) / d, Math.round(h) / d]
 }
 
-export const aspectsEqual = (a: [number, number], b: [number, number]) => a[0] * b[1] === a[1] * b[0]
+const aspectsEqual = (a: [number, number], b: [number, number]) => a[0] * b[1] === a[1] * b[0]
 
 export const parseAspect = (ratio: string): [number, number] | null => {
   if (!ratio || ratio === ASPECT_FREE) return null

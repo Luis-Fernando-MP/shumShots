@@ -14,7 +14,7 @@ import {
   parseAspect,
   resolveAspectSelection,
   simplifyAspect
-} from '../../utils'
+} from '../../utils/aspectRatio'
 import { getDefaultState, getField } from '@views/code-studio/utils/preferences'
 import { type FC, useState } from 'react'
 

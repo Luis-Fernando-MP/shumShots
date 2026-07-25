@@ -17,8 +17,6 @@ const ScrollPreference: FC = () => {
   const query = usePreferenceSearch()
   const searching = query.trim().length > 0
 
-  if (!scrollbar) return null
-
   const {
     vertical,
     horizontal,
@@ -31,7 +29,7 @@ const ScrollPreference: FC = () => {
 
   const enabled = vertical !== 'hidden' || horizontal !== 'hidden'
 
-  const handleChange = (newProps: Partial<NonNullable<typeof scrollbar>>) => {
+  const handleChange = (newProps: Partial<typeof scrollbar>) => {
     setMonaco('scrollbar', { ...scrollbar, ...newProps })
   }
 

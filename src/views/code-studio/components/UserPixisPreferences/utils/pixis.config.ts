@@ -37,7 +37,6 @@ export const BREADCRUMB_SEPARATORS = ['/', '>', '›', '·'] as const
 export const chromeDefaults = {
   controls: 'mac',
   controlsSide: 'left',
-  titleAlign: 'center',
   macColors: 'classic',
   headerDensity: 'comfortable',
   headerTint: 'none',
@@ -57,17 +56,14 @@ export const chromeDefaults = {
 export const CHROME_LOOK_PRESETS: {
   id: string
   label: string
-  description: string
   patch: Partial<PixisChromeState>
 }[] = [
   {
     id: 'macos',
     label: 'macOS',
-    description: 'Bolitas, título centrado, header suave',
     patch: {
       controls: 'mac',
       controlsSide: 'left',
-      titleAlign: 'center',
       macColors: 'classic',
       headerTint: 'subtle',
       headerAccent: false,
@@ -81,7 +77,6 @@ export const CHROME_LOOK_PRESETS: {
   {
     id: 'vscode',
     label: 'VS Code',
-    description: 'Tabs, explorer, activity y status bar',
     patch: {
       controls: 'none',
       tabStyle: 'underline',
@@ -101,11 +96,9 @@ export const CHROME_LOOK_PRESETS: {
   {
     id: 'windows',
     label: 'Windows',
-    description: 'Controles a la derecha y tabs browser',
     patch: {
       controls: 'windows',
       controlsSide: 'right',
-      titleAlign: 'left',
       tabStyle: 'browser',
       showTabAdd: false,
       headerTint: 'subtle',
@@ -118,7 +111,6 @@ export const CHROME_LOOK_PRESETS: {
   {
     id: 'minimal',
     label: 'Minimal',
-    description: 'Sin chrome extra, solo el código',
     patch: {
       controls: 'none',
       breadcrumb: false,
@@ -137,7 +129,7 @@ export const matchesChromePreset = (
   patch: Partial<PixisChromeState>
 ) => Object.entries(patch).every(([key, value]) => chrome[key as keyof PixisChromeState] === value)
 
-export const pixisDefaults = {
+const pixisDefaults = {
   borderRadius: 20,
   containerWidth: 900,
   containerHeight: 600,
@@ -173,16 +165,6 @@ export const pixisPreferenceGroups = [
 ] satisfies PreferenceGroup[]
 
 export const pixisPreferenceFields = {
-  chrome: field({
-    id: 'chrome',
-    groupId: 'chrome',
-    path: 'pixis.chrome',
-    kind: 'custom',
-    title: 'Estilo de ventana',
-    subtitle: 'Controles, alineación y chrome decorativo',
-    description: 'Personaliza cómo se ve el marco del editor en el shot.',
-    default: chromeDefaults
-  }),
   borderRadius: field({
     id: 'borderRadius',
     groupId: 'pixis',
@@ -253,8 +235,7 @@ export const pixisPreferenceFields = {
     description: 'La caja grande es el marco; la interna muestra la proporción.',
     example: 'Ej: Default = 900×600; Free = ratio personalizado',
     note: 'Con ratio activo, al cambiar ancho o alto se ajusta el otro lado.',
-    default: pixisDefaults.aspectRatio,
-    options: ['default', 'free', '1:1', '4:3', '3:2', '16:9', '9:16', '21:9']
+    default: pixisDefaults.aspectRatio
   }),
   containerPadding: field({
     id: 'containerPadding',
@@ -275,7 +256,7 @@ export const pixisPreferenceFields = {
     id: 'exportScale',
     groupId: 'pixis',
     path: 'pixis.exportScale',
-    kind: 'custom',
+    kind: 'number',
     title: 'Calidad de imagen',
     subtitle: 'Escala al descargar o copiar',
     description: 'Multiplica la resolución del PNG exportado.',

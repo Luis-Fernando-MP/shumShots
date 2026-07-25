@@ -1,6 +1,4 @@
 export {
-  BREADCRUMB_SEPARATORS,
-  CHROME_LOOK_PRESETS,
   EXPLORER_WIDTH_DEFAULT,
   EXPLORER_WIDTH_MAX,
   EXPLORER_WIDTH_MIN,
@@ -9,22 +7,14 @@ export {
   applyPixisDom,
   chromeDefaults,
   getDefaultPixisState,
-  matchesChromePreset,
   pixisPreferenceFields,
   pixisPreferenceGroups,
   type PixisPreferenceFieldId
 } from './pixis.config'
 
 export {
-  ASPECT_DEFAULT,
-  ASPECT_FREE,
-  ASPECT_PRESETS,
   clampSize,
   heightFromWidth,
   isAspectLocked,
-  isAspectSelected,
-  parseAspect,
-  resolveAspectSelection,
-  simplifyAspect,
   widthFromHeight
 } from './aspectRatio'

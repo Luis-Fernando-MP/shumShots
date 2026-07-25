@@ -17,9 +17,7 @@ const MinimapPreference: FC = () => {
   const query = usePreferenceSearch()
   const searching = query.trim().length > 0
 
-  if (!minimap) return null
-
-  const handleChange = (newProps: Partial<NonNullable<typeof minimap>>) => {
+  const handleChange = (newProps: Partial<typeof minimap>) => {
     setMonaco('minimap', { ...minimap, ...newProps })
   }
 
