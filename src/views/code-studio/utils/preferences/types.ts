@@ -63,6 +63,7 @@ export type HighlightLinesState = {
   style: HighlightLinesStyle
   overviewRuler: boolean
   diffView: HighlightLinesDiffView
+  showWhitespace: boolean
 }
 
 export type PixisChromeState = {

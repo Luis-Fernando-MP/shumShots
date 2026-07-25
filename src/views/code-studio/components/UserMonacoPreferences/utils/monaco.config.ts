@@ -11,7 +11,8 @@ export const highlightLinesDefaults = {
   showGutterBar: true,
   style: 'amber',
   overviewRuler: true,
-  diffView: 'off'
+  diffView: 'off',
+  showWhitespace: true
 } satisfies HighlightLinesState
 
 export const monacoDefaults = {
@@ -83,7 +84,7 @@ export const monacoPreferenceGroups = [
   {
     id: 'highlightLines',
     title: 'Highlight Lines:',
-    subtitle: 'Resalta rangos del shot o activa el Diff Editor (paralelo / inline).'
+    subtitle: 'Rangos en editor normal, o Diff Editor (paralelo / inline).'
   },
   {
     id: 'minimap',
@@ -260,7 +261,7 @@ export const monacoPreferenceFields = {
     kind: 'custom',
     title: 'Highlight Lines',
     subtitle: 'Rangos resaltados o Diff Editor',
-    description: 'Decoraciones por rango, o Diff Editor nativo (rojo/verde automático).',
+    description: 'Rangos en editor normal, o Diff nativo (rojo/verde).',
     example: 'Ej: 11-13, 20 — o vista sideBySide / inline',
     default: monacoDefaults.highlightLines
   }),

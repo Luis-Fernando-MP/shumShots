@@ -57,7 +57,8 @@ const HighlightLinesPreference: FC = () => {
   }
 
   const activeContent = activeFile?.kind === 'file' ? (activeFile.content ?? '') : ''
-  const { enabled, ranges, showGutterBar, style, overviewRuler, diffView } = highlightLines
+  const { enabled, ranges, showGutterBar, style, overviewRuler, diffView, showWhitespace } =
+    highlightLines
   const diffActive = diffView !== 'off'
   const showDiffPanel = diffActive || searching
   const showRangesPanel = (enabled && !diffActive) || searching
@@ -88,7 +89,7 @@ const HighlightLinesPreference: FC = () => {
       <PreferenceField
         title='Diff Editor'
         subtitle='Pasado (izq.) vs actual (der.)'
-        description='Al activar, cada tab guarda su propio pasado (solo lectura). Edita el actual para ver el diff en rojo/verde.'
+        description='Cada tab guarda su pasado (solo lectura). Edita el actual para ver rojo/verde.'
         example='Ej: Paralelo = dos columnas; Inline = estilo git'
         keywords='diff sideBySide inline createDiffEditor'
       >
@@ -111,6 +112,19 @@ const HighlightLinesPreference: FC = () => {
             <Button type='button' size='sm' variant='outline' onClick={snapshotOriginal}>
               Capturar tab actual como pasado
             </Button>
+          </PreferenceField>
+
+          <PreferenceField
+            title='Espacios en Diff'
+            subtitle='Alinea y marca diferencias de whitespace'
+            description='On = respeta espacios/tabs al comparar. Off = ignora solo whitespace.'
+            keywords='whitespace spaces espacios tabs alineacion ignoreTrimWhitespace'
+          >
+            <PreferenceToggle
+              value={showWhitespace}
+              options={[true, false] as const}
+              onChange={v => handleChange({ showWhitespace: v })}
+            />
           </PreferenceField>
         </PreferencePanel>
       )}

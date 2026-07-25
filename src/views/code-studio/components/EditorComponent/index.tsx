@@ -66,6 +66,7 @@ const EditorComponent: FC = () => {
   const diffView = monacoOpts.highlightLines?.diffView ?? 'off'
   const diffActive = diffView !== 'off'
   const sideBySide = diffView === 'sideBySide'
+  const showWhitespace = monacoOpts.highlightLines?.showWhitespace ?? true
 
   const { moveBoard, exampleCode, handleMount, handleDiffMount, handleBeforeMount, themeName } =
     useMonacoEditor({
@@ -153,10 +154,13 @@ const EditorComponent: FC = () => {
       letterSpacing: monacoOpts.letterSpacing,
       fontFamily: typography,
       lineNumbers: monacoOpts.lineNumbers,
+      renderValidationDecorations: monacoOpts.renderValidationDecorations ?? 'off',
+      renderWhitespace: showWhitespace ? ('all' as const) : ('none' as const),
       renderLineHighlight: 'none' as const,
       scrollBeyondLastLine: false,
       folding: false,
       glyphMargin: false,
+      stickyScroll: { enabled: false },
       minimap: { enabled: false },
       scrollbar: {
         vertical: 'auto' as const,
@@ -166,7 +170,10 @@ const EditorComponent: FC = () => {
       renderSideBySide: true,
       renderSideBySideInlineBreakpoint: 0,
       renderIndicators: true,
-      ignoreTrimWhitespace: false,
+      renderMarginRevertIcon: false,
+      renderGutterMenu: false,
+      experimental: { showEmptyDecorations: false },
+      ignoreTrimWhitespace: !showWhitespace,
       enableSplitViewResizing: true,
       originalEditable: false,
       readOnly: false,
@@ -180,6 +187,8 @@ const EditorComponent: FC = () => {
       monacoOpts.fontLigatures,
       monacoOpts.letterSpacing,
       monacoOpts.lineNumbers,
+      monacoOpts.renderValidationDecorations,
+      showWhitespace,
       typography
     ]
   )
