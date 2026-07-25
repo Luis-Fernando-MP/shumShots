@@ -1,12 +1,12 @@
 import type { DropzoneFile } from '@/shared/components/Dropzone'
 import { toaster } from '@common/ui/Toast'
-import { HOST_URL } from '@/shared/constants'
-import { useWorker } from '@koale/useworker'
+// import { HOST_URL } from '@/shared/constants'
+// import { useWorker } from '@koale/useworker'
 import { useCallback, useEffect, useRef, useState } from 'react'
 
 import useImagesStore from '../store/images/images.store'
 import usePicturesStore from '../store/images/pictures.store'
-import uploadImage from '../workers/upload.worker'
+// import uploadImage from '../workers/upload.worker'
 
 const usePictureCanvas = () => {
   const picture = usePicturesStore(s => s.picture)
@@ -15,7 +15,7 @@ const usePictureCanvas = () => {
 
   const [isLoading, setIsLoading] = useState(false)
   const blobUrlRef = useRef<string | null>(null)
-  const [upload] = useWorker(uploadImage)
+  // const [upload] = useWorker(uploadImage)
 
   useEffect(() => {
     return () => {
@@ -23,28 +23,29 @@ const usePictureCanvas = () => {
     }
   }, [])
 
-  const sendImage = useCallback(
-    async (file: File, blobUrl: string) => {
-      try {
-        const result = await upload(file, `${HOST_URL}/api/upload`)
-        if (result instanceof Error) throw result
-        setPicture({ url: result.original_image })
-        if (blobUrlRef.current === blobUrl) {
-          URL.revokeObjectURL(blobUrl)
-          blobUrlRef.current = null
-        }
-      } catch {
-        toaster({ title: 'Error al subir la imagen', type: 'error', id: 'upload-error' })
-        setPicture(null)
-        if (blobUrlRef.current === blobUrl) {
-          URL.revokeObjectURL(blobUrl)
-          blobUrlRef.current = null
-        }
-        setIsLoading(false)
-      }
-    },
-    [upload, setPicture]
-  )
+  // TODO: completar la subida a la nube
+  // const sendImage = useCallback(
+  //   async (file: File, blobUrl: string) => {
+  //     try {
+  //       const result = await upload(file, `${HOST_URL}/api/upload`)
+  //       if (result instanceof Error) throw result
+  //       setPicture({ url: result.original_image })
+  //       if (blobUrlRef.current === blobUrl) {
+  //         URL.revokeObjectURL(blobUrl)
+  //         blobUrlRef.current = null
+  //       }
+  //     } catch {
+  //       toaster({ title: 'Error al subir la imagen', type: 'error', id: 'upload-error' })
+  //       setPicture(null)
+  //       if (blobUrlRef.current === blobUrl) {
+  //         URL.revokeObjectURL(blobUrl)
+  //         blobUrlRef.current = null
+  //       }
+  //       setIsLoading(false)
+  //     }
+  //   },
+  //   [upload, setPicture]
+  // )
 
   const handleLoadError = useCallback(() => {
     toaster({ title: 'Carga una nueva imagen', type: 'error', id: 'load-error' })
@@ -63,9 +64,10 @@ const usePictureCanvas = () => {
 
       setIsLoading(true)
       setPicture({ url: blobUrl })
-      void sendImage(file, blobUrl)
+      // TODO: completar la subida a la nube
+      // void sendImage(file, blobUrl)
     },
-    [sendImage, setPicture]
+    [setPicture]
   )
 
   return {

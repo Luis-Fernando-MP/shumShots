@@ -50,7 +50,6 @@ const Dropzone: FC<Props> = ({ onDrop, removeAfterUpload = false, maxFiles = 1, 
 
   const dropzone = useDropzone({
     maxFiles,
-    autoFocus: true,
     ...dropzoneProps,
     accept: acceptedFileTypes,
     onDrop: handleDrop
@@ -71,17 +70,18 @@ const Dropzone: FC<Props> = ({ onDrop, removeAfterUpload = false, maxFiles = 1, 
   const renderContent = useCallback(() => {
     if (isDragActive) {
       return (
-        <section className='flex size-full cursor-pointer flex-col justify-center'>
-          <section className='flex flex-row items-center gap-2'>
-            <div className='grid size-[50px] place-content-center rounded-lg bg-foreground p-[5px] [&>svg]:size-[30px] [&>svg]:stroke-background [&>svg]:stroke-2'>
-              <IconDragging />
-            </div>
-            <div className='flex flex-col gap-1'>
-              <h2>{isDragAccept ? '¡Suelta para subir!' : 'Formato no válido'}</h2>
-              <h5>{isDragAccept ? 'La subida es automática 🚀' : 'Formatos aceptados:'}</h5>
-              {!isDragAccept && <p>PNG, JPG o Webp</p>}
-            </div>
-          </section>
+        <section className='flex size-full flex-col items-center justify-center gap-3 text-center'>
+          <div className='grid size-12 place-content-center rounded-lg bg-foreground p-2 [&>svg]:size-7 [&>svg]:stroke-background [&>svg]:stroke-2'>
+            <IconDragging />
+          </div>
+          <div className='flex flex-col items-center gap-1'>
+            <h2 className='text-base font-medium text-foreground'>
+              {isDragAccept ? '¡Suelta para cargar!' : 'Formato no válido'}
+            </h2>
+            <p className='text-sm text-muted-foreground'>
+              {isDragAccept ? 'Se usará en local por ahora' : 'PNG, JPG o WebP'}
+            </p>
+          </div>
         </section>
       )
     }
@@ -89,24 +89,23 @@ const Dropzone: FC<Props> = ({ onDrop, removeAfterUpload = false, maxFiles = 1, 
     if (files.length > 0 && children) {
       const missingFiles = files.length < maxFiles
       return (
-        <section className='flex size-full cursor-pointer flex-col justify-center'>
+        <section className='flex size-full flex-col items-center justify-center text-center'>
           {children({ missingFiles, openFileExplorer: open, files, removeFile: handleRemoveFile, maxFiles })}
         </section>
       )
     }
 
     return (
-      <section className='flex size-full cursor-pointer flex-col justify-center'>
-        <section className='flex flex-row items-center gap-2'>
-          <div className='grid size-[50px] place-content-center rounded-lg bg-foreground p-[5px] [&>svg]:size-[30px] [&>svg]:stroke-background [&>svg]:stroke-2'>
-            <IconDragging />
-          </div>
-          <div className='flex flex-col gap-1'>
-            <h2>Suelta o pega</h2>
-            <h5>{maxFiles > 1 ? 'Tus imágenes' : 'Una imagen'}</h5>
-            <p>En: PNG, JPG o Webp</p>
-          </div>
-        </section>
+      <section className='flex size-full flex-col items-center justify-center gap-3 text-center'>
+        <div className='grid size-12 place-content-center rounded-lg bg-foreground p-2 [&>svg]:size-7 [&>svg]:stroke-background [&>svg]:stroke-2'>
+          <IconDragging />
+        </div>
+        <div className='flex flex-col items-center gap-1'>
+          <h2 className='text-base font-medium text-foreground'>Suelta o pega</h2>
+          <p className='text-sm text-muted-foreground'>
+            {maxFiles > 1 ? 'Tus imágenes' : 'Una imagen'} · PNG, JPG o WebP
+          </p>
+        </div>
       </section>
     )
   }, [isDragActive, isDragAccept, files, children, maxFiles, open, handleRemoveFile])
@@ -123,7 +122,7 @@ const Dropzone: FC<Props> = ({ onDrop, removeAfterUpload = false, maxFiles = 1, 
     <article
       {...getRootProps()}
       aria-label='Zona de arrastre de imágenes'
-      className={`relative flex size-full overflow-auto rounded-lg border-[3.5px] border-background bg-background ${acl(isDragActive, 'border-primary border-dashed')} ${acl(isDragReject && !isDragActive, 'bg-red-500/50')}`}
+      className={`relative flex size-full cursor-pointer items-center justify-center overflow-auto rounded-lg border-[3.5px] border-background bg-background outline-none focus:outline-none focus-visible:outline-none [&_input]:outline-none ${acl(isDragActive, 'border-primary border-dashed')} ${acl(isDragReject && !isDragActive, 'bg-semantic-error/20')}`}
     >
       <input {...getInputProps()} />
       {renderContent()}

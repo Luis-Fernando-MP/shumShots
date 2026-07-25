@@ -5,6 +5,12 @@
   /* No `paint` containment: it rasterizes then blurs on CSS scale. */
   contain: layout style;
   opacity: 0;
+  outline: none;
+}
+
+.board:focus,
+.board:focus-visible {
+  outline: none;
 }
 
 .board.is-ready {
