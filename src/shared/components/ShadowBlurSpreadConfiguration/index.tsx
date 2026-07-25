@@ -1,5 +1,5 @@
-import { ShadowType } from '@views/image-studio/store/shadow/shadow.store'
 import { acl } from '@/shared/acl'
+import { SHADOW_PRESETS, type ShadowType } from '@views/image-studio/store/shadow/shadow.store'
 import type { FC } from 'react'
 
 interface Props {
@@ -7,62 +7,26 @@ interface Props {
   setType: (type: ShadowType) => void
 }
 
-const defaultShadows = [
-  {
-    type: 'none',
-    blur: 2,
-    spread: 0,
-    x: 0,
-    y: 0,
-    label: 'Limpio'
-  },
-  {
-    type: 'simple',
-    blur: 15,
-    spread: 0,
-    x: 0,
-    y: 0,
-    label: 'Simple'
-  },
-  {
-    type: 'extended',
-    blur: 20,
-    spread: 0,
-    x: 9,
-    y: 9,
-    label: 'Extendido'
-  },
-  {
-    type: 'light',
-    blur: 3,
-    spread: 5,
-    x: 0,
-    y: 0,
-    label: 'Brillo'
-  }
-]
-
+/** @deprecated Prefer image-studio ShadowPresetsWrapper. Kept for legacy imports. */
 const ShadowBlurSpreadConfiguration: FC<Props> = ({ type, setType }) => {
   return (
-    <section className='flex flex-row flex-wrap items-center gap-2'>
-      {defaultShadows.map(shadow => {
-        const { type: shdType, blur, spread, x, y, label } = shadow
-        const isActive = type === shdType
+    <section className='grid grid-cols-3 gap-2'>
+      {SHADOW_PRESETS.map(shadow => {
+        const isActive = type === shadow.type
         return (
           <button
-            className={`flex h-[100px] w-[60px] flex-col items-center ${acl(isActive, '[&>div]:border-primary [&>div]:border-2')}`}
-            key={shadow.label}
-            onClick={() => setType(shdType as ShadowType)}
+            className={`flex flex-col items-center gap-1 ${acl(isActive, '[&>div]:border-primary [&>div]:border-2')}`}
+            key={shadow.type}
+            type='button'
+            onClick={() => setType(shadow.type)}
           >
-            <div className='relative size-full overflow-hidden rounded-lg bg-background'>
+            <div className='bg-background relative h-16 w-full overflow-hidden rounded-lg'>
               <div
-                className='absolute left-1/2 top-1/2 size-[30px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-background'
-                style={{
-                  boxShadow: `${x}px ${y}px ${blur}px ${spread}px rgba(var(--fnt-primary), 0.3)`
-                }}
+                className='bg-background absolute top-1/2 left-1/2 size-8 -translate-x-1/2 -translate-y-1/2 rounded-md'
+                style={{ boxShadow: shadow.preview }}
               />
             </div>
-            <h5>{label}</h5>
+            <h5>{shadow.label}</h5>
           </button>
         )
       })}

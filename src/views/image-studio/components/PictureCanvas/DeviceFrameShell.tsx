@@ -8,6 +8,8 @@ type Props = {
   frameId: string | null
   className?: string
   style?: CSSProperties
+  /** Alpha-aware shadow (`filter: drop-shadow(...)`) for the device silhouette. */
+  dropShadowFilter?: string
   children: ReactNode
 }
 
@@ -23,7 +25,7 @@ const maskStyle = (maskUrl: string): CSSProperties => ({
   transformOrigin: 'center'
 })
 
-const DeviceFrameShell: FC<Props> = ({ frameId, className, style, children }) => {
+const DeviceFrameShell: FC<Props> = ({ frameId, className, style, dropShadowFilter, children }) => {
   const { data } = framesQuery.list()
   const frame = frameId ? (data?.data?.frames.find(item => item.id === frameId) ?? null) : null
   const chroma = useChromaFrame(frame?.path)
@@ -39,20 +41,30 @@ const DeviceFrameShell: FC<Props> = ({ frameId, className, style, children }) =>
   return (
     <div
       className={className}
-      style={{ width: '100%', height: '100%', position: 'relative', overflow: 'hidden', ...style }}
+      style={{
+        width: '100%',
+        height: '100%',
+        position: 'relative',
+        // Keep overflow visible so drop-shadow is not clipped.
+        overflow: 'visible',
+        filter: dropShadowFilter,
+        ...style
+      }}
     >
-      <div
-        className='absolute inset-0 overflow-hidden'
-        style={chroma ? maskStyle(chroma.maskUrl) : { visibility: 'hidden' }}
-      >
-        {children}
+      <div className='absolute inset-0 overflow-hidden'>
+        <div
+          className='absolute inset-0 overflow-hidden'
+          style={chroma ? maskStyle(chroma.maskUrl) : { visibility: 'hidden' }}
+        >
+          {children}
+        </div>
+        <img
+          src={chroma?.frameUrl ?? frame.path}
+          alt=''
+          draggable={false}
+          className='pointer-events-none absolute inset-0 z-10 size-full object-fill select-none'
+        />
       </div>
-      <img
-        src={chroma?.frameUrl ?? frame.path}
-        alt=''
-        draggable={false}
-        className='pointer-events-none absolute inset-0 z-10 size-full object-fill select-none'
-      />
     </div>
   )
 }

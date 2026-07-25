@@ -1,16 +1,22 @@
-import useShadowStore from '@views/image-studio/store/shadow/shadow.store'
+'use client'
+
 import SliderControl from '@/shared/components/SliderControl'
+import useShadowStore from '@views/image-studio/store/shadow/shadow.store'
 import type { FC } from 'react'
-import Typography from '@common/ui/Typography'
+
+import SectionBlock from '../../BackgroundConfiguration/wrappers/SectionBlock'
 
 const ShadowOpacityWrapper: FC = () => {
-  const { opacity, setOpacity } = useShadowStore()
-  return (
-    <Typography.Block title='Opacidad:' className='shadowConfig-section flex flex-col gap-grid-lg'>
-      <Typography.Paragraph tone='secondary'>La opacidad se ajusta automáticamente con el movimiento del foco.</Typography.Paragraph>
+  const type = useShadowStore(s => s.type)
+  const opacity = useShadowStore(s => s.opacity)
+  const setOpacity = useShadowStore(s => s.setOpacity)
 
-      <SliderControl onChangeRange={v => setOpacity(v / 100)} value={Math.round(opacity * 100)} step={10} width={200} />
-    </Typography.Block>
+  if (type === 'none') return null
+
+  return (
+    <SectionBlock title='Opacidad' description='Ajusta la intensidad de la sombra.'>
+      <SliderControl onChangeRange={v => setOpacity(v / 100)} value={Math.round(opacity * 100)} step={5} width={200} />
+    </SectionBlock>
   )
 }
 

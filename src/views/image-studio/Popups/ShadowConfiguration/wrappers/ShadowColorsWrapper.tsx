@@ -1,14 +1,18 @@
 'use client'
 
-import useShadowStore from '@views/image-studio/store/shadow/shadow.store'
 import ColorsController from '@/shared/components/ColorsController'
 import { extractColor } from '@/shared/components/extractColor'
-import Typography from '@common/ui/Typography'
+import useShadowStore from '@views/image-studio/store/shadow/shadow.store'
 import type { FC } from 'react'
 
+import SectionBlock from '../../BackgroundConfiguration/wrappers/SectionBlock'
+
 const ShadowColorsWrapper: FC = () => {
+  const type = useShadowStore(s => s.type)
   const color = useShadowStore(s => s.color)
   const setColor = useShadowStore(s => s.setColor)
+
+  if (type === 'none') return null
 
   const handleChangeColor = (bg: string) => {
     const spread = extractColor(bg)
@@ -17,9 +21,9 @@ const ShadowColorsWrapper: FC = () => {
   }
 
   return (
-    <Typography.Block title='Colores' className='gap-grid-lg flex flex-col'>
+    <SectionBlock title='Color'>
       <ColorsController background={color} setBackground={handleChangeColor} />
-    </Typography.Block>
+    </SectionBlock>
   )
 }
 

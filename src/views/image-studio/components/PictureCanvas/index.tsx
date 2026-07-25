@@ -6,12 +6,12 @@ import { cn } from '@common/utils/cn'
 import DeviceFrameShell from '@views/image-studio/components/PictureCanvas/DeviceFrameShell'
 import PictureViewer from '@views/image-studio/components/PictureCanvas/PictureViewer'
 import usePictureSlot from '@views/image-studio/hooks/usePictureSlot'
+import { useShadowVisualStyles } from '@views/image-studio/hooks/useShadowVisualStyles'
 import useBackgroundStore from '@views/image-studio/store/background/background.store'
 import { resolveSmoothCornerStyle } from '@views/image-studio/store/background/backgroundRadius.store'
 import useImagesBorderStore from '@views/image-studio/store/images/useImagesBorderStore'
 import useImagesRadiusStore from '@views/image-studio/store/images/imagesRadius.store'
 import usePicturesStore, { type PictureItem } from '@views/image-studio/store/images/pictures.store'
-import useShadowStore from '@views/image-studio/store/shadow/shadow.store'
 import { buildCanvasFrameStyle, insetBorderRadius } from '@views/image-studio/utils/borderFrame'
 import { getPictureLayout, type PictureLayoutRect } from '@views/image-studio/utils/pictureLayouts'
 import { type CSSProperties, type FC, useMemo } from 'react'
@@ -74,7 +74,7 @@ const PictureSlot: FC<SlotProps> = ({ picture, layout, canvasWidth, canvasHeight
   const matBottom = useImagesBorderStore(s => s.matBottom)
   const matLeft = useImagesBorderStore(s => s.matLeft)
 
-  const dropShadow = useShadowStore(s => s.getShadowStyle())
+  const { boxShadow, dropShadowFilter, lightOverlay } = useShadowVisualStyles()
   const { data: framesData } = framesQuery.list()
   const catalogFrame = picture.frameId
     ? (framesData?.data?.frames.find(item => item.id === picture.frameId) ?? null)
@@ -120,16 +120,16 @@ const PictureSlot: FC<SlotProps> = ({ picture, layout, canvasWidth, canvasHeight
       gradient,
       blendMode
     })
-    if (dropShadow && !hasDeviceFrame) {
-      style.boxShadow = [style.boxShadow, dropShadow].filter(Boolean).join(', ')
+    if (!hasDeviceFrame && boxShadow) {
+      style.boxShadow = [style.boxShadow, boxShadow].filter(Boolean).join(', ')
     }
     if (!hasDeviceFrame && cornerShapeCss) Object.assign(style, { cornerShape: cornerShapeCss })
     return style
   }, [
     blendMode,
+    boxShadow,
     color,
     cornerShapeCss,
-    dropShadow,
     effectiveBorderSize,
     effectiveBorderType,
     effectiveRadiusCss,
@@ -175,9 +175,11 @@ const PictureSlot: FC<SlotProps> = ({ picture, layout, canvasWidth, canvasHeight
   }, [cornerShapeCss, effectiveRadiusCss, hasDeviceFrame, matInset, strokeWidth])
 
   const shellStyle = useMemo((): CSSProperties => {
-    if (!dropShadow || hasDeviceFrame) return {}
-    return { boxShadow: dropShadow, overflow: 'visible' }
-  }, [dropShadow, hasDeviceFrame])
+    if (hasDeviceFrame || !boxShadow) return {}
+    return { overflow: 'visible' }
+  }, [boxShadow, hasDeviceFrame])
+
+  const showShadow = Boolean(hasDeviceFrame ? dropShadowFilter : boxShadow)
 
   return (
     <div
@@ -191,15 +193,27 @@ const PictureSlot: FC<SlotProps> = ({ picture, layout, canvasWidth, canvasHeight
         }
       }}
       className={cn(
-        'absolute cursor-pointer overflow-hidden outline-none',
+        'absolute cursor-pointer outline-none',
+        showShadow ? 'overflow-visible' : 'overflow-hidden',
         !hasDeviceFrame && 'rounded-sm',
         selected && 'z-10'
       )}
       style={{ left, top, width: boxWidth, height: boxHeight }}
     >
-      <DeviceFrameShell frameId={picture.frameId} className='size-full' style={shellStyle}>
-        <div className='relative size-full overflow-hidden' style={contentFrameStyle}>
-          <div className='relative size-full' style={matStyle}>
+      <DeviceFrameShell
+        frameId={picture.frameId}
+        className='size-full'
+        style={shellStyle}
+        dropShadowFilter={hasDeviceFrame ? dropShadowFilter : undefined}
+      >
+        <div
+          className='relative size-full'
+          style={{
+            ...contentFrameStyle,
+            overflow: !hasDeviceFrame && boxShadow ? 'visible' : 'hidden'
+          }}
+        >
+          <div className='relative size-full overflow-hidden' style={matStyle}>
             <div className='relative size-full' style={contentStyle}>
               {picture.url && (
                 <PictureViewer
@@ -209,6 +223,9 @@ const PictureSlot: FC<SlotProps> = ({ picture, layout, canvasWidth, canvasHeight
                   onError={handleLoadError}
                   onSize={handleSize}
                 />
+              )}
+              {lightOverlay && (
+                <div className='pointer-events-none absolute inset-0 z-[1]' style={lightOverlay} />
               )}
               <Dropzone
                 onDrop={handleDropFile}
