@@ -2,7 +2,7 @@
 
 import Switch from '@common/ui/Switch'
 import Typography from '@common/ui/Typography'
-import useShadowStore, { getActiveLight, getActiveShadow } from '@views/image-studio/store/shadow/shadow.store'
+import useShadowStore, { getActiveLight, getActiveShadow } from '@views/image-studio/Popups/ShadowConfiguration/store'
 import { type FC } from 'react'
 
 import SectionBlock from '../../BackgroundConfiguration/wrappers/SectionBlock'

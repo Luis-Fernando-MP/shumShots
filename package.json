@@ -4,7 +4,6 @@
   "private": true,
   "packageManager": "pnpm@10.18.3",
   "scripts": {
-    "predev": "node scripts/copy-monaco.mjs",
     "prebuild": "node scripts/copy-monaco.mjs",
     "dev": "next dev --turbopack",
     "build": "pnpm lint && next build",

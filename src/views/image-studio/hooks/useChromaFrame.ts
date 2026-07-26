@@ -8,7 +8,7 @@ type ChromaFrameAssets = {
   silhouetteUrl: string
 }
 
-const CACHE_VERSION = 2
+const CACHE_VERSION = 3
 const cache = new Map<string, ChromaFrameAssets>()
 const inflight = new Map<string, Promise<ChromaFrameAssets>>()
 
@@ -69,14 +69,16 @@ const processChromaFrame = async (src: string): Promise<ChromaFrameAssets> => {
     const b = pixels[i + 2] ?? 0
     const a = pixels[i + 3] ?? 0
 
-    if (a >= 20) {
+    const chroma = isChromaGreen(r, g, b, a)
+
+    if (chroma || a > 0) {
       silhouettePixels[i] = 0
       silhouettePixels[i + 1] = 0
       silhouettePixels[i + 2] = 0
-      silhouettePixels[i + 3] = 255
+      silhouettePixels[i + 3] = chroma ? 255 : a
     }
 
-    if (!isChromaGreen(r, g, b, a)) continue
+    if (!chroma) continue
     pixels[i + 3] = 0
     maskPixels[i] = 255
     maskPixels[i + 1] = 255

@@ -13,7 +13,7 @@ import useShadowStore, {
   getActiveShadow,
   type LightType,
   type ShadowType
-} from '@views/image-studio/store/shadow/shadow.store'
+} from '@views/image-studio/Popups/ShadowConfiguration/store'
 import { PlusIcon, XIcon } from 'lucide-react'
 import type { FC, MouseEvent } from 'react'
 

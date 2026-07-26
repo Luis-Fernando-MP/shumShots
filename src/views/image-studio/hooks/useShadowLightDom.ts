@@ -3,20 +3,21 @@
 import useShadowStore, {
   type LightLayer,
   type ShadowLayer
-} from '@views/image-studio/store/shadow/shadow.store'
+} from '@views/image-studio/Popups/ShadowConfiguration/store'
+import { resolveLightOverlayStyle } from '@views/image-studio/fx/light'
 import {
-  layerAppliesTo,
   resolveBoxShadowStyle,
   resolveDropShadowFilter,
-  resolveLightOverlayStyle,
-  shadowScaleForSize
-} from '@views/image-studio/utils/shadowVisual'
+  resolveFrameFillBoxShadow
+} from '@views/image-studio/fx/shadow'
+import { layerAppliesTo, shadowScaleForSize } from '@views/image-studio/fx/shared/targeting'
 import type { CSSProperties, RefObject } from 'react'
 import { useLayoutEffect } from 'react'
 
 export type SlotShadowFx = {
   boxShadow: string
   dropShadowFilter: string
+  frameFillBoxShadow: string
   lightOverlays: CSSProperties[]
 }
 
@@ -50,11 +51,28 @@ const mergeDropFilters = (layers: ShadowLayer[], scale: number) => {
           position: layer.position,
           scale
         },
-        3
+        5
       )
     )
     .filter(Boolean) as string[]
   return parts.join(' ')
+}
+
+const mergeFrameFillBoxShadows = (layers: ShadowLayer[], scale: number) => {
+  const parts = layers
+    .map(layer =>
+      resolveFrameFillBoxShadow({
+        type: layer.type,
+        opacity: layer.opacity,
+        blur: layer.blur,
+        spread: layer.spread,
+        color: layer.color,
+        position: layer.position,
+        scale
+      })
+    )
+    .filter(Boolean) as string[]
+  return parts.join(', ')
 }
 
 const mergeLightOverlays = (layers: LightLayer[]): CSSProperties[] =>
@@ -81,6 +99,7 @@ export const computeSlotShadowFx = (
   return {
     boxShadow: mergeBoxShadows(shadows, scale),
     dropShadowFilter: mergeDropFilters(shadows, scale),
+    frameFillBoxShadow: mergeFrameFillBoxShadows(shadows, scale),
     lightOverlays: mergeLightOverlays(lights)
   }
 }
@@ -141,6 +160,7 @@ export const useShadowLightDom = ({
         baseBoxShadow,
         fx.boxShadow,
         fx.dropShadowFilter,
+        fx.frameFillBoxShadow,
         fx.lightOverlays.map(item => `${item.backgroundImage}|${item.mixBlendMode}`).join(';')
       ].join('|')
 
@@ -152,7 +172,8 @@ export const useShadowLightDom = ({
 
       if (hasDeviceFrame) {
         if (boxEl) {
-          boxEl.style.boxShadow = 'none'
+          boxEl.style.boxShadow =
+            [baseBoxShadow, fx.frameFillBoxShadow].filter(Boolean).join(', ') || 'none'
           boxEl.style.overflow = 'visible'
         }
         if (filterEl) {

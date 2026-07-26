@@ -37,7 +37,7 @@ import useImageLibraryStore, {
   type LibraryImage
 } from '@views/image-studio/store/images/imageLibrary.store'
 import usePicturesStore, { type PictureItem } from '@views/image-studio/store/images/pictures.store'
-import useShadowStore from '@views/image-studio/store/shadow/shadow.store'
+import useShadowStore from '@views/image-studio/Popups/ShadowConfiguration/store'
 import { formatBytes, importStudioImage } from '@views/image-studio/utils/imageLibrary'
 import { getPictureLayout } from '@views/image-studio/utils/pictureLayouts'
 import { GripVerticalIcon, ImagePlusIcon, LayoutGridIcon, Trash2Icon, UploadIcon } from 'lucide-react'

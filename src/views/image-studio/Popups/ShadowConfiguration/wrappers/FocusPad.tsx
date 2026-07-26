@@ -1,13 +1,10 @@
 'use client'
 
 import { cn } from '@common/utils/cn'
+import { LIGHT_DATA, LIGHT_PRESETS, normalizeLightType, type LightType } from '@views/image-studio/fx/light'
+import { SHADOW_DATA, SHADOW_PRESETS, type ShadowType } from '@views/image-studio/fx/shadow'
 import { useActiveLayerPreview } from '@views/image-studio/hooks/useShadowVisualStyles'
-import useShadowStore, {
-  LIGHT_PRESETS,
-  SHADOW_PRESETS,
-  type LightType,
-  type ShadowType
-} from '@views/image-studio/store/shadow/shadow.store'
+import useShadowStore from '@views/image-studio/Popups/ShadowConfiguration/store'
 import { SunIcon } from 'lucide-react'
 import { type FC, type PointerEvent as ReactPointerEvent, useEffect, useRef, useState } from 'react'
 
@@ -17,30 +14,6 @@ type Kind = 'shadow' | 'light'
 type SunPos = { x: number; y: number }
 
 const SUN_MARGIN = 0.06
-
-const THROW: Record<Exclude<ShadowType, 'none'>, number> = {
-  soft: 130,
-  contact: 125,
-  deep: 180,
-  crisp: 105,
-  ambient: 72
-}
-
-const BLUR_GROW: Record<Exclude<ShadowType, 'none'>, number> = {
-  soft: 48,
-  contact: 36,
-  deep: 72,
-  crisp: 22,
-  ambient: 24
-}
-
-const SPREAD_GROW: Record<Exclude<ShadowType, 'none'>, number> = {
-  soft: 0,
-  contact: 2,
-  deep: 8,
-  crisp: 0,
-  ambient: 10
-}
 
 const clamp01 = (value: number, margin = 0) => Math.min(1 - margin, Math.max(margin, value))
 const nearlySame = (a: SunPos, b: SunPos) => Math.abs(a.x - b.x) < 1e-4 && Math.abs(a.y - b.y) < 1e-4
@@ -53,7 +26,7 @@ const lightPreset = (type: LightType) =>
 
 const sunFromShadowPosition = (type: ShadowType, position: { x: number; y: number }): SunPos => {
   if (type === 'none') return { x: 0.5, y: 0.5 }
-  const throwPx = THROW[type] || 1
+  const throwPx = SHADOW_DATA[type].pad.throw || 1
   return {
     x: clamp01(-position.x / throwPx / 2 + 0.5, SUN_MARGIN),
     y: clamp01(-position.y / throwPx / 2 + 0.5, SUN_MARGIN)
@@ -76,16 +49,17 @@ const applyFocus = (nx: number, ny: number, source: Kind) => {
 
   if (touchShadow && shadow && shadow.type !== 'none') {
     const base = shadowPreset(shadow.type)
+    const pad = SHADOW_DATA[shadow.type].pad
     const relX = (nx - 0.5) * 2
     const relY = (ny - 0.5) * 2
     const distance = Math.min(1, Math.hypot(relX, relY))
-    const throwPx = THROW[shadow.type]
+    const throwPx = pad.throw
     const position = {
       x: round1(-relX * throwPx),
       y: round1(-relY * throwPx)
     }
-    const blur = round1(Math.max(0, base.blur + distance * BLUR_GROW[shadow.type]))
-    const spread = round1(base.spread + distance * SPREAD_GROW[shadow.type])
+    const blur = round1(Math.max(0, base.blur + distance * pad.blurGrow))
+    const spread = round1(base.spread + distance * pad.spreadGrow)
     if (
       Math.abs(shadow.position.x - position.x) > 0.05 ||
       Math.abs(shadow.position.y - position.y) > 0.05 ||
@@ -97,22 +71,25 @@ const applyFocus = (nx: number, ny: number, source: Kind) => {
   }
 
   if (touchLight && light && light.type !== 'none') {
-    const base = lightPreset(light.type)
-    const distance = Math.min(1, Math.hypot((nx - 0.5) * 2, (ny - 0.5) * 2))
-    let size = base.size
-    if (light.type === 'soft') size = base.size + distance * 10
-    else if (light.type === 'beam') size = Math.max(32, base.size - distance * 6)
-    else if (light.type === 'rim') size = base.size + distance * 8
-    else if (light.type === 'warm' || light.type === 'cool') size = base.size + distance * 12
-    size = round1(size)
-    const focus = { x: round1(nx * 1000) / 1000, y: round1(ny * 1000) / 1000 }
+    const lightType = normalizeLightType(light.type)
+    if (lightType !== 'none') {
+      const base = lightPreset(lightType)
+      const pad = LIGHT_DATA[lightType].pad
+      const distance = Math.min(1, Math.hypot((nx - 0.5) * 2, (ny - 0.5) * 2))
+      let size = base.size + distance * pad.sizeGrow
+      if ('sizeMin' in pad && typeof pad.sizeMin === 'number') {
+        size = Math.max(pad.sizeMin, size)
+      }
+      size = round1(size)
+      const focus = { x: round1(nx * 1000) / 1000, y: round1(ny * 1000) / 1000 }
 
-    if (
-      Math.abs(light.focus.x - focus.x) > 0.002 ||
-      Math.abs(light.focus.y - focus.y) > 0.002 ||
-      Math.abs(light.size - size) > 0.05
-    ) {
-      lightPatch = { focus, size }
+      if (
+        Math.abs(light.focus.x - focus.x) > 0.002 ||
+        Math.abs(light.focus.y - focus.y) > 0.002 ||
+        Math.abs(light.size - size) > 0.05
+      ) {
+        lightPatch = { focus, size }
+      }
     }
   }
 
@@ -142,7 +119,7 @@ const FocusPad: FC<{ kind: Kind }> = ({ kind }) => {
   const [dragSun, setDragSun] = useState<SunPos | null>(null)
 
   const shadowType = shadow?.type ?? 'none'
-  const lightType = light?.type ?? 'none'
+  const lightType = light ? normalizeLightType(light.type) : 'none'
   const disabled = kind === 'shadow' ? shadowType === 'none' : lightType === 'none'
   const linkFocus = useShadowStore(s => s.linkFocus)
   const linked = linkFocus && shadowType !== 'none' && lightType !== 'none'

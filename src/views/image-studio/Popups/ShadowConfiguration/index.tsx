@@ -3,7 +3,7 @@
 import Popup from '@/shared/components/Popup'
 import Button from '@/shared/ui/Button'
 import { Button as UiButton } from '@common/ui/Button'
-import useShadowStore from '@views/image-studio/store/shadow/shadow.store'
+import useShadowStore from '@views/image-studio/Popups/ShadowConfiguration/store'
 import { CloudSunIcon } from 'lucide-react'
 import { type FC } from 'react'
 

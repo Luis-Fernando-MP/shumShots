@@ -1,36 +1,53 @@
 import { create, type StateCreator } from 'zustand'
+import { createJSONStorage, persist } from 'zustand/middleware'
 
-import { createId } from '@views/image-studio/utils/createId'
 import {
   LIGHT_PRESETS,
-  SHADOW_PRESETS,
+  normalizeLightType,
+  resolveLightOverlayStyle,
   type LightLayer,
-  type LightType,
+  type LightType
+} from '@views/image-studio/fx/light'
+import {
+  resolveBoxShadowStyle,
+  resolveDropShadowFilter,
+  SHADOW_PRESETS,
   type ShadowLayer,
   type ShadowType
-} from './shadow.types'
+} from '@views/image-studio/fx/shadow'
+import {
+  layerAppliesTo,
+  SHADOW_DESIGN_REF,
+  shadowScaleForSize
+} from '@views/image-studio/fx/shared/targeting'
+import { createId } from '@views/image-studio/utils/createId'
 
 export type {
   LightFocus,
   LightLayer,
   LightPreset,
-  LightType,
+  LightType
+} from '@views/image-studio/fx/light'
+export type {
   ShadowLayer,
   ShadowPosition,
   ShadowPreset,
   ShadowType
-} from './shadow.types'
+} from '@views/image-studio/fx/shadow'
 
-export { LIGHT_PRESETS, SHADOW_PRESETS } from './shadow.types'
-
+export { LIGHT_PRESETS, normalizeLightType } from '@views/image-studio/fx/light'
+export { SHADOW_PRESETS } from '@views/image-studio/fx/shadow'
 export {
-  SHADOW_DESIGN_REF,
   layerAppliesTo,
   resolveBoxShadowStyle,
   resolveDropShadowFilter,
   resolveLightOverlayStyle,
+  SHADOW_DESIGN_REF,
   shadowScaleForSize
-} from '@views/image-studio/utils/shadowVisual'
+}
+
+const STORAGE_KEY = 'pixis:image-studio:shadow-light'
+const STORAGE_VERSION = 1
 
 const defaultShadowLayer = (index = 1): ShadowLayer => ({
   id: createId('shadow'),
@@ -55,6 +72,19 @@ const defaultLightLayer = (index = 1): LightLayer => ({
   targetIds: []
 })
 
+const sanitizeLightLayer = (layer: LightLayer): LightLayer => {
+  const type = normalizeLightType(layer.type)
+  return type === layer.type ? layer : { ...layer, type }
+}
+
+const isShadowType = (type: string): type is ShadowType =>
+  SHADOW_PRESETS.some(preset => preset.type === type)
+
+const sanitizeShadowLayer = (layer: ShadowLayer): ShadowLayer => {
+  if (isShadowType(layer.type)) return layer
+  return { ...layer, type: 'none', opacity: 0, blur: 0, spread: 0 }
+}
+
 type ShadowState = {
   shadowLayers: ShadowLayer[]
   lightLayers: LightLayer[]
@@ -77,6 +107,14 @@ type ShadowState = {
   clearShadows: () => void
   clearLights: () => void
   purgeSlotTargets: (slotIds: string[]) => void
+}
+
+type PersistedShadowState = {
+  shadowLayers: ShadowLayer[]
+  lightLayers: LightLayer[]
+  activeShadowId: string
+  activeLightId: string
+  linkFocus: boolean
 }
 
 const firstShadow = defaultShadowLayer(1)
@@ -143,9 +181,12 @@ const state: StateCreator<ShadowState> = (set, get) => ({
 
   updateActiveLight: patch =>
     set(s => ({
-      lightLayers: s.lightLayers.map(layer =>
-        layer.id === s.activeLightId ? { ...layer, ...patch } : layer
-      )
+      lightLayers: s.lightLayers.map(layer => {
+        if (layer.id !== s.activeLightId) return layer
+        const next = { ...layer, ...patch }
+        if (patch.type !== undefined) next.type = normalizeLightType(patch.type)
+        return next
+      })
     })),
 
   applyShadowPreset: type => {
@@ -160,7 +201,8 @@ const state: StateCreator<ShadowState> = (set, get) => ({
   },
 
   applyLightPreset: type => {
-    const preset = LIGHT_PRESETS.find(item => item.type === type) ?? LIGHT_PRESETS[0]
+    const resolved = normalizeLightType(type)
+    const preset = LIGHT_PRESETS.find(item => item.type === resolved) ?? LIGHT_PRESETS[0]
     get().updateActiveLight({
       type: preset.type,
       opacity: preset.opacity,
@@ -198,12 +240,66 @@ const state: StateCreator<ShadowState> = (set, get) => ({
   }
 })
 
-const useShadowStore = create(state)
+const mergePersisted = (
+  persisted: Partial<PersistedShadowState> | undefined,
+  current: ShadowState
+): ShadowState => {
+  const shadowLayers =
+    Array.isArray(persisted?.shadowLayers) && persisted.shadowLayers.length > 0
+      ? persisted.shadowLayers.map(sanitizeShadowLayer)
+      : current.shadowLayers
+  const lightLayers =
+    Array.isArray(persisted?.lightLayers) && persisted.lightLayers.length > 0
+      ? persisted.lightLayers.map(sanitizeLightLayer)
+      : current.lightLayers
+
+  const activeShadowId =
+    typeof persisted?.activeShadowId === 'string' &&
+    shadowLayers.some(layer => layer.id === persisted.activeShadowId)
+      ? persisted.activeShadowId
+      : shadowLayers[0].id
+
+  const activeLightId =
+    typeof persisted?.activeLightId === 'string' &&
+    lightLayers.some(layer => layer.id === persisted.activeLightId)
+      ? persisted.activeLightId
+      : lightLayers[0].id
+
+  return {
+    ...current,
+    shadowLayers,
+    lightLayers,
+    activeShadowId,
+    activeLightId,
+    linkFocus: typeof persisted?.linkFocus === 'boolean' ? persisted.linkFocus : current.linkFocus
+  }
+}
+
+const useShadowStore = create(
+  persist(state, {
+    name: STORAGE_KEY,
+    version: STORAGE_VERSION,
+    skipHydration: true,
+    storage: createJSONStorage(() => localStorage),
+    partialize: (s): PersistedShadowState => ({
+      shadowLayers: s.shadowLayers,
+      lightLayers: s.lightLayers,
+      activeShadowId: s.activeShadowId,
+      activeLightId: s.activeLightId,
+      linkFocus: s.linkFocus
+    }),
+    merge: (persisted, current) =>
+      mergePersisted(persisted as Partial<PersistedShadowState> | undefined, current)
+  })
+)
 
 export const getActiveShadow = (state: ShadowState) =>
   state.shadowLayers.find(layer => layer.id === state.activeShadowId) ?? state.shadowLayers[0]
 
-export const getActiveLight = (state: ShadowState) =>
-  state.lightLayers.find(layer => layer.id === state.activeLightId) ?? state.lightLayers[0]
+export const getActiveLight = (state: ShadowState) => {
+  const layer =
+    state.lightLayers.find(item => item.id === state.activeLightId) ?? state.lightLayers[0]
+  return sanitizeLightLayer(layer)
+}
 
 export default useShadowStore

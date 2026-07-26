@@ -3,13 +3,10 @@
 import useShadowStore, {
   getActiveLight,
   getActiveShadow
-} from '@views/image-studio/store/shadow/shadow.store'
-import {
-  resolveBoxShadowStyle,
-  resolveDropShadowFilter,
-  resolveLightOverlayStyle,
-  shadowScaleForSize
-} from '@views/image-studio/utils/shadowVisual'
+} from '@views/image-studio/Popups/ShadowConfiguration/store'
+import { resolveLightOverlayStyle } from '@views/image-studio/fx/light'
+import { resolveBoxShadowStyle, resolveDropShadowFilter } from '@views/image-studio/fx/shadow'
+import { shadowScaleForSize } from '@views/image-studio/fx/shared/targeting'
 
 const PREVIEW_EDGE = 56
 
