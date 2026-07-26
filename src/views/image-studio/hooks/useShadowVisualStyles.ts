@@ -1,64 +1,145 @@
 'use client'
 
 import useShadowStore, {
+  getActiveLight,
+  getActiveShadow,
+  type LightLayer,
+  type ShadowLayer
+} from '@views/image-studio/store/shadow/shadow.store'
+import {
+  layerAppliesTo,
   resolveBoxShadowStyle,
   resolveDropShadowFilter,
-  resolveLightOverlayStyle
-} from '@views/image-studio/store/shadow/shadow.store'
+  resolveLightOverlayStyle,
+  shadowScaleForSize
+} from '@views/image-studio/utils/shadowVisual'
+import type { CSSProperties } from 'react'
 import { useMemo } from 'react'
 
-/** Stable visual styles derived from the shadow store (avoids getSnapshot loops). */
-export const useShadowVisualStyles = () => {
-  const type = useShadowStore(s => s.type)
-  const opacity = useShadowStore(s => s.opacity)
-  const blur = useShadowStore(s => s.blur)
-  const spread = useShadowStore(s => s.spread)
-  const color = useShadowStore(s => s.color)
-  const positionX = useShadowStore(s => s.position.x)
-  const positionY = useShadowStore(s => s.position.y)
+const PREVIEW_EDGE = 56
 
-  const lightType = useShadowStore(s => s.lightType)
-  const lightOpacity = useShadowStore(s => s.lightOpacity)
-  const lightSize = useShadowStore(s => s.lightSize)
-  const lightColor = useShadowStore(s => s.lightColor)
-  const lightFocusX = useShadowStore(s => s.lightFocus.x)
-  const lightFocusY = useShadowStore(s => s.lightFocus.y)
+const mergeBoxShadows = (layers: ShadowLayer[], scale: number) => {
+  const parts = layers
+    .map(layer =>
+      resolveBoxShadowStyle({
+        type: layer.type,
+        opacity: layer.opacity,
+        blur: layer.blur,
+        spread: layer.spread,
+        color: layer.color,
+        position: layer.position,
+        scale
+      })
+    )
+    .filter(Boolean) as string[]
+  return parts.length ? parts.join(', ') : undefined
+}
 
-  return useMemo(() => {
-    const shadowInput = {
-      type,
-      opacity,
-      blur,
-      spread,
-      color,
-      position: { x: positionX, y: positionY }
-    }
-    const lightInput = {
-      lightType,
-      lightOpacity,
-      lightSize,
-      lightColor,
-      lightFocus: { x: lightFocusX, y: lightFocusY }
-    }
+const mergeDropFilters = (layers: ShadowLayer[], scale: number) => {
+  const parts = layers
+    .map(layer =>
+      resolveDropShadowFilter({
+        type: layer.type,
+        opacity: layer.opacity,
+        blur: layer.blur,
+        spread: layer.spread,
+        color: layer.color,
+        position: layer.position,
+        scale
+      })
+    )
+    .filter(Boolean) as string[]
+  return parts.length ? parts.join(' ') : undefined
+}
 
-    return {
-      boxShadow: resolveBoxShadowStyle(shadowInput),
-      dropShadowFilter: resolveDropShadowFilter(shadowInput),
-      lightOverlay: resolveLightOverlayStyle(lightInput)
-    }
-  }, [
-    blur,
-    color,
-    lightColor,
-    lightFocusX,
-    lightFocusY,
-    lightOpacity,
-    lightSize,
-    lightType,
-    opacity,
-    positionX,
-    positionY,
-    spread,
-    type
-  ])
+const mergeLightOverlays = (layers: LightLayer[]): CSSProperties[] =>
+  layers
+    .map(layer =>
+      resolveLightOverlayStyle({
+        lightType: layer.type,
+        lightOpacity: layer.opacity,
+        lightSize: layer.size,
+        lightColor: layer.color,
+        lightFocus: layer.focus
+      })
+    )
+    .filter(Boolean) as CSSProperties[]
+
+export const useShadowVisualStyles = (slotId: string, edgePx = 280) => {
+  const scale = shadowScaleForSize(edgePx)
+
+  const boxShadow = useShadowStore(s => {
+    const shadows = s.shadowLayers.filter(layer => layerAppliesTo(layer.targetIds, slotId))
+    return mergeBoxShadows(shadows, scale) ?? ''
+  })
+
+  const dropShadowFilter = useShadowStore(s => {
+    const shadows = s.shadowLayers.filter(layer => layerAppliesTo(layer.targetIds, slotId))
+    return mergeDropFilters(shadows, scale) ?? ''
+  })
+
+  const lightSignature = useShadowStore(s =>
+    s.lightLayers
+      .filter(layer => layerAppliesTo(layer.targetIds, slotId))
+      .map(
+        layer =>
+          `${layer.id}:${layer.type}:${layer.opacity}:${layer.size}:${layer.color}:${layer.focus.x}:${layer.focus.y}`
+      )
+      .join('|')
+  )
+
+  const lightOverlays = useMemo(() => {
+    const lights = useShadowStore
+      .getState()
+      .lightLayers.filter(layer => layerAppliesTo(layer.targetIds, slotId))
+    return mergeLightOverlays(lights)
+  }, [lightSignature, slotId])
+
+  return {
+    boxShadow: boxShadow || undefined,
+    dropShadowFilter: dropShadowFilter || undefined,
+    lightOverlays
+  }
+}
+
+export const useActiveLayerPreview = () => {
+  const scale = shadowScaleForSize(PREVIEW_EDGE)
+  const shadow = useShadowStore(getActiveShadow)
+  const light = useShadowStore(getActiveLight)
+
+  return {
+    shadow,
+    light,
+    boxShadow: shadow
+      ? resolveBoxShadowStyle({
+          type: shadow.type,
+          opacity: shadow.opacity,
+          blur: shadow.blur,
+          spread: shadow.spread,
+          color: shadow.color,
+          position: shadow.position,
+          scale
+        })
+      : undefined,
+    dropShadowFilter: shadow
+      ? resolveDropShadowFilter({
+          type: shadow.type,
+          opacity: shadow.opacity,
+          blur: shadow.blur,
+          spread: shadow.spread,
+          color: shadow.color,
+          position: shadow.position,
+          scale
+        })
+      : undefined,
+    lightOverlay: light
+      ? resolveLightOverlayStyle({
+          lightType: light.type,
+          lightOpacity: light.opacity,
+          lightSize: light.size,
+          lightColor: light.color,
+          lightFocus: light.focus
+        })
+      : undefined
+  }
 }

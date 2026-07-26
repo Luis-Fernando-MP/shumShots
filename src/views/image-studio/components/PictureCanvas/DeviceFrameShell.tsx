@@ -8,7 +8,6 @@ type Props = {
   frameId: string | null
   className?: string
   style?: CSSProperties
-  /** Alpha-aware shadow (`filter: drop-shadow(...)`) for the device silhouette. */
   dropShadowFilter?: string
   children: ReactNode
 }
@@ -45,7 +44,6 @@ const DeviceFrameShell: FC<Props> = ({ frameId, className, style, dropShadowFilt
         width: '100%',
         height: '100%',
         position: 'relative',
-        // Keep overflow visible so drop-shadow is not clipped.
         overflow: 'visible',
         filter: dropShadowFilter,
         ...style

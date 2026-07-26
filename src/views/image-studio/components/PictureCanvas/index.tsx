@@ -49,9 +49,8 @@ type SlotProps = {
 }
 
 const PictureSlot: FC<SlotProps> = ({ picture, layout, canvasWidth, canvasHeight, selected }) => {
-  const { isLoading, setIsLoading, handleLoadError, handleDropFile, handleSize, select } = usePictureSlot(
-    picture.id
-  )
+  const { isLoading, setIsLoading, handleLoadError, handleDropFile, handleSize, select, imageUrl } =
+    usePictureSlot(picture.id)
 
   const activeIndividualBorder = useImagesRadiusStore(s => s.activeIndividualBorder)
   const borderRadiusValue = useImagesRadiusStore(s => s.borderRadius)
@@ -74,7 +73,6 @@ const PictureSlot: FC<SlotProps> = ({ picture, layout, canvasWidth, canvasHeight
   const matBottom = useImagesBorderStore(s => s.matBottom)
   const matLeft = useImagesBorderStore(s => s.matLeft)
 
-  const { boxShadow, dropShadowFilter, lightOverlay } = useShadowVisualStyles()
   const { data: framesData } = framesQuery.list()
   const catalogFrame = picture.frameId
     ? (framesData?.data?.frames.find(item => item.id === picture.frameId) ?? null)
@@ -94,7 +92,10 @@ const PictureSlot: FC<SlotProps> = ({ picture, layout, canvasWidth, canvasHeight
   }, [frameAspect, slotHeight, slotLeft, slotTop, slotWidth])
 
   const { left, top, width: boxWidth, height: boxHeight } = frameBox
-
+  const { boxShadow, dropShadowFilter, lightOverlays } = useShadowVisualStyles(
+    picture.id,
+    Math.min(boxWidth, boxHeight)
+  )
   const radiusCss = activeIndividualBorder
     ? `${borderLTRadius}px ${borderRTRadius}px ${borderRBRadius}px ${borderLBRadius}px`
     : `${borderRadiusValue}px`
@@ -215,22 +216,26 @@ const PictureSlot: FC<SlotProps> = ({ picture, layout, canvasWidth, canvasHeight
         >
           <div className='relative size-full overflow-hidden' style={matStyle}>
             <div className='relative size-full' style={contentStyle}>
-              {picture.url && (
+              {imageUrl && (
                 <PictureViewer
-                  imageUrl={picture.url}
+                  imageUrl={imageUrl}
                   isLoading={isLoading}
                   setIsLoading={setIsLoading}
                   onError={handleLoadError}
                   onSize={handleSize}
                 />
               )}
-              {lightOverlay && (
-                <div className='pointer-events-none absolute inset-0 z-[1]' style={lightOverlay} />
-              )}
+              {lightOverlays.map((overlay, index) => (
+                <div
+                  key={`light-${picture.id}-${index}`}
+                  className='pointer-events-none absolute inset-0 z-[1]'
+                  style={overlay}
+                />
+              ))}
               <Dropzone
                 onDrop={handleDropFile}
                 maxFiles={1}
-                overlay={Boolean(picture.url)}
+                overlay={Boolean(imageUrl)}
                 compact={hasDeviceFrame}
               />
             </div>

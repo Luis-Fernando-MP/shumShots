@@ -20,7 +20,7 @@ const SectionBlock: FC<Props> = ({ title, level = 1, description, children }) =>
           {prefix} {title}
         </Typography.Label>
         {description && (
-          <Typography.Small tone='secondary' className='text-[10px] leading-relaxed'>
+          <Typography.Small tone='secondary' className='text-xs leading-relaxed'>
             {description}
           </Typography.Small>
         )}

@@ -5,7 +5,6 @@ export type PictureLayoutRect = {
   h: number
 }
 
-/** Rects in % of the background canvas (0–100), non-overlapping. */
 export const PICTURE_LAYOUTS: Record<number, PictureLayoutRect[]> = {
   1: [{ x: 18, y: 16, w: 64, h: 68 }],
   2: [

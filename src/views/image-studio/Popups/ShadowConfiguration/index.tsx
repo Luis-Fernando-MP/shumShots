@@ -3,26 +3,19 @@
 import Popup from '@/shared/components/Popup'
 import Button from '@/shared/ui/Button'
 import { Button as UiButton } from '@common/ui/Button'
-import Typography from '@common/ui/Typography'
 import useShadowStore from '@views/image-studio/store/shadow/shadow.store'
 import { CloudSunIcon } from 'lucide-react'
 import { type FC } from 'react'
 
-import LightColorsWrapper from './wrappers/LightColorsWrapper'
-import LightFocusPad from './wrappers/LightFocusPad'
-import LightOpacityWrapper from './wrappers/LightOpacityWrapper'
-import LightPresetsWrapper from './wrappers/LightPresetsWrapper'
-import ShadowColorsWrapper from './wrappers/ShadowColorsWrapper'
-import ShadowFocusPad from './wrappers/ShadowFocusPad'
-import ShadowOpacityWrapper from './wrappers/ShadowOpacityWrapper'
-import ShadowPresetsWrapper from './wrappers/ShadowPresetsWrapper'
+import LayerPanel from './wrappers/LayerPanel'
+import LinkFocusSection from './wrappers/LinkFocusSection'
 
 const ShadowConfiguration: FC = () => {
-  const applyPreset = useShadowStore(s => s.applyPreset)
-  const applyLightPreset = useShadowStore(s => s.applyLightPreset)
+  const clearShadows = useShadowStore(s => s.clearShadows)
+  const clearLights = useShadowStore(s => s.clearLights)
 
   return (
-    <Popup className='h-[780px] w-[350px]'>
+    <Popup className='h-[min(820px,90vh)] w-[360px]'>
       <Popup.Trigger>
         <Button size='icon' tooltip='Sombras y luz'>
           <CloudSunIcon />
@@ -30,45 +23,31 @@ const ShadowConfiguration: FC = () => {
       </Popup.Trigger>
 
       <Popup.Header>
-        <h5 className='font-display text-sm leading-tight font-medium tracking-wide'>Imagen · Sombras y luz</h5>
+        <h5 className='font-display text-sm leading-tight font-medium tracking-wide'>
+          Imagen · Sombras y luz
+        </h5>
       </Popup.Header>
 
-      <Popup.Content className='gap-grid-xl flex flex-col text-xs [&_h5]:text-xs [&_h5]:leading-snug [&_.text-sm]:text-xs'>
-        <div className='gap-grid-xl flex flex-col'>
-          <Typography.Label size='xs' weight='semibold' className='text-muted-foreground tracking-wide'>
-            # Sombra
-          </Typography.Label>
-          <ShadowPresetsWrapper />
-          <ShadowFocusPad />
-          <ShadowOpacityWrapper />
-          <ShadowColorsWrapper />
-        </div>
-
-        <div className='bg-border h-px w-full' />
-
-        <div className='gap-grid-xl flex flex-col'>
-          <Typography.Label size='xs' weight='semibold' className='text-muted-foreground tracking-wide'>
-            # Luz
-          </Typography.Label>
-          <LightPresetsWrapper />
-          <LightFocusPad />
-          <LightOpacityWrapper />
-          <LightColorsWrapper />
-        </div>
+      <Popup.Content className='gap-grid-lg flex flex-col text-xs'>
+        <LinkFocusSection />
+        <div className='bg-border/70 h-px w-full' />
+        <LayerPanel kind='shadow' />
+        <div className='bg-border/70 h-px w-full' />
+        <LayerPanel kind='light' />
       </Popup.Content>
 
-      <Popup.Footer className='gap-2'>
-        <UiButton type='button' variant='outline' size='sm' className='w-full text-xs' onClick={() => applyPreset('none')}>
-          Quitar sombra
-        </UiButton>
+      <Popup.Footer>
         <UiButton
           type='button'
           variant='outline'
           size='sm'
           className='w-full text-xs'
-          onClick={() => applyLightPreset('none')}
+          onClick={() => {
+            clearShadows()
+            clearLights()
+          }}
         >
-          Quitar luz
+          Resetear cambios
         </UiButton>
       </Popup.Footer>
     </Popup>

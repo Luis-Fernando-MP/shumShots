@@ -4,7 +4,7 @@ import Button from '@/shared/ui/Button'
 import UnsplashPicker from '@common/components/UnsplashPicker'
 import ShotCapture from '@common/ui/ShotCapture'
 import useBackgroundStore from '@views/image-studio/store/background/background.store'
-import { ImagePlusIcon, SlidersHorizontalIcon } from 'lucide-react'
+import { ImagePlusIcon } from 'lucide-react'
 import type { FC } from 'react'
 
 import BackgroundConfiguration from '../../Popups/BackgroundConfiguration'
@@ -27,10 +27,6 @@ const MainBarOptions: FC = () => {
             <ImagePlusIcon />
           </Button>
         </UnsplashPicker>
-
-        <Button size='icon' tooltip='Filtros del fondo'>
-          <SlidersHorizontalIcon />
-        </Button>
       </section>
 
       <section className='gap-grid flex flex-row items-center'>
@@ -39,10 +35,6 @@ const MainBarOptions: FC = () => {
         <CornerConfiguration />
         <ShadowConfiguration />
         <ImagesCountConfiguration />
-
-        <Button size='icon' tooltip='Filtros de la imagen'>
-          <SlidersHorizontalIcon />
-        </Button>
       </section>
 
       <section className='gap-grid flex flex-row items-center'>
