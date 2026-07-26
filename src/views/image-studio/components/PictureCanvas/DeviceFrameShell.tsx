@@ -24,7 +24,7 @@ const contentBoxStyle = (rect: ChromaContentRect): CSSProperties => ({
   overflow: 'hidden'
 })
 
-const fullMaskStyle = (maskUrl: string): CSSProperties => ({
+const maskStyle = (maskUrl: string): CSSProperties => ({
   maskImage: `url(${maskUrl})`,
   WebkitMaskImage: `url(${maskUrl})`,
   maskMode: 'alpha',
@@ -71,17 +71,15 @@ const DeviceFrameShell: FC<Props> = ({ frameId, className, style, filterTargetRe
           className='pointer-events-none absolute inset-0 z-0 size-full object-fill select-none'
         />
       )}
-
-      {/*
-        Mask stays in full-frame space (100% / 0 0). Remapping the mask onto the
-        content box was shifting the screen and leaving black margins.
-        The photo is laid out only inside contentRect (zona verde).
-      */}
       <div
-        className='absolute inset-0 z-[1]'
-        style={chroma ? fullMaskStyle(chroma.maskUrl) : { visibility: 'hidden' }}
+        className='z-[1]'
+        style={
+          chroma
+            ? { ...contentBoxStyle(contentRect), ...maskStyle(chroma.maskUrl) }
+            : { ...contentBoxStyle(contentRect), visibility: 'hidden' }
+        }
       >
-        <div style={contentBoxStyle(contentRect)}>{children}</div>
+        {children}
       </div>
 
       <img

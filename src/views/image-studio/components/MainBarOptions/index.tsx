@@ -41,7 +41,7 @@ const MainBarOptions: FC = () => {
 
       <section className='gap-grid flex flex-row items-center'>
         <div className='bg-border h-6 w-px' />
-        <ShotCapture target='editor' missingTitle='No se encontró el canvas' />
+        <ShotCapture target='editor' compress={false} scale={6} missingTitle='No se encontró el canvas' />
       </section>
     </>
   )

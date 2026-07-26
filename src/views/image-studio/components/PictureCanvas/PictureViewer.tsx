@@ -1,34 +1,31 @@
 'use client'
 
 import ShumShots from '@/shared/ui/ShumShots'
-import type { FrameFitMode } from '@views/image-studio/Popups/FrameConfiguration/store'
-import { createElement, type FC, useEffect, useRef } from 'react'
+import useFrameStore, {
+  defaultSlotPan
+} from '@views/image-studio/Popups/FrameConfiguration/store'
+import { type FC, useEffect, useLayoutEffect, useRef } from 'react'
 
 type Props = {
+  slotId: string
+  frameActive: boolean
   imageUrl?: string | null
   isLoading: boolean
   setIsLoading: (isLoading: boolean) => void
   onError: () => void
   onSize: (size: { width: number; height: number; aspectRatio: number }) => void
-  fitMode?: FrameFitMode
-  objectPosition?: { x: number; y: number }
-}
-
-const fitClass = (fitMode: FrameFitMode) => {
-  if (fitMode === 'contain') return 'object-contain'
-  if (fitMode === 'fill') return 'object-fill'
-  return 'object-cover'
 }
 
 const PictureViewer: FC<Props> = ({
+  slotId,
+  frameActive,
   imageUrl,
   isLoading,
   setIsLoading,
   onError,
-  onSize,
-  fitMode = 'cover',
-  objectPosition = { x: 0.5, y: 0.5 }
+  onSize
 }) => {
+  const imageRef = useRef<HTMLImageElement>(null)
   const onErrorRef = useRef(onError)
   const onSizeRef = useRef(onSize)
   const setIsLoadingRef = useRef(setIsLoading)
@@ -41,11 +38,10 @@ const PictureViewer: FC<Props> = ({
   useEffect(() => {
     if (!imageUrl) return
 
-    const img = new Image()
-    img.src = imageUrl
-
-    img.onload = () => {
-      const { naturalWidth, naturalHeight } = img
+    const image = new Image()
+    image.src = imageUrl
+    image.onload = () => {
+      const { naturalWidth, naturalHeight } = image
       const aspectRatio = naturalWidth / Math.max(1, naturalHeight)
       const key = `${naturalWidth}x${naturalHeight}`
       if (lastSizeKey.current !== key) {
@@ -54,13 +50,32 @@ const PictureViewer: FC<Props> = ({
       }
       setIsLoadingRef.current(false)
     }
-    img.onerror = () => onErrorRef.current()
+    image.onerror = () => onErrorRef.current()
 
     return () => {
-      img.onload = null
-      img.onerror = null
+      image.onload = null
+      image.onerror = null
     }
   }, [imageUrl])
+
+  useLayoutEffect(() => {
+    const apply = (state = useFrameStore.getState()) => {
+      const image = imageRef.current
+      if (!image) return
+
+      const fitMode = frameActive ? state.fitMode : 'cover'
+      const position = frameActive ? (state.slotPan[slotId] ?? defaultSlotPan) : defaultSlotPan
+      const objectPosition = `${position.x * 100}% ${position.y * 100}%`
+
+      if (image.style.objectFit !== fitMode) image.style.objectFit = fitMode
+      if (image.style.objectPosition !== objectPosition) {
+        image.style.objectPosition = objectPosition
+      }
+    }
+
+    apply()
+    return useFrameStore.subscribe(apply)
+  }, [frameActive, slotId])
 
   if (!imageUrl) return null
 
@@ -72,17 +87,17 @@ const PictureViewer: FC<Props> = ({
     )
   }
 
-  return createElement('img', {
-    src: imageUrl,
-    className: `pointer-events-none absolute inset-0 size-full ${fitClass(fitMode)}`,
-    style: {
-      objectPosition: `${objectPosition.x * 100}% ${objectPosition.y * 100}%`
-    },
-    alt: 'Imagen del shot',
-    decoding: 'async',
-    draggable: false,
-    onError
-  })
+  return (
+    <img
+      ref={imageRef}
+      src={imageUrl}
+      className='pointer-events-none absolute inset-0 size-full'
+      alt='Imagen del shot'
+      decoding='async'
+      draggable={false}
+      onError={onError}
+    />
+  )
 }
 
 export default PictureViewer

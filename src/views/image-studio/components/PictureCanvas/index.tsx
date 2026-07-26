@@ -7,7 +7,6 @@ import DeviceFrameShell from '@views/image-studio/components/PictureCanvas/Devic
 import PictureViewer from '@views/image-studio/components/PictureCanvas/PictureViewer'
 import usePictureSlot from '@views/image-studio/hooks/usePictureSlot'
 import { useShadowLightDom } from '@views/image-studio/hooks/useShadowLightDom'
-import useFrameStore, { defaultSlotPan } from '@views/image-studio/Popups/FrameConfiguration/store'
 import useBackgroundStore from '@views/image-studio/store/background/background.store'
 import { resolveSmoothCornerStyle } from '@views/image-studio/store/background/backgroundRadius.store'
 import useImagesRadiusStore from '@views/image-studio/store/images/imagesRadius.store'
@@ -15,7 +14,15 @@ import usePicturesStore, { type PictureItem } from '@views/image-studio/store/im
 import useImagesBorderStore from '@views/image-studio/store/images/useImagesBorderStore'
 import { buildCanvasFrameStyle, insetBorderRadius } from '@views/image-studio/utils/borderFrame'
 import { getPictureLayout, type PictureLayoutRect } from '@views/image-studio/utils/pictureLayouts'
-import { memo, useCallback, useMemo, useRef, useState, type CSSProperties, type FC } from 'react'
+import {
+  memo,
+  useCallback,
+  useMemo,
+  useRef,
+  useState,
+  type CSSProperties,
+  type FC
+} from 'react'
 
 const fitFrameInSlot = (
   slot: { left: number; top: number; width: number; height: number },
@@ -80,10 +87,6 @@ const PictureSlot = memo(function PictureSlot({
   const matBottom = useImagesBorderStore(s => s.matBottom)
   const matLeft = useImagesBorderStore(s => s.matLeft)
 
-  const fitMode = useFrameStore(s => s.fitMode)
-  const slotPan = useFrameStore(s => s.slotPan)
-  const objectPosition = slotPan[picture.id] ?? defaultSlotPan
-
   const { data: framesData } = framesQuery.list()
   const catalogFrame = picture.frameId
     ? (framesData?.data?.frames.find(item => item.id === picture.frameId) ?? null)
@@ -143,8 +146,9 @@ const PictureSlot = memo(function PictureSlot({
     })
     if (!hasDeviceFrame && cornerShapeCss) Object.assign(style, { cornerShape: cornerShapeCss })
     const base = typeof style.boxShadow === 'string' ? style.boxShadow : ''
-    const { boxShadow: _ignored, ...withoutShadow } = style
-    return { contentFrameStyle: withoutShadow as CSSProperties, baseBoxShadow: base }
+    const contentFrameStyle = { ...style }
+    delete contentFrameStyle.boxShadow
+    return { contentFrameStyle: contentFrameStyle as CSSProperties, baseBoxShadow: base }
   }, [
     blendMode,
     color,
@@ -233,13 +237,13 @@ const PictureSlot = memo(function PictureSlot({
             <div className='relative size-full overflow-hidden' style={contentStyle}>
               {imageUrl && (
                 <PictureViewer
+                  slotId={picture.id}
+                  frameActive={hasDeviceFrame}
                   imageUrl={imageUrl}
                   isLoading={isLoading}
                   setIsLoading={setIsLoading}
                   onError={handleLoadError}
                   onSize={handleSize}
-                  fitMode={hasDeviceFrame ? fitMode : 'cover'}
-                  objectPosition={hasDeviceFrame ? objectPosition : { x: 0.5, y: 0.5 }}
                 />
               )}
               <div ref={lightsRef} className='pointer-events-none absolute inset-0 z-[1]' />

@@ -51,15 +51,7 @@ const Board = ({ children, className = '', isCenter = true, minScale, normalScal
       onTouchMove={handleTouchMove}
       onTouchEnd={handleTouchEnd}
     >
-      <div
-        className={`board-surface ${className}`}
-        ref={$childrenRef}
-        style={{
-          top: offset.y,
-          left: offset.x,
-          transform: `scale(${scale})`
-        }}
-      >
+      <div className={`board-surface ${className}`} ref={$childrenRef}>
         {children(offset, scale, handleScaleCentered)}
       </div>
     </article>

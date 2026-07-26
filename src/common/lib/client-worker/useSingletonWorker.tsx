@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import { Remote, releaseProxy, wrap } from 'comlink';
 
@@ -12,6 +12,7 @@ const registry = new Map<string, { proxy: Remote<any>; instance: Worker; refCoun
 const useSingletonWorker = <T = any,>({ worker, group }: Props) => {
   const workerRef = useRef<Remote<T> | null>(null);
   const workerInstanceRef = useRef<Worker | null>(null);
+  const [ready, setReady] = useState(false);
 
   useEffect(() => {
     if (!registry.has(group)) {
@@ -23,8 +24,10 @@ const useSingletonWorker = <T = any,>({ worker, group }: Props) => {
     entry.refCount++;
     workerRef.current = entry.proxy as Remote<T>;
     workerInstanceRef.current = entry.instance;
+    setReady(true);
 
     return () => {
+      setReady(false);
       const entry = registry.get(group)!;
       entry.refCount--;
 
@@ -39,7 +42,7 @@ const useSingletonWorker = <T = any,>({ worker, group }: Props) => {
     };
   }, [group, worker]);
 
-  return { workerRef, workerInstanceRef };
+  return { workerRef, workerInstanceRef, ready };
 };
 
 export default useSingletonWorker;

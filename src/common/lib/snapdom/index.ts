@@ -9,13 +9,19 @@ export type DomCaptureOptions = {
   embedFonts?: boolean
   /** Omite delays idle para capturar más rápido. Por defecto: `true`. */
   fast?: boolean
-  /** Reduce imágenes incrustadas a su resolución visible. Por defecto: `true`. */
+  /**
+   * Reduce imágenes incrustadas a su resolución visible antes de exportar.
+   * Útil para capturas ligeras; destruye nitidez en fotos. Por defecto: `true`.
+   */
   compress?: boolean
   /** Política de caché entre capturas. Por defecto: `'soft'`. */
   cache?: CaptureCache
 }
 
-type CaptureScale = { scale?: number }
+type CaptureRunOptions = {
+  scale?: number
+  compress?: boolean
+}
 
 const DEFAULTS = {
   scale: 5,
@@ -42,10 +48,11 @@ class DomCapture {
     }
   }
 
-  #snapOptions(scale?: number) {
+  #snapOptions(run?: CaptureRunOptions) {
     return {
       ...this.#options,
-      scale: Math.max(1, scale ?? this.#options.scale)
+      scale: Math.max(1, run?.scale ?? this.#options.scale),
+      compress: run?.compress ?? this.#options.compress
     }
   }
 
@@ -62,19 +69,19 @@ class DomCapture {
     }
   }
 
-  async #toCanvas(element: HTMLElement, scale?: number): Promise<HTMLCanvasElement> {
-    return this.#run(element, () => snapdom.toCanvas(element, this.#snapOptions(scale)))
+  async #toCanvas(element: HTMLElement, run?: CaptureRunOptions): Promise<HTMLCanvasElement> {
+    return this.#run(element, () => snapdom.toCanvas(element, this.#snapOptions(run)))
   }
 
   /** Devuelve la captura como data URL PNG. */
-  async toDataUrl(element: HTMLElement, options?: CaptureScale): Promise<string> {
-    const canvas = await this.#toCanvas(element, options?.scale)
+  async toDataUrl(element: HTMLElement, options?: CaptureRunOptions): Promise<string> {
+    const canvas = await this.#toCanvas(element, options)
     return canvas.toDataURL('image/png')
   }
 
   /** Devuelve la captura como `Blob` PNG. */
-  async toBlob(element: HTMLElement, options?: CaptureScale): Promise<Blob> {
-    const canvas = await this.#toCanvas(element, options?.scale)
+  async toBlob(element: HTMLElement, options?: CaptureRunOptions): Promise<Blob> {
+    const canvas = await this.#toCanvas(element, options)
     return new Promise((resolve, reject) => {
       canvas.toBlob(
         blob => (blob ? resolve(blob) : reject(new Error('No se pudo generar el PNG'))),
@@ -84,7 +91,7 @@ class DomCapture {
   }
 
   /** Captura el elemento y descarga un archivo PNG. */
-  async download(element: HTMLElement, fileName = 'pixis', options?: CaptureScale): Promise<void> {
+  async download(element: HTMLElement, fileName = 'pixis', options?: CaptureRunOptions): Promise<void> {
     const blob = await this.toBlob(element, options)
     const name = fileName.trim() || 'pixis'
     const url = URL.createObjectURL(blob)
@@ -99,7 +106,7 @@ class DomCapture {
   }
 
   /** Captura el elemento y lo copia al portapapeles como PNG. */
-  async copy(element: HTMLElement, options?: CaptureScale): Promise<void> {
+  async copy(element: HTMLElement, options?: CaptureRunOptions): Promise<void> {
     if (!navigator.clipboard?.write || typeof ClipboardItem === 'undefined') {
       throw new Error('La API de portapapeles no está disponible')
     }
@@ -113,4 +120,4 @@ const domCapture = new DomCapture()
 
 export default DomCapture
 export { DomCapture, domCapture }
-export type { CaptureCache }
+export type { CaptureCache, CaptureRunOptions }

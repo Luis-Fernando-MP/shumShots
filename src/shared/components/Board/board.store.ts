@@ -26,21 +26,24 @@ interface IBoardStore {
   setOffset: (offset: Positions) => void
 }
 
-export const MIN_SCALE = 0.5
-export const MAX_SCALE = 3
+export const MIN_SCALE = 0.1
+export const MAX_SCALE = 4
 export const INITIAL_SCALE = 0.8
 export const ZOOM_STEP = 0.3
 export const SCALE_EPSILON = 0.001
+export const WHEEL_ZOOM_INTENSITY = 0.0018
 
 export const snapToDevicePixel = (value: number): number => {
   const dpr = typeof window !== 'undefined' ? window.devicePixelRatio || 1 : 1
   return Math.round(value * dpr) / dpr
 }
 
-const snapOffset = (offset: Positions): Positions => ({
+export const snapOffset = (offset: Positions): Positions => ({
   x: snapToDevicePixel(offset.x),
   y: snapToDevicePixel(offset.y)
 })
+
+const clampScale = (scale: number) => Math.max(MIN_SCALE, Math.min(MAX_SCALE, scale))
 
 const atMaxScale = (scale: number) => scale >= MAX_SCALE - SCALE_EPSILON
 const atMinScale = (scale: number) => scale <= MIN_SCALE + SCALE_EPSILON
@@ -57,7 +60,7 @@ const state: StateCreator<IBoardStore> = (set, get) => ({
 
   setEnableScroll: enableScroll => set({ enableScroll }),
   setScale: scale => {
-    const clampedScale = Math.max(MIN_SCALE, Math.min(MAX_SCALE, scale))
+    const clampedScale = clampScale(scale)
     if (Math.abs(clampedScale - get().scale) < SCALE_EPSILON) return
     set({ scale: clampedScale })
   },
@@ -87,9 +90,12 @@ const state: StateCreator<IBoardStore> = (set, get) => ({
   },
   setOffset: offset => set({ offset: snapOffset(offset) }),
   setScaleAndOffset: (scale, offset) => {
-    const clampedScale = Math.max(MIN_SCALE, Math.min(MAX_SCALE, scale))
-    if (Math.abs(clampedScale - get().scale) < SCALE_EPSILON) return
-    set({ scale: clampedScale, offset: snapOffset(offset) })
+    const clampedScale = clampScale(scale)
+    const { scale: prevScale, offset: prevOffset } = get()
+    const sameScale = Math.abs(clampedScale - prevScale) < SCALE_EPSILON
+    const sameOffset = Math.abs(offset.x - prevOffset.x) < SCALE_EPSILON && Math.abs(offset.y - prevOffset.y) < SCALE_EPSILON
+    if (sameScale && sameOffset) return
+    set({ scale: clampedScale, offset })
   },
   setNextChild: nextChild => set({ nextChild }),
   setPrevChild: prevChild => set({ prevChild }),

@@ -1,6 +1,14 @@
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react'
 
-import useBoardStore, { MAX_SCALE, MIN_SCALE, Positions, SCALE_EPSILON, ZoomDirection } from './board.store'
+import useBoardStore, {
+  MAX_SCALE,
+  MIN_SCALE,
+  Positions,
+  SCALE_EPSILON,
+  WHEEL_ZOOM_INTENSITY,
+  ZoomDirection,
+  snapOffset
+} from './board.store'
 
 interface IUseBoardHook {
   isCenter: boolean
@@ -15,28 +23,56 @@ export interface BoardRef {
   handleScale: (scale: number) => void
 }
 
+const ZOOM_IDLE_MS = 120
+
+const clampScale = (scale: number) => Math.max(MIN_SCALE, Math.min(MAX_SCALE, scale))
+
+const applySurfaceTransform = (el: HTMLElement | null, scale: number, offset: Positions) => {
+  if (!el) return
+  el.style.transform = `translate3d(${offset.x}px, ${offset.y}px, 0) scale(${scale})`
+}
+
 const useBoard = ({ isCenter, minScale = false, normalScale = false }: IUseBoardHook) => {
-  const {
-    offset,
-    scale,
-    setOffset,
-    setScale,
-    setScaleCentered,
-    setScaleAndOffset,
-    setPrevChild,
-    setNextChild,
-    setMoveToChild,
-    setResetZoom,
-    setZoomCentered,
-    enableScroll
-  } = useBoardStore()
+  const offset = useBoardStore(s => s.offset)
+  const scale = useBoardStore(s => s.scale)
+  const enableScroll = useBoardStore(s => s.enableScroll)
+  const setOffset = useBoardStore(s => s.setOffset)
+  const setScale = useBoardStore(s => s.setScale)
+  const setScaleCentered = useBoardStore(s => s.setScaleCentered)
+  const setScaleAndOffset = useBoardStore(s => s.setScaleAndOffset)
+  const setPrevChild = useBoardStore(s => s.setPrevChild)
+  const setNextChild = useBoardStore(s => s.setNextChild)
+  const setMoveToChild = useBoardStore(s => s.setMoveToChild)
+  const setResetZoom = useBoardStore(s => s.setResetZoom)
+  const setZoomCentered = useBoardStore(s => s.setZoomCentered)
+
   const $containerRef = useRef<HTMLDivElement>(null)
   const $childrenRef = useRef<HTMLDivElement>(null)
 
   const [isMoving, setIsMoving] = useState(false)
-  const [lastMousePosition, setLastMousePosition] = useState<Positions | null>(null)
   const [childIndex, setChildIndex] = useState(0)
-  const animationFrameRef = useRef<number | undefined>(undefined)
+
+  const liveRef = useRef({ scale: 1, offset: { x: 0, y: 0 } })
+  const panRef = useRef<{ active: boolean; lastX: number; lastY: number }>({
+    active: false,
+    lastX: 0,
+    lastY: 0
+  })
+  const panRafRef = useRef<number | null>(null)
+  const zoomRafRef = useRef<number | null>(null)
+  const zoomIdleTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const zoomingRef = useRef(false)
+
+  const setZoomingClass = (active: boolean) => {
+    $containerRef.current?.classList.toggle('is-zooming', active)
+  }
+
+  // Transform solo por DOM: React no debe pisar el zoom en curso.
+  useLayoutEffect(() => {
+    if (zoomingRef.current || panRef.current.active) return
+    liveRef.current = { scale, offset }
+    applySurfaceTransform($childrenRef.current, scale, offset)
+  }, [scale, offset])
 
   const handleScale = (nextScale: number): void => {
     setScale(nextScale)
@@ -134,76 +170,71 @@ const useBoard = ({ isCenter, minScale = false, normalScale = false }: IUseBoard
     moveToChild(0, minScale ? appMinScale : maxScale)
   }, [moveToChild, setScale, minScale])
 
+  const flushZoomToStore = useCallback(
+    (snap: boolean) => {
+      const live = liveRef.current
+      const nextOffset = snap ? snapOffset(live.offset) : live.offset
+      if (snap) live.offset = nextOffset
+      setScaleAndOffset(live.scale, nextOffset)
+      if (snap) applySurfaceTransform($childrenRef.current, live.scale, nextOffset)
+    },
+    [setScaleAndOffset]
+  )
+
+  const endZoomGesture = useCallback(() => {
+    if (zoomRafRef.current != null) {
+      cancelAnimationFrame(zoomRafRef.current)
+      zoomRafRef.current = null
+    }
+    zoomingRef.current = false
+    setZoomingClass(false)
+    flushZoomToStore(true)
+  }, [flushZoomToStore])
+
   const handleBoardDown = (e: React.MouseEvent) => {
     if (e.ctrlKey) {
       e.preventDefault()
       setIsMoving(true)
-      setLastMousePosition({ x: e.clientX, y: e.clientY })
+      panRef.current = { active: true, lastX: e.clientX, lastY: e.clientY }
     }
   }
 
-  const handleBoardMove = useCallback(
-    (e: React.MouseEvent) => {
-      if (!isMoving || !lastMousePosition) return
+  const handleBoardMove = useCallback((e: React.MouseEvent) => {
+    if (!panRef.current.active) return
 
-      if (animationFrameRef.current) {
-        cancelAnimationFrame(animationFrameRef.current)
-      }
+    const clientX = e.clientX
+    const clientY = e.clientY
 
-      animationFrameRef.current = requestAnimationFrame(() => {
-        const deltaX = e.clientX - lastMousePosition.x
-        const deltaY = e.clientY - lastMousePosition.y
-        setOffset({ x: offset.x + deltaX, y: offset.y + deltaY })
-        setLastMousePosition({ x: e.clientX, y: e.clientY })
-      })
-    },
-    [isMoving, lastMousePosition, offset, setOffset]
-  )
+    if (panRafRef.current != null) cancelAnimationFrame(panRafRef.current)
+    panRafRef.current = requestAnimationFrame(() => {
+      panRafRef.current = null
+      const pan = panRef.current
+      if (!pan.active) return
 
-  const handleBoardUp = useCallback(() => {
-    setIsMoving(false)
-    setLastMousePosition(null)
-    if (animationFrameRef.current) {
-      cancelAnimationFrame(animationFrameRef.current)
-    }
+      const deltaX = clientX - pan.lastX
+      const deltaY = clientY - pan.lastY
+      pan.lastX = clientX
+      pan.lastY = clientY
+
+      const live = liveRef.current
+      live.offset = { x: live.offset.x + deltaX, y: live.offset.y + deltaY }
+      applySurfaceTransform($childrenRef.current, live.scale, live.offset)
+    })
   }, [])
 
-  const handleWheel = useCallback(
-    (e: WheelEvent) => {
-      if (!e.ctrlKey) return
-      e.preventDefault()
-
-      const canvas = $containerRef.current
-      if (!canvas) return
-
-      const zoomingIn = e.deltaY < 0
-      if (zoomingIn && scale >= MAX_SCALE - SCALE_EPSILON) return
-      if (!zoomingIn && scale <= MIN_SCALE + SCALE_EPSILON) return
-
-      const zoomFactor = 1.1
-      const nextScale = zoomingIn ? scale * zoomFactor : scale / zoomFactor
-      const clampedScale = Math.max(MIN_SCALE, Math.min(MAX_SCALE, nextScale))
-      if (Math.abs(clampedScale - scale) < SCALE_EPSILON) return
-
-      const rect = canvas.getBoundingClientRect()
-      const mouseX = (e.clientX - rect.left - offset.x) / scale
-      const mouseY = (e.clientY - rect.top - offset.y) / scale
-
-      setScaleAndOffset(clampedScale, {
-        x: offset.x - mouseX * (clampedScale - scale),
-        y: offset.y - mouseY * (clampedScale - scale)
-      })
-    },
-    [offset, scale, setScaleAndOffset]
-  )
-
-  const nextChild = useCallback(() => {
-    moveToChild(childIndex + 1)
-  }, [childIndex, moveToChild])
-
-  const prevChild = useCallback(() => {
-    moveToChild(childIndex - 1)
-  }, [childIndex, moveToChild])
+  const handleBoardUp = useCallback(() => {
+    if (!panRef.current.active && !isMoving) return
+    panRef.current.active = false
+    setIsMoving(false)
+    if (panRafRef.current != null) {
+      cancelAnimationFrame(panRafRef.current)
+      panRafRef.current = null
+    }
+    const snapped = snapOffset(liveRef.current.offset)
+    liveRef.current.offset = snapped
+    applySurfaceTransform($childrenRef.current, liveRef.current.scale, snapped)
+    setOffset(snapped)
+  }, [isMoving, setOffset])
 
   const handleTouchStart = (e: React.TouchEvent) => {
     const touch = e.touches[0]
@@ -219,15 +250,61 @@ const useBoard = ({ isCenter, minScale = false, normalScale = false }: IUseBoard
     handleBoardUp()
   }
 
+  const nextChild = useCallback(() => {
+    moveToChild(childIndex + 1)
+  }, [childIndex, moveToChild])
+
+  const prevChild = useCallback(() => {
+    moveToChild(childIndex - 1)
+  }, [childIndex, moveToChild])
+
   useEffect(() => {
     const canvas = $containerRef.current
-    if (canvas && !enableScroll) {
-      canvas.addEventListener('wheel', handleWheel, { passive: false })
+    if (!canvas || enableScroll) return
+
+    const onWheel = (e: WheelEvent) => {
+      if (!e.ctrlKey) return
+      e.preventDefault()
+
+      const surface = $childrenRef.current
+      if (!surface) return
+
+      const live = liveRef.current
+      let dy = e.deltaY
+      if (e.deltaMode === 1) dy *= 16
+      else if (e.deltaMode === 2) dy *= canvas.clientHeight
+
+      const nextScale = clampScale(live.scale * Math.exp(-dy * WHEEL_ZOOM_INTENSITY))
+      if (Math.abs(nextScale - live.scale) < SCALE_EPSILON) return
+
+      const rect = canvas.getBoundingClientRect()
+      const mouseX = (e.clientX - rect.left - live.offset.x) / live.scale
+      const mouseY = (e.clientY - rect.top - live.offset.y) / live.scale
+      const nextOffset = {
+        x: live.offset.x - mouseX * (nextScale - live.scale),
+        y: live.offset.y - mouseY * (nextScale - live.scale)
+      }
+
+      live.scale = nextScale
+      live.offset = nextOffset
+      applySurfaceTransform(surface, nextScale, nextOffset)
+
+      if (!zoomingRef.current) {
+        zoomingRef.current = true
+        setZoomingClass(true)
+      }
+
+      if (zoomIdleTimerRef.current != null) clearTimeout(zoomIdleTimerRef.current)
+      zoomIdleTimerRef.current = setTimeout(endZoomGesture, ZOOM_IDLE_MS)
     }
+
+    canvas.addEventListener('wheel', onWheel, { passive: false })
     return () => {
-      canvas?.removeEventListener('wheel', handleWheel)
+      canvas.removeEventListener('wheel', onWheel)
+      if (zoomIdleTimerRef.current != null) clearTimeout(zoomIdleTimerRef.current)
+      if (zoomRafRef.current != null) cancelAnimationFrame(zoomRafRef.current)
     }
-  }, [scale, offset, enableScroll, handleWheel])
+  }, [enableScroll, endZoomGesture])
 
   useEffect(() => {
     setScale(1)
@@ -263,9 +340,9 @@ const useBoard = ({ isCenter, minScale = false, normalScale = false }: IUseBoard
 
   useEffect(() => {
     return () => {
-      if (animationFrameRef.current) {
-        cancelAnimationFrame(animationFrameRef.current)
-      }
+      if (panRafRef.current != null) cancelAnimationFrame(panRafRef.current)
+      if (zoomRafRef.current != null) cancelAnimationFrame(zoomRafRef.current)
+      if (zoomIdleTimerRef.current != null) clearTimeout(zoomIdleTimerRef.current)
     }
   }, [])
 

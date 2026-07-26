@@ -43,6 +43,11 @@ export type ShotCaptureProps = {
   }
   /** Export scale multiplier. @default 5 */
   scale?: number
+  /**
+   * When false, keeps embedded images at their source resolution (no downscale
+   * to on-screen size). Prefer for image-studio exports. @default true
+   */
+  compress?: boolean
   /** Initial file name without extension. @default `'pixis'` */
   defaultFileName?: string
   /** Toast when the target node is missing. */
@@ -72,6 +77,7 @@ const ShotCapture: FC<ShotCaptureProps> = ({
   alternateTarget,
   alternatePrompt,
   scale = 5,
+  compress = true,
   defaultFileName = 'pixis',
   missingTitle = 'No se encontró el elemento a capturar',
   className
@@ -102,10 +108,11 @@ const ShotCapture: FC<ShotCaptureProps> = ({
     const toastId = toaster({ title: 'Procesando imagen...', type: 'pending' })
     setBusy(true)
     try {
+      const captureOptions = { scale: exportScale, compress }
       if (action === 'download') {
-        await domCapture.download(element, fileName, { scale: exportScale })
+        await domCapture.download(element, fileName, captureOptions)
       } else {
-        await domCapture.copy(element, { scale: exportScale })
+        await domCapture.copy(element, captureOptions)
       }
       toaster({ title: 'Completado', type: 'success', id: toastId })
     } catch (error) {

@@ -1,5 +1,6 @@
 'use client'
 
+import useBoardStore from '@/shared/components/Board/board.store'
 import useShadowStore, {
   type LightLayer,
   type ShadowLayer
@@ -21,6 +22,12 @@ export type SlotShadowFx = {
   lightOverlays: CSSProperties[]
 }
 
+const dropShadowStopsForBoardScale = (boardScale: number) => {
+  if (boardScale >= 1.75) return 1
+  if (boardScale >= 1.3) return 2
+  return 5
+}
+
 const mergeBoxShadows = (layers: ShadowLayer[], scale: number) => {
   const parts = layers
     .map(layer =>
@@ -38,7 +45,7 @@ const mergeBoxShadows = (layers: ShadowLayer[], scale: number) => {
   return parts.join(', ')
 }
 
-const mergeDropFilters = (layers: ShadowLayer[], scale: number) => {
+const mergeDropFilters = (layers: ShadowLayer[], scale: number, maxStops: number) => {
   const parts = layers
     .map(layer =>
       resolveDropShadowFilter(
@@ -51,7 +58,7 @@ const mergeDropFilters = (layers: ShadowLayer[], scale: number) => {
           position: layer.position,
           scale
         },
-        5
+        maxStops
       )
     )
     .filter(Boolean) as string[]
@@ -91,15 +98,21 @@ const mergeLightOverlays = (layers: LightLayer[]): CSSProperties[] =>
 export const computeSlotShadowFx = (
   slotId: string,
   edgePx: number,
+  boardScale = 1,
   state = useShadowStore.getState()
 ): SlotShadowFx => {
-  const scale = shadowScaleForSize(edgePx)
+  const sizeScale = shadowScaleForSize(edgePx)
+  const filterScale = sizeScale / Math.max(1, boardScale)
   const shadows = state.shadowLayers.filter(layer => layerAppliesTo(layer.targetIds, slotId))
   const lights = state.lightLayers.filter(layer => layerAppliesTo(layer.targetIds, slotId))
   return {
-    boxShadow: mergeBoxShadows(shadows, scale),
-    dropShadowFilter: mergeDropFilters(shadows, scale),
-    frameFillBoxShadow: mergeFrameFillBoxShadows(shadows, scale),
+    boxShadow: mergeBoxShadows(shadows, sizeScale),
+    dropShadowFilter: mergeDropFilters(
+      shadows,
+      filterScale,
+      dropShadowStopsForBoardScale(boardScale)
+    ),
+    frameFillBoxShadow: mergeFrameFillBoxShadows(shadows, sizeScale),
     lightOverlays: mergeLightOverlays(lights)
   }
 }
@@ -150,13 +163,15 @@ export const useShadowLightDom = ({
     let prevKey = ''
 
     const paint = () => {
-      const fx = computeSlotShadowFx(slotId, edgePx)
+      const boardScale = useBoardStore.getState().scale
+      const fx = computeSlotShadowFx(slotId, edgePx, boardScale)
       const filterEl = filterTarget
       const boxEl = boxShadowRef.current
 
       const key = [
         hasDeviceFrame ? 'drop' : 'box',
         filterEl ? 'img' : 'noimg',
+        boardScale.toFixed(3),
         baseBoxShadow,
         fx.boxShadow,
         fx.dropShadowFilter,
@@ -178,7 +193,7 @@ export const useShadowLightDom = ({
         }
         if (filterEl) {
           filterEl.style.filter = fx.dropShadowFilter || 'none'
-          filterEl.style.willChange = fx.dropShadowFilter ? 'filter' : 'auto'
+          filterEl.style.willChange = 'auto'
         }
       } else {
         if (boxEl) {
@@ -195,7 +210,22 @@ export const useShadowLightDom = ({
     }
 
     paint()
-    return useShadowStore.subscribe(paint)
+    let boardScaleTimer: ReturnType<typeof setTimeout> | null = null
+    const unsubShadow = useShadowStore.subscribe(paint)
+    const unsubBoard = useBoardStore.subscribe((state, prev) => {
+      if (state.scale === prev.scale) return
+      // Evita repintar drop-shadow en cada tick del zoom (tirones/parpadeos).
+      if (boardScaleTimer != null) clearTimeout(boardScaleTimer)
+      boardScaleTimer = setTimeout(() => {
+        boardScaleTimer = null
+        paint()
+      }, 120)
+    })
+    return () => {
+      unsubShadow()
+      unsubBoard()
+      if (boardScaleTimer != null) clearTimeout(boardScaleTimer)
+    }
   }, [
     baseBoxShadow,
     boxShadowRef,

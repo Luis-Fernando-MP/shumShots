@@ -54,6 +54,8 @@ const SlotPanSection: FC = () => {
 
   const padRef = useRef<HTMLDivElement>(null)
   const dragging = useRef(false)
+  const pendingPan = useRef<{ x: number; y: number } | null>(null)
+  const rafId = useRef(0)
   const [dragPan, setDragPan] = useState<{ x: number; y: number } | null>(null)
 
   const allSelected = selectedSlotIds.length === 0
@@ -81,6 +83,25 @@ const SlotPanSection: FC = () => {
     if (!selectedSlotIds.includes(value)) setSelectedSlotIds([...selectedSlotIds, value])
   }
 
+  const flushPan = () => {
+    rafId.current = 0
+    const next = pendingPan.current
+    if (!next) return
+    setPanForSelected(next)
+  }
+
+  const queuePan = (next: { x: number; y: number }) => {
+    pendingPan.current = next
+    if (!rafId.current) rafId.current = requestAnimationFrame(flushPan)
+  }
+
+  useEffect(
+    () => () => {
+      if (rafId.current) cancelAnimationFrame(rafId.current)
+    },
+    []
+  )
+
   const movePan = (event: ReactPointerEvent) => {
     const pad = padRef.current
     if (!pad) return
@@ -91,11 +112,19 @@ const SlotPanSection: FC = () => {
       y: clamp01((event.clientY - rect.top) / rect.height, PAD_MARGIN)
     }
     setDragPan(next)
-    setPanForSelected(next)
+    queuePan(next)
   }
 
   const endDrag = (event: ReactPointerEvent<HTMLDivElement>) => {
     dragging.current = false
+    if (rafId.current) {
+      cancelAnimationFrame(rafId.current)
+      rafId.current = 0
+    }
+    if (pendingPan.current) {
+      setPanForSelected(pendingPan.current)
+      pendingPan.current = null
+    }
     setDragPan(null)
     if (event.currentTarget.hasPointerCapture(event.pointerId)) {
       event.currentTarget.releasePointerCapture(event.pointerId)
