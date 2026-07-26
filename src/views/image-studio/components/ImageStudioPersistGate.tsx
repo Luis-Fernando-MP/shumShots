@@ -1,5 +1,6 @@
 'use client'
 
+import useFrameStore from '@views/image-studio/Popups/FrameConfiguration/store'
 import useShadowStore from '@views/image-studio/Popups/ShadowConfiguration/store'
 import useImageLibraryStore from '@views/image-studio/store/images/imageLibrary.store'
 import usePicturesStore from '@views/image-studio/store/images/pictures.store'
@@ -15,7 +16,8 @@ const ImageStudioPersistGate: FC<{ children: ReactNode }> = ({ children }) => {
       await Promise.all([
         useImageLibraryStore.persist.rehydrate(),
         usePicturesStore.persist.rehydrate(),
-        useShadowStore.persist.rehydrate()
+        useShadowStore.persist.rehydrate(),
+        useFrameStore.persist.rehydrate()
       ])
       await promoteLegacyImagePersist()
       if (!cancelled) setReady(true)

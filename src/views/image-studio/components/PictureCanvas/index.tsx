@@ -7,6 +7,7 @@ import DeviceFrameShell from '@views/image-studio/components/PictureCanvas/Devic
 import PictureViewer from '@views/image-studio/components/PictureCanvas/PictureViewer'
 import usePictureSlot from '@views/image-studio/hooks/usePictureSlot'
 import { useShadowLightDom } from '@views/image-studio/hooks/useShadowLightDom'
+import useFrameStore, { defaultSlotPan } from '@views/image-studio/Popups/FrameConfiguration/store'
 import useBackgroundStore from '@views/image-studio/store/background/background.store'
 import { resolveSmoothCornerStyle } from '@views/image-studio/store/background/backgroundRadius.store'
 import useImagesRadiusStore from '@views/image-studio/store/images/imagesRadius.store'
@@ -78,6 +79,10 @@ const PictureSlot = memo(function PictureSlot({
   const matRight = useImagesBorderStore(s => s.matRight)
   const matBottom = useImagesBorderStore(s => s.matBottom)
   const matLeft = useImagesBorderStore(s => s.matLeft)
+
+  const fitMode = useFrameStore(s => s.fitMode)
+  const slotPan = useFrameStore(s => s.slotPan)
+  const objectPosition = slotPan[picture.id] ?? defaultSlotPan
 
   const { data: framesData } = framesQuery.list()
   const catalogFrame = picture.frameId
@@ -233,6 +238,8 @@ const PictureSlot = memo(function PictureSlot({
                   setIsLoading={setIsLoading}
                   onError={handleLoadError}
                   onSize={handleSize}
+                  fitMode={hasDeviceFrame ? fitMode : 'cover'}
+                  objectPosition={hasDeviceFrame ? objectPosition : { x: 0.5, y: 0.5 }}
                 />
               )}
               <div ref={lightsRef} className='pointer-events-none absolute inset-0 z-[1]' />

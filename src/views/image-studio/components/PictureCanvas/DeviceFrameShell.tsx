@@ -1,7 +1,10 @@
 'use client'
 
 import { framesQuery } from '@common/core'
-import { useChromaFrame } from '@views/image-studio/hooks/useChromaFrame'
+import {
+  useChromaFrame,
+  type ChromaContentRect
+} from '@views/image-studio/hooks/useChromaFrame'
 import { type CSSProperties, type FC, type ReactNode, type Ref, memo } from 'react'
 
 type Props = {
@@ -12,16 +15,25 @@ type Props = {
   children: ReactNode
 }
 
-const maskStyle = (maskUrl: string): CSSProperties => ({
+const contentBoxStyle = (rect: ChromaContentRect): CSSProperties => ({
+  position: 'absolute',
+  left: `${rect.left * 100}%`,
+  top: `${rect.top * 100}%`,
+  width: `${rect.width * 100}%`,
+  height: `${rect.height * 100}%`,
+  overflow: 'hidden'
+})
+
+const fullMaskStyle = (maskUrl: string): CSSProperties => ({
   maskImage: `url(${maskUrl})`,
   WebkitMaskImage: `url(${maskUrl})`,
   maskMode: 'alpha',
   maskSize: '100% 100%',
   WebkitMaskSize: '100% 100%',
+  maskPosition: '0 0',
+  WebkitMaskPosition: '0 0',
   maskRepeat: 'no-repeat',
-  WebkitMaskRepeat: 'no-repeat',
-  transform: 'scale(1.01)',
-  transformOrigin: 'center'
+  WebkitMaskRepeat: 'no-repeat'
 })
 
 const DeviceFrameShell: FC<Props> = ({ frameId, className, style, filterTargetRef, children }) => {
@@ -36,6 +48,8 @@ const DeviceFrameShell: FC<Props> = ({ frameId, className, style, filterTargetRe
       </div>
     )
   }
+
+  const contentRect = chroma?.contentRect ?? { left: 0, top: 0, width: 1, height: 1 }
 
   return (
     <div
@@ -57,11 +71,19 @@ const DeviceFrameShell: FC<Props> = ({ frameId, className, style, filterTargetRe
           className='pointer-events-none absolute inset-0 z-0 size-full object-fill select-none'
         />
       )}
-      <div className='absolute inset-0 z-[1] overflow-hidden'>
-        <div className='absolute inset-0 overflow-hidden' style={chroma ? maskStyle(chroma.maskUrl) : { visibility: 'hidden' }}>
-          {children}
-        </div>
+
+      {/*
+        Mask stays in full-frame space (100% / 0 0). Remapping the mask onto the
+        content box was shifting the screen and leaving black margins.
+        The photo is laid out only inside contentRect (zona verde).
+      */}
+      <div
+        className='absolute inset-0 z-[1]'
+        style={chroma ? fullMaskStyle(chroma.maskUrl) : { visibility: 'hidden' }}
+      >
+        <div style={contentBoxStyle(contentRect)}>{children}</div>
       </div>
+
       <img
         src={chroma?.frameUrl ?? frame.path}
         alt=''

@@ -12,7 +12,6 @@ import BorderColorsController from './wrappers/BorderColorsController'
 import BorderMatController from './wrappers/BorderMatController'
 import BorderSizeController from './wrappers/BorderSizeController'
 import BorderStyleController from './wrappers/BorderStyleController'
-import DeviceFramesController from './wrappers/DeviceFramesController'
 import ImagesRadiusController from './wrappers/ImagesRadiusController'
 
 const CornerConfiguration: FC = () => {
@@ -47,7 +46,6 @@ const CornerConfiguration: FC = () => {
         <ImagesRadiusController />
         <BorderStyleController />
         <BorderColorsController />
-        <DeviceFramesController />
         <BorderMatController />
         <BorderSizeController />
       </Popup.Content>

@@ -1,6 +1,7 @@
 'use client'
 
 import ShumShots from '@/shared/ui/ShumShots'
+import type { FrameFitMode } from '@views/image-studio/Popups/FrameConfiguration/store'
 import { createElement, type FC, useEffect, useRef } from 'react'
 
 type Props = {
@@ -9,9 +10,25 @@ type Props = {
   setIsLoading: (isLoading: boolean) => void
   onError: () => void
   onSize: (size: { width: number; height: number; aspectRatio: number }) => void
+  fitMode?: FrameFitMode
+  objectPosition?: { x: number; y: number }
 }
 
-const PictureViewer: FC<Props> = ({ imageUrl, isLoading, setIsLoading, onError, onSize }) => {
+const fitClass = (fitMode: FrameFitMode) => {
+  if (fitMode === 'contain') return 'object-contain'
+  if (fitMode === 'fill') return 'object-fill'
+  return 'object-cover'
+}
+
+const PictureViewer: FC<Props> = ({
+  imageUrl,
+  isLoading,
+  setIsLoading,
+  onError,
+  onSize,
+  fitMode = 'cover',
+  objectPosition = { x: 0.5, y: 0.5 }
+}) => {
   const onErrorRef = useRef(onError)
   const onSizeRef = useRef(onSize)
   const setIsLoadingRef = useRef(setIsLoading)
@@ -57,8 +74,13 @@ const PictureViewer: FC<Props> = ({ imageUrl, isLoading, setIsLoading, onError, 
 
   return createElement('img', {
     src: imageUrl,
-    className: 'pointer-events-none absolute inset-0 size-full object-cover object-center',
+    className: `pointer-events-none absolute inset-0 size-full ${fitClass(fitMode)}`,
+    style: {
+      objectPosition: `${objectPosition.x * 100}% ${objectPosition.y * 100}%`
+    },
     alt: 'Imagen del shot',
+    decoding: 'async',
+    draggable: false,
     onError
   })
 }

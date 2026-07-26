@@ -10,6 +10,7 @@ import type { FC } from 'react'
 import BackgroundConfiguration from '../../Popups/BackgroundConfiguration'
 import CanvasBorderConfiguration from '../../Popups/CanvasBorderConfiguration'
 import CornerConfiguration from '../../Popups/CornerConfiguration'
+import FrameConfiguration from '../../Popups/FrameConfiguration'
 import ImagesCountConfiguration from '../../Popups/ImagesCountConfiguration'
 import ShadowConfiguration from '../../Popups/ShadowConfiguration'
 
@@ -33,6 +34,7 @@ const MainBarOptions: FC = () => {
         <div className='bg-border h-6 w-px' />
 
         <CornerConfiguration />
+        <FrameConfiguration />
         <ShadowConfiguration />
         <ImagesCountConfiguration />
       </section>
