@@ -108,11 +108,19 @@ export const resolveBoxShadowStyle = (state: ShadowVisualInput): string | undefi
     .join(', ')
 }
 
-export const resolveDropShadowFilter = (state: ShadowVisualInput): string | undefined => {
-  const stops = buildShadowStops(state).slice(0, 6)
-  if (!stops.length) return undefined
+export const resolveDropShadowFilter = (
+  state: ShadowVisualInput,
+  maxStops = 3
+): string | undefined => {
+  const all = buildShadowStops(state)
+  if (!all.length) return undefined
+  const stops =
+    all.length <= maxStops
+      ? all
+      : [all[0], all[Math.floor((all.length - 1) / 2)], all[all.length - 1]].filter(Boolean)
   const { color } = state
   return stops
+    .slice(0, maxStops)
     .map(
       stop =>
         `drop-shadow(${stop.x.toFixed(1)}px ${stop.y.toFixed(1)}px ${Math.max(stop.blur, 1).toFixed(1)}px rgba(${color}, ${stop.alpha.toFixed(3)}))`

@@ -5,10 +5,14 @@ import { useEffect, useState } from 'react'
 type ChromaFrameAssets = {
   maskUrl: string
   frameUrl: string
+  silhouetteUrl: string
 }
 
+const CACHE_VERSION = 2
 const cache = new Map<string, ChromaFrameAssets>()
 const inflight = new Map<string, Promise<ChromaFrameAssets>>()
+
+const cacheKey = (src: string) => `${CACHE_VERSION}:${src}`
 
 const isChromaGreen = (r: number, g: number, b: number, a: number) =>
   a >= 20 && g > 90 && g >= r * 1.35 && g >= b * 1.35 && g - Math.max(r, b) > 25
@@ -51,8 +55,28 @@ const processChromaFrame = async (src: string): Promise<ChromaFrameAssets> => {
   const maskData = maskCtx.createImageData(width, height)
   const maskPixels = maskData.data
 
+  const silhouetteCanvas = document.createElement('canvas')
+  silhouetteCanvas.width = width
+  silhouetteCanvas.height = height
+  const silhouetteCtx = silhouetteCanvas.getContext('2d')
+  if (!silhouetteCtx) throw new Error('2d context unavailable')
+  const silhouetteData = silhouetteCtx.createImageData(width, height)
+  const silhouettePixels = silhouetteData.data
+
   for (let i = 0; i < pixels.length; i += 4) {
-    if (!isChromaGreen(pixels[i] ?? 0, pixels[i + 1] ?? 0, pixels[i + 2] ?? 0, pixels[i + 3] ?? 0)) continue
+    const r = pixels[i] ?? 0
+    const g = pixels[i + 1] ?? 0
+    const b = pixels[i + 2] ?? 0
+    const a = pixels[i + 3] ?? 0
+
+    if (a >= 20) {
+      silhouettePixels[i] = 0
+      silhouettePixels[i + 1] = 0
+      silhouettePixels[i + 2] = 0
+      silhouettePixels[i + 3] = 255
+    }
+
+    if (!isChromaGreen(r, g, b, a)) continue
     pixels[i + 3] = 0
     maskPixels[i] = 255
     maskPixels[i + 1] = 255
@@ -62,13 +86,18 @@ const processChromaFrame = async (src: string): Promise<ChromaFrameAssets> => {
 
   frameCtx.putImageData(frameData, 0, 0)
   maskCtx.putImageData(maskData, 0, 0)
+  silhouetteCtx.putImageData(silhouetteData, 0, 0)
 
-  const [frameUrl, maskUrl] = await Promise.all([toBlobUrl(frameCanvas), toBlobUrl(maskCanvas)])
-  return { frameUrl, maskUrl }
+  const [frameUrl, maskUrl, silhouetteUrl] = await Promise.all([
+    toBlobUrl(frameCanvas),
+    toBlobUrl(maskCanvas),
+    toBlobUrl(silhouetteCanvas)
+  ])
+  return { frameUrl, maskUrl, silhouetteUrl }
 }
 
 export const useChromaFrame = (src: string | null | undefined) => {
-  const [assets, setAssets] = useState<ChromaFrameAssets | null>(() => (src ? (cache.get(src) ?? null) : null))
+  const [assets, setAssets] = useState<ChromaFrameAssets | null>(() => (src ? (cache.get(cacheKey(src)) ?? null) : null))
 
   useEffect(() => {
     if (!src) {
@@ -76,25 +105,26 @@ export const useChromaFrame = (src: string | null | undefined) => {
       return
     }
 
-    const cached = cache.get(src)
+    const key = cacheKey(src)
+    const cached = cache.get(key)
     if (cached) {
       setAssets(cached)
       return
     }
 
     let cancelled = false
-    let run = inflight.get(src)
+    let run = inflight.get(key)
 
     if (!run) {
       run = processChromaFrame(src)
         .then(result => {
-          cache.set(src, result)
+          cache.set(key, result)
           return result
         })
         .finally(() => {
-          inflight.delete(src)
+          inflight.delete(key)
         })
-      inflight.set(src, run)
+      inflight.set(key, run)
     }
 
     run

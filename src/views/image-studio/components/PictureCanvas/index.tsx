@@ -6,15 +6,15 @@ import { cn } from '@common/utils/cn'
 import DeviceFrameShell from '@views/image-studio/components/PictureCanvas/DeviceFrameShell'
 import PictureViewer from '@views/image-studio/components/PictureCanvas/PictureViewer'
 import usePictureSlot from '@views/image-studio/hooks/usePictureSlot'
-import { useShadowVisualStyles } from '@views/image-studio/hooks/useShadowVisualStyles'
+import { useShadowLightDom } from '@views/image-studio/hooks/useShadowLightDom'
 import useBackgroundStore from '@views/image-studio/store/background/background.store'
 import { resolveSmoothCornerStyle } from '@views/image-studio/store/background/backgroundRadius.store'
-import useImagesBorderStore from '@views/image-studio/store/images/useImagesBorderStore'
 import useImagesRadiusStore from '@views/image-studio/store/images/imagesRadius.store'
 import usePicturesStore, { type PictureItem } from '@views/image-studio/store/images/pictures.store'
+import useImagesBorderStore from '@views/image-studio/store/images/useImagesBorderStore'
 import { buildCanvasFrameStyle, insetBorderRadius } from '@views/image-studio/utils/borderFrame'
 import { getPictureLayout, type PictureLayoutRect } from '@views/image-studio/utils/pictureLayouts'
-import { type CSSProperties, type FC, useMemo } from 'react'
+import { memo, useCallback, useMemo, useRef, useState, type CSSProperties, type FC } from 'react'
 
 const fitFrameInSlot = (
   slot: { left: number; top: number; width: number; height: number },
@@ -48,7 +48,13 @@ type SlotProps = {
   selected: boolean
 }
 
-const PictureSlot: FC<SlotProps> = ({ picture, layout, canvasWidth, canvasHeight, selected }) => {
+const PictureSlot = memo(function PictureSlot({
+  picture,
+  layout,
+  canvasWidth,
+  canvasHeight,
+  selected
+}: SlotProps) {
   const { isLoading, setIsLoading, handleLoadError, handleDropFile, handleSize, select, imageUrl } =
     usePictureSlot(picture.id)
 
@@ -92,15 +98,24 @@ const PictureSlot: FC<SlotProps> = ({ picture, layout, canvasWidth, canvasHeight
   }, [frameAspect, slotHeight, slotLeft, slotTop, slotWidth])
 
   const { left, top, width: boxWidth, height: boxHeight } = frameBox
-  const { boxShadow, dropShadowFilter, lightOverlays } = useShadowVisualStyles(
-    picture.id,
-    Math.min(boxWidth, boxHeight)
-  )
+  const edgePx = Math.min(boxWidth, boxHeight)
+
+  const rootRef = useRef<HTMLDivElement>(null)
+  const boxShadowRef = useRef<HTMLDivElement>(null)
+  const lightsRef = useRef<HTMLDivElement>(null)
+  const [filterTarget, setFilterTarget] = useState<HTMLImageElement | null>(null)
+  const bindFilterTarget = useCallback((node: HTMLImageElement | null) => {
+    setFilterTarget(node)
+  }, [])
+
   const radiusCss = activeIndividualBorder
     ? `${borderLTRadius}px ${borderRTRadius}px ${borderRBRadius}px ${borderLBRadius}px`
     : `${borderRadiusValue}px`
 
-  const cornerShapeCss = useMemo(() => resolveSmoothCornerStyle(borderSmooth).cornerShape, [borderSmooth])
+  const cornerShapeCss = useMemo(
+    () => resolveSmoothCornerStyle(borderSmooth).cornerShape,
+    [borderSmooth]
+  )
   const showMat = !hasDeviceFrame && matEnabled && matTop + matRight + matBottom + matLeft > 0
   const strokeWidth = hasDeviceFrame || type === 'none' ? 0 : size
   const matInset = showMat ? Math.min(matTop, matRight, matBottom, matLeft) : 0
@@ -109,7 +124,7 @@ const PictureSlot: FC<SlotProps> = ({ picture, layout, canvasWidth, canvasHeight
   const effectiveBorderType = hasDeviceFrame ? 'none' : type
   const effectiveBorderSize = hasDeviceFrame ? 0 : size
 
-  const contentFrameStyle = useMemo((): CSSProperties => {
+  const { contentFrameStyle, baseBoxShadow } = useMemo(() => {
     const style = buildCanvasFrameStyle({
       width: '100%',
       height: '100%',
@@ -121,14 +136,12 @@ const PictureSlot: FC<SlotProps> = ({ picture, layout, canvasWidth, canvasHeight
       gradient,
       blendMode
     })
-    if (!hasDeviceFrame && boxShadow) {
-      style.boxShadow = [style.boxShadow, boxShadow].filter(Boolean).join(', ')
-    }
     if (!hasDeviceFrame && cornerShapeCss) Object.assign(style, { cornerShape: cornerShapeCss })
-    return style
+    const base = typeof style.boxShadow === 'string' ? style.boxShadow : ''
+    const { boxShadow: _ignored, ...withoutShadow } = style
+    return { contentFrameStyle: withoutShadow as CSSProperties, baseBoxShadow: base }
   }, [
     blendMode,
-    boxShadow,
     color,
     cornerShapeCss,
     effectiveBorderSize,
@@ -138,6 +151,17 @@ const PictureSlot: FC<SlotProps> = ({ picture, layout, canvasWidth, canvasHeight
     gradient,
     hasDeviceFrame
   ])
+
+  useShadowLightDom({
+    slotId: picture.id,
+    edgePx,
+    hasDeviceFrame,
+    baseBoxShadow: hasDeviceFrame ? '' : baseBoxShadow,
+    filterTarget: hasDeviceFrame ? filterTarget : null,
+    rootRef,
+    boxShadowRef,
+    lightsRef
+  })
 
   const matStyle = useMemo((): CSSProperties => {
     const style: CSSProperties = {
@@ -175,15 +199,9 @@ const PictureSlot: FC<SlotProps> = ({ picture, layout, canvasWidth, canvasHeight
     return style
   }, [cornerShapeCss, effectiveRadiusCss, hasDeviceFrame, matInset, strokeWidth])
 
-  const shellStyle = useMemo((): CSSProperties => {
-    if (hasDeviceFrame || !boxShadow) return {}
-    return { overflow: 'visible' }
-  }, [boxShadow, hasDeviceFrame])
-
-  const showShadow = Boolean(hasDeviceFrame ? dropShadowFilter : boxShadow)
-
   return (
     <div
+      ref={rootRef}
       role='button'
       tabIndex={0}
       onClick={select}
@@ -194,8 +212,7 @@ const PictureSlot: FC<SlotProps> = ({ picture, layout, canvasWidth, canvasHeight
         }
       }}
       className={cn(
-        'absolute cursor-pointer outline-none',
-        showShadow ? 'overflow-visible' : 'overflow-hidden',
+        'absolute cursor-pointer overflow-visible outline-none',
         !hasDeviceFrame && 'rounded-sm',
         selected && 'z-10'
       )}
@@ -203,19 +220,12 @@ const PictureSlot: FC<SlotProps> = ({ picture, layout, canvasWidth, canvasHeight
     >
       <DeviceFrameShell
         frameId={picture.frameId}
-        className='size-full'
-        style={shellStyle}
-        dropShadowFilter={hasDeviceFrame ? dropShadowFilter : undefined}
+        className='size-full overflow-visible'
+        filterTargetRef={bindFilterTarget}
       >
-        <div
-          className='relative size-full'
-          style={{
-            ...contentFrameStyle,
-            overflow: !hasDeviceFrame && boxShadow ? 'visible' : 'hidden'
-          }}
-        >
+        <div ref={boxShadowRef} className='relative size-full overflow-visible' style={contentFrameStyle}>
           <div className='relative size-full overflow-hidden' style={matStyle}>
-            <div className='relative size-full' style={contentStyle}>
+            <div className='relative size-full overflow-hidden' style={contentStyle}>
               {imageUrl && (
                 <PictureViewer
                   imageUrl={imageUrl}
@@ -225,13 +235,7 @@ const PictureSlot: FC<SlotProps> = ({ picture, layout, canvasWidth, canvasHeight
                   onSize={handleSize}
                 />
               )}
-              {lightOverlays.map((overlay, index) => (
-                <div
-                  key={`light-${picture.id}-${index}`}
-                  className='pointer-events-none absolute inset-0 z-[1]'
-                  style={overlay}
-                />
-              ))}
+              <div ref={lightsRef} className='pointer-events-none absolute inset-0 z-[1]' />
               <Dropzone
                 onDrop={handleDropFile}
                 maxFiles={1}
@@ -244,7 +248,7 @@ const PictureSlot: FC<SlotProps> = ({ picture, layout, canvasWidth, canvasHeight
       </DeviceFrameShell>
     </div>
   )
-}
+})
 
 const PictureCanvas: FC = () => {
   const pictures = usePicturesStore(s => s.pictures)

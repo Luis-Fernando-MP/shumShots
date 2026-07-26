@@ -9,7 +9,7 @@ import useShadowStore, {
   type ShadowType
 } from '@views/image-studio/store/shadow/shadow.store'
 import { SunIcon } from 'lucide-react'
-import { type FC, type PointerEvent as ReactPointerEvent, useRef, useState } from 'react'
+import { type FC, type PointerEvent as ReactPointerEvent, useEffect, useRef, useState } from 'react'
 
 import SectionBlock from '../../BackgroundConfiguration/wrappers/SectionBlock'
 
@@ -44,6 +44,7 @@ const SPREAD_GROW: Record<Exclude<ShadowType, 'none'>, number> = {
 
 const clamp01 = (value: number, margin = 0) => Math.min(1 - margin, Math.max(margin, value))
 const nearlySame = (a: SunPos, b: SunPos) => Math.abs(a.x - b.x) < 1e-4 && Math.abs(a.y - b.y) < 1e-4
+const round1 = (value: number) => Math.round(value * 10) / 10
 
 const shadowPreset = (type: ShadowType) =>
   SHADOW_PRESETS.find(item => item.type === type) ?? SHADOW_PRESETS[0]
@@ -79,14 +80,17 @@ const applyFocus = (nx: number, ny: number, source: Kind) => {
     const relY = (ny - 0.5) * 2
     const distance = Math.min(1, Math.hypot(relX, relY))
     const throwPx = THROW[shadow.type]
-    const position = { x: -relX * throwPx, y: -relY * throwPx }
-    const blur = Math.max(0, base.blur + distance * BLUR_GROW[shadow.type])
-    const spread = base.spread + distance * SPREAD_GROW[shadow.type]
+    const position = {
+      x: round1(-relX * throwPx),
+      y: round1(-relY * throwPx)
+    }
+    const blur = round1(Math.max(0, base.blur + distance * BLUR_GROW[shadow.type]))
+    const spread = round1(base.spread + distance * SPREAD_GROW[shadow.type])
     if (
-      Math.abs(shadow.position.x - position.x) > 1e-3 ||
-      Math.abs(shadow.position.y - position.y) > 1e-3 ||
-      Math.abs(shadow.blur - blur) > 1e-3 ||
-      Math.abs(shadow.spread - spread) > 1e-3
+      Math.abs(shadow.position.x - position.x) > 0.05 ||
+      Math.abs(shadow.position.y - position.y) > 0.05 ||
+      Math.abs(shadow.blur - blur) > 0.05 ||
+      Math.abs(shadow.spread - spread) > 0.05
     ) {
       shadowPatch = { position, blur, spread }
     }
@@ -100,15 +104,19 @@ const applyFocus = (nx: number, ny: number, source: Kind) => {
     else if (light.type === 'beam') size = Math.max(32, base.size - distance * 6)
     else if (light.type === 'rim') size = base.size + distance * 8
     else if (light.type === 'warm' || light.type === 'cool') size = base.size + distance * 12
+    size = round1(size)
+    const focus = { x: round1(nx * 1000) / 1000, y: round1(ny * 1000) / 1000 }
 
     if (
-      Math.abs(light.focus.x - nx) > 1e-4 ||
-      Math.abs(light.focus.y - ny) > 1e-4 ||
-      Math.abs(light.size - size) > 1e-3
+      Math.abs(light.focus.x - focus.x) > 0.002 ||
+      Math.abs(light.focus.y - focus.y) > 0.002 ||
+      Math.abs(light.size - size) > 0.05
     ) {
-      lightPatch = { focus: { x: nx, y: ny }, size }
+      lightPatch = { focus, size }
     }
   }
+
+  if (!shadowPatch && !lightPatch) return
 
   if (shadowPatch && lightPatch) {
     useShadowStore.setState(s => ({
@@ -129,6 +137,8 @@ const FocusPad: FC<{ kind: Kind }> = ({ kind }) => {
   const { shadow, light, boxShadow, lightOverlay } = useActiveLayerPreview()
   const padRef = useRef<HTMLDivElement>(null)
   const dragging = useRef(false)
+  const pendingFocus = useRef<SunPos | null>(null)
+  const rafId = useRef(0)
   const [dragSun, setDragSun] = useState<SunPos | null>(null)
 
   const shadowType = shadow?.type ?? 'none'
@@ -143,6 +153,25 @@ const FocusPad: FC<{ kind: Kind }> = ({ kind }) => {
       : { x: light?.focus.x ?? 0.55, y: light?.focus.y ?? 0.28 }
   const sun = dragSun ?? storeSun
 
+  useEffect(
+    () => () => {
+      if (rafId.current) cancelAnimationFrame(rafId.current)
+    },
+    []
+  )
+
+  const flushFocus = () => {
+    rafId.current = 0
+    const next = pendingFocus.current
+    if (!next) return
+    applyFocus(next.x, next.y, kind)
+  }
+
+  const queueFocus = (next: SunPos) => {
+    pendingFocus.current = next
+    if (!rafId.current) rafId.current = requestAnimationFrame(flushFocus)
+  }
+
   const moveSun = (event: ReactPointerEvent) => {
     const pad = padRef.current
     if (!pad || disabled) return
@@ -153,11 +182,19 @@ const FocusPad: FC<{ kind: Kind }> = ({ kind }) => {
       y: clamp01((event.clientY - rect.top) / rect.height, SUN_MARGIN)
     }
     setDragSun(prev => (prev && nearlySame(prev, next) ? prev : next))
-    applyFocus(next.x, next.y, kind)
+    queueFocus(next)
   }
 
   const endDrag = (event: ReactPointerEvent<HTMLDivElement>) => {
     dragging.current = false
+    if (rafId.current) {
+      cancelAnimationFrame(rafId.current)
+      rafId.current = 0
+    }
+    if (pendingFocus.current) {
+      applyFocus(pendingFocus.current.x, pendingFocus.current.y, kind)
+      pendingFocus.current = null
+    }
     setDragSun(null)
     if (event.currentTarget.hasPointerCapture(event.pointerId)) {
       event.currentTarget.releasePointerCapture(event.pointerId)

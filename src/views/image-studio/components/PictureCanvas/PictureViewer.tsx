@@ -1,9 +1,9 @@
 'use client'
 
 import ShumShots from '@/shared/ui/ShumShots'
-import { type FC, useEffect } from 'react'
+import { createElement, type FC, useEffect, useRef } from 'react'
 
-interface Props {
+type Props = {
   imageUrl?: string | null
   isLoading: boolean
   setIsLoading: (isLoading: boolean) => void
@@ -11,48 +11,39 @@ interface Props {
   onSize: (size: { width: number; height: number; aspectRatio: number }) => void
 }
 
-const MAX_WIDTH = 624
-const MAX_HEIGHT = 416
-
 const PictureViewer: FC<Props> = ({ imageUrl, isLoading, setIsLoading, onError, onSize }) => {
+  const onErrorRef = useRef(onError)
+  const onSizeRef = useRef(onSize)
+  const setIsLoadingRef = useRef(setIsLoading)
+  const lastSizeKey = useRef('')
+
+  onErrorRef.current = onError
+  onSizeRef.current = onSize
+  setIsLoadingRef.current = setIsLoading
+
   useEffect(() => {
     if (!imageUrl) return
 
     const img = new Image()
     img.src = imageUrl
 
-    const handleImageLoad = () => {
+    img.onload = () => {
       const { naturalWidth, naturalHeight } = img
-      const ratio = naturalWidth / naturalHeight
-      let nextWidth = naturalWidth
-      let nextHeight = naturalHeight
-
-      if (naturalWidth > MAX_WIDTH) {
-        nextWidth = MAX_WIDTH
-        nextHeight = nextWidth / ratio
+      const aspectRatio = naturalWidth / Math.max(1, naturalHeight)
+      const key = `${naturalWidth}x${naturalHeight}`
+      if (lastSizeKey.current !== key) {
+        lastSizeKey.current = key
+        onSizeRef.current({ width: naturalWidth, height: naturalHeight, aspectRatio })
       }
-
-      if (nextHeight > MAX_HEIGHT) {
-        nextHeight = MAX_HEIGHT
-        nextWidth = nextHeight * ratio
-      }
-
-      onSize({
-        width: Math.round(nextWidth),
-        height: Math.round(nextHeight),
-        aspectRatio: ratio
-      })
-      setIsLoading(false)
+      setIsLoadingRef.current(false)
     }
-
-    img.onload = handleImageLoad
-    img.onerror = onError
+    img.onerror = () => onErrorRef.current()
 
     return () => {
       img.onload = null
       img.onerror = null
     }
-  }, [imageUrl, onError, onSize, setIsLoading])
+  }, [imageUrl])
 
   if (!imageUrl) return null
 
@@ -64,15 +55,12 @@ const PictureViewer: FC<Props> = ({ imageUrl, isLoading, setIsLoading, onError, 
     )
   }
 
-  return (
-    // eslint-disable-next-line @next/next/no-img-element
-    <img
-      src={imageUrl}
-      className='pointer-events-none absolute inset-0 size-full object-cover object-center'
-      alt='Imagen del shot'
-      onError={onError}
-    />
-  )
+  return createElement('img', {
+    src: imageUrl,
+    className: 'pointer-events-none absolute inset-0 size-full object-cover object-center',
+    alt: 'Imagen del shot',
+    onError
+  })
 }
 
 export default PictureViewer

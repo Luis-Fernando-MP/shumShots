@@ -113,13 +113,24 @@ const state: StateCreator<PicturesState> = (set, get) => ({
     })),
 
   setPictureSize: (id, size) =>
-    set(s => ({
-      pictures: s.pictures.map(item =>
-        item.id === id
-          ? { ...item, width: size.width, height: size.height, aspectRatio: size.aspectRatio }
-          : item
-      )
-    })),
+    set(s => {
+      const current = s.pictures.find(item => item.id === id)
+      if (
+        current &&
+        current.width === size.width &&
+        current.height === size.height &&
+        current.aspectRatio === size.aspectRatio
+      ) {
+        return s
+      }
+      return {
+        pictures: s.pictures.map(item =>
+          item.id === id
+            ? { ...item, width: size.width, height: size.height, aspectRatio: size.aspectRatio }
+            : item
+        )
+      }
+    }),
 
   reorderSlots: (activeId, overId) =>
     set(s => {

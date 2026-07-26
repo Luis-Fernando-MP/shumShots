@@ -59,9 +59,7 @@ export const promoteLegacyImagePersist = async () => {
           }
           if (images.length > 0) useImageLibraryStore.setState({ images })
         }
-      } catch {
-        // ignore
-      }
+      } catch {}
     }
   }
 
@@ -81,7 +79,5 @@ export const promoteLegacyImagePersist = async () => {
       count: typeof parsed.state?.count === 'number' ? parsed.state.count : pictures.length,
       selectedId: parsed.state?.selectedId ?? slots.selectedId
     })
-  } catch {
-    // ignore
-  }
+  } catch {}
 }
