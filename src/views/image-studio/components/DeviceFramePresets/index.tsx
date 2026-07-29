@@ -3,7 +3,9 @@
 import { framesQuery, type Frame } from '@common/core'
 import Typography from '@common/ui/Typography'
 import { cn } from '@common/utils/cn'
-import useFrameStore from '@views/image-studio/Popups/FrameConfiguration/store'
+import useFrameStore, {
+  createDefaultFrameConfig
+} from '@views/image-studio/Popups/FrameConfiguration/store'
 import { CircleOffIcon } from 'lucide-react'
 import { type FC } from 'react'
 
@@ -42,8 +44,12 @@ const FrameThumb: FC<{
   )
 }
 
-const DeviceFramePresets: FC = () => {
-  const frameId = useFrameStore(s => s.frameId)
+type Props = { tabId: string }
+
+const DeviceFramePresets: FC<Props> = ({ tabId }) => {
+  const frameId = useFrameStore(
+    s => s.byTab[tabId]?.frameId ?? createDefaultFrameConfig().frameId
+  )
   const setFrameId = useFrameStore(s => s.setFrameId)
   const { data, isLoading, isError } = framesQuery.list()
 
@@ -61,7 +67,7 @@ const DeviceFramePresets: FC = () => {
     <div className='gap-grid flex flex-col'>
       <button
         type='button'
-        onClick={() => setFrameId(null)}
+        onClick={() => setFrameId(tabId, null)}
         aria-label='Sin frame'
         className={cn(
           'border-border/70 text-muted-foreground hover:bg-muted/50 hover:text-foreground flex h-9 w-full items-center justify-center gap-2 rounded-radius border px-2 text-[11px] font-medium transition-colors',
@@ -89,7 +95,7 @@ const DeviceFramePresets: FC = () => {
                 key={frame.id}
                 frame={frame}
                 active={frameId === frame.id}
-                onSelect={setFrameId}
+                onSelect={id => setFrameId(tabId, id)}
               />
             ))}
           </div>

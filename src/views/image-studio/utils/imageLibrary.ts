@@ -15,7 +15,9 @@ export const fileToDataUrl = (file: File) =>
 
 export const importStudioImage = async (file: File): Promise<LibraryImage> => {
   const raw = await fileToDataUrl(file)
-  const compressed = await compressImageDataUrl(raw)
+  const compressed = await compressImageDataUrl(raw, {
+    preferPng: file.type === 'image/png' || raw.startsWith('data:image/png')
+  })
   return useImageLibraryStore.getState().addImage({
     dataUrl: compressed.dataUrl,
     width: compressed.width,
@@ -26,10 +28,11 @@ export const importStudioImage = async (file: File): Promise<LibraryImage> => {
 
 export const compressImageDataUrl = async (
   dataUrl: string,
-  options?: { maxEdge?: number; quality?: number }
+  options?: { maxEdge?: number; quality?: number; preferPng?: boolean }
 ): Promise<{ dataUrl: string; width: number; height: number; bytes: number }> => {
-  const maxEdge = options?.maxEdge ?? 1280
-  const quality = options?.quality ?? 0.72
+  const maxEdge = options?.maxEdge ?? 3200
+  const quality = options?.quality ?? 0.92
+  const preferPng = options?.preferPng ?? dataUrl.startsWith('data:image/png')
 
   const img = await new Promise<HTMLImageElement>((resolve, reject) => {
     const node = new Image()
@@ -49,7 +52,10 @@ export const compressImageDataUrl = async (
   if (!ctx) throw new Error('2d context unavailable')
 
   ctx.drawImage(img, 0, 0, width, height)
-  const compressed = canvas.toDataURL('image/jpeg', quality)
+
+  const compressed = preferPng
+    ? canvas.toDataURL('image/png')
+    : canvas.toDataURL('image/jpeg', quality)
   const bytes = Math.round((compressed.length * 3) / 4)
 
   return { dataUrl: compressed, width, height, bytes }

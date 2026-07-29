@@ -10,10 +10,10 @@ import { shadowScaleForSize } from '@views/image-studio/fx/shared/targeting'
 
 const PREVIEW_EDGE = 56
 
-export const useActiveLayerPreview = () => {
+export const useActiveLayerPreview = (tabId: string) => {
   const scale = shadowScaleForSize(PREVIEW_EDGE)
-  const shadow = useShadowStore(getActiveShadow)
-  const light = useShadowStore(getActiveLight)
+  const shadow = useShadowStore(getActiveShadow(tabId))
+  const light = useShadowStore(getActiveLight(tabId))
 
   return {
     shadow,

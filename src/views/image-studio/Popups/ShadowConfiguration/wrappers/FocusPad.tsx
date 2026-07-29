@@ -4,7 +4,10 @@ import { cn } from '@common/utils/cn'
 import { LIGHT_DATA, LIGHT_PRESETS, normalizeLightType, type LightType } from '@views/image-studio/fx/light'
 import { SHADOW_DATA, SHADOW_PRESETS, type ShadowType } from '@views/image-studio/fx/shadow'
 import { useActiveLayerPreview } from '@views/image-studio/hooks/useShadowVisualStyles'
-import useShadowStore from '@views/image-studio/Popups/ShadowConfiguration/store'
+import useShadowStore, {
+  createDefaultShadowConfig,
+  selectTabConfig
+} from '@views/image-studio/Popups/ShadowConfiguration/store'
 import { SunIcon } from 'lucide-react'
 import { type FC, type PointerEvent as ReactPointerEvent, useEffect, useRef, useState } from 'react'
 
@@ -33,19 +36,20 @@ const sunFromShadowPosition = (type: ShadowType, position: { x: number; y: numbe
   }
 }
 
-const applyFocus = (nx: number, ny: number, source: Kind) => {
+const applyFocus = (tabId: string, nx: number, ny: number, source: Kind) => {
   const state = useShadowStore.getState()
+  const config = selectTabConfig(tabId)(state)
   const shadow =
-    state.shadowLayers.find(layer => layer.id === state.activeShadowId) ?? state.shadowLayers[0]
+    config.shadowLayers.find(layer => layer.id === config.activeShadowId) ?? config.shadowLayers[0]
   const light =
-    state.lightLayers.find(layer => layer.id === state.activeLightId) ?? state.lightLayers[0]
+    config.lightLayers.find(layer => layer.id === config.activeLightId) ?? config.lightLayers[0]
   const canLink = Boolean(shadow && shadow.type !== 'none' && light && light.type !== 'none')
-  const linked = state.linkFocus && canLink
+  const linked = config.linkFocus && canLink
   const touchShadow = source === 'shadow' || linked
   const touchLight = source === 'light' || linked
 
-  let shadowPatch: Parameters<typeof state.updateActiveShadow>[0] | null = null
-  let lightPatch: Parameters<typeof state.updateActiveLight>[0] | null = null
+  let shadowPatch: Parameters<typeof state.updateActiveShadow>[1] | null = null
+  let lightPatch: Parameters<typeof state.updateActiveLight>[1] | null = null
 
   if (touchShadow && shadow && shadow.type !== 'none') {
     const base = shadowPreset(shadow.type)
@@ -96,22 +100,31 @@ const applyFocus = (nx: number, ny: number, source: Kind) => {
   if (!shadowPatch && !lightPatch) return
 
   if (shadowPatch && lightPatch) {
-    useShadowStore.setState(s => ({
-      shadowLayers: s.shadowLayers.map(layer =>
-        layer.id === s.activeShadowId ? { ...layer, ...shadowPatch } : layer
-      ),
-      lightLayers: s.lightLayers.map(layer =>
-        layer.id === s.activeLightId ? { ...layer, ...lightPatch } : layer
-      )
-    }))
+    useShadowStore.setState(s => {
+      const current = s.byTab[tabId] ?? createDefaultShadowConfig()
+      return {
+        byTab: {
+          ...s.byTab,
+          [tabId]: {
+            ...current,
+            shadowLayers: current.shadowLayers.map(layer =>
+              layer.id === current.activeShadowId ? { ...layer, ...shadowPatch } : layer
+            ),
+            lightLayers: current.lightLayers.map(layer =>
+              layer.id === current.activeLightId ? { ...layer, ...lightPatch } : layer
+            )
+          }
+        }
+      }
+    })
     return
   }
-  if (shadowPatch) state.updateActiveShadow(shadowPatch)
-  if (lightPatch) state.updateActiveLight(lightPatch)
+  if (shadowPatch) state.updateActiveShadow(tabId, shadowPatch)
+  if (lightPatch) state.updateActiveLight(tabId, lightPatch)
 }
 
-const FocusPad: FC<{ kind: Kind }> = ({ kind }) => {
-  const { shadow, light, boxShadow, lightOverlay } = useActiveLayerPreview()
+const FocusPad: FC<{ kind: Kind; tabId: string }> = ({ kind, tabId }) => {
+  const { shadow, light, boxShadow, lightOverlay } = useActiveLayerPreview(tabId)
   const padRef = useRef<HTMLDivElement>(null)
   const dragging = useRef(false)
   const pendingFocus = useRef<SunPos | null>(null)
@@ -121,7 +134,7 @@ const FocusPad: FC<{ kind: Kind }> = ({ kind }) => {
   const shadowType = shadow?.type ?? 'none'
   const lightType = light ? normalizeLightType(light.type) : 'none'
   const disabled = kind === 'shadow' ? shadowType === 'none' : lightType === 'none'
-  const linkFocus = useShadowStore(s => s.linkFocus)
+  const linkFocus = useShadowStore(s => s.byTab[tabId]?.linkFocus ?? false)
   const linked = linkFocus && shadowType !== 'none' && lightType !== 'none'
 
   const storeSun =
@@ -141,7 +154,7 @@ const FocusPad: FC<{ kind: Kind }> = ({ kind }) => {
     rafId.current = 0
     const next = pendingFocus.current
     if (!next) return
-    applyFocus(next.x, next.y, kind)
+    applyFocus(tabId, next.x, next.y, kind)
   }
 
   const queueFocus = (next: SunPos) => {
@@ -169,7 +182,7 @@ const FocusPad: FC<{ kind: Kind }> = ({ kind }) => {
       rafId.current = 0
     }
     if (pendingFocus.current) {
-      applyFocus(pendingFocus.current.x, pendingFocus.current.y, kind)
+      applyFocus(tabId, pendingFocus.current.x, pendingFocus.current.y, kind)
       pendingFocus.current = null
     }
     setDragSun(null)

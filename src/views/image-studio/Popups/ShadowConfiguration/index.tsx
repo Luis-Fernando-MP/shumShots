@@ -3,16 +3,26 @@
 import Popup from '@/shared/components/Popup'
 import Button from '@/shared/ui/Button'
 import { Button as UiButton } from '@common/ui/Button'
+import Separator from '@common/ui/Separator'
+import { TABS_SCOPES } from '@views/image-studio/constants'
 import useShadowStore from '@views/image-studio/Popups/ShadowConfiguration/store'
+import Tabs from '@views/image-studio/shared/components/tabs'
+import { getTabsStore } from '@views/image-studio/shared/components/tabs/store'
 import { CloudSunIcon } from 'lucide-react'
-import { type FC } from 'react'
+import { type FC, useEffect } from 'react'
 
 import LayerPanel from './wrappers/LayerPanel'
 import LinkFocusSection from './wrappers/LinkFocusSection'
 
 const ShadowConfiguration: FC = () => {
-  const clearShadows = useShadowStore(s => s.clearShadows)
-  const clearLights = useShadowStore(s => s.clearLights)
+  const syncTabs = useShadowStore(s => s.syncTabs)
+  const reset = useShadowStore(s => s.reset)
+
+  useEffect(() => {
+    const tabs = getTabsStore(TABS_SCOPES.shadow)
+    syncTabs(tabs.getState().layers)
+    return tabs.subscribe(state => syncTabs(state.layers))
+  }, [syncTabs])
 
   return (
     <Popup className='h-[min(820px,90vh)] w-[360px]'>
@@ -29,11 +39,20 @@ const ShadowConfiguration: FC = () => {
       </Popup.Header>
 
       <Popup.Content className='gap-grid-lg flex flex-col text-xs'>
-        <LinkFocusSection />
-        <div className='bg-border/70 h-px w-full' />
-        <LayerPanel kind='shadow' />
-        <div className='bg-border/70 h-px w-full' />
-        <LayerPanel kind='light' />
+        <Tabs scope={TABS_SCOPES.shadow} onTabsChange={layers => syncTabs(layers)}>
+          <Tabs.Title>Destinos y efectos</Tabs.Title>
+          <Tabs.Content>
+            {({ selectedTab }) => (
+              <div className='gap-grid-lg flex flex-col'>
+                <LinkFocusSection tabId={selectedTab.id} />
+                <Separator orientation='horizontal' />
+                <LayerPanel kind='shadow' tabId={selectedTab.id} />
+                <Separator orientation='horizontal' />
+                <LayerPanel kind='light' tabId={selectedTab.id} />
+              </div>
+            )}
+          </Tabs.Content>
+        </Tabs>
       </Popup.Content>
 
       <Popup.Footer>
@@ -43,8 +62,8 @@ const ShadowConfiguration: FC = () => {
           size='sm'
           className='w-full text-xs'
           onClick={() => {
-            clearShadows()
-            clearLights()
+            reset()
+            getTabsStore(TABS_SCOPES.shadow).getState().reset()
           }}
         >
           Resetear cambios

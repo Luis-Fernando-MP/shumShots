@@ -2,8 +2,12 @@
 
 import ShumShots from '@/shared/ui/ShumShots'
 import useFrameStore, {
+  createDefaultFrameConfig,
   defaultSlotPan
 } from '@views/image-studio/Popups/FrameConfiguration/store'
+import { TABS_SCOPES } from '@views/image-studio/constants'
+import { getTabsStore } from '@views/image-studio/shared/components/tabs/store'
+import { resolveTabConfig } from '@views/image-studio/shared/resolveTabConfig'
 import { type FC, useEffect, useLayoutEffect, useRef } from 'react'
 
 type Props = {
@@ -59,12 +63,20 @@ const PictureViewer: FC<Props> = ({
   }, [imageUrl])
 
   useLayoutEffect(() => {
-    const apply = (state = useFrameStore.getState()) => {
+    const apply = () => {
       const image = imageRef.current
       if (!image) return
 
-      const fitMode = frameActive ? state.fitMode : 'cover'
-      const position = frameActive ? (state.slotPan[slotId] ?? defaultSlotPan) : defaultSlotPan
+      const frameState = useFrameStore.getState()
+      const layers = getTabsStore(TABS_SCOPES.frame).getState().layers
+      const resolved = resolveTabConfig(
+        layers,
+        frameState.byTab,
+        slotId,
+        createDefaultFrameConfig()
+      )
+      const fitMode = frameActive ? resolved.fitMode : 'cover'
+      const position = frameActive ? (frameState.slotPan[slotId] ?? defaultSlotPan) : defaultSlotPan
       const objectPosition = `${position.x * 100}% ${position.y * 100}%`
 
       if (image.style.objectFit !== fitMode) image.style.objectFit = fitMode
@@ -74,7 +86,12 @@ const PictureViewer: FC<Props> = ({
     }
 
     apply()
-    return useFrameStore.subscribe(apply)
+    const unsubFrame = useFrameStore.subscribe(apply)
+    const unsubTabs = getTabsStore(TABS_SCOPES.frame).subscribe(apply)
+    return () => {
+      unsubFrame()
+      unsubTabs()
+    }
   }, [frameActive, slotId])
 
   if (!imageUrl) return null

@@ -3,31 +3,25 @@
 import Dropzone from '@/shared/components/Dropzone'
 import { framesQuery } from '@common/core'
 import { cn } from '@common/utils/cn'
+import useFrameStore, { createDefaultFrameConfig } from '@views/image-studio/Popups/FrameConfiguration/store'
 import DeviceFrameShell from '@views/image-studio/components/PictureCanvas/DeviceFrameShell'
 import PictureViewer from '@views/image-studio/components/PictureCanvas/PictureViewer'
+import { TABS_SCOPES } from '@views/image-studio/constants'
+import { layerAppliesTo } from '@views/image-studio/fx/shared/targeting'
 import usePictureSlot from '@views/image-studio/hooks/usePictureSlot'
 import { useShadowLightDom } from '@views/image-studio/hooks/useShadowLightDom'
+import { getTabsStore } from '@views/image-studio/shared/components/tabs/store'
+import { getPositionEntry } from '@views/image-studio/slotPositions/data'
 import useBackgroundStore from '@views/image-studio/store/background/background.store'
 import { resolveSmoothCornerStyle } from '@views/image-studio/store/background/backgroundRadius.store'
-import useImagesRadiusStore from '@views/image-studio/store/images/imagesRadius.store'
+import useCornerStore, { createDefaultCornerConfig } from '@views/image-studio/store/corner'
+import useGridStore from '@views/image-studio/store/grid'
 import usePicturesStore, { type PictureItem } from '@views/image-studio/store/images/pictures.store'
-import useImagesBorderStore from '@views/image-studio/store/images/useImagesBorderStore'
+import useSizeStore, { resolveSlotSizeFromState } from '@views/image-studio/store/size'
 import { buildCanvasFrameStyle, insetBorderRadius } from '@views/image-studio/utils/borderFrame'
-import { getPictureLayout, type PictureLayoutRect } from '@views/image-studio/utils/pictureLayouts'
-import {
-  memo,
-  useCallback,
-  useMemo,
-  useRef,
-  useState,
-  type CSSProperties,
-  type FC
-} from 'react'
+import { type CSSProperties, type FC, memo, useCallback, useMemo, useRef, useState } from 'react'
 
-const fitFrameInSlot = (
-  slot: { left: number; top: number; width: number; height: number },
-  aspect: number
-) => {
+const fitFrameInSlot = (slot: { left: number; top: number; width: number; height: number }, aspect: number) => {
   const slotAspect = slot.width / Math.max(1, slot.height)
   let width = slot.width
   let height = slot.height
@@ -48,65 +42,86 @@ const fitFrameInSlot = (
   }
 }
 
+const resolveLayerIdForSlot = (layers: { id: string; targetIds: string[] }[], slotId: string) => {
+  for (let i = layers.length - 1; i >= 0; i -= 1) {
+    const layer = layers[i]
+    if (!layerAppliesTo(layer.targetIds, slotId)) continue
+    return layer.id
+  }
+  return null
+}
+
 type SlotProps = {
   picture: PictureItem
-  layout: PictureLayoutRect
-  canvasWidth: number
-  canvasHeight: number
+  left: number
+  top: number
+  slotWidth: number
+  slotHeight: number
+  rotateZ: number
+  rotateX: number
+  rotateY: number
+  zIndex: number
   selected: boolean
 }
 
 const PictureSlot = memo(function PictureSlot({
   picture,
-  layout,
-  canvasWidth,
-  canvasHeight,
+  left: slotLeft,
+  top: slotTop,
+  slotWidth,
+  slotHeight,
+  rotateZ,
+  rotateX,
+  rotateY,
+  zIndex,
   selected
 }: SlotProps) {
-  const { isLoading, setIsLoading, handleLoadError, handleDropFile, handleSize, select, imageUrl } =
-    usePictureSlot(picture.id)
+  const { isLoading, setIsLoading, handleLoadError, handleDropFile, handleSize, select, imageUrl } = usePictureSlot(picture.id)
 
-  const activeIndividualBorder = useImagesRadiusStore(s => s.activeIndividualBorder)
-  const borderRadiusValue = useImagesRadiusStore(s => s.borderRadius)
-  const borderLTRadius = useImagesRadiusStore(s => s.borderLTRadius)
-  const borderRTRadius = useImagesRadiusStore(s => s.borderRTRadius)
-  const borderRBRadius = useImagesRadiusStore(s => s.borderRBRadius)
-  const borderLBRadius = useImagesRadiusStore(s => s.borderLBRadius)
-  const borderSmooth = useImagesRadiusStore(s => s.borderSmooth)
+  const cornerLayers = getTabsStore(TABS_SCOPES.corner)(s => s.layers)
+  const cornerTabId = useMemo(() => resolveLayerIdForSlot(cornerLayers, picture.id), [cornerLayers, picture.id])
+  const defaultCorner = useMemo(() => createDefaultCornerConfig(), [])
+  const corner = useCornerStore(s => (cornerTabId ? s.byTab[cornerTabId] : undefined) ?? defaultCorner)
+  const {
+    activeIndividualBorder,
+    borderRadius: borderRadiusValue,
+    borderLTRadius,
+    borderRTRadius,
+    borderRBRadius,
+    borderLBRadius,
+    borderSmooth
+  } = corner.radius
+  const { color, size, type, finish, gradient, blendMode, matEnabled, matColor, matTop, matRight, matBottom, matLeft } =
+    corner.border
 
-  const color = useImagesBorderStore(s => s.color)
-  const size = useImagesBorderStore(s => s.size)
-  const type = useImagesBorderStore(s => s.type)
-  const finish = useImagesBorderStore(s => s.finish)
-  const gradient = useImagesBorderStore(s => s.gradient)
-  const blendMode = useImagesBorderStore(s => s.blendMode)
-  const matEnabled = useImagesBorderStore(s => s.matEnabled)
-  const matColor = useImagesBorderStore(s => s.matColor)
-  const matTop = useImagesBorderStore(s => s.matTop)
-  const matRight = useImagesBorderStore(s => s.matRight)
-  const matBottom = useImagesBorderStore(s => s.matBottom)
-  const matLeft = useImagesBorderStore(s => s.matLeft)
+  const frameLayers = getTabsStore(TABS_SCOPES.frame)(s => s.layers)
+  const frameTabId = useMemo(() => resolveLayerIdForSlot(frameLayers, picture.id), [frameLayers, picture.id])
+  const defaultFrame = useMemo(() => createDefaultFrameConfig(), [])
+  const frameConfig = useFrameStore(s => (frameTabId ? s.byTab[frameTabId] : undefined) ?? defaultFrame)
+  const resolvedFrameId = frameConfig.frameId
 
   const { data: framesData } = framesQuery.list()
-  const catalogFrame = picture.frameId
-    ? (framesData?.data?.frames.find(item => item.id === picture.frameId) ?? null)
-    : null
+  const catalogFrame = resolvedFrameId ? (framesData?.data?.frames.find(item => item.id === resolvedFrameId) ?? null) : null
   const frameAspect = catalogFrame?.aspect ?? null
   const hasDeviceFrame = Boolean(catalogFrame)
 
-  const slotWidth = (layout.w / 100) * canvasWidth
-  const slotHeight = (layout.h / 100) * canvasHeight
-  const slotLeft = (layout.x / 100) * canvasWidth
-  const slotTop = (layout.y / 100) * canvasHeight
-
   const frameBox = useMemo(() => {
-    const slot = { left: slotLeft, top: slotTop, width: slotWidth, height: slotHeight }
+    const slot = { left: 0, top: 0, width: slotWidth, height: slotHeight }
     if (!frameAspect || frameAspect <= 0) return slot
     return fitFrameInSlot(slot, frameAspect)
-  }, [frameAspect, slotHeight, slotLeft, slotTop, slotWidth])
+  }, [frameAspect, slotHeight, slotWidth])
 
   const { left, top, width: boxWidth, height: boxHeight } = frameBox
   const edgePx = Math.min(boxWidth, boxHeight)
+  const has3d = rotateX !== 0 || rotateY !== 0
+  const transform = [
+    has3d ? `perspective(900px)` : '',
+    `rotateX(${rotateX}deg)`,
+    `rotateY(${rotateY}deg)`,
+    `rotateZ(${rotateZ}deg)`
+  ]
+    .filter(Boolean)
+    .join(' ')
 
   const rootRef = useRef<HTMLDivElement>(null)
   const boxShadowRef = useRef<HTMLDivElement>(null)
@@ -120,10 +135,7 @@ const PictureSlot = memo(function PictureSlot({
     ? `${borderLTRadius}px ${borderRTRadius}px ${borderRBRadius}px ${borderLBRadius}px`
     : `${borderRadiusValue}px`
 
-  const cornerShapeCss = useMemo(
-    () => resolveSmoothCornerStyle(borderSmooth).cornerShape,
-    [borderSmooth]
-  )
+  const cornerShapeCss = useMemo(() => resolveSmoothCornerStyle(borderSmooth).cornerShape, [borderSmooth])
   const showMat = !hasDeviceFrame && matEnabled && matTop + matRight + matBottom + matLeft > 0
   const strokeWidth = hasDeviceFrame || type === 'none' ? 0 : size
   const matInset = showMat ? Math.min(matTop, matRight, matBottom, matLeft) : 0
@@ -146,9 +158,9 @@ const PictureSlot = memo(function PictureSlot({
     })
     if (!hasDeviceFrame && cornerShapeCss) Object.assign(style, { cornerShape: cornerShapeCss })
     const base = typeof style.boxShadow === 'string' ? style.boxShadow : ''
-    const contentFrameStyle = { ...style }
-    delete contentFrameStyle.boxShadow
-    return { contentFrameStyle: contentFrameStyle as CSSProperties, baseBoxShadow: base }
+    const nextStyle = { ...style }
+    delete nextStyle.boxShadow
+    return { contentFrameStyle: nextStyle as CSSProperties, baseBoxShadow: base }
   }, [
     blendMode,
     color,
@@ -184,18 +196,7 @@ const PictureSlot = memo(function PictureSlot({
     }
     if (!hasDeviceFrame && cornerShapeCss) Object.assign(style, { cornerShape: cornerShapeCss })
     return style
-  }, [
-    cornerShapeCss,
-    effectiveRadiusCss,
-    hasDeviceFrame,
-    matBottom,
-    matColor,
-    matLeft,
-    matRight,
-    matTop,
-    showMat,
-    strokeWidth
-  ])
+  }, [cornerShapeCss, effectiveRadiusCss, hasDeviceFrame, matBottom, matColor, matLeft, matRight, matTop, showMat, strokeWidth])
 
   const contentStyle = useMemo((): CSSProperties => {
     const style: CSSProperties = {
@@ -220,18 +221,18 @@ const PictureSlot = memo(function PictureSlot({
           select()
         }
       }}
-      className={cn(
-        'absolute cursor-pointer overflow-visible outline-none',
-        !hasDeviceFrame && 'rounded-sm',
-        selected && 'z-10'
-      )}
-      style={{ left, top, width: boxWidth, height: boxHeight }}
+      className={cn('absolute cursor-pointer overflow-visible outline-none', !hasDeviceFrame && 'rounded-sm', selected && 'z-10')}
+      style={{
+        left: slotLeft + left,
+        top: slotTop + top,
+        width: boxWidth,
+        height: boxHeight,
+        zIndex,
+        transform,
+        transformOrigin: 'center center'
+      }}
     >
-      <DeviceFrameShell
-        frameId={picture.frameId}
-        className='size-full overflow-visible'
-        filterTargetRef={bindFilterTarget}
-      >
+      <DeviceFrameShell frameId={resolvedFrameId} className='size-full overflow-visible' filterTargetRef={bindFilterTarget}>
         <div ref={boxShadowRef} className='relative size-full overflow-visible' style={contentFrameStyle}>
           <div className='relative size-full overflow-hidden' style={matStyle}>
             <div className='relative size-full overflow-hidden' style={contentStyle}>
@@ -247,12 +248,7 @@ const PictureSlot = memo(function PictureSlot({
                 />
               )}
               <div ref={lightsRef} className='pointer-events-none absolute inset-0 z-[1]' />
-              <Dropzone
-                onDrop={handleDropFile}
-                maxFiles={1}
-                overlay={Boolean(imageUrl)}
-                compact={hasDeviceFrame}
-              />
+              <Dropzone onDrop={handleDropFile} maxFiles={1} overlay={Boolean(imageUrl)} compact={hasDeviceFrame} />
             </div>
           </div>
         </div>
@@ -263,26 +259,43 @@ const PictureSlot = memo(function PictureSlot({
 
 const PictureCanvas: FC = () => {
   const pictures = usePicturesStore(s => s.pictures)
-  const count = usePicturesStore(s => s.count)
   const selectedId = usePicturesStore(s => s.selectedId)
   const backgroundWidth = useBackgroundStore(s => s.backgroundWidth)
   const backgroundHeight = useBackgroundStore(s => s.backgroundHeight)
+  const sizeLayers = useSizeStore(s => s.layers)
+  const constrainToParent = useGridStore(s => s.constrainToParent)
+  const positionId = useGridStore(s => s.positionId)
 
-  const layout = useMemo(() => getPictureLayout(count), [count])
+  const placements = useMemo(() => {
+    const slotSizes = pictures.map(picture => resolveSlotSizeFromState(sizeLayers, picture.id))
+    const entry = getPositionEntry(positionId, pictures.length)
+    return entry.builder({
+      count: pictures.length,
+      canvasWidth: backgroundWidth,
+      canvasHeight: backgroundHeight,
+      slotSizes,
+      constrainToParent
+    })
+  }, [backgroundHeight, backgroundWidth, constrainToParent, pictures, positionId, sizeLayers])
 
   return (
     <div className='pointer-events-none absolute inset-0' id='picture-canvas-layer'>
       <div className='pointer-events-auto relative size-full'>
         {pictures.map((picture, index) => {
-          const rect = layout[index]
-          if (!rect) return null
+          const placement = placements[index]
+          if (!placement) return null
           return (
             <PictureSlot
               key={picture.id}
               picture={picture}
-              layout={rect}
-              canvasWidth={backgroundWidth}
-              canvasHeight={backgroundHeight}
+              left={placement.x}
+              top={placement.y}
+              slotWidth={placement.width}
+              slotHeight={placement.height}
+              rotateZ={placement.rotateZ}
+              rotateX={placement.rotateX}
+              rotateY={placement.rotateY}
+              zIndex={placement.zIndex}
               selected={picture.id === selectedId}
             />
           )

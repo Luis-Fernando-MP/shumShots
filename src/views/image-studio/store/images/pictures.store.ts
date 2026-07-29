@@ -42,8 +42,8 @@ const createPicture = (index: number): PictureItem => ({
   id: formatSlotId(index),
   libraryId: null,
   frameId: null,
-  width: 320,
-  height: 240,
+  width: 420,
+  height: 315,
   aspectRatio: 4 / 3
 })
 

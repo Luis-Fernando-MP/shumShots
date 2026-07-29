@@ -1,5 +1,6 @@
 'use client'
 
+import Chip from '@common/ui/Chip'
 import {
   Select,
   SelectContent,
@@ -10,7 +11,6 @@ import {
 import Typography from '@common/ui/Typography'
 import useImageLibraryStore from '@views/image-studio/store/images/imageLibrary.store'
 import usePicturesStore from '@views/image-studio/store/images/pictures.store'
-import { XIcon } from 'lucide-react'
 import { type FC } from 'react'
 
 const ALL_VALUE = '__all__'
@@ -18,28 +18,17 @@ const ALL_VALUE = '__all__'
 type Props = {
   targetIds: string[]
   onChange: (ids: string[]) => void
+  emptyHint?: string
 }
-
-const Chip: FC<{ label: string; onRemove?: () => void }> = ({ label, onRemove }) => (
-  <span className='border-border bg-muted/50 text-foreground inline-flex h-7 max-w-[11rem] items-center gap-1 rounded-md border px-2 text-xs font-medium'>
-    <span className='truncate'>{label}</span>
-    {onRemove && (
-      <button
-        type='button'
-        aria-label={`Quitar ${label}`}
-        className='text-muted-foreground hover:text-foreground shrink-0 rounded-sm p-0.5'
-        onClick={onRemove}
-      >
-        <XIcon className='size-3' />
-      </button>
-    )}
-  </span>
-)
 
 const slotLabel = (slotId: string, imageName: string | null) =>
   imageName ? `${slotId} · ${imageName}` : `${slotId} · vacío`
 
-const TargetSlotsPicker: FC<Props> = ({ targetIds, onChange }) => {
+const TargetSlotsPicker: FC<Props> = ({
+  targetIds,
+  onChange,
+  emptyHint = 'Añade slots en Cuadrícula para asignar destinos.'
+}) => {
   const pictures = usePicturesStore(s => s.pictures)
   const images = useImageLibraryStore(s => s.images)
   const allSelected = targetIds.length === 0
@@ -86,7 +75,7 @@ const TargetSlotsPicker: FC<Props> = ({ targetIds, onChange }) => {
 
       <div className='flex min-h-7 flex-wrap gap-1.5'>
         {allSelected ? (
-          <Chip label='Todos los slots' />
+          <Chip>Todos los slots</Chip>
         ) : (
           targetIds.map(id => {
             const picture = pictures.find(item => item.id === id)
@@ -94,9 +83,11 @@ const TargetSlotsPicker: FC<Props> = ({ targetIds, onChange }) => {
             return (
               <Chip
                 key={id}
-                label={slotLabel(picture.id, resolveName(picture.libraryId))}
                 onRemove={() => onChange(targetIds.filter(item => item !== id))}
-              />
+                removeLabel={`Quitar ${id}`}
+              >
+                {slotLabel(id, resolveName(picture.libraryId))}
+              </Chip>
             )
           })
         )}
@@ -104,7 +95,7 @@ const TargetSlotsPicker: FC<Props> = ({ targetIds, onChange }) => {
 
       {pictures.length === 0 && (
         <Typography.Small tone='secondary' className='text-xs'>
-          Añade slots en Layout para asignar sombras y luces.
+          {emptyHint}
         </Typography.Small>
       )}
     </div>

@@ -13,6 +13,7 @@ import CornerConfiguration from '../../Popups/CornerConfiguration'
 import FrameConfiguration from '../../Popups/FrameConfiguration'
 import ImagesCountConfiguration from '../../Popups/ImagesCountConfiguration'
 import ShadowConfiguration from '../../Popups/ShadowConfiguration'
+import SlotSizeConfiguration from '../../Popups/SlotSizeConfiguration'
 
 const MainBarOptions: FC = () => {
   const setBackground = useBackgroundStore(s => s.setBackground)
@@ -37,6 +38,7 @@ const MainBarOptions: FC = () => {
         <FrameConfiguration />
         <ShadowConfiguration />
         <ImagesCountConfiguration />
+        <SlotSizeConfiguration />
       </section>
 
       <section className='gap-grid flex flex-row items-center'>

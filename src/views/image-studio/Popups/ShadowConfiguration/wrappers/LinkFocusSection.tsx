@@ -2,16 +2,21 @@
 
 import Switch from '@common/ui/Switch'
 import Typography from '@common/ui/Typography'
-import useShadowStore, { getActiveLight, getActiveShadow } from '@views/image-studio/Popups/ShadowConfiguration/store'
+import useShadowStore, {
+  getActiveLight,
+  getActiveShadow
+} from '@views/image-studio/Popups/ShadowConfiguration/store'
 import { type FC } from 'react'
 
 import SectionBlock from '../../BackgroundConfiguration/wrappers/SectionBlock'
 
-const LinkFocusSection: FC = () => {
-  const linkFocus = useShadowStore(s => s.linkFocus)
+type Props = { tabId: string }
+
+const LinkFocusSection: FC<Props> = ({ tabId }) => {
+  const linkFocus = useShadowStore(s => s.byTab[tabId]?.linkFocus ?? false)
   const setLinkFocus = useShadowStore(s => s.setLinkFocus)
-  const shadow = useShadowStore(getActiveShadow)
-  const light = useShadowStore(getActiveLight)
+  const shadow = useShadowStore(getActiveShadow(tabId))
+  const light = useShadowStore(getActiveLight(tabId))
 
   const canLink = shadow.type !== 'none' && light.type !== 'none'
   const active = canLink && linkFocus
@@ -39,7 +44,7 @@ const LinkFocusSection: FC = () => {
           disabled={!canLink}
           onChange={() => {
             if (!canLink) return
-            setLinkFocus(!linkFocus)
+            setLinkFocus(tabId, !linkFocus)
           }}
         />
       </div>

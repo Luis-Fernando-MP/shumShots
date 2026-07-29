@@ -3,10 +3,13 @@
 import Popup from '@/shared/components/Popup'
 import Button from '@/shared/ui/Button'
 import { Button as UiButton } from '@common/ui/Button'
-import useImagesBorderStore from '@views/image-studio/store/images/useImagesBorderStore'
-import useImagesRadiusStore from '@views/image-studio/store/images/imagesRadius.store'
+import Separator from '@common/ui/Separator'
+import { TABS_SCOPES } from '@views/image-studio/constants'
+import Tabs from '@views/image-studio/shared/components/tabs'
+import { getTabsStore } from '@views/image-studio/shared/components/tabs/store'
+import useCornerStore from '@views/image-studio/store/corner'
 import { SquareRoundCornerIcon } from 'lucide-react'
-import { type FC } from 'react'
+import { type FC, useEffect } from 'react'
 
 import BorderColorsController from './wrappers/BorderColorsController'
 import BorderMatController from './wrappers/BorderMatController'
@@ -15,19 +18,18 @@ import BorderStyleController from './wrappers/BorderStyleController'
 import ImagesRadiusController from './wrappers/ImagesRadiusController'
 
 const CornerConfiguration: FC = () => {
-  const resetBorder = useImagesBorderStore(s => s.resetBorder)
+  const syncTabs = useCornerStore(s => s.syncTabs)
+  const resetCorner = useCornerStore(s => s.reset)
+
+  useEffect(() => {
+    const tabs = getTabsStore(TABS_SCOPES.corner)
+    syncTabs(tabs.getState().layers)
+    return tabs.subscribe(state => syncTabs(state.layers))
+  }, [syncTabs])
 
   const handleReset = () => {
-    resetBorder()
-    useImagesRadiusStore.setState({
-      activeIndividualBorder: false,
-      borderLTRadius: 20,
-      borderRTRadius: 20,
-      borderLBRadius: 20,
-      borderRBRadius: 20,
-      borderRadius: 20,
-      borderSmooth: 0
-    })
+    resetCorner()
+    getTabsStore(TABS_SCOPES.corner).getState().reset()
   }
 
   return (
@@ -43,11 +45,27 @@ const CornerConfiguration: FC = () => {
       </Popup.Header>
 
       <Popup.Content className='gap-grid-xl flex flex-col text-xs [&_h5]:text-xs [&_h5]:leading-snug [&_.text-sm]:text-xs'>
-        <ImagesRadiusController />
-        <BorderStyleController />
-        <BorderColorsController />
-        <BorderMatController />
-        <BorderSizeController />
+        <Tabs
+          scope={TABS_SCOPES.corner}
+          onTabsChange={layers => syncTabs(layers)}
+        >
+          <Tabs.Title>Destinos y estilo</Tabs.Title>
+          <Tabs.Content>
+            {() => (
+              <div className='gap-grid-lg flex flex-col'>
+                <ImagesRadiusController />
+                <Separator orientation='horizontal' />
+                <BorderStyleController />
+                <Separator orientation='horizontal' />
+                <BorderColorsController />
+                <Separator orientation='horizontal' />
+                <BorderMatController />
+                <Separator orientation='horizontal' />
+                <BorderSizeController />
+              </div>
+            )}
+          </Tabs.Content>
+        </Tabs>
       </Popup.Content>
 
       <Popup.Footer>

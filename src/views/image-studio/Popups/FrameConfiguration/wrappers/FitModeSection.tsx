@@ -1,7 +1,10 @@
 'use client'
 
 import { cn } from '@common/utils/cn'
-import useFrameStore, { type FrameFitMode } from '@views/image-studio/Popups/FrameConfiguration/store'
+import useFrameStore, {
+  createDefaultFrameConfig,
+  type FrameFitMode
+} from '@views/image-studio/Popups/FrameConfiguration/store'
 import type { FC } from 'react'
 
 import SectionBlock from '../../BackgroundConfiguration/wrappers/SectionBlock'
@@ -12,8 +15,12 @@ const OPTIONS: { value: FrameFitMode; label: string; hint: string }[] = [
   { value: 'fill', label: 'Estirar', hint: 'Estira al ancho y alto de la zona verde' }
 ]
 
-const FitModeSection: FC = () => {
-  const fitMode = useFrameStore(s => s.fitMode)
+type Props = { tabId: string }
+
+const FitModeSection: FC<Props> = ({ tabId }) => {
+  const fitMode = useFrameStore(
+    s => s.byTab[tabId]?.fitMode ?? createDefaultFrameConfig().fitMode
+  )
   const setFitMode = useFrameStore(s => s.setFitMode)
 
   return (
@@ -27,7 +34,7 @@ const FitModeSection: FC = () => {
             key={option.value}
             type='button'
             title={option.hint}
-            onClick={() => setFitMode(option.value)}
+            onClick={() => setFitMode(tabId, option.value)}
             className={cn(
               'border-border/70 text-muted-foreground hover:bg-muted/50 hover:text-foreground flex h-9 items-center justify-center rounded-radius border px-1 text-[11px] font-medium transition-colors',
               fitMode === option.value &&

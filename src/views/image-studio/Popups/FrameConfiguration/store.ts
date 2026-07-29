@@ -1,64 +1,89 @@
 import { create, type StateCreator } from 'zustand'
 import { createJSONStorage, persist } from 'zustand/middleware'
 
+import { TABS_SCOPES } from '@views/image-studio/constants'
+import { getTabsStore, type TabLayer } from '@views/image-studio/shared/components/tabs/store'
+import { resolveTabConfig, syncTabBuckets } from '@views/image-studio/shared/resolveTabConfig'
 import usePicturesStore from '@views/image-studio/store/images/pictures.store'
 
 export type FrameFitMode = 'cover' | 'contain' | 'fill'
 export type SlotPan = { x: number; y: number }
 
+export type FrameTabConfig = {
+  frameId: string | null
+  fitMode: FrameFitMode
+}
+
 const STORAGE_KEY = 'pixis:image-studio:frame-config'
-const STORAGE_VERSION = 1
+const STORAGE_VERSION = 2
 const DEFAULT_PAN: SlotPan = { x: 0.5, y: 0.5 }
 
 const clamp01 = (value: number) => Math.min(1, Math.max(0, value))
 
+export const createDefaultFrameConfig = (): FrameTabConfig => ({
+  frameId: null,
+  fitMode: 'cover'
+})
+
 type FrameState = {
-  frameId: string | null
-  fitMode: FrameFitMode
+  byTab: Record<string, FrameTabConfig>
   slotPan: Record<string, SlotPan>
-  selectedSlotIds: string[]
-  setFrameId: (frameId: string | null) => void
-  setFitMode: (fitMode: FrameFitMode) => void
-  setSelectedSlotIds: (ids: string[]) => void
-  setPanForSelected: (pan: SlotPan) => void
+  syncTabs: (layers: TabLayer[]) => void
+  setFrameId: (tabId: string, frameId: string | null) => void
+  setFitMode: (tabId: string, fitMode: FrameFitMode) => void
+  setPanForSlots: (slotIds: string[], pan: SlotPan) => void
   getPanForSlot: (slotId: string) => SlotPan
+  resolveForSlot: (slotId: string) => FrameTabConfig
+  syncResolvedFramesToPictures: () => void
   reset: () => void
 }
 
-type PersistedFrameState = {
-  frameId: string | null
-  fitMode: FrameFitMode
-  slotPan: Record<string, SlotPan>
-  selectedSlotIds: string[]
-}
-
-const syncFrameToPictures = (frameId: string | null) => {
-  usePicturesStore.getState().setFrameIdForAll(frameId)
+const syncResolvedFramesToPictures = (resolve: (slotId: string) => FrameTabConfig) => {
+  const { pictures, setFrameId } = usePicturesStore.getState()
+  for (const picture of pictures) {
+    const next = resolve(picture.id).frameId
+    if (picture.frameId !== next) setFrameId(picture.id, next)
+  }
 }
 
 const state: StateCreator<FrameState> = (set, get) => ({
-  frameId: null,
-  fitMode: 'cover',
+  byTab: {},
   slotPan: {},
-  selectedSlotIds: [],
 
-  setFrameId: frameId => {
-    set({ frameId })
-    syncFrameToPictures(frameId)
+  syncTabs: layers => {
+    set(s => ({ byTab: syncTabBuckets(s.byTab, layers, createDefaultFrameConfig) }))
+    get().syncResolvedFramesToPictures()
   },
 
-  setFitMode: fitMode => set({ fitMode }),
+  setFrameId: (tabId, frameId) => {
+    set(s => {
+      const current = s.byTab[tabId] ?? createDefaultFrameConfig()
+      return {
+        byTab: {
+          ...s.byTab,
+          [tabId]: { ...current, frameId }
+        }
+      }
+    })
+    get().syncResolvedFramesToPictures()
+  },
 
-  setSelectedSlotIds: ids => set({ selectedSlotIds: ids }),
+  setFitMode: (tabId, fitMode) => {
+    set(s => {
+      const current = s.byTab[tabId] ?? createDefaultFrameConfig()
+      return {
+        byTab: {
+          ...s.byTab,
+          [tabId]: { ...current, fitMode }
+        }
+      }
+    })
+  },
 
-  setPanForSelected: pan => {
-    const next = {
-      x: clamp01(pan.x),
-      y: clamp01(pan.y)
-    }
-    const selected = get().selectedSlotIds
+  setPanForSlots: (slotIds, pan) => {
+    const next = { x: clamp01(pan.x), y: clamp01(pan.y) }
     const pictures = usePicturesStore.getState().pictures
-    const targets = selected.length > 0 ? selected : pictures.map(item => item.id)
+    const targets = slotIds.length > 0 ? slotIds : pictures.map(item => item.id)
     set(s => {
       const slotPan = { ...s.slotPan }
       for (const id of targets) slotPan[id] = next
@@ -68,49 +93,23 @@ const state: StateCreator<FrameState> = (set, get) => ({
 
   getPanForSlot: slotId => get().slotPan[slotId] ?? DEFAULT_PAN,
 
+  resolveForSlot: slotId => {
+    const layers = getTabsStore(TABS_SCOPES.frame).getState().layers
+    return resolveTabConfig(layers, get().byTab, slotId, createDefaultFrameConfig())
+  },
+
+  syncResolvedFramesToPictures: () => {
+    syncResolvedFramesToPictures(slotId => get().resolveForSlot(slotId))
+  },
+
   reset: () => {
-    set({
-      frameId: null,
-      fitMode: 'cover',
-      slotPan: {},
-      selectedSlotIds: []
-    })
-    syncFrameToPictures(null)
+    const layers = getTabsStore(TABS_SCOPES.frame).getState().layers
+    const byTab: Record<string, FrameTabConfig> = {}
+    for (const layer of layers) byTab[layer.id] = createDefaultFrameConfig()
+    set({ byTab, slotPan: {} })
+    get().syncResolvedFramesToPictures()
   }
 })
-
-const mergePersisted = (
-  persisted: Partial<PersistedFrameState> | undefined,
-  current: FrameState
-): FrameState => {
-  const frameId = typeof persisted?.frameId === 'string' || persisted?.frameId === null
-    ? (persisted.frameId ?? null)
-    : current.frameId
-
-  const fitMode =
-    persisted?.fitMode === 'cover' ||
-    persisted?.fitMode === 'contain' ||
-    persisted?.fitMode === 'fill'
-      ? persisted.fitMode
-      : current.fitMode
-
-  const slotPan =
-    persisted?.slotPan && typeof persisted.slotPan === 'object' ? persisted.slotPan : current.slotPan
-
-  const selectedSlotIds = Array.isArray(persisted?.selectedSlotIds)
-    ? persisted.selectedSlotIds.filter((id): id is string => typeof id === 'string')
-    : current.selectedSlotIds
-
-  if (frameId !== current.frameId) syncFrameToPictures(frameId)
-
-  return {
-    ...current,
-    frameId,
-    fitMode,
-    slotPan,
-    selectedSlotIds
-  }
-}
 
 const useFrameStore = create(
   persist(state, {
@@ -118,16 +117,34 @@ const useFrameStore = create(
     version: STORAGE_VERSION,
     skipHydration: true,
     storage: createJSONStorage(() => localStorage),
-    partialize: (s): PersistedFrameState => ({
-      frameId: s.frameId,
-      fitMode: s.fitMode,
-      slotPan: s.slotPan,
-      selectedSlotIds: s.selectedSlotIds
+    partialize: s => ({
+      byTab: s.byTab,
+      slotPan: s.slotPan
     }),
-    merge: (persisted, current) =>
-      mergePersisted(persisted as Partial<PersistedFrameState> | undefined, current),
+    migrate: (persisted, version) => {
+      const data = (persisted ?? {}) as Record<string, unknown>
+      if (version < 2) {
+        const frameId =
+          typeof data.frameId === 'string' || data.frameId === null ? data.frameId : null
+        const fitMode =
+          data.fitMode === 'cover' || data.fitMode === 'contain' || data.fitMode === 'fill'
+            ? data.fitMode
+            : 'cover'
+        const slotPan =
+          data.slotPan && typeof data.slotPan === 'object'
+            ? (data.slotPan as Record<string, SlotPan>)
+            : {}
+        const layers = getTabsStore(TABS_SCOPES.frame).getState().layers
+        const byTab: Record<string, FrameTabConfig> = {}
+        for (const layer of layers) {
+          byTab[layer.id] = { frameId: frameId as string | null, fitMode: fitMode as FrameFitMode }
+        }
+        return { byTab, slotPan }
+      }
+      return data
+    },
     onRehydrateStorage: () => state => {
-      if (state) syncFrameToPictures(state.frameId)
+      if (state) state.syncResolvedFramesToPictures()
     }
   })
 )

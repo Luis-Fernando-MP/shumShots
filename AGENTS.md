@@ -362,3 +362,34 @@ export default listMapper
 - Run focused type checks, lint checks, and relevant tests after changes.
 - Existing legacy errors under `src/app/v1`, broken `(pages)` imports, and `tmp` are baseline debt. Do not mask them with `any`, `@ts-ignore`, or broad TypeScript exclusions.
 - Never reintroduce `sass`, SCSS files, `@sass/*`, or Stylelint SCSS configs.
+
+## image-studio
+
+### Popup → canvas
+
+- `BackgroundConfiguration` / `CanvasBorderConfiguration` → `BackgroundCanvas`.
+- `CornerConfiguration`, `FrameConfiguration`, `ShadowConfiguration`, `SlotSizeConfiguration` → `PictureCanvas` slots.
+- `ImagesCountConfiguration` → count, fit padre–hijo, posiciones de slots.
+
+### Tabs (targeting multi-slot)
+
+- Compound API: `Tabs` + `Tabs.Title` + `Tabs.Content` under `shared/components/tabs/`.
+- Everything that affects the active layer lives in `Tabs.Content` only.
+- Scopes are unique and declared in `constants.ts` as `TABS_SCOPES` (`as const`); `Tabs` accepts `scope: TabScope`.
+- Tabs own a scoped Zustand store (`pixis:image-studio:tabs:{scope}`) with layers + `targetIds` (`[]` = all slots).
+
+### Domain catalogs
+
+- Prefer `data.ts` (id, title, description, `builder`, optional `preview`) + `builders.ts` (pure functions with explicit props).
+- `builder` feeds the large canvas; optional `preview` feeds popup thumbnails.
+
+### Stores
+
+- Product domain stores live under `store/{dominio}/index.ts`.
+- Microstores: `store/{dominio}/{dominio}-{micro}.ts`.
+- Do not keep popup feature stores inside the popup UI tree when they are domain state.
+
+### Fit + positions
+
+- `constrainToParent` (default true) scales slots to fit within ~90% of the background while keeping child aspect ratio.
+- Position presets (`slotPositions/`) may overlap children (fan/stack) even when fit is on; the group bbox still fits the parent.

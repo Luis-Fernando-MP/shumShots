@@ -1,16 +1,15 @@
 'use client'
 
 import ColorsController from '@/shared/components/ColorsController'
-import useImagesBorderStore from '@views/image-studio/store/images/useImagesBorderStore'
+import { useActiveTabId } from '@views/image-studio/shared/components/tabs'
+import { useCornerBorderAdapter } from '@views/image-studio/store/corner/adapters'
 import type { FC } from 'react'
 
 import SectionBlock from '../../BackgroundConfiguration/wrappers/SectionBlock'
 
 const BorderColorsController: FC = () => {
-  const color = useImagesBorderStore(s => s.color)
-  const type = useImagesBorderStore(s => s.type)
-  const setColor = useImagesBorderStore(s => s.setColor)
-  const setType = useImagesBorderStore(s => s.setType)
+  const tabId = useActiveTabId()
+  const { color, type, setColor, setType } = useCornerBorderAdapter(tabId)
 
   return (
     <SectionBlock

@@ -1,35 +1,35 @@
-export type PictureLayoutRect = {
+export type PictureLayoutPoint = {
   x: number
   y: number
-  w: number
-  h: number
 }
 
-export const PICTURE_LAYOUTS: Record<number, PictureLayoutRect[]> = {
-  1: [{ x: 18, y: 16, w: 64, h: 68 }],
+export type PictureLayoutRect = PictureLayoutPoint
+
+export const PICTURE_LAYOUTS: Record<number, PictureLayoutPoint[]> = {
+  1: [{ x: 26.5, y: 23.75 }],
   2: [
-    { x: 6, y: 22, w: 42, h: 56 },
-    { x: 52, y: 22, w: 42, h: 56 }
+    { x: 8, y: 28.75 },
+    { x: 54, y: 28.75 }
   ],
   3: [
-    { x: 4, y: 24, w: 30, h: 52 },
-    { x: 35, y: 24, w: 30, h: 52 },
-    { x: 66, y: 24, w: 30, h: 52 }
+    { x: 4, y: 28.75 },
+    { x: 35, y: 28.75 },
+    { x: 66, y: 28.75 }
   ],
   4: [
-    { x: 8, y: 10, w: 40, h: 38 },
-    { x: 52, y: 10, w: 40, h: 38 },
-    { x: 8, y: 52, w: 40, h: 38 },
-    { x: 52, y: 52, w: 40, h: 38 }
+    { x: 8, y: 14 },
+    { x: 52, y: 14 },
+    { x: 8, y: 52 },
+    { x: 52, y: 52 }
   ],
   5: [
-    { x: 4, y: 8, w: 30, h: 40 },
-    { x: 35, y: 8, w: 30, h: 40 },
-    { x: 66, y: 8, w: 30, h: 40 },
-    { x: 18, y: 52, w: 30, h: 40 },
-    { x: 52, y: 52, w: 30, h: 40 }
+    { x: 4, y: 10 },
+    { x: 35, y: 10 },
+    { x: 66, y: 10 },
+    { x: 18, y: 52 },
+    { x: 52, y: 52 }
   ]
 }
 
-export const getPictureLayout = (count: number): PictureLayoutRect[] =>
+export const getPictureLayout = (count: number): PictureLayoutPoint[] =>
   PICTURE_LAYOUTS[Math.min(5, Math.max(1, count))] ?? PICTURE_LAYOUTS[1]

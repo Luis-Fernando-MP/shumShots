@@ -20,6 +20,9 @@ import {
   SHADOW_DESIGN_REF,
   shadowScaleForSize
 } from '@views/image-studio/fx/shared/targeting'
+import { TABS_SCOPES } from '@views/image-studio/constants'
+import { getTabsStore, type TabLayer } from '@views/image-studio/shared/components/tabs/store'
+import { resolveTabConfig, syncTabBuckets } from '@views/image-studio/shared/resolveTabConfig'
 import { createId } from '@views/image-studio/utils/createId'
 
 export type {
@@ -47,7 +50,7 @@ export {
 }
 
 const STORAGE_KEY = 'pixis:image-studio:shadow-light'
-const STORAGE_VERSION = 1
+const STORAGE_VERSION = 2
 
 const defaultShadowLayer = (index = 1): ShadowLayer => ({
   id: createId('shadow'),
@@ -85,113 +88,166 @@ const sanitizeShadowLayer = (layer: ShadowLayer): ShadowLayer => {
   return { ...layer, type: 'none', opacity: 0, blur: 0, spread: 0 }
 }
 
+export type ShadowTabConfig = {
+  shadowLayers: ShadowLayer[]
+  lightLayers: LightLayer[]
+  activeShadowId: string
+  activeLightId: string
+  linkFocus: boolean
+}
+
+export const createDefaultShadowConfig = (): ShadowTabConfig => {
+  const shadow = defaultShadowLayer(1)
+  const light = defaultLightLayer(1)
+  return {
+    shadowLayers: [shadow],
+    lightLayers: [light],
+    activeShadowId: shadow.id,
+    activeLightId: light.id,
+    linkFocus: false
+  }
+}
+
 type ShadowState = {
-  shadowLayers: ShadowLayer[]
-  lightLayers: LightLayer[]
-  activeShadowId: string
-  activeLightId: string
-  linkFocus: boolean
-  setActiveShadow: (id: string) => void
-  setActiveLight: (id: string) => void
-  setLinkFocus: (value: boolean) => void
-  addShadowLayer: () => void
-  addLightLayer: () => void
-  removeShadowLayer: (id: string) => void
-  removeLightLayer: (id: string) => void
-  updateActiveShadow: (patch: Partial<Omit<ShadowLayer, 'id'>>) => void
-  updateActiveLight: (patch: Partial<Omit<LightLayer, 'id'>>) => void
-  applyShadowPreset: (type: ShadowType) => void
-  applyLightPreset: (type: LightType) => void
-  setShadowTargets: (ids: string[]) => void
-  setLightTargets: (ids: string[]) => void
-  clearShadows: () => void
-  clearLights: () => void
-  purgeSlotTargets: (slotIds: string[]) => void
+  byTab: Record<string, ShadowTabConfig>
+  syncTabs: (layers: TabLayer[]) => void
+  setActiveShadow: (tabId: string, id: string) => void
+  setActiveLight: (tabId: string, id: string) => void
+  setLinkFocus: (tabId: string, value: boolean) => void
+  addShadowLayer: (tabId: string) => void
+  addLightLayer: (tabId: string) => void
+  removeShadowLayer: (tabId: string, id: string) => void
+  removeLightLayer: (tabId: string, id: string) => void
+  updateActiveShadow: (tabId: string, patch: Partial<Omit<ShadowLayer, 'id'>>) => void
+  updateActiveLight: (tabId: string, patch: Partial<Omit<LightLayer, 'id'>>) => void
+  applyShadowPreset: (tabId: string, type: ShadowType) => void
+  applyLightPreset: (tabId: string, type: LightType) => void
+  clearTab: (tabId: string) => void
+  reset: () => void
+  resolveForSlot: (slotId: string) => ShadowTabConfig
+  getTabConfig: (tabId: string) => ShadowTabConfig
 }
 
-type PersistedShadowState = {
-  shadowLayers: ShadowLayer[]
-  lightLayers: LightLayer[]
-  activeShadowId: string
-  activeLightId: string
-  linkFocus: boolean
+const patchTab = (
+  set: (fn: (s: ShadowState) => Partial<ShadowState>) => void,
+  tabId: string,
+  updater: (config: ShadowTabConfig) => ShadowTabConfig
+) => {
+  set(s => {
+    const current = s.byTab[tabId] ?? createDefaultShadowConfig()
+    return {
+      byTab: {
+        ...s.byTab,
+        [tabId]: updater(current)
+      }
+    }
+  })
 }
-
-const firstShadow = defaultShadowLayer(1)
-const firstLight = defaultLightLayer(1)
 
 const state: StateCreator<ShadowState> = (set, get) => ({
-  shadowLayers: [firstShadow],
-  lightLayers: [firstLight],
-  activeShadowId: firstShadow.id,
-  activeLightId: firstLight.id,
-  linkFocus: false,
+  byTab: {},
 
-  setActiveShadow: id => {
-    if (!get().shadowLayers.some(layer => layer.id === id)) return
-    set({ activeShadowId: id })
-  },
-  setActiveLight: id => {
-    if (!get().lightLayers.some(layer => layer.id === id)) return
-    set({ activeLightId: id })
-  },
-  setLinkFocus: value => set({ linkFocus: value }),
-
-  addShadowLayer: () => {
-    const layer = defaultShadowLayer(get().shadowLayers.length + 1)
-    set(s => ({ shadowLayers: [...s.shadowLayers, layer], activeShadowId: layer.id }))
-  },
-  addLightLayer: () => {
-    const layer = defaultLightLayer(get().lightLayers.length + 1)
-    set(s => ({ lightLayers: [...s.lightLayers, layer], activeLightId: layer.id }))
+  syncTabs: layers => {
+    set(s => ({ byTab: syncTabBuckets(s.byTab, layers, createDefaultShadowConfig) }))
   },
 
-  removeShadowLayer: id =>
-    set(s => {
-      if (s.shadowLayers.length <= 1) {
+  getTabConfig: tabId => get().byTab[tabId] ?? createDefaultShadowConfig(),
+
+  setActiveShadow: (tabId, id) => {
+    patchTab(set, tabId, config => {
+      if (!config.shadowLayers.some(layer => layer.id === id)) return config
+      return { ...config, activeShadowId: id }
+    })
+  },
+
+  setActiveLight: (tabId, id) => {
+    patchTab(set, tabId, config => {
+      if (!config.lightLayers.some(layer => layer.id === id)) return config
+      return { ...config, activeLightId: id }
+    })
+  },
+
+  setLinkFocus: (tabId, value) => {
+    patchTab(set, tabId, config => ({ ...config, linkFocus: value }))
+  },
+
+  addShadowLayer: tabId => {
+    patchTab(set, tabId, config => {
+      const layer = defaultShadowLayer(config.shadowLayers.length + 1)
+      return {
+        ...config,
+        shadowLayers: [...config.shadowLayers, layer],
+        activeShadowId: layer.id
+      }
+    })
+  },
+
+  addLightLayer: tabId => {
+    patchTab(set, tabId, config => {
+      const layer = defaultLightLayer(config.lightLayers.length + 1)
+      return {
+        ...config,
+        lightLayers: [...config.lightLayers, layer],
+        activeLightId: layer.id
+      }
+    })
+  },
+
+  removeShadowLayer: (tabId, id) => {
+    patchTab(set, tabId, config => {
+      if (config.shadowLayers.length <= 1) {
         const reset = defaultShadowLayer(1)
-        return { shadowLayers: [reset], activeShadowId: reset.id }
+        return { ...config, shadowLayers: [reset], activeShadowId: reset.id }
       }
-      const shadowLayers = s.shadowLayers.filter(layer => layer.id !== id)
+      const shadowLayers = config.shadowLayers.filter(layer => layer.id !== id)
       return {
+        ...config,
         shadowLayers,
-        activeShadowId: s.activeShadowId === id ? shadowLayers[0].id : s.activeShadowId
+        activeShadowId:
+          config.activeShadowId === id ? shadowLayers[0].id : config.activeShadowId
       }
-    }),
+    })
+  },
 
-  removeLightLayer: id =>
-    set(s => {
-      if (s.lightLayers.length <= 1) {
+  removeLightLayer: (tabId, id) => {
+    patchTab(set, tabId, config => {
+      if (config.lightLayers.length <= 1) {
         const reset = defaultLightLayer(1)
-        return { lightLayers: [reset], activeLightId: reset.id }
+        return { ...config, lightLayers: [reset], activeLightId: reset.id }
       }
-      const lightLayers = s.lightLayers.filter(layer => layer.id !== id)
+      const lightLayers = config.lightLayers.filter(layer => layer.id !== id)
       return {
+        ...config,
         lightLayers,
-        activeLightId: s.activeLightId === id ? lightLayers[0].id : s.activeLightId
+        activeLightId: config.activeLightId === id ? lightLayers[0].id : config.activeLightId
       }
-    }),
+    })
+  },
 
-  updateActiveShadow: patch =>
-    set(s => ({
-      shadowLayers: s.shadowLayers.map(layer =>
-        layer.id === s.activeShadowId ? { ...layer, ...patch } : layer
+  updateActiveShadow: (tabId, patch) => {
+    patchTab(set, tabId, config => ({
+      ...config,
+      shadowLayers: config.shadowLayers.map(layer =>
+        layer.id === config.activeShadowId ? { ...layer, ...patch } : layer
       )
-    })),
+    }))
+  },
 
-  updateActiveLight: patch =>
-    set(s => ({
-      lightLayers: s.lightLayers.map(layer => {
-        if (layer.id !== s.activeLightId) return layer
+  updateActiveLight: (tabId, patch) => {
+    patchTab(set, tabId, config => ({
+      ...config,
+      lightLayers: config.lightLayers.map(layer => {
+        if (layer.id !== config.activeLightId) return layer
         const next = { ...layer, ...patch }
         if (patch.type !== undefined) next.type = normalizeLightType(patch.type)
         return next
       })
-    })),
+    }))
+  },
 
-  applyShadowPreset: type => {
+  applyShadowPreset: (tabId, type) => {
     const preset = SHADOW_PRESETS.find(item => item.type === type) ?? SHADOW_PRESETS[0]
-    get().updateActiveShadow({
+    get().updateActiveShadow(tabId, {
       type: preset.type,
       blur: preset.blur,
       spread: preset.spread,
@@ -200,10 +256,10 @@ const state: StateCreator<ShadowState> = (set, get) => ({
     })
   },
 
-  applyLightPreset: type => {
+  applyLightPreset: (tabId, type) => {
     const resolved = normalizeLightType(type)
     const preset = LIGHT_PRESETS.find(item => item.type === resolved) ?? LIGHT_PRESETS[0]
-    get().updateActiveLight({
+    get().updateActiveLight(tabId, {
       type: preset.type,
       opacity: preset.opacity,
       size: preset.size,
@@ -212,68 +268,27 @@ const state: StateCreator<ShadowState> = (set, get) => ({
     })
   },
 
-  setShadowTargets: ids => get().updateActiveShadow({ targetIds: ids }),
-  setLightTargets: ids => get().updateActiveLight({ targetIds: ids }),
-
-  clearShadows: () => {
-    const reset = defaultShadowLayer(1)
-    set({ shadowLayers: [reset], activeShadowId: reset.id })
-  },
-  clearLights: () => {
-    const reset = defaultLightLayer(1)
-    set({ lightLayers: [reset], activeLightId: reset.id })
-  },
-
-  purgeSlotTargets: slotIds => {
-    if (slotIds.length === 0) return
-    const drop = new Set(slotIds)
+  clearTab: tabId => {
     set(s => ({
-      shadowLayers: s.shadowLayers.map(layer => ({
-        ...layer,
-        targetIds: layer.targetIds.filter(id => !drop.has(id))
-      })),
-      lightLayers: s.lightLayers.map(layer => ({
-        ...layer,
-        targetIds: layer.targetIds.filter(id => !drop.has(id))
-      }))
+      byTab: {
+        ...s.byTab,
+        [tabId]: createDefaultShadowConfig()
+      }
     }))
+  },
+
+  reset: () => {
+    const layers = getTabsStore(TABS_SCOPES.shadow).getState().layers
+    const byTab: Record<string, ShadowTabConfig> = {}
+    for (const layer of layers) byTab[layer.id] = createDefaultShadowConfig()
+    set({ byTab })
+  },
+
+  resolveForSlot: slotId => {
+    const layers = getTabsStore(TABS_SCOPES.shadow).getState().layers
+    return resolveTabConfig(layers, get().byTab, slotId, createDefaultShadowConfig())
   }
 })
-
-const mergePersisted = (
-  persisted: Partial<PersistedShadowState> | undefined,
-  current: ShadowState
-): ShadowState => {
-  const shadowLayers =
-    Array.isArray(persisted?.shadowLayers) && persisted.shadowLayers.length > 0
-      ? persisted.shadowLayers.map(sanitizeShadowLayer)
-      : current.shadowLayers
-  const lightLayers =
-    Array.isArray(persisted?.lightLayers) && persisted.lightLayers.length > 0
-      ? persisted.lightLayers.map(sanitizeLightLayer)
-      : current.lightLayers
-
-  const activeShadowId =
-    typeof persisted?.activeShadowId === 'string' &&
-    shadowLayers.some(layer => layer.id === persisted.activeShadowId)
-      ? persisted.activeShadowId
-      : shadowLayers[0].id
-
-  const activeLightId =
-    typeof persisted?.activeLightId === 'string' &&
-    lightLayers.some(layer => layer.id === persisted.activeLightId)
-      ? persisted.activeLightId
-      : lightLayers[0].id
-
-  return {
-    ...current,
-    shadowLayers,
-    lightLayers,
-    activeShadowId,
-    activeLightId,
-    linkFocus: typeof persisted?.linkFocus === 'boolean' ? persisted.linkFocus : current.linkFocus
-  }
-}
 
 const useShadowStore = create(
   persist(state, {
@@ -281,24 +296,58 @@ const useShadowStore = create(
     version: STORAGE_VERSION,
     skipHydration: true,
     storage: createJSONStorage(() => localStorage),
-    partialize: (s): PersistedShadowState => ({
-      shadowLayers: s.shadowLayers,
-      lightLayers: s.lightLayers,
-      activeShadowId: s.activeShadowId,
-      activeLightId: s.activeLightId,
-      linkFocus: s.linkFocus
-    }),
-    merge: (persisted, current) =>
-      mergePersisted(persisted as Partial<PersistedShadowState> | undefined, current)
+    partialize: s => ({ byTab: s.byTab }),
+    migrate: (persisted, version) => {
+      const data = (persisted ?? {}) as Record<string, unknown>
+      if (version < 2) {
+        const shadowLayers = Array.isArray(data.shadowLayers)
+          ? (data.shadowLayers as ShadowLayer[]).map(sanitizeShadowLayer)
+          : null
+        const lightLayers = Array.isArray(data.lightLayers)
+          ? (data.lightLayers as LightLayer[]).map(sanitizeLightLayer)
+          : null
+        const layers = getTabsStore(TABS_SCOPES.shadow).getState().layers
+        const seed = createDefaultShadowConfig()
+        if (shadowLayers && shadowLayers.length > 0) {
+          seed.shadowLayers = shadowLayers
+          seed.activeShadowId =
+            typeof data.activeShadowId === 'string' &&
+            shadowLayers.some(layer => layer.id === data.activeShadowId)
+              ? data.activeShadowId
+              : shadowLayers[0].id
+        }
+        if (lightLayers && lightLayers.length > 0) {
+          seed.lightLayers = lightLayers
+          seed.activeLightId =
+            typeof data.activeLightId === 'string' &&
+            lightLayers.some(layer => layer.id === data.activeLightId)
+              ? data.activeLightId
+              : lightLayers[0].id
+        }
+        if (typeof data.linkFocus === 'boolean') seed.linkFocus = data.linkFocus
+        const byTab: Record<string, ShadowTabConfig> = {}
+        for (const layer of layers) byTab[layer.id] = { ...seed }
+        return { byTab }
+      }
+      return data
+    }
   })
 )
 
-export const getActiveShadow = (state: ShadowState) =>
-  state.shadowLayers.find(layer => layer.id === state.activeShadowId) ?? state.shadowLayers[0]
+export const selectTabConfig = (tabId: string) => (state: ShadowState) =>
+  state.byTab[tabId] ?? createDefaultShadowConfig()
 
-export const getActiveLight = (state: ShadowState) => {
+export const getActiveShadow = (tabId: string) => (state: ShadowState) => {
+  const config = selectTabConfig(tabId)(state)
+  return (
+    config.shadowLayers.find(layer => layer.id === config.activeShadowId) ?? config.shadowLayers[0]
+  )
+}
+
+export const getActiveLight = (tabId: string) => (state: ShadowState) => {
+  const config = selectTabConfig(tabId)(state)
   const layer =
-    state.lightLayers.find(item => item.id === state.activeLightId) ?? state.lightLayers[0]
+    config.lightLayers.find(item => item.id === config.activeLightId) ?? config.lightLayers[0]
   return sanitizeLightLayer(layer)
 }
 

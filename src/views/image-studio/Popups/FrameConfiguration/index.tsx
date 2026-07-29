@@ -3,16 +3,27 @@
 import Popup from '@/shared/components/Popup'
 import Button from '@/shared/ui/Button'
 import { Button as UiButton } from '@common/ui/Button'
+import Separator from '@common/ui/Separator'
+import { TABS_SCOPES } from '@views/image-studio/constants'
 import useFrameStore from '@views/image-studio/Popups/FrameConfiguration/store'
+import Tabs from '@views/image-studio/shared/components/tabs'
+import { getTabsStore } from '@views/image-studio/shared/components/tabs/store'
 import { SmartphoneIcon } from 'lucide-react'
-import { type FC } from 'react'
+import { type FC, useEffect } from 'react'
 
 import DeviceFramesSection from './wrappers/DeviceFramesSection'
 import FitModeSection from './wrappers/FitModeSection'
 import SlotPanSection from './wrappers/SlotPanSection'
 
 const FrameConfiguration: FC = () => {
+  const syncTabs = useFrameStore(s => s.syncTabs)
   const reset = useFrameStore(s => s.reset)
+
+  useEffect(() => {
+    const tabs = getTabsStore(TABS_SCOPES.frame)
+    syncTabs(tabs.getState().layers)
+    return tabs.subscribe(state => syncTabs(state.layers))
+  }, [syncTabs])
 
   return (
     <Popup className='h-[min(820px,90vh)] w-[360px]'>
@@ -29,11 +40,20 @@ const FrameConfiguration: FC = () => {
       </Popup.Header>
 
       <Popup.Content className='gap-grid-lg flex flex-col text-xs'>
-        <DeviceFramesSection />
-        <div className='bg-border/70 h-px w-full' />
-        <FitModeSection />
-        <div className='bg-border/70 h-px w-full' />
-        <SlotPanSection />
+        <Tabs scope={TABS_SCOPES.frame} onTabsChange={layers => syncTabs(layers)}>
+          <Tabs.Title>Destinos y frame</Tabs.Title>
+          <Tabs.Content>
+            {({ selectedTab, selectedSlots }) => (
+              <div className='gap-grid-lg flex flex-col'>
+                <DeviceFramesSection tabId={selectedTab.id} />
+                <Separator orientation='horizontal' />
+                <FitModeSection tabId={selectedTab.id} />
+                <Separator orientation='horizontal' />
+                <SlotPanSection targetIds={selectedSlots} />
+              </div>
+            )}
+          </Tabs.Content>
+        </Tabs>
       </Popup.Content>
 
       <Popup.Footer>
@@ -42,7 +62,10 @@ const FrameConfiguration: FC = () => {
           variant='outline'
           size='sm'
           className='w-full text-xs'
-          onClick={reset}
+          onClick={() => {
+            reset()
+            getTabsStore(TABS_SCOPES.frame).getState().reset()
+          }}
         >
           Resetear cambios
         </UiButton>

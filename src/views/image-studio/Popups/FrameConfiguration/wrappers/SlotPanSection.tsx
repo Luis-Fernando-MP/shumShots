@@ -44,13 +44,18 @@ const Chip: FC<{ label: string; onRemove?: () => void }> = ({ label, onRemove })
   </span>
 )
 
-const SlotPanSection: FC = () => {
+type Props = { targetIds: string[] }
+
+const SlotPanSection: FC<Props> = ({ targetIds }) => {
   const pictures = usePicturesStore(s => s.pictures)
   const images = useImageLibraryStore(s => s.images)
-  const selectedSlotIds = useFrameStore(s => s.selectedSlotIds)
-  const setSelectedSlotIds = useFrameStore(s => s.setSelectedSlotIds)
-  const setPanForSelected = useFrameStore(s => s.setPanForSelected)
+  const setPanForSlots = useFrameStore(s => s.setPanForSlots)
   const slotPan = useFrameStore(s => s.slotPan)
+  const [panTargets, setPanTargets] = useState<string[]>(targetIds)
+
+  useEffect(() => {
+    setPanTargets(targetIds)
+  }, [targetIds])
 
   const padRef = useRef<HTMLDivElement>(null)
   const dragging = useRef(false)
@@ -58,8 +63,8 @@ const SlotPanSection: FC = () => {
   const rafId = useRef(0)
   const [dragPan, setDragPan] = useState<{ x: number; y: number } | null>(null)
 
-  const allSelected = selectedSlotIds.length === 0
-  const focusSlotId = allSelected ? pictures[0]?.id : selectedSlotIds[0]
+  const allSelected = panTargets.length === 0
+  const focusSlotId = allSelected ? pictures[0]?.id : panTargets[0]
   const storePan = focusSlotId ? (slotPan[focusSlotId] ?? defaultSlotPan) : defaultSlotPan
   const pan = dragPan ?? storePan
 
@@ -73,21 +78,21 @@ const SlotPanSection: FC = () => {
 
   const handleSelect = (value: string) => {
     if (value === ALL_VALUE) {
-      setSelectedSlotIds([])
+      setPanTargets([])
       return
     }
     if (allSelected) {
-      setSelectedSlotIds([value])
+      setPanTargets([value])
       return
     }
-    if (!selectedSlotIds.includes(value)) setSelectedSlotIds([...selectedSlotIds, value])
+    if (!panTargets.includes(value)) setPanTargets([...panTargets, value])
   }
 
   const flushPan = () => {
     rafId.current = 0
     const next = pendingPan.current
     if (!next) return
-    setPanForSelected(next)
+    setPanForSlots(panTargets, next)
   }
 
   const queuePan = (next: { x: number; y: number }) => {
@@ -122,7 +127,7 @@ const SlotPanSection: FC = () => {
       rafId.current = 0
     }
     if (pendingPan.current) {
-      setPanForSelected(pendingPan.current)
+      setPanForSlots(panTargets, pendingPan.current)
       pendingPan.current = null
     }
     setDragPan(null)
@@ -134,24 +139,24 @@ const SlotPanSection: FC = () => {
   useEffect(() => {
     if (pictures.length === 0) return
     const valid = new Set(pictures.map(item => item.id))
-    const next = selectedSlotIds.filter(id => valid.has(id))
-    if (next.length !== selectedSlotIds.length) setSelectedSlotIds(next)
-  }, [pictures, selectedSlotIds, setSelectedSlotIds])
+    const next = panTargets.filter(id => valid.has(id))
+    if (next.length !== panTargets.length) setPanTargets(next)
+  }, [pictures, panTargets])
 
   const chips = useMemo(() => {
     if (allSelected) return <Chip label='Todos los slots' />
-    return selectedSlotIds.map(id => {
+    return panTargets.map(id => {
       const picture = pictures.find(item => item.id === id)
       if (!picture) return null
       return (
         <Chip
           key={id}
           label={slotLabel(picture.id, resolveName(picture.libraryId))}
-          onRemove={() => setSelectedSlotIds(selectedSlotIds.filter(item => item !== id))}
+          onRemove={() => setPanTargets(panTargets.filter(item => item !== id))}
         />
       )
     })
-  }, [allSelected, pictures, selectedSlotIds, images, setSelectedSlotIds])
+  }, [allSelected, pictures, panTargets, images])
 
   return (
     <SectionBlock
@@ -197,7 +202,7 @@ const SlotPanSection: FC = () => {
                   key={picture.id}
                   value={picture.id}
                   className='text-xs'
-                  disabled={!allSelected && selectedSlotIds.includes(picture.id)}
+                  disabled={!allSelected && panTargets.includes(picture.id)}
                 >
                   {slotLabel(picture.id, resolveName(picture.libraryId))}
                 </SelectItem>

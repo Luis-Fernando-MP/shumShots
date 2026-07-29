@@ -3,15 +3,15 @@
 import useBoardStore from '@/shared/components/Board/board.store'
 import useShadowStore, {
   type LightLayer,
-  type ShadowLayer
+  type ShadowLayer,
+  createDefaultShadowConfig
 } from '@views/image-studio/Popups/ShadowConfiguration/store'
+import { TABS_SCOPES } from '@views/image-studio/constants'
 import { resolveLightOverlayStyle } from '@views/image-studio/fx/light'
-import {
-  resolveBoxShadowStyle,
-  resolveDropShadowFilter,
-  resolveFrameFillBoxShadow
-} from '@views/image-studio/fx/shadow'
-import { layerAppliesTo, shadowScaleForSize } from '@views/image-studio/fx/shared/targeting'
+import { resolveBoxShadowStyle, resolveDropShadowFilter, resolveFrameFillBoxShadow } from '@views/image-studio/fx/shadow'
+import { shadowScaleForSize } from '@views/image-studio/fx/shared/targeting'
+import { getTabsStore } from '@views/image-studio/shared/components/tabs/store'
+import { resolveTabConfig } from '@views/image-studio/shared/resolveTabConfig'
 import type { CSSProperties, RefObject } from 'react'
 import { useLayoutEffect } from 'react'
 
@@ -103,15 +103,12 @@ export const computeSlotShadowFx = (
 ): SlotShadowFx => {
   const sizeScale = shadowScaleForSize(edgePx)
   const filterScale = sizeScale / Math.max(1, boardScale)
-  const shadows = state.shadowLayers.filter(layer => layerAppliesTo(layer.targetIds, slotId))
-  const lights = state.lightLayers.filter(layer => layerAppliesTo(layer.targetIds, slotId))
+  const config = state.resolveForSlot(slotId)
+  const shadows = config.shadowLayers
+  const lights = config.lightLayers
   return {
     boxShadow: mergeBoxShadows(shadows, sizeScale),
-    dropShadowFilter: mergeDropFilters(
-      shadows,
-      filterScale,
-      dropShadowStopsForBoardScale(boardScale)
-    ),
+    dropShadowFilter: mergeDropFilters(shadows, filterScale, dropShadowStopsForBoardScale(boardScale)),
     frameFillBoxShadow: mergeFrameFillBoxShadows(shadows, sizeScale),
     lightOverlays: mergeLightOverlays(lights)
   }
@@ -132,8 +129,7 @@ const syncLightOverlays = (container: HTMLElement | null, overlays: CSSPropertie
       container.appendChild(node)
     }
     node.style.backgroundImage = typeof style.backgroundImage === 'string' ? style.backgroundImage : ''
-    node.style.mixBlendMode =
-      typeof style.mixBlendMode === 'string' ? style.mixBlendMode : 'normal'
+    node.style.mixBlendMode = typeof style.mixBlendMode === 'string' ? style.mixBlendMode : 'normal'
     node.style.pointerEvents = 'none'
   })
 }
@@ -161,8 +157,12 @@ export const useShadowLightDom = ({
 }: BindArgs) => {
   useLayoutEffect(() => {
     let prevKey = ''
+    let rafId = 0
+    let paintScheduled = false
+    const fallbackConfig = createDefaultShadowConfig()
 
     const paint = () => {
+      paintScheduled = false
       const boardScale = useBoardStore.getState().scale
       const fx = computeSlotShadowFx(slotId, edgePx, boardScale)
       const filterEl = filterTarget
@@ -187,8 +187,7 @@ export const useShadowLightDom = ({
 
       if (hasDeviceFrame) {
         if (boxEl) {
-          boxEl.style.boxShadow =
-            [baseBoxShadow, fx.frameFillBoxShadow].filter(Boolean).join(', ') || 'none'
+          boxEl.style.boxShadow = [baseBoxShadow, fx.frameFillBoxShadow].filter(Boolean).join(', ') || 'none'
           boxEl.style.overflow = 'visible'
         }
         if (filterEl) {
@@ -209,31 +208,51 @@ export const useShadowLightDom = ({
       syncLightOverlays(lightsRef.current, fx.lightOverlays)
     }
 
+    const schedulePaint = () => {
+      if (paintScheduled) return
+      paintScheduled = true
+      rafId = requestAnimationFrame(() => {
+        rafId = 0
+        paint()
+      })
+    }
+
+    const shouldPaintForShadowState = (
+      nextState: ReturnType<typeof useShadowStore.getState>,
+      prevState: ReturnType<typeof useShadowStore.getState>
+    ) => {
+      const layers = getTabsStore(TABS_SCOPES.shadow).getState().layers
+      const nextConfig = resolveTabConfig(layers, nextState.byTab, slotId, fallbackConfig)
+      const prevConfig = resolveTabConfig(layers, prevState.byTab, slotId, fallbackConfig)
+      return nextConfig.shadowLayers !== prevConfig.shadowLayers || nextConfig.lightLayers !== prevConfig.lightLayers
+    }
+
     paint()
     let boardScaleTimer: ReturnType<typeof setTimeout> | null = null
-    const unsubShadow = useShadowStore.subscribe(paint)
+    const unsubShadow = useShadowStore.subscribe((state, prev) => {
+      if (!shouldPaintForShadowState(state, prev)) return
+      schedulePaint()
+    })
+    const tabsStore = getTabsStore(TABS_SCOPES.shadow)
+    const unsubTabs = tabsStore.subscribe((state, prev) => {
+      if (state.layers === prev.layers) return
+      schedulePaint()
+    })
     const unsubBoard = useBoardStore.subscribe((state, prev) => {
       if (state.scale === prev.scale) return
       // Evita repintar drop-shadow en cada tick del zoom (tirones/parpadeos).
       if (boardScaleTimer != null) clearTimeout(boardScaleTimer)
       boardScaleTimer = setTimeout(() => {
         boardScaleTimer = null
-        paint()
+        schedulePaint()
       }, 120)
     })
     return () => {
       unsubShadow()
+      unsubTabs()
       unsubBoard()
       if (boardScaleTimer != null) clearTimeout(boardScaleTimer)
+      if (rafId) cancelAnimationFrame(rafId)
     }
-  }, [
-    baseBoxShadow,
-    boxShadowRef,
-    edgePx,
-    filterTarget,
-    hasDeviceFrame,
-    lightsRef,
-    rootRef,
-    slotId
-  ])
+  }, [baseBoxShadow, boxShadowRef, edgePx, filterTarget, hasDeviceFrame, lightsRef, rootRef, slotId])
 }
