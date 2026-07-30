@@ -39,6 +39,7 @@ const LayerTabs: FC<PanelProps> = ({ kind, tabId }) => {
       onAdd={() => addLayer(tabId)}
       onRemove={id => removeLayer(tabId, id)}
       addLabel={kind === 'shadow' ? 'Nueva sombra' : 'Nueva luz'}
+      labelPrefix={kind === 'shadow' ? 'Sombra' : 'Luz'}
     />
   )
 }

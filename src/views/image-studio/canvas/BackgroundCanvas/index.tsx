@@ -18,12 +18,11 @@ const BackgroundCanvas: FC<Props> = ({ parentRef }) => {
     overlayStyle,
     overlayOpacity,
     duotoneLayers,
-    vignetteStyle,
-    lightOverlays
+    vignetteStyle
   } = useBackgroundCanvasStore({ parentRef })
 
   return (
-    <div className='editor-background relative' style={frameStyle}>
+    <div className='editor-background relative z-0' style={frameStyle}>
       <div className='relative size-full' style={matStyle}>
         <div
           className='relative size-full overflow-hidden'
@@ -41,9 +40,6 @@ const BackgroundCanvas: FC<Props> = ({ parentRef }) => {
           )}
           {overlayOpacity > 0 && <div className='pointer-events-none absolute inset-0' style={overlayStyle} />}
           {vignetteStyle && <div className='pointer-events-none absolute inset-0' style={vignetteStyle} />}
-          {lightOverlays.map((style, index) => (
-            <div key={index} className='pointer-events-none absolute inset-0' style={style} />
-          ))}
         </div>
       </div>
     </div>

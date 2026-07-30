@@ -1,20 +1,10 @@
-import { create, type StateCreator } from 'zustand'
+import { LIGHT_PRESETS, type LightType, normalizeLightType } from '@views/image-studio/Popups/common/presets/light'
+import { type StateCreator, create } from 'zustand'
 import { createJSONStorage, persist } from 'zustand/middleware'
 
-import {
-  LIGHT_PRESETS,
-  normalizeLightType,
-  type LightType
-} from '@views/image-studio/Popups/common/presets/light'
-
-import {
-  STORAGE_KEY,
-  STORAGE_VERSION,
-  createInitialLightState,
-  defaultLightLayer
-} from './initialState'
+import { STORAGE_KEY, createInitialLightState, defaultLightLayer } from './initialState'
 import type LightState from './type.light'
-import type { CanvasLightLayer } from './type.light'
+import type { CanvasLightLayer, LightStackMode } from './type.light'
 
 const sanitizeLayer = (layer: CanvasLightLayer): CanvasLightLayer => {
   const type = normalizeLightType(layer.type)
@@ -53,9 +43,7 @@ const state: StateCreator<LightState> = (set, get) => ({
 
   updateLight: patch => {
     set(s => ({
-      layers: s.layers.map(layer =>
-        layer.id === s.activeId ? { ...layer, ...patch } : layer
-      )
+      layers: s.layers.map(layer => (layer.id === s.activeId ? { ...layer, ...patch } : layer))
     }))
   },
 
@@ -82,26 +70,29 @@ const state: StateCreator<LightState> = (set, get) => ({
     get().updateLight({ focus })
   },
 
+  setStackMode: mode => set({ stackMode: mode }),
+
   reset: () => set(createInitialLightState())
 })
 
 const useCanvasLightStore = create(
   persist(state, {
     name: STORAGE_KEY,
-    version: STORAGE_VERSION,
     storage: createJSONStorage(() => localStorage),
     skipHydration: true,
-    partialize: (s): Pick<LightState, 'layers' | 'activeId'> => ({
+    partialize: (s): Pick<LightState, 'layers' | 'activeId' | 'stackMode'> => ({
       layers: s.layers,
-      activeId: s.activeId
+      activeId: s.activeId,
+      stackMode: s.stackMode
     }),
+    migrate: persisted => persisted,
     merge: (persisted, current) => {
-      const raw = persisted as Partial<Pick<LightState, 'layers' | 'activeId'>> | undefined
+      const raw = persisted as Partial<Pick<LightState, 'layers' | 'activeId' | 'stackMode'>> | undefined
       if (!raw?.layers?.length) return current
       const layers = raw.layers.map(sanitizeLayer)
-      const activeId =
-        layers.some(layer => layer.id === raw.activeId) ? (raw.activeId as string) : layers[0].id
-      return { ...current, layers, activeId }
+      const activeId = layers.some(layer => layer.id === raw.activeId) ? (raw.activeId as string) : layers[0].id
+      const stackMode: LightStackMode = raw.stackMode === 'below' ? 'below' : 'above'
+      return { ...current, layers, activeId, stackMode }
     }
   })
 )

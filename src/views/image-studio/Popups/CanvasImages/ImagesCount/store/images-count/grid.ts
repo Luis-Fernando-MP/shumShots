@@ -18,7 +18,6 @@ type GridState = {
 }
 
 const STORAGE_KEY = 'pixis:image-studio:grid'
-const STORAGE_VERSION = 2
 
 const defaults: Pick<GridState, 'constrainToParent' | 'positionId'> = {
   constrainToParent: true,
@@ -48,23 +47,13 @@ const state: StateCreator<GridState> = (set, get) => ({
 const useGridStore = create(
   persist(state, {
     name: STORAGE_KEY,
-    version: STORAGE_VERSION,
     skipHydration: true,
     storage: createJSONStorage(() => localStorage),
     partialize: s => ({
       constrainToParent: s.constrainToParent,
       positionId: s.positionId
     }),
-    migrate: (persisted, version) => {
-      const data = (persisted ?? {}) as Partial<GridState>
-      if (version < 2 && typeof data.positionId === 'string') {
-        return {
-          ...data,
-          positionId: normalizePositionId(data.positionId)
-        }
-      }
-      return data
-    },
+    migrate: persisted => persisted,
     merge: (persisted, current) => {
       const data = (persisted ?? {}) as Partial<GridState>
       return {

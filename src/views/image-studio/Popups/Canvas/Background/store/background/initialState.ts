@@ -3,7 +3,6 @@ import { DEFAULT_BACKGROUND_SIZE } from '@views/image-studio/utils/backgroundSty
 import type { BackgroundState } from './type.background'
 
 export const STORAGE_KEY = 'image-studio-background'
-export const STORAGE_VERSION = 2
 
 export const FILTER_DEFAULTS = {
   brightness: 100,

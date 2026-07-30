@@ -11,8 +11,7 @@ import {
   createDefaultFrameConfig,
   DEFAULT_PAN,
   defaultSlotPan,
-  STORAGE_KEY,
-  STORAGE_VERSION
+  STORAGE_KEY
 } from './initialState'
 import type FrameState from './type.frame'
 import type { FrameFitMode, FrameTabConfig, SlotPan } from './type.frame'
@@ -93,34 +92,32 @@ const state: StateCreator<FrameState> = (set, get) => ({
 const useFrameStore = create(
   persist(state, {
     name: STORAGE_KEY,
-    version: STORAGE_VERSION,
     skipHydration: true,
     storage: createJSONStorage(() => localStorage),
     partialize: s => ({
       byTab: s.byTab,
       slotPan: s.slotPan
     }),
-    migrate: (persisted, version) => {
+    migrate: persisted => {
       const data = (persisted ?? {}) as Record<string, unknown>
-      if (version < 2) {
-        const frameId =
-          typeof data.frameId === 'string' || data.frameId === null ? data.frameId : null
-        const fitMode =
-          data.fitMode === 'cover' || data.fitMode === 'contain' || data.fitMode === 'fill'
-            ? data.fitMode
-            : 'cover'
-        const slotPan =
-          data.slotPan && typeof data.slotPan === 'object'
-            ? (data.slotPan as Record<string, SlotPan>)
-            : {}
-        const layers = getTabsStore(TABS_SCOPES.frame).getState().layers
-        const byTab: Record<string, FrameTabConfig> = {}
-        for (const layer of layers) {
-          byTab[layer.id] = { frameId: frameId as string | null, fitMode: fitMode as FrameFitMode }
-        }
-        return { byTab, slotPan }
+      if (data.byTab && typeof data.byTab === 'object') return data
+
+      const frameId =
+        typeof data.frameId === 'string' || data.frameId === null ? data.frameId : null
+      const fitMode =
+        data.fitMode === 'cover' || data.fitMode === 'contain' || data.fitMode === 'fill'
+          ? data.fitMode
+          : 'cover'
+      const slotPan =
+        data.slotPan && typeof data.slotPan === 'object'
+          ? (data.slotPan as Record<string, SlotPan>)
+          : {}
+      const layers = getTabsStore(TABS_SCOPES.frame).getState().layers
+      const byTab: Record<string, FrameTabConfig> = {}
+      for (const layer of layers) {
+        byTab[layer.id] = { frameId: frameId as string | null, fitMode: fitMode as FrameFitMode }
       }
-      return data
+      return { byTab, slotPan }
     },
     onRehydrateStorage: () => state => {
       if (state) state.syncResolvedFramesToPictures()

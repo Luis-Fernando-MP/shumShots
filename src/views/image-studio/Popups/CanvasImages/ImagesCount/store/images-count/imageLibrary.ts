@@ -34,7 +34,6 @@ type LibraryState = {
 }
 
 const STORAGE_KEY = 'pixis-image-library'
-const STORAGE_VERSION = 2
 
 const slugify = (value: string) =>
   value
@@ -139,7 +138,6 @@ const state: StateCreator<LibraryState> = (set, get) => ({
 const useImageLibraryStore = create(
   persist(state, {
     name: STORAGE_KEY,
-    version: STORAGE_VERSION,
     skipHydration: true,
     storage: createJSONStorage(() => localStorage),
     partialize: s => ({ images: s.images }),

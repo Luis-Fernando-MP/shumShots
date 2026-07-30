@@ -350,7 +350,7 @@ export default listMapper
 
 ## State and async data
 
-- Use Zustand for client-side feature state. Persist only serializable state and version persisted schemas.
+- Use Zustand for client-side feature state. Persist only serializable state.
 - Use TanStack Query for server state. Do not duplicate server data in Zustand.
 - Keep Fabric, Monaco, DOM, and other non-serializable instances outside Zustand state.
 
@@ -442,7 +442,7 @@ Prefer **TypeScript inference** + `satisfies SectionBuilder[]` / `PresetBuilder`
 ### Stores
 
 - Domain Zustand stores live **inside** `Popups/.../store/{dominio}/`, not a root `image-studio/store/`.
-- Persist with stable `name` + `version` when moving stores.
+- Persist only serializable state. Prefer a stable `name` key; use `merge` (and optional shape-based `migrate`) for sanitizing rehydrated data — do **not** use Zustand persist `version` counters.
 - Canvas hooks (not ShotEditor / MainBar parents) apply DOM/styles from those stores.
 - MainBar may read a store only for chrome actions (e.g. Unsplash → setBackground).
 

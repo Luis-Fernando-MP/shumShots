@@ -1,7 +1,6 @@
 import type { FrameTabConfig, SlotPan } from './type.frame'
 
 export const STORAGE_KEY = 'pixis:image-studio:frame-config'
-export const STORAGE_VERSION = 2
 
 export const DEFAULT_PAN: SlotPan = { x: 0.5, y: 0.5 }
 

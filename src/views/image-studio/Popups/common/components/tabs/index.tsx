@@ -127,6 +127,7 @@ const TabsRoot: FC<TabsRootProps> = ({ scope, children, addLabel = 'Nueva capa',
               onTabsChange?.(next.layers, next.activeLayerId)
             }}
             addLabel={addLabel}
+            labelPrefix='Grupo'
           />
           <TargetSlotsPicker
             targetIds={selectedSlots}

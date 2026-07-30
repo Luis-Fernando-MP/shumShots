@@ -5,7 +5,7 @@ import { TABS_SCOPES } from '@views/image-studio/constants'
 import { getTabsStore } from '@views/image-studio/Popups/common/components/tabs/store'
 import { resolveTabConfig, syncTabBuckets } from '@views/image-studio/Popups/common/components/tabs/resolveTabConfig'
 
-import { createDefaultCornerConfig, STORAGE_KEY, STORAGE_VERSION } from './initialState'
+import { createDefaultCornerConfig, STORAGE_KEY } from './initialState'
 import type CornerState from './type.corner'
 import type { CornerTabConfig } from './type.corner'
 
@@ -62,10 +62,10 @@ const state: StateCreator<CornerState> = (set, get) => ({
 const useCornerStore = create(
   persist(state, {
     name: STORAGE_KEY,
-    version: STORAGE_VERSION,
     skipHydration: true,
     storage: createJSONStorage(() => localStorage),
-    partialize: s => ({ byTab: s.byTab })
+    partialize: s => ({ byTab: s.byTab }),
+    migrate: persisted => persisted
   })
 )
 

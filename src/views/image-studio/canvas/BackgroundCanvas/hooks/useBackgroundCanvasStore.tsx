@@ -5,8 +5,6 @@ import useCanvasBorderStore from '@views/image-studio/Popups/Canvas/CanvasBorder
 import useCanvasRadiusStore, {
   resolveSmoothCornerStyle
 } from '@views/image-studio/Popups/Canvas/CanvasBorder/store/canvas-border/radius.store'
-import useCanvasLightStore from '@views/image-studio/Popups/Canvas/Light/store/light/store'
-import { resolveLightOverlayStyle } from '@views/image-studio/Popups/common/presets/light'
 import {
   buildBackgroundTransform,
   buildFilterCss,
@@ -72,8 +70,6 @@ const useBackgroundCanvasStore = (options: UseBackgroundCanvasStoreOptions = {})
   const matRight = useCanvasBorderStore(s => s.matRight)
   const matBottom = useCanvasBorderStore(s => s.matBottom)
   const matLeft = useCanvasBorderStore(s => s.matLeft)
-
-  const lightLayers = useCanvasLightStore(s => s.layers)
 
   const duotoneActive = duotoneIntensity > 0
 
@@ -217,22 +213,6 @@ const useBackgroundCanvasStore = (options: UseBackgroundCanvasStoreOptions = {})
     ]
   )
 
-  const lightOverlays = useMemo(
-    () =>
-      lightLayers
-        .map(layer =>
-          resolveLightOverlayStyle({
-            lightType: layer.type,
-            lightOpacity: layer.opacity,
-            lightSize: layer.size,
-            lightColor: layer.color,
-            lightFocus: layer.focus
-          })
-        )
-        .filter(Boolean) as CSSProperties[],
-    [lightLayers]
-  )
-
   return {
     radiusCss,
     cornerShapeCss,
@@ -243,8 +223,7 @@ const useBackgroundCanvasStore = (options: UseBackgroundCanvasStoreOptions = {})
     overlayStyle,
     overlayOpacity,
     duotoneLayers,
-    vignetteStyle,
-    lightOverlays
+    vignetteStyle
   }
 }
 

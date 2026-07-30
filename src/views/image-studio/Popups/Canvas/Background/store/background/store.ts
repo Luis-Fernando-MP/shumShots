@@ -13,7 +13,7 @@ import {
 import { type StateCreator, create } from 'zustand'
 import { persist } from 'zustand/middleware'
 
-import { FILTER_DEFAULTS, STORAGE_KEY, STORAGE_VERSION, initialState } from './initialState'
+import { FILTER_DEFAULTS, STORAGE_KEY, initialState } from './initialState'
 import type BackgroundStore from './type.background'
 import type { BackgroundState } from './type.background'
 
@@ -156,7 +156,7 @@ const state: StateCreator<BackgroundStore> = (set, get) => ({
 const useBackgroundStore = create(
   persist(state, {
     name: STORAGE_KEY,
-    version: STORAGE_VERSION,
+    migrate: persisted => persisted,
     partialize: (s): BackgroundState => ({
       background: isPersistableBackground(s.background) ? s.background : null,
       backgroundWidth: s.backgroundWidth,

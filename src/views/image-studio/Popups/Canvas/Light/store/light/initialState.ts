@@ -3,7 +3,6 @@ import { createId } from '@views/image-studio/utils/createId'
 import type { CanvasLightLayer } from './type.light'
 
 export const STORAGE_KEY = 'pixis:image-studio:canvas-light'
-export const STORAGE_VERSION = 1
 
 export const defaultLightLayer = (index = 1): CanvasLightLayer => ({
   id: createId('canvas-light'),
@@ -19,6 +18,7 @@ export const createInitialLightState = () => {
   const layer = defaultLightLayer(1)
   return {
     layers: [layer],
-    activeId: layer.id
+    activeId: layer.id,
+    stackMode: 'above' as const
   }
 }

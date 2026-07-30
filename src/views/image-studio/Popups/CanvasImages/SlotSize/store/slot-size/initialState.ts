@@ -3,7 +3,6 @@ import { createId } from '@views/image-studio/utils/createId'
 import type { SizeLayer } from './type.slot-size'
 
 export const STORAGE_KEY = 'pixis:image-studio:size'
-export const STORAGE_VERSION = 1
 
 export const DEFAULT_SLOT_SIZE = { width: 420, height: 315 } as const
 

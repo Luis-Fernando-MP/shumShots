@@ -87,9 +87,9 @@ function createTabsStore(scope: TabScope) {
       }),
       {
         name: `pixis:image-studio:tabs:${scope}`,
-        version: 1,
         skipHydration: true,
         storage: createJSONStorage(() => localStorage),
+        migrate: persisted => persisted,
         partialize: s => ({
           layers: s.layers,
           activeLayerId: s.activeLayerId

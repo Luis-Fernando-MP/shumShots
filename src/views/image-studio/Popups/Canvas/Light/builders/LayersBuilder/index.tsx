@@ -13,7 +13,7 @@ const LayersBuilder: FC = () => {
   const removeLayer = useCanvasLightStore(s => s.removeLayer)
 
   return (
-    <SectionBlock title='Capas' description='Luces aplicadas sobre el canvas de fondo.'>
+    <SectionBlock title='Capas' description='Una o varias luces sobre el mismo canvas (sin slots).'>
       <TabBar
         items={layers}
         activeId={activeId}
@@ -21,6 +21,7 @@ const LayersBuilder: FC = () => {
         onAdd={addLayer}
         onRemove={removeLayer}
         addLabel='Nueva luz'
+        labelPrefix='Luz'
       />
     </SectionBlock>
   )

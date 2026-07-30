@@ -155,6 +155,7 @@ const usePicturesStore = create(
     name: STORAGE_KEY,
     skipHydration: true,
     storage: createJSONStorage(() => localStorage),
+    migrate: persisted => persisted,
     partialize: s => ({
       pictures: s.pictures,
       count: s.count,

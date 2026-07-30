@@ -1,7 +1,6 @@
 import type { CornerBorderConfig, CornerRadiusConfig, CornerTabConfig } from './type.corner'
 
 export const STORAGE_KEY = 'pixis:image-studio:corner'
-export const STORAGE_VERSION = 1
 
 export const DEFAULT_BORDER: CornerBorderConfig = {
   color: 'rgba(255, 255, 255, 1)',

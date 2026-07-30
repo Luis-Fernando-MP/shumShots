@@ -279,7 +279,7 @@ const PictureCanvas: FC = () => {
   }, [backgroundHeight, backgroundWidth, constrainToParent, pictures, positionId, sizeLayers])
 
   return (
-    <div className='pointer-events-none absolute inset-0' id='picture-canvas-layer'>
+    <div className='pointer-events-none absolute inset-0 z-[10]' id='picture-canvas-layer'>
       <div className='pointer-events-auto relative size-full'>
         {pictures.map((picture, index) => {
           const placement = placements[index]

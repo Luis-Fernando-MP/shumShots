@@ -8,8 +8,7 @@ import {
   clampSize,
   createLayer,
   DEFAULT_SLOT_SIZE,
-  STORAGE_KEY,
-  STORAGE_VERSION
+  STORAGE_KEY
 } from './initialState'
 import type SizeState from './type.slot-size'
 import type { SizeLayer } from './type.slot-size'
@@ -136,13 +135,13 @@ const state: StateCreator<SizeState> = (set, get) => ({
 const useSizeStore = create(
   persist(state, {
     name: STORAGE_KEY,
-    version: STORAGE_VERSION,
     skipHydration: true,
     storage: createJSONStorage(() => localStorage),
     partialize: s => ({
       layers: s.layers,
       activeLayerId: s.activeLayerId
     }),
+    migrate: persisted => persisted,
     merge: (persisted, current) => {
       const data = (persisted ?? {}) as Partial<SizeState>
       const raw = Array.isArray(data.layers) && data.layers.length > 0 ? data.layers : current.layers

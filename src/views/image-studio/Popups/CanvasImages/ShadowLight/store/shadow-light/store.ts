@@ -24,7 +24,6 @@ import type ShadowState from './type.shadow-light'
 import type { ShadowTabConfig } from './type.shadow-light'
 
 const STORAGE_KEY = 'pixis:image-studio:shadow-light'
-const STORAGE_VERSION = 2
 
 const sanitizeLightLayer = (layer: LightLayer): LightLayer => {
   const type = normalizeLightType(layer.type)
@@ -204,43 +203,43 @@ const state: StateCreator<ShadowState> = (set, get) => ({
 const useShadowStore = create(
   persist(state, {
     name: STORAGE_KEY,
-    version: STORAGE_VERSION,
     skipHydration: true,
     storage: createJSONStorage(() => localStorage),
     partialize: s => ({ byTab: s.byTab }),
-    migrate: (persisted, version) => {
+    migrate: persisted => {
       const data = (persisted ?? {}) as Record<string, unknown>
-      if (version < 2) {
-        const shadowLayers = Array.isArray(data.shadowLayers)
-          ? (data.shadowLayers as ShadowLayer[]).map(sanitizeShadowLayer)
-          : null
-        const lightLayers = Array.isArray(data.lightLayers)
-          ? (data.lightLayers as LightLayer[]).map(sanitizeLightLayer)
-          : null
-        const layers = getTabsStore(TABS_SCOPES.shadow).getState().layers
-        const seed = createDefaultShadowConfig()
-        if (shadowLayers && shadowLayers.length > 0) {
-          seed.shadowLayers = shadowLayers
-          seed.activeShadowId =
-            typeof data.activeShadowId === 'string' &&
-            shadowLayers.some(layer => layer.id === data.activeShadowId)
-              ? data.activeShadowId
-              : shadowLayers[0].id
-        }
-        if (lightLayers && lightLayers.length > 0) {
-          seed.lightLayers = lightLayers
-          seed.activeLightId =
-            typeof data.activeLightId === 'string' &&
-            lightLayers.some(layer => layer.id === data.activeLightId)
-              ? data.activeLightId
-              : lightLayers[0].id
-        }
-        if (typeof data.linkFocus === 'boolean') seed.linkFocus = data.linkFocus
-        const byTab: Record<string, ShadowTabConfig> = {}
-        for (const layer of layers) byTab[layer.id] = { ...seed }
-        return { byTab }
+      if (data.byTab && typeof data.byTab === 'object') return data
+
+      const shadowLayers = Array.isArray(data.shadowLayers)
+        ? (data.shadowLayers as ShadowLayer[]).map(sanitizeShadowLayer)
+        : null
+      const lightLayers = Array.isArray(data.lightLayers)
+        ? (data.lightLayers as LightLayer[]).map(sanitizeLightLayer)
+        : null
+      if (!shadowLayers && !lightLayers) return data
+
+      const layers = getTabsStore(TABS_SCOPES.shadow).getState().layers
+      const seed = createDefaultShadowConfig()
+      if (shadowLayers && shadowLayers.length > 0) {
+        seed.shadowLayers = shadowLayers
+        seed.activeShadowId =
+          typeof data.activeShadowId === 'string' &&
+          shadowLayers.some(layer => layer.id === data.activeShadowId)
+            ? data.activeShadowId
+            : shadowLayers[0].id
       }
-      return data
+      if (lightLayers && lightLayers.length > 0) {
+        seed.lightLayers = lightLayers
+        seed.activeLightId =
+          typeof data.activeLightId === 'string' &&
+          lightLayers.some(layer => layer.id === data.activeLightId)
+            ? data.activeLightId
+            : lightLayers[0].id
+      }
+      if (typeof data.linkFocus === 'boolean') seed.linkFocus = data.linkFocus
+      const byTab: Record<string, ShadowTabConfig> = {}
+      for (const layer of layers) byTab[layer.id] = { ...seed }
+      return { byTab }
     }
   })
 )
