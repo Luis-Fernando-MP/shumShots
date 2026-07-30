@@ -2,7 +2,6 @@
 
 import { cn } from '@common/utils/cn'
 import SectionBlock from '@views/image-studio/Popups/common/components/SectionBlock'
-import useGridStore from '@views/image-studio/Popups/CanvasImages/ImagesCount/store/images-count/grid'
 import usePicturesStore from '@views/image-studio/Popups/CanvasImages/ImagesCount/store/images-count/pictures'
 import useSizeStore from '@views/image-studio/Popups/CanvasImages/SlotSize/store/slot-size/store'
 import { ALL_TAB_SCOPES } from '@views/image-studio/constants'
@@ -44,7 +43,6 @@ const purgeRemovedSlots = (removed: string[]) => {
 const CountBuilder: FC = () => {
   const count = usePicturesStore(s => s.count)
   const setCount = usePicturesStore(s => s.setCount)
-  const ensurePositionForCount = useGridStore(s => s.ensurePositionForCount)
 
   return (
     <SectionBlock
@@ -61,7 +59,6 @@ const CountBuilder: FC = () => {
               onClick={() => {
                 const removed = setCount(value)
                 purgeRemovedSlots(removed)
-                ensurePositionForCount(value)
               }}
               className={cn(
                 'flex flex-col gap-1.5 rounded-lg p-1.5 transition-colors',

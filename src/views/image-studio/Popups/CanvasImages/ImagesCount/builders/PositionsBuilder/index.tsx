@@ -4,23 +4,17 @@ import Chip from '@common/ui/Chip'
 import { cn } from '@common/utils/cn'
 import SectionBlock from '@views/image-studio/Popups/common/components/SectionBlock'
 import {
-  positionsForCount,
+  SLOT_POSITION_LIST,
   type SlotPositionId
 } from '@views/image-studio/Popups/CanvasImages/ImagesCount/presets/positions/data'
 import useGridStore from '@views/image-studio/Popups/CanvasImages/ImagesCount/store/images-count/grid'
 import usePicturesStore from '@views/image-studio/Popups/CanvasImages/ImagesCount/store/images-count/pictures'
-import { type FC, useEffect } from 'react'
+import type { FC } from 'react'
 
 const PositionsBuilder: FC = () => {
   const count = usePicturesStore(s => s.count)
   const positionId = useGridStore(s => s.positionId)
   const setPositionId = useGridStore(s => s.setPositionId)
-  const ensurePositionForCount = useGridStore(s => s.ensurePositionForCount)
-  const entries = positionsForCount(count)
-
-  useEffect(() => {
-    ensurePositionForCount(count)
-  }, [count, ensurePositionForCount])
 
   return (
     <SectionBlock
@@ -28,7 +22,7 @@ const PositionsBuilder: FC = () => {
       description='Estilos de composición para el número de slots actual.'
     >
       <div className='grid grid-cols-4 gap-2'>
-        {entries.map(item => {
+        {SLOT_POSITION_LIST.map(item => {
           const active = positionId === item.id
           const Preview = item.preview
           return (
@@ -52,7 +46,7 @@ const PositionsBuilder: FC = () => {
                   3D
                 </Chip>
               )}
-              {Preview ? <Preview active={active} /> : <div className='h-10' />}
+              <Preview active={active} count={count} />
               <span className='text-muted-foreground text-center text-[10px] font-medium leading-tight'>
                 {item.title}
               </span>

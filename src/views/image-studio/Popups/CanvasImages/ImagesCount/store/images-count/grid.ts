@@ -3,7 +3,6 @@ import { createJSONStorage, persist } from 'zustand/middleware'
 
 import {
   DEFAULT_POSITION_ID,
-  defaultPositionIdForCount,
   SLOT_POSITIONS,
   type SlotPositionId
 } from '@views/image-studio/Popups/CanvasImages/ImagesCount/presets/positions/data'
@@ -13,7 +12,6 @@ type GridState = {
   positionId: SlotPositionId
   setConstrainToParent: (value: boolean) => void
   setPositionId: (id: SlotPositionId) => void
-  ensurePositionForCount: (count: number) => void
   reset: () => void
 }
 
@@ -26,21 +24,15 @@ const defaults: Pick<GridState, 'constrainToParent' | 'positionId'> = {
 
 const normalizePositionId = (id: string, fallback = DEFAULT_POSITION_ID): SlotPositionId => {
   if (SLOT_POSITIONS[id]) return id
-  const legacy = SLOT_POSITIONS[`${id}-1`]
-  if (legacy) return legacy.id
+  const family = id.replace(/-\d+$/, '')
+  if (family && SLOT_POSITIONS[family]) return family
   return fallback
 }
 
-const state: StateCreator<GridState> = (set, get) => ({
+const state: StateCreator<GridState> = set => ({
   ...defaults,
   setConstrainToParent: value => set({ constrainToParent: value }),
   setPositionId: id => set({ positionId: normalizePositionId(id) }),
-  ensurePositionForCount: count => {
-    const current = get().positionId
-    const entry = SLOT_POSITIONS[current]
-    if (entry && entry.count === count) return
-    set({ positionId: defaultPositionIdForCount(count) })
-  },
   reset: () => set({ ...defaults })
 })
 

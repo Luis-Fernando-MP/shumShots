@@ -268,7 +268,7 @@ const PictureCanvas: FC = () => {
 
   const placements = useMemo(() => {
     const slotSizes = pictures.map(picture => resolveSlotSizeFromState(sizeLayers, picture.id))
-    const entry = getPositionEntry(positionId, pictures.length)
+    const entry = getPositionEntry(positionId)
     return entry.builder({
       count: pictures.length,
       canvasWidth: backgroundWidth,

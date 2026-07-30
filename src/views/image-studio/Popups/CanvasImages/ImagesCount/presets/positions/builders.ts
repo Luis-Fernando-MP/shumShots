@@ -8,8 +8,7 @@ const clamp = (value: number, min: number, max: number) => Math.min(max, Math.ma
 
 const fitGroup = (
   placements: SlotPlacement[],
-  ctx: SlotBuildContext,
-  _allowOverlap: boolean
+  ctx: SlotBuildContext
 ): SlotPlacement[] => {
   if (!ctx.constrainToParent || placements.length === 0) return placements
 
@@ -30,7 +29,7 @@ const fitGroup = (
 
   const groupW = Math.max(1, maxX - minX)
   const groupH = Math.max(1, maxY - minY)
-  let scale = Math.min(1, maxW / groupW, maxH / groupH)
+  const scale = Math.min(1, maxW / groupW, maxH / groupH)
 
   const scaled = placements.map(p => ({
     ...p,
@@ -66,7 +65,6 @@ const sizeAt = (ctx: SlotBuildContext, index: number) =>
 
 export const buildGrid = (ctx: SlotBuildContext): SlotPlacement[] => {
   const cols = ctx.count <= 3 ? ctx.count : ctx.count === 4 ? 2 : 3
-  const rows = Math.ceil(ctx.count / cols)
   const gapX = ctx.canvasWidth * 0.03
   const gapY = ctx.canvasHeight * 0.03
 
@@ -86,7 +84,7 @@ export const buildGrid = (ctx: SlotBuildContext): SlotPlacement[] => {
     }
   })
 
-  return fitGroup(base, ctx, false)
+  return fitGroup(base, ctx)
 }
 
 export const buildStagger = (ctx: SlotBuildContext): SlotPlacement[] => {
@@ -104,7 +102,7 @@ export const buildStagger = (ctx: SlotBuildContext): SlotPlacement[] => {
       zIndex: index
     }
   })
-  return fitGroup(base, ctx, false)
+  return fitGroup(base, ctx)
 }
 
 export const buildStack = (ctx: SlotBuildContext): SlotPlacement[] => {
@@ -122,7 +120,7 @@ export const buildStack = (ctx: SlotBuildContext): SlotPlacement[] => {
       zIndex: index
     }
   })
-  return fitGroup(base, ctx, true)
+  return fitGroup(base, ctx)
 }
 
 export const buildStackBalanced = (ctx: SlotBuildContext): SlotPlacement[] => {
@@ -141,7 +139,7 @@ export const buildStackBalanced = (ctx: SlotBuildContext): SlotPlacement[] => {
       zIndex: index
     }
   })
-  return fitGroup(base, ctx, true)
+  return fitGroup(base, ctx)
 }
 
 export const buildFan = (ctx: SlotBuildContext): SlotPlacement[] => {
@@ -161,7 +159,7 @@ export const buildFan = (ctx: SlotBuildContext): SlotPlacement[] => {
       zIndex: index
     }
   })
-  return fitGroup(base, ctx, true)
+  return fitGroup(base, ctx)
 }
 
 export const buildFanTilt = (ctx: SlotBuildContext): SlotPlacement[] => {
@@ -179,7 +177,7 @@ export const buildFanTilt = (ctx: SlotBuildContext): SlotPlacement[] => {
       zIndex: index
     }
   })
-  return fitGroup(base, ctx, true)
+  return fitGroup(base, ctx)
 }
 
 export const buildDiagonal = (ctx: SlotBuildContext): SlotPlacement[] => {
@@ -197,7 +195,7 @@ export const buildDiagonal = (ctx: SlotBuildContext): SlotPlacement[] => {
       zIndex: index
     }
   })
-  return fitGroup(base, ctx, false)
+  return fitGroup(base, ctx)
 }
 
 export const buildPerspective = (ctx: SlotBuildContext): SlotPlacement[] => {
@@ -216,7 +214,7 @@ export const buildPerspective = (ctx: SlotBuildContext): SlotPlacement[] => {
       zIndex: index
     }
   })
-  return fitGroup(base, ctx, true)
+  return fitGroup(base, ctx)
 }
 
 export const buildColumn = (ctx: SlotBuildContext): SlotPlacement[] => {
@@ -234,7 +232,7 @@ export const buildColumn = (ctx: SlotBuildContext): SlotPlacement[] => {
       zIndex: index
     }
   })
-  return fitGroup(base, ctx, false)
+  return fitGroup(base, ctx)
 }
 
 export const buildOrbit = (ctx: SlotBuildContext): SlotPlacement[] => {
@@ -255,5 +253,5 @@ export const buildOrbit = (ctx: SlotBuildContext): SlotPlacement[] => {
       zIndex: index
     }
   })
-  return fitGroup(base, ctx, true)
+  return fitGroup(base, ctx)
 }

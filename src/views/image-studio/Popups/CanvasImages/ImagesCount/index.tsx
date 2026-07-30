@@ -14,14 +14,12 @@ import usePicturesStore from './store/images-count/pictures'
 
 const ImagesCount: FC = () => {
   const setCount = usePicturesStore(s => s.setCount)
-  const ensurePositionForCount = useGridStore(s => s.ensurePositionForCount)
   const resetGrid = useGridStore(s => s.reset)
 
   const handleReset = () => {
     const removed = setCount(1)
     purgeRemovedSlots(removed)
     resetGrid()
-    ensurePositionForCount(1)
   }
 
   return (
