@@ -1,4 +1,4 @@
-import { IBorderRadiusStore } from '@views/image-studio/store/background/backgroundRadius.store'
+import { IBorderRadiusStore } from '@views/image-studio/Popups/Canvas/CanvasBorder/store/canvas-border/radius.store'
 import type { FC } from 'react'
 
 import DefaultBorders from '../DefaultBorders'

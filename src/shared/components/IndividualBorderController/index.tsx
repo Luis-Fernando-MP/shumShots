@@ -1,5 +1,5 @@
 import { Button } from '@common/ui/Button'
-import { IBorderRadiusStore } from '@views/image-studio/store/background/backgroundRadius.store'
+import { IBorderRadiusStore } from '@views/image-studio/Popups/Canvas/CanvasBorder/store/canvas-border/radius.store'
 import { MaximizeIcon, RotateCcwIcon, ScaleIcon } from 'lucide-react'
 import { type FC } from 'react'
 

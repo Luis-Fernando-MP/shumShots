@@ -1,5 +1,5 @@
-import useImageLibraryStore, { type LibraryImage } from '@views/image-studio/store/images/imageLibrary.store'
-import usePicturesStore from '@views/image-studio/store/images/pictures.store'
+import useImageLibraryStore, { type LibraryImage } from '@views/image-studio/Popups/CanvasImages/ImagesCount/store/images-count/imageLibrary'
+import usePicturesStore from '@views/image-studio/Popups/CanvasImages/ImagesCount/store/images-count/pictures'
 import { putImageBlob } from '@views/image-studio/utils/imageBlobDb'
 
 const LEGACY_DB = 'pixis-persist-db'

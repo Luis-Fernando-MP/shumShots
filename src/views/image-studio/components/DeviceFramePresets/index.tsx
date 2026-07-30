@@ -5,7 +5,7 @@ import Typography from '@common/ui/Typography'
 import { cn } from '@common/utils/cn'
 import useFrameStore, {
   createDefaultFrameConfig
-} from '@views/image-studio/Popups/FrameConfiguration/store'
+} from '@views/image-studio/Popups/CanvasImages/Frame/store/frame/store'
 import { CircleOffIcon } from 'lucide-react'
 import { type FC } from 'react'
 

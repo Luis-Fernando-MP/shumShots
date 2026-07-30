@@ -1,29 +1,15 @@
 'use client'
 
-import useBackgroundRadiusStore from '@views/image-studio/store/background/backgroundRadius.store'
-import { type FC, memo } from 'react'
-
-import BackgroundCanvas from '../BackgroundCanvas'
-import PictureCanvas from '../PictureCanvas'
+import BackgroundCanvas from '@views/image-studio/canvas/BackgroundCanvas'
+import PictureCanvas from '@views/image-studio/canvas/PictureCanvas'
+import { type FC, memo, useRef } from 'react'
 
 const ShotEditor: FC = () => {
-  const activeIndividualBorder = useBackgroundRadiusStore(s => s.activeIndividualBorder)
-  const borderRadiusValue = useBackgroundRadiusStore(s => s.borderRadius)
-  const borderLTRadius = useBackgroundRadiusStore(s => s.borderLTRadius)
-  const borderRTRadius = useBackgroundRadiusStore(s => s.borderRTRadius)
-  const borderRBRadius = useBackgroundRadiusStore(s => s.borderRBRadius)
-  const borderLBRadius = useBackgroundRadiusStore(s => s.borderLBRadius)
-
-  let borderRadius = `${borderRadiusValue}px`
-  if (activeIndividualBorder) {
-    borderRadius = `${borderLTRadius}px ${borderRTRadius}px ${borderRBRadius}px ${borderLBRadius}px`
-  }
+  const editorRef = useRef<HTMLDivElement>(null)
 
   return (
-    <div id='editor' className='relative size-fit h-fit w-fit overflow-hidden' style={{ borderRadius }}>
-      <div className='overflow-hidden' style={{ borderRadius }}>
-        <BackgroundCanvas />
-      </div>
+    <div id='editor' ref={editorRef} className='relative size-fit h-fit w-fit overflow-hidden'>
+      <BackgroundCanvas parentRef={editorRef} />
       <PictureCanvas />
     </div>
   )

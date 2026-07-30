@@ -1,4 +1,4 @@
-import { IBorderRadiusStore } from '@views/image-studio/store/background/backgroundRadius.store'
+import { IBorderRadiusStore } from '@views/image-studio/Popups/Canvas/CanvasBorder/store/canvas-border/radius.store'
 import Corner from '@/shared/assets/Corner'
 import IconInput from '@/shared/ui/IconInput'
 import type { FC } from 'react'

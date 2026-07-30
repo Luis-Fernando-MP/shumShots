@@ -1,6 +1,6 @@
 import useImageLibraryStore, {
   type LibraryImage
-} from '@views/image-studio/store/images/imageLibrary.store'
+} from '@views/image-studio/Popups/CanvasImages/ImagesCount/store/images-count/imageLibrary'
 
 export const fileToDataUrl = (file: File) =>
   new Promise<string>((resolve, reject) => {

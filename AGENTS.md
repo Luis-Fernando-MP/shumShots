@@ -365,31 +365,96 @@ export default listMapper
 
 ## image-studio
 
+Architecture is **domain-first** under `src/views/image-studio/`.
+
+### Top-level layout
+
+```
+image-studio/
+  index.tsx
+  constants.ts
+  types/                    # SectionBuilder, PresetBuilder (default export)
+  components/               # chrome only: ShotEditor, MainBarOptions, PersistGate, DeviceFramePresets
+  canvas/
+    BackgroundCanvas/       # owns Background + CanvasBorder + Canvas/Light side-effects
+    PictureCanvas/          # owns Frame, ShadowLight, Corner, ImagesCount, SlotSize side-effects
+  Popups/
+    common/
+      components/           # SectionBlock, PresetCard, tabs, border/{radius,style,color,size,mat}, …
+      presets/              # shared catalogs composed by domains (e.g. light)
+      sections/             # shared SECTIONS fragments for compose (`...BORDER_SECTIONS`)
+      lib/                  # small cross-preset helpers (e.g. fx-shared targeting/math)
+    Canvas/                 # affects BackgroundCanvas
+      Background | CanvasBorder | Light
+    CanvasImages/           # affects PictureCanvas
+      ShadowLight | Frame | Corner | ImagesCount | SlotSize
+  utils/                    # pure cross-domain helpers only when truly shared
+```
+
 ### Popup → canvas
 
-- `BackgroundConfiguration` / `CanvasBorderConfiguration` → `BackgroundCanvas`.
-- `CornerConfiguration`, `FrameConfiguration`, `ShadowConfiguration`, `SlotSizeConfiguration` → `PictureCanvas` slots.
-- `ImagesCountConfiguration` → count, fit padre–hijo, posiciones de slots.
+- `Popups/Canvas/Background`, `CanvasBorder`, `Light` → `canvas/BackgroundCanvas` (+ `useBackgroundCanvasStore`).
+- `Popups/CanvasImages/Frame`, `ShadowLight`, `Corner`, `ImagesCount`, `SlotSize` → `canvas/PictureCanvas` (+ picture hooks).
+- `ShotEditor` only composes canvases / passes `parentRef`. **No domain store imports.**
 
-### Tabs (targeting multi-slot)
+### Domain folder shape
 
-- Compound API: `Tabs` + `Tabs.Title` + `Tabs.Content` under `shared/components/tabs/`.
-- Everything that affects the active layer lives in `Tabs.Content` only.
-- Scopes are unique and declared in `constants.ts` as `TABS_SCOPES` (`as const`); `Tabs` accepts `scope: TabScope`.
-- Tabs own a scoped Zustand store (`pixis:image-studio:tabs:{scope}`) with layers + `targetIds` (`[]` = all slots).
+Every domain under `Popups/{Canvas|CanvasImages}/{Dominio}/`:
 
-### Domain catalogs
+```
+index.tsx                 # MainBar entry (Popup shell)
+sections.ts               # SECTIONS satisfies SectionBuilder[]; component = Builder ref (no inline wrappers)
+store/{dominio}/
+  store.ts
+  type.{dominio}.ts
+  initialState.ts
+  helpers/                # optional
+  {substore}/             # optional microstores
+builders/{Name}Builder/index.tsx
+shared/                   # only reused inside this domain
+presets/{name}/           # domain-local catalogs (shadow, positions, …)
+```
 
-- Prefer `data.ts` (id, title, description, `builder`, optional `preview`) + `builders.ts` (pure functions with explicit props).
-- `builder` feeds the large canvas; optional `preview` feeds popup thumbnails.
+TSX product files use `{Carpeta}/index.tsx` so they can grow `hooks/` / `utils/` later.
+
+### `Popups/common` — compose, don’t duplicate
+
+- `common/components/border/*` — prop-driven radius/style/color/size/mat UI used by CanvasBorder and Corner.
+- `common/presets/light` — shared by `Canvas/Light` and `CanvasImages/ShadowLight` (`...LIGHT_PRESETS`).
+- `common/sections` — optional arrays domains spread into local `SECTIONS` (`[...BORDER_SECTIONS, ...local]`).
+- Positions presets live only under `CanvasImages/ImagesCount/presets/positions` (not common).
+- Frame templates / device frames stay in their domains (not common).
+
+Prefer **TypeScript inference** + `satisfies SectionBuilder[]` / `PresetBuilder`. Avoid inventing extra type layers.
+
+### Types
+
+- `types/sections.types.ts` — `SectionBuilder` (`key`, `title`, `description`, `SectionIcon`, `component`).
+- `types/presets.types.ts` — `PresetBuilder` (`key`, `Title`, `Description`, `Builder`, `Preview`).
+- `component` / `Builder` / `Preview` are **direct references** executed in loops (not `() => <X />`).
+
+### Tabs (multi-slot targeting)
+
+- Compound API under `Popups/common/components/tabs/`.
+- Active-layer controls live in `Tabs.Content` only.
+- Scopes in `constants.ts` as `TABS_SCOPES`; store key `pixis:image-studio:tabs:{scope}`; `targetIds: []` = all slots.
 
 ### Stores
 
-- Product domain stores live under `store/{dominio}/index.ts`.
-- Microstores: `store/{dominio}/{dominio}-{micro}.ts`.
-- Do not keep popup feature stores inside the popup UI tree when they are domain state.
+- Domain Zustand stores live **inside** `Popups/.../store/{dominio}/`, not a root `image-studio/store/`.
+- Persist with stable `name` + `version` when moving stores.
+- Canvas hooks (not ShotEditor / MainBar parents) apply DOM/styles from those stores.
+- MainBar may read a store only for chrome actions (e.g. Unsplash → setBackground).
 
 ### Fit + positions
 
-- `constrainToParent` (default true) scales slots to fit within ~90% of the background while keeping child aspect ratio.
-- Position presets (`slotPositions/`) may overlap children (fan/stack) even when fit is on; the group bbox still fits the parent.
+- `constrainToParent` (default true) scales slots to ~90% of the background while keeping child aspect ratio.
+- Position presets may overlap children (fan/stack); the group bbox still fits the parent.
+
+### Do not create
+
+- Root `store/`, `fx/`, `slotPositions/`, `hooks/`, or `*Configuration/` popups.
+- Domain stores outside their Popups domain folder.
+- Verbose duplicate border controllers — use `common/components/border/*` + compose sections.
+- Large new type graphs when inference / `satisfies` is enough.
+

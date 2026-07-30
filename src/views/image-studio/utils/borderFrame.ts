@@ -1,4 +1,4 @@
-import type { BorderFinish, BorderType } from '@views/image-studio/store/border/createBorderStore'
+import type { BorderFinish, BorderType } from '@views/image-studio/Popups/common/components/createBorderStore'
 import {
   resolveBorderColor,
   resolveBorderFinishShadow

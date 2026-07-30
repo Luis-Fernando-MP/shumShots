@@ -1,7 +1,7 @@
 'use client'
 
 import { cn } from '@common/utils/cn'
-import type { BorderConfigurationState } from '@views/image-studio/store/border/createBorderStore'
+import type { BorderConfigurationState } from '@views/image-studio/Popups/common/components/createBorderStore'
 import type { BorderFinish } from '@views/image-studio/utils/borderFinish'
 import {
   resolveBorderColor,
