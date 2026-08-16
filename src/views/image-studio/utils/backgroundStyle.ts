@@ -1,6 +1,6 @@
 import type { CSSProperties } from 'react'
 
-const THEME_PREVIEW_FILL: CSSProperties = {
+export const THEME_PREVIEW_FILL: CSSProperties = {
   backgroundImage:
     'linear-gradient(135deg, rgba(var(--tn-primary), 0.9), rgb(var(--bg-secondary)), rgba(var(--tn-secondary), 0.75))'
 }
@@ -17,8 +17,33 @@ export const DEMO_SCENE_FILL: CSSProperties = {
 const IMAGE_PREFIXES = ['url(', '/wallpapers/', 'blob:', 'data:', 'http://', 'https://'] as const
 
 export type BackgroundPositionPreset = 'center' | 'top' | 'bottom' | 'left' | 'right' | 'free'
-export type VignettePreset = 'none' | 'soft' | 'hard' | 'light' | 'cinema' | 'corners' | 'custom'
-export type DuotonePresetId = 'none' | 'spotify' | 'sunset' | 'ocean' | 'neon' | 'ember' | 'custom'
+export type VignettePreset =
+  | 'none'
+  | 'soft'
+  | 'hard'
+  | 'light'
+  | 'cinema'
+  | 'corners'
+  | 'tunnel'
+  | 'letterbox'
+  | 'edge-burn'
+  | 'halo'
+  | 'dual-spot'
+  | 'tri-spot'
+  | 'custom'
+export type DuotonePresetId =
+  | 'none'
+  | 'selenium'
+  | 'cyanotype'
+  | 'platinum'
+  | 'tealOrange'
+  | 'sepiaPrint'
+  | 'redscale'
+  | 'tungsten'
+  | 'splitGold'
+  | 'coolSteel'
+  | 'custom'
+export type VignettePoints = 1 | 2 | 3
 export type FilterPresetId = 'original' | 'vivid' | 'soft' | 'mono' | 'warm' | 'cool'
 
 export const POSITION_PRESETS: Record<Exclude<BackgroundPositionPreset, 'free'>, { x: number; y: number }> = {
@@ -140,7 +165,15 @@ export type VignetteState = {
   color: string
   focusX: number
   focusY: number
+  points?: VignettePoints
+  focus2X?: number
+  focus2Y?: number
+  focus3X?: number
+  focus3Y?: number
 }
+
+const radialHole = (at: string, size: number, outer: number, color: string, inner = 'transparent') =>
+  `radial-gradient(circle at ${at}, ${inner} ${size}%, ${color} ${outer}%)`
 
 export const resolveVignetteStyle = (state: VignetteState): CSSProperties | null => {
   if (state.preset === 'none') return null
@@ -152,6 +185,15 @@ export const resolveVignetteStyle = (state: VignetteState): CSSProperties | null
   const size = Math.max(5, Math.min(95, state.size))
   const outer = Math.min(100, size + soft * 0.45)
   const at = `${focusX}% ${focusY}%`
+  const points = state.points ?? (state.preset === 'dual-spot' ? 2 : state.preset === 'tri-spot' ? 3 : 1)
+
+  if (state.preset === 'letterbox') {
+    const band = Math.max(8, (100 - size) * 0.35)
+    return {
+      opacity: intensity,
+      background: `linear-gradient(to bottom, ${color} 0%, ${color} ${band}%, transparent ${band + soft * 0.2}%, transparent ${100 - band - soft * 0.2}%, ${color} ${100 - band}%, ${color} 100%)`
+    }
+  }
 
   if (state.preset === 'corners') {
     const clearHalf = Math.max(12, (100 - size) * 0.55 + soft * 0.12)
@@ -172,32 +214,40 @@ export const resolveVignetteStyle = (state: VignetteState): CSSProperties | null
   if (state.preset === 'cinema') {
     return { opacity: intensity, background: `radial-gradient(ellipse 70% 55% at ${at}, transparent ${size}%, ${color} ${outer}%)` }
   }
-  if (state.preset === 'light') {
+  if (state.preset === 'light' || state.preset === 'halo') {
     return {
       opacity: intensity,
       background: `radial-gradient(circle at ${at}, rgba(255,255,255,0.28) 0%, transparent ${size}%, ${color} ${outer}%)`
     }
   }
-  if (state.preset === 'hard') {
+  if (state.preset === 'hard' || state.preset === 'edge-burn') {
     return {
       opacity: intensity,
       background: `radial-gradient(circle at ${at}, transparent ${Math.max(10, size - 12)}%, ${color} ${size}%)`
     }
   }
-  return { opacity: intensity, background: `radial-gradient(circle at ${at}, transparent ${size}%, ${color} ${outer}%)` }
-}
+  if (state.preset === 'tunnel') {
+    return {
+      opacity: intensity,
+      background: `radial-gradient(circle at ${at}, transparent ${Math.max(8, size * 0.55)}%, ${color} ${outer}%)`
+    }
+  }
 
-export const VIGNETTE_PRESETS: {
-  id: Exclude<VignettePreset, 'custom' | 'none'>
-  label: string
-  values: Pick<VignetteState, 'intensity' | 'size' | 'softness' | 'color' | 'focusX' | 'focusY'>
-}[] = [
-  { id: 'soft', label: 'Suave', values: { intensity: 55, size: 42, softness: 55, color: 'rgba(0,0,0,1)', focusX: 50, focusY: 50 } },
-  { id: 'hard', label: 'Fuerte', values: { intensity: 75, size: 48, softness: 18, color: 'rgba(0,0,0,1)', focusX: 50, focusY: 50 } },
-  { id: 'light', label: 'Glow', values: { intensity: 45, size: 35, softness: 60, color: 'rgba(0,0,0,0.85)', focusX: 50, focusY: 42 } },
-  { id: 'cinema', label: 'Cinema', values: { intensity: 70, size: 38, softness: 50, color: 'rgba(0,0,0,1)', focusX: 50, focusY: 50 } },
-  { id: 'corners', label: 'Esquinas', values: { intensity: 60, size: 40, softness: 40, color: 'rgba(0,0,0,1)', focusX: 50, focusY: 50 } }
-]
+  const foci = [
+    at,
+    `${state.focus2X ?? 28}% ${state.focus2Y ?? 38}%`,
+    `${state.focus3X ?? 72}% ${state.focus3Y ?? 62}%`
+  ].slice(0, points)
+
+  if (points > 1) {
+    return {
+      opacity: intensity,
+      background: foci.map(point => radialHole(point, size, outer, color)).join(', ')
+    }
+  }
+
+  return { opacity: intensity, background: radialHole(at, size, outer, color) }
+}
 
 export const BLUR_PRESETS = [
   { id: 'none', label: 'Sin blur', value: 0 },
@@ -213,6 +263,27 @@ export type DuotoneState = {
   highlight: string
 }
 
+export const VIGNETTE_PRESETS: {
+  id: Exclude<VignettePreset, 'custom' | 'none'>
+  label: string
+  values: Pick<
+    VignetteState,
+    'intensity' | 'size' | 'softness' | 'color' | 'focusX' | 'focusY' | 'points' | 'focus2X' | 'focus2Y' | 'focus3X' | 'focus3Y'
+  >
+}[] = [
+  { id: 'soft', label: 'Suave', values: { intensity: 55, size: 42, softness: 55, color: 'rgba(0,0,0,1)', focusX: 50, focusY: 50, points: 1 } },
+  { id: 'hard', label: 'Fuerte', values: { intensity: 75, size: 48, softness: 18, color: 'rgba(0,0,0,1)', focusX: 50, focusY: 50, points: 1 } },
+  { id: 'light', label: 'Glow', values: { intensity: 45, size: 35, softness: 60, color: 'rgba(0,0,0,0.85)', focusX: 50, focusY: 42, points: 1 } },
+  { id: 'cinema', label: 'Cinema', values: { intensity: 70, size: 38, softness: 50, color: 'rgba(0,0,0,1)', focusX: 50, focusY: 50, points: 1 } },
+  { id: 'corners', label: 'Esquinas', values: { intensity: 60, size: 40, softness: 40, color: 'rgba(0,0,0,1)', focusX: 50, focusY: 50, points: 1 } },
+  { id: 'tunnel', label: 'Túnel', values: { intensity: 78, size: 32, softness: 28, color: 'rgba(0,0,0,1)', focusX: 50, focusY: 50, points: 1 } },
+  { id: 'letterbox', label: 'Letterbox', values: { intensity: 70, size: 55, softness: 18, color: 'rgba(0,0,0,1)', focusX: 50, focusY: 50, points: 1 } },
+  { id: 'edge-burn', label: 'Burn', values: { intensity: 72, size: 52, softness: 12, color: 'rgba(20,8,0,1)', focusX: 50, focusY: 50, points: 1 } },
+  { id: 'halo', label: 'Halo', values: { intensity: 50, size: 36, softness: 62, color: 'rgba(0,0,0,0.9)', focusX: 50, focusY: 46, points: 1 } },
+  { id: 'dual-spot', label: 'Doble', values: { intensity: 68, size: 28, softness: 40, color: 'rgba(0,0,0,1)', focusX: 32, focusY: 42, points: 2, focus2X: 70, focus2Y: 58 } },
+  { id: 'tri-spot', label: 'Triple', values: { intensity: 64, size: 22, softness: 36, color: 'rgba(0,0,0,1)', focusX: 28, focusY: 32, points: 3, focus2X: 72, focus2Y: 38, focus3X: 50, focus3Y: 72 } }
+]
+
 export const DUOTONE_PRESETS: {
   id: Exclude<DuotonePresetId, 'custom'>
   label: string
@@ -220,12 +291,16 @@ export const DUOTONE_PRESETS: {
   highlight: string
   intensity: number
 }[] = [
-  { id: 'none', label: 'Sin tint', shadow: '#1a1a1a', highlight: '#e8e4df', intensity: 0 },
-  { id: 'spotify', label: 'Spotify', shadow: '#1a2230', highlight: '#6fae82', intensity: 72 },
-  { id: 'sunset', label: 'Sunset', shadow: '#2a1c22', highlight: '#d4a08a', intensity: 70 },
-  { id: 'ocean', label: 'Ocean', shadow: '#1a2430', highlight: '#7fa3b5', intensity: 70 },
-  { id: 'neon', label: 'Neon', shadow: '#22182a', highlight: '#c48bb0', intensity: 72 },
-  { id: 'ember', label: 'Ember', shadow: '#261c14', highlight: '#c9a07a', intensity: 70 }
+  { id: 'none', label: 'Off', shadow: '#1a1a1a', highlight: '#e8e4df', intensity: 0 },
+  { id: 'selenium', label: 'Selenium', shadow: '#1c1814', highlight: '#c4b8a8', intensity: 70 },
+  { id: 'cyanotype', label: 'Cyanotype', shadow: '#0b1c33', highlight: '#8eb8c8', intensity: 74 },
+  { id: 'platinum', label: 'Platinum', shadow: '#1a1c1e', highlight: '#d8d4cc', intensity: 68 },
+  { id: 'tealOrange', label: 'Teal-orange', shadow: '#123038', highlight: '#d4a078', intensity: 72 },
+  { id: 'sepiaPrint', label: 'Sepia', shadow: '#2a1c12', highlight: '#e0c8a0', intensity: 70 },
+  { id: 'redscale', label: 'Redscale', shadow: '#2a1010', highlight: '#e8a090', intensity: 72 },
+  { id: 'tungsten', label: 'Tungsten', shadow: '#1a1420', highlight: '#e8c878', intensity: 70 },
+  { id: 'splitGold', label: 'Split gold', shadow: '#121820', highlight: '#e0c070', intensity: 68 },
+  { id: 'coolSteel', label: 'Steel', shadow: '#141820', highlight: '#b8c4d0', intensity: 70 }
 ]
 
 export const resolveDuotoneLayers = (shadow: string, highlight: string, intensity: number) => {
@@ -261,7 +336,7 @@ export const buildBackgroundTransform = (options: {
   const zoom = Math.max(1, options.scale / 100)
   const minDim = Math.max(1, Math.min(options.width, options.height))
   const blurPad = options.blur <= 0 ? 1 : 1 + (2 * options.blur) / minDim
-  const combined = zoom * blurPad * rotationCoverScale(options.rotation)
+  const combined = zoom * blurPad
   const parts: string[] = []
   if (combined !== 1) parts.push(`scale(${combined})`)
   if (options.rotation !== 0) parts.push(`rotate(${options.rotation}deg)`)

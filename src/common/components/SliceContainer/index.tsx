@@ -4,6 +4,7 @@ import { Button } from '@common/components/Button'
 import { cn } from '@common/utils/cn'
 import { ChevronDownIcon } from 'lucide-react'
 import {
+  Children,
   type HTMLAttributes,
   type ReactNode,
   useCallback,
@@ -28,11 +29,22 @@ export interface SliceContainerProps extends Omit<HTMLAttributes<HTMLDivElement>
   onExtend?: () => void
   expandLabel?: string
   collapseLabel?: string
+  /** Classes applied only while expanded (e.g. larger gap). */
+  expandedClassName?: string
+  /** Items visible in the collapsed clip; used to compute `+N más`. */
+  collapsedVisible?: number
   /** Hide the toggle when content fits without clipping. @default true */
   hideToggleWhenFit?: boolean
 }
 
-/** Clippable content region with fade mask and expand/collapse control. */
+/**
+ * Región recortable con máscara y control `+N más`.
+ *
+ * @param props.maxHeight - Alto colapsado en px.
+ * @param props.extendedMaxHeight - Alto expandido; si se omite, el contenido crece libre.
+ * @param props.expandedClassName - Clases extra al abrir (gap / columnas).
+ * @param props.collapsedVisible - Ítems que caben colapsados, para el contador.
+ */
 const SliceContainer = ({
   children,
   className,
@@ -42,8 +54,10 @@ const SliceContainer = ({
   open: openProp,
   onOpenChange,
   onExtend,
-  expandLabel = 'Ver más',
-  collapseLabel = 'Ver menos',
+  expandLabel,
+  collapseLabel = 'Menos',
+  expandedClassName,
+  collapsedVisible,
   hideToggleWhenFit = true,
   ...props
 }: SliceContainerProps) => {
@@ -54,6 +68,9 @@ const SliceContainer = ({
 
   const isControlled = openProp !== undefined
   const isOpen = isControlled ? Boolean(openProp) : uncontrolledOpen
+  const childCount = Children.count(children)
+  const hidden = Math.max(0, childCount - (collapsedVisible ?? 0))
+  const moreLabel = expandLabel ?? (hidden > 0 ? `+${hidden} más` : 'Más')
 
   const measure = useCallback(() => {
     const node = contentRef.current
@@ -89,8 +106,9 @@ const SliceContainer = ({
         className={cn(
           'scrollbar-hidden min-w-0 transition-[max-height] duration-300 ease-out',
           isOpen ? 'overflow-y-auto' : 'overflow-hidden',
-          !isOpen && overflows && '[mask-image:linear-gradient(to_bottom,black_40%,transparent)]',
-          className
+          !isOpen && overflows && '[mask-image:linear-gradient(to_bottom,black_55%,transparent)]',
+          className,
+          isOpen && expandedClassName
         )}
         style={{
           maxHeight: isOpen ? expandedMax : collapsedMax
@@ -102,17 +120,17 @@ const SliceContainer = ({
       {showToggle && (
         <Button
           type='button'
-          variant='ghost'
+          variant='soft'
           size='sm'
           aria-expanded={isOpen}
           aria-controls={contentId}
           onClick={() => setOpen(!isOpen)}
           className={cn(
-            'text-muted-foreground hover:text-foreground h-7 w-fit justify-start gap-1.5 self-start rounded-md px-2 text-xs font-medium',
-            'hover:bg-muted/50'
+            'text-foreground h-8 w-full justify-center gap-1.5 rounded-full px-3 text-xs font-medium',
+            'bg-primary/12 hover:bg-primary/18'
           )}
         >
-          {isOpen ? collapseLabel : expandLabel}
+          {isOpen ? collapseLabel : moreLabel}
           <ChevronDownIcon
             className={cn('size-3.5 shrink-0 transition-transform duration-200', isOpen && 'rotate-180')}
             aria-hidden

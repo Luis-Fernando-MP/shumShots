@@ -69,15 +69,8 @@ export const PreferenceField = ({
   }
 
   return (
-    <div data-preference-field className={cn('flex flex-col gap-2', className)}>
-      <div className='flex flex-col gap-1'>
-        <Text.emphasis>{title}</Text.emphasis>
-        {subtitle != null && <Text.caption>{subtitle}</Text.caption>}
-        {description != null && <Text.paragraph className='text-muted-foreground'>{description}</Text.paragraph>}
-        {example != null && <Text.caption>{example}</Text.caption>}
-        {note != null && <Text.caption>{note}</Text.caption>}
-      </div>
-
+    <div data-preference-field className={cn('flex flex-col gap-1.5', className)}>
+      <Text.emphasis>{title}</Text.emphasis>
       <div className='flex w-full flex-wrap items-center gap-1.5'>{children}</div>
     </div>
   )
@@ -103,7 +96,7 @@ interface PreferenceSectionProps {
 export const PreferenceSection = ({ title, subtitle, keywords, children, className }: PreferenceSectionProps) => {
   const query = usePreferenceSearch()
   // Solo el título abre toda la sección; el subtítulo no debe mostrar todos los campos.
-  const titleHit = matchesPreferenceSearch(query, [title, keywords])
+  const titleHit = matchesPreferenceSearch(query, [title, subtitle, keywords])
   const childQuery = titleHit ? '' : query
 
   return (
@@ -112,11 +105,8 @@ export const PreferenceSection = ({ title, subtitle, keywords, children, classNa
         data-preference-section
         className={cn('flex flex-col gap-3', query && '[&:not(:has([data-preference-field]))]:hidden', className)}
       >
-        <div className='flex flex-col gap-0.5'>
-          <Text.heading>{title}</Text.heading>
-          {subtitle != null && <Text.caption>{subtitle}</Text.caption>}
-        </div>
-        <div className='flex flex-col gap-3.5'>{children}</div>
+        <Text.heading>{title}</Text.heading>
+        <div className='flex flex-col gap-3'>{children}</div>
       </section>
     </PreferenceSearchProvider>
   )

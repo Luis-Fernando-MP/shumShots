@@ -7,8 +7,9 @@ import Background from '@views/image-studio/Popups/Canvas/Background'
 import useBackgroundStore from '@views/image-studio/Popups/Canvas/Background/store/background/store'
 import CanvasBorder from '@views/image-studio/Popups/Canvas/CanvasBorder'
 import Light from '@views/image-studio/Popups/Canvas/Light'
+import Portrait from '@views/image-studio/Popups/Canvas/Portrait'
 import { SectionSearchProvider } from '@views/image-studio/components/section-search'
-import { BlendIcon, FrameIcon, ImagePlusIcon, SunIcon } from 'lucide-react'
+import { ApertureIcon, BlendIcon, FrameIcon, ImagePlusIcon, SunIcon } from 'lucide-react'
 import { type FC } from 'react'
 
 const CanvasSidebar: FC = () => {
@@ -30,6 +31,9 @@ const CanvasSidebar: FC = () => {
           </App.tab>
           <App.tab value='luz' label='Luz' description='Capas, presets y foco' icon={SunIcon}>
             <Light />
+          </App.tab>
+          <App.tab value='retrato' label='Retrato' description='Foco, lupa y grain' icon={ApertureIcon}>
+            <Portrait />
           </App.tab>
           <App.tab value='unsplash' label='Unsplash' description='Fotos para el fondo' icon={ImagePlusIcon}>
             <UnsplashPicker embedded onSelect={url => setBackground(url)} />

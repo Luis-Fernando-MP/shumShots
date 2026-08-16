@@ -1,5 +1,4 @@
-import Text from '@common/components/Text'
-import { acl } from '@common/lib/acl'
+import { cn } from '@common/utils/cn'
 import type { FC, MouseEvent } from 'react'
 
 interface Props {
@@ -10,23 +9,29 @@ interface Props {
 }
 
 /**
- * @description Represents an individual border that can be selected.
- * @param value - The value that determines the style of the border radius.
- * @param label - The label displayed on the button.
- * @param selected - Indicates whether this border is selected.
- * @param onClick - Function that is executed when the button is clicked.
+ * Icono de radio: una esquina dibuja el valor.
+ *
+ * @param props.value - Radio visual de la esquina (px en el thumb).
+ * @param props.label - Nombre accesible del preset.
+ * @param props.selected - Si este preset está activo.
+ * @param props.onClick - Aplica el preset.
  */
-
-const IndividualDefaultBorder: FC<Props> = ({ value, onClick, label, selected }) => {
-  return (
-    <button type='button' className={`flex w-full min-w-0 select-none flex-col items-center rounded-[12px] bg-background px-1 pt-2 pb-1 ${acl(selected, 'bg-primary')}`} onClick={onClick}>
-      <div className='relative h-[60px] w-[55px]'>
-        <div className='size-full rounded-lg bg-card brightness-95' />
-        <div className='absolute -right-[10px] -top-[3px] h-[50px] w-[40px] origin-top-right rotate-[10deg] border-b-2 border-l-2 border-primary/30 bg-muted brightness-125 shadow-[-15px_10px_15px_-4px_rgb(0_0_0_/_20%)]' style={{ borderBottomLeftRadius: value }} />
-      </div>
-      <Text.caption className={selected ? 'text-primary-foreground' : undefined}>{label}</Text.caption>
-    </button>
-  )
-}
+const IndividualDefaultBorder: FC<Props> = ({ value, onClick, label, selected }) => (
+  <button
+    type='button'
+    aria-label={label}
+    aria-pressed={selected}
+    className={cn(
+      'grid size-8 place-content-center rounded-[12px]',
+      selected ? 'bg-primary text-primary-foreground' : 'bg-muted text-muted-foreground hover:bg-muted/80'
+    )}
+    onClick={onClick}
+  >
+    <span
+      className={cn('size-4 border-2', selected ? 'border-primary-foreground' : 'border-current')}
+      style={{ borderRadius: `${Math.min(8, value * 0.1)}px` }}
+    />
+  </button>
+)
 
 export default IndividualDefaultBorder

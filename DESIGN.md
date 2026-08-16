@@ -223,10 +223,11 @@ Use `@common/components` primitives. Do not restyle a one-off button when `Butto
 - Focus: border becomes `border-border` (soft) or `border-primary` (outline).
 - Status variants tint background and border with semantic success/warning/error/info.
 - Suffix chips sit inside the field (`bg-muted`, `rounded-md`).
+- `SliderControl`: thin 4px track, label left, value right. Not a filled `h-9` pill.
 
 ### Navigation
 - `App.topDock` / `App.bottomDock`: icon-forward, ghost buttons, tooltips. Floating capsules over the board, not a boxed app nav.
-- `App.tabs` / `App.tab`: chrome tabs (12px pills, icon + word). The active tab also paints an intro (`Text.title` + `Text.subtitle`) above the list. Slots: `App.leftSidebar` / `App.rightSidebar` `.header` / `.content` / `.footer`.
+- `App.tabs` / `App.tab`: chrome tabs (12px pills). Two to four tabs show icon + word; more than four are icon-only with tooltip. No intro title or description above the list — `description` is search/a11y only. Slots: `App.leftSidebar` / `App.rightSidebar` `.header` / `.content` / `.footer`.
 - Image-studio destination layers use `Tab.Layer` (`src/common/components/Tabs/extension/layer.tsx`); the store stays in `Popups/common/components/tabs`.
 - Tooltip: `bg-card`, `border-primary/30`, `rounded-md`, `text-xs`.
 
@@ -238,7 +239,7 @@ Use `@common/components` primitives. Do not restyle a one-off button when `Butto
 
 ### Do:
 - **Do** use `bg-primary`, `text-foreground`, `rounded-radius`, `gap-grid` (and siblings) for new chrome.
-- **Do** put sidebar, dock, and popup chrome on `Text.*`. Clusters use 24px gap; fields inside a section use 8px.
+- **Do** put sidebar, dock, and popup chrome on `Text.*`. Clusters use 16px gap; fields inside a section use 8px.
 - **Do** keep Operate density: compact controls, Spanish labels, tooltips on icon-only hits.
 - **Do** treat image-studio canvas effects (vignette, lights, 3D) as the artifact; keep chrome quieter than the board.
 - **Do** honor `APP_Z_INDEX` instead of inventing new stacking numbers.

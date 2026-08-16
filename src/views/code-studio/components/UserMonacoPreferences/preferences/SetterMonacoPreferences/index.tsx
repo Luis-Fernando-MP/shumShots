@@ -31,8 +31,10 @@ const SetterMonacoPreferences: FC = () => (
       <SchemaPreferenceField fieldId='renderValidationDecorations' />
       <SchemaPreferenceField fieldId='lineNumbers' />
       <SchemaPreferenceField fieldId='wordWrap' />
-      <SchemaPreferenceField fieldId='wordWrapColumn' />
-      <SchemaPreferenceField fieldId='wrappingIndent' />
+      <PreferencePanel>
+        <SchemaPreferenceField fieldId='wordWrapColumn' />
+        <SchemaPreferenceField fieldId='wrappingIndent' />
+      </PreferencePanel>
       <SchemaPreferenceField fieldId='renderLineHighlight' />
     </Section>
 
@@ -59,11 +61,15 @@ const SetterMonacoPreferences: FC = () => (
     <Section groupId='editor'>
       <SchemaPreferenceField fieldId='folding' />
       <SchemaPreferenceField fieldId='scrollBeyondLastLine' />
-      <SchemaPreferenceField fieldId='formatOnPaste' />
-      <SchemaPreferenceField fieldId='formatOnType' />
+      <PreferencePanel>
+        <SchemaPreferenceField fieldId='formatOnPaste' />
+        <SchemaPreferenceField fieldId='formatOnType' />
+      </PreferencePanel>
       <SchemaPreferenceField fieldId='matchBrackets' />
-      <SchemaPreferenceField fieldId='autoClosingBrackets' />
-      <SchemaPreferenceField fieldId='autoClosingQuotes' />
+      <PreferencePanel>
+        <SchemaPreferenceField fieldId='autoClosingBrackets' />
+        <SchemaPreferenceField fieldId='autoClosingQuotes' />
+      </PreferencePanel>
     </Section>
   </div>
 )

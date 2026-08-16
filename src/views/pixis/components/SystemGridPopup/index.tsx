@@ -4,22 +4,36 @@ import useBoardStore, { GRID_SIZES } from '@common/components/Board/board.store'
 import Button from '@common/components/Button'
 import Popup from '@common/components/Popup'
 import Switch from '@common/components/Switch'
-import Typography from '@common/components/Typography'
+import Text from '@common/components/Text'
+import usePixisPreferencesStore from '@views/code-studio/store/pixisPreferences.store'
+import useWorkspaceStore from '@views/code-studio/store/workspace.store'
+import { resetImageStudio } from '@views/image-studio/utils/resetImageStudio'
 import { Grid3x3Icon } from 'lucide-react'
+import { usePathname } from 'next/navigation'
 import { type FC } from 'react'
 
 /**
- * Popup de sistema: cuadrícula del viewport y snap al paneo.
- *
- * @returns El trigger y el diálogo de sistema.
+ * Popup de sistema: cuadrícula del viewport y reset global del estudio.
  */
 const SystemGridPopup: FC = () => {
+  const pathname = usePathname()
   const showGrid = useBoardStore(s => s.showGrid)
   const snapToGrid = useBoardStore(s => s.snapToGrid)
   const gridSize = useBoardStore(s => s.gridSize)
   const setShowGrid = useBoardStore(s => s.setShowGrid)
   const setSnapToGrid = useBoardStore(s => s.setSnapToGrid)
   const setGridSize = useBoardStore(s => s.setGridSize)
+  const resetPreferences = usePixisPreferencesStore(s => s.resetPreferences)
+  const resetWorkspace = useWorkspaceStore(s => s.resetWorkspace)
+
+  const handleResetAll = () => {
+    if (pathname?.includes('/editor')) {
+      resetImageStudio()
+      return
+    }
+    resetPreferences()
+    resetWorkspace()
+  }
 
   return (
     <Popup className='h-auto min-h-0 w-[320px]'>
@@ -31,25 +45,19 @@ const SystemGridPopup: FC = () => {
 
       <Popup.Header>Sistema</Popup.Header>
 
-      <Popup.Content className='gap-grid-lg flex flex-col'>
+      <Popup.Content className='flex flex-col gap-4'>
         <div className='flex items-center justify-between gap-3'>
-          <div className='flex min-w-0 flex-col gap-0.5'>
-            <Typography.Label>Mostrar cuadrícula</Typography.Label>
-            <Typography.Small tone='secondary'>Papel milimetrado del viewport, no del shot.</Typography.Small>
-          </div>
+          <Text.heading>Cuadrícula</Text.heading>
           <Switch on={showGrid} onChange={() => setShowGrid(!showGrid)} aria-label='Mostrar cuadrícula' />
         </div>
 
         <div className='flex items-center justify-between gap-3'>
-          <div className='flex min-w-0 flex-col gap-0.5'>
-            <Typography.Label>Ajustar a la cuadrícula</Typography.Label>
-            <Typography.Small tone='secondary'>Snap del paneo mientras arrastras.</Typography.Small>
-          </div>
+          <Text.heading>Ajustar</Text.heading>
           <Switch on={snapToGrid} onChange={() => setSnapToGrid(!snapToGrid)} aria-label='Ajustar a la cuadrícula' />
         </div>
 
         <div className='flex flex-col gap-2'>
-          <Typography.Label>Tamaño</Typography.Label>
+          <Text.caption>Tamaño</Text.caption>
           <div className='flex flex-wrap gap-1'>
             {GRID_SIZES.map(size => (
               <Button
@@ -65,6 +73,10 @@ const SystemGridPopup: FC = () => {
             ))}
           </div>
         </div>
+
+        <Button variant='dashed' status='error' className='w-full rounded-[12px]' onClick={handleResetAll}>
+          Resetear todo
+        </Button>
       </Popup.Content>
     </Popup>
   )

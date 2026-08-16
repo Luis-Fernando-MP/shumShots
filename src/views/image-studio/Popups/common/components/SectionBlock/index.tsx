@@ -12,16 +12,16 @@ type Props = {
   children: ReactNode
 }
 
+/**
+ * Sección de dominio: título corto. `description` solo alimenta la búsqueda.
+ */
 const SectionBlock: FC<Props> = ({ title, description, keywords, children }) => {
   const visible = useSectionSearch([title, description, keywords])
   if (!visible) return null
 
   return (
     <section className='flex flex-col gap-2' data-section-block>
-      <div className='flex flex-col gap-0.5'>
-        <Text.heading>{title}</Text.heading>
-        {description && <Text.caption>{description}</Text.caption>}
-      </div>
+      <Text.heading>{title}</Text.heading>
       {children}
     </section>
   )

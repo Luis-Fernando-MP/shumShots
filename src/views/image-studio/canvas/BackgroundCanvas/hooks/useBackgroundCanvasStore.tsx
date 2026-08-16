@@ -49,6 +49,11 @@ const useBackgroundCanvasStore = (options: UseBackgroundCanvasStoreOptions = {})
   const vignetteColor = useBackgroundStore(s => s.vignetteColor)
   const vignetteFocusX = useBackgroundStore(s => s.vignetteFocusX)
   const vignetteFocusY = useBackgroundStore(s => s.vignetteFocusY)
+  const vignettePoints = useBackgroundStore(s => s.vignettePoints)
+  const vignetteFocus2X = useBackgroundStore(s => s.vignetteFocus2X)
+  const vignetteFocus2Y = useBackgroundStore(s => s.vignetteFocus2Y)
+  const vignetteFocus3X = useBackgroundStore(s => s.vignetteFocus3X)
+  const vignetteFocus3Y = useBackgroundStore(s => s.vignetteFocus3Y)
 
   const activeIndividualBorder = useCanvasRadiusStore(s => s.activeIndividualBorder)
   const borderRadius = useCanvasRadiusStore(s => s.borderRadius)
@@ -154,7 +159,7 @@ const useBackgroundCanvasStore = (options: UseBackgroundCanvasStoreOptions = {})
       buildBackgroundTransform({
         scale,
         blur,
-        rotation,
+        rotation: 0,
         width: backgroundWidth,
         height: backgroundHeight,
         originX: positionX,
@@ -181,6 +186,20 @@ const useBackgroundCanvasStore = (options: UseBackgroundCanvasStoreOptions = {})
     sepia
   ])
 
+  const fillTransform = useMemo(
+    () =>
+      buildBackgroundTransform({
+        scale: 100,
+        blur: 0,
+        rotation,
+        width: backgroundWidth,
+        height: backgroundHeight,
+        originX: 50,
+        originY: 50
+      }),
+    [backgroundHeight, backgroundWidth, rotation]
+  )
+
   const overlayStyle = useMemo(
     (): CSSProperties => ({ backgroundColor: overlayColor, opacity: overlayOpacity / 100 }),
     [overlayColor, overlayOpacity]
@@ -200,12 +219,22 @@ const useBackgroundCanvasStore = (options: UseBackgroundCanvasStoreOptions = {})
         softness: vignetteSoftness,
         color: vignetteColor,
         focusX: vignetteFocusX,
-        focusY: vignetteFocusY
+        focusY: vignetteFocusY,
+        points: vignettePoints,
+        focus2X: vignetteFocus2X,
+        focus2Y: vignetteFocus2Y,
+        focus3X: vignetteFocus3X,
+        focus3Y: vignetteFocus3Y
       }),
     [
       vignetteColor,
       vignetteFocusX,
       vignetteFocusY,
+      vignettePoints,
+      vignetteFocus2X,
+      vignetteFocus2Y,
+      vignetteFocus3X,
+      vignetteFocus3Y,
       vignetteIntensity,
       vignettePreset,
       vignetteSize,
@@ -220,6 +249,7 @@ const useBackgroundCanvasStore = (options: UseBackgroundCanvasStoreOptions = {})
     frameStyle,
     matStyle,
     fillStyle,
+    fillTransform,
     overlayStyle,
     overlayOpacity,
     duotoneLayers,

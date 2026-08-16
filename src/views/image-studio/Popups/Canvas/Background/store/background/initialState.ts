@@ -42,5 +42,10 @@ export const initialState = (): BackgroundState => ({
   vignetteSoftness: 55,
   vignetteColor: 'rgba(0, 0, 0, 1)',
   vignetteFocusX: 50,
-  vignetteFocusY: 50
+  vignetteFocusY: 50,
+  vignettePoints: 1,
+  vignetteFocus2X: 28,
+  vignetteFocus2Y: 38,
+  vignetteFocus3X: 72,
+  vignetteFocus3Y: 62
 })

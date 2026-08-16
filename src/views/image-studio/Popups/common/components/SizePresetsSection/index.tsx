@@ -35,30 +35,26 @@ const FormatStage: FC<{ width: number; height: number; label: string; active: bo
   label,
   active
 }) => {
-  const ratio = width / height
-  const landscape = ratio >= 1
+  const landscape = width >= height
 
   return (
-    <div
-      className={cn(
-        'flex flex-col items-center gap-1.5 rounded-[12px] border px-2 py-2',
-        active ? 'border-primary bg-primary/10' : 'border-border/60 bg-muted/40 hover:bg-muted/70'
-      )}
-    >
-      <div className='bg-background/60 grid aspect-square w-full place-content-center rounded-[8px]'>
+    <div className='flex flex-col items-center gap-1'>
+      <div
+        className={cn(
+          'grid h-9 w-full place-content-center rounded-[8px]',
+          active ? 'bg-primary/15' : 'bg-muted hover:bg-muted/80'
+        )}
+      >
         <div
-          className={cn('rounded-[3px]', active ? 'bg-primary' : 'bg-foreground/40')}
+          className={cn('rounded-[2px]', active ? 'bg-primary' : 'bg-foreground/50')}
           style={{
-            aspectRatio: ratio,
-            width: landscape ? '72%' : undefined,
-            height: landscape ? undefined : '72%'
+            aspectRatio: `${width} / ${height}`,
+            width: landscape ? '22px' : undefined,
+            height: landscape ? undefined : '22px'
           }}
         />
       </div>
-      <Text.emphasis className={cn('text-center', !active && 'text-muted-foreground')}>{label}</Text.emphasis>
-      <Text.caption className='tabular-nums'>
-        {width}×{height}
-      </Text.caption>
+      <Text.caption className={cn('text-center', active && 'text-primary')}>{label}</Text.caption>
     </div>
   )
 }
@@ -82,7 +78,7 @@ const SizePresetsSection: FC<Props> = ({
     <Text.caption>{disabledHint ?? 'No disponible con el estado actual.'}</Text.caption>
   ) : (
     <div className='flex flex-col gap-3'>
-      <div className='grid grid-cols-2 gap-1.5'>
+      <div className='grid grid-cols-3 gap-1.5'>
         {presets.map(item => (
           <button key={item.id} type='button' onClick={() => setSize(item.width, item.height)}>
             <FormatStage

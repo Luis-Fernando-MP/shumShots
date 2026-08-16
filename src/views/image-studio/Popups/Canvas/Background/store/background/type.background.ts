@@ -2,6 +2,7 @@ import type {
   BackgroundPositionPreset,
   DuotonePresetId,
   FilterPresetId,
+  VignettePoints,
   VignettePreset
 } from '@views/image-studio/utils/backgroundStyle'
 import type { CSSProperties } from 'react'
@@ -37,6 +38,11 @@ export interface BackgroundState {
   vignetteColor: string
   vignetteFocusX: number
   vignetteFocusY: number
+  vignettePoints: VignettePoints
+  vignetteFocus2X: number
+  vignetteFocus2Y: number
+  vignetteFocus3X: number
+  vignetteFocus3Y: number
 }
 
 export interface BackgroundActions {
@@ -70,6 +76,7 @@ export interface BackgroundActions {
   setVignetteSoftness: (vignetteSoftness: number) => void
   setVignetteColor: (vignetteColor: string) => void
   setVignetteFocus: (x: number, y: number) => void
+  setVignettePoints: (points: VignettePoints) => void
   applyVignettePreset: (preset: Exclude<VignettePreset, 'none' | 'custom'>) => void
   resetFilters: () => void
   resetBackground: () => void

@@ -1,7 +1,7 @@
 'use client'
 
 import { Tab } from '@common/components/Tabs'
-import Text from '@common/components/Text'
+import Tooltip from '@common/components/Tooltip'
 import { cn } from '@common/utils/cn'
 import { type LucideIcon } from 'lucide-react'
 import { Children, type ReactElement, type ReactNode, isValidElement, useState } from 'react'
@@ -32,8 +32,33 @@ interface AppTabsProps {
 const isAppTab = (child: ReactNode): child is ReactElement<AppTabProps> =>
   isValidElement(child) && child.type === AppTab
 
+const TabButton = ({
+  tab,
+  iconOnly
+}: {
+  tab: AppTabProps
+  iconOnly: boolean
+}) => {
+  const Icon = tab.icon
+  const trigger = (
+    <Tab.Trigger value={tab.value} aria-label={tab.label} className={cn(iconOnly && 'size-8 p-0')}>
+      {Icon && <Icon className='size-3.5' />}
+      {!iconOnly && tab.label}
+    </Tab.Trigger>
+  )
+
+  if (!iconOnly) return trigger
+
+  return (
+    <Tooltip>
+      <Tooltip.Trigger asChild>{trigger}</Tooltip.Trigger>
+      <Tooltip.Content>{tab.label}</Tooltip.Content>
+    </Tooltip>
+  )
+}
+
 /**
- * Tabs de sidebar: intro del tab activo + triggers con icono.
+ * Tira de tabs de sidebar. Más de cuatro: solo icono. Si no, icono + palabra.
  */
 const AppTabs = ({ children, defaultValue, value, onValueChange, className }: AppTabsProps) => {
   const tabs: AppTabProps[] = []
@@ -44,9 +69,7 @@ const AppTabs = ({ children, defaultValue, value, onValueChange, className }: Ap
 
   const initial = defaultValue ?? tabs[0]?.value
   const [uncontrolled, setUncontrolled] = useState(initial)
-  const current = value ?? uncontrolled
-  const active = tabs.find(tab => tab.value === current) ?? tabs[0]
-  const ActiveIcon = active?.icon
+  const iconOnly = tabs.length > 4
 
   const handleChange = (next: string) => {
     if (value == null) setUncontrolled(next)
@@ -60,30 +83,14 @@ const AppTabs = ({ children, defaultValue, value, onValueChange, className }: Ap
       onValueChange={handleChange}
       className={cn('flex min-h-0 flex-1 flex-col', className)}
     >
-      <div className='border-border/50 shrink-0 space-y-3 border-b px-3 py-3'>
-        {active && (
-          <div className='flex items-start gap-2.5'>
-            {ActiveIcon && (
-              <span className='bg-muted text-foreground mt-0.5 grid size-8 place-content-center rounded-[12px]'>
-                <ActiveIcon className='size-4' />
-              </span>
-            )}
-            <div className='min-w-0'>
-              <Text.title>{active.label}</Text.title>
-              {active.description && <Text.subtitle className='mt-0.5'>{active.description}</Text.subtitle>}
-            </div>
-          </div>
-        )}
-        <Tab.List>
-          {tabs.map(tab => {
-            const Icon = tab.icon
-            return (
-              <Tab.Trigger key={tab.value} value={tab.value}>
-                {Icon && <Icon className='size-3.5' />}
-                {tab.label}
-              </Tab.Trigger>
-            )
-          })}
+      <div className='border-border/50 shrink-0 border-b px-2 py-2'>
+        <Tab.List
+          className={cn(iconOnly && 'grid w-full gap-0.5')}
+          style={iconOnly ? { gridTemplateColumns: `repeat(${tabs.length}, minmax(0, 1fr))` } : undefined}
+        >
+          {tabs.map(tab => (
+            <TabButton key={tab.value} tab={tab} iconOnly={iconOnly} />
+          ))}
         </Tab.List>
       </div>
 

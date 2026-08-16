@@ -6,6 +6,8 @@ import { ImagePlusIcon, WandIcon, XIcon } from 'lucide-react'
 import { type FC, type ReactNode, memo, useCallback, useEffect, useState } from 'react'
 import { type DropzoneOptions, useDropzone } from 'react-dropzone'
 
+import Button from '@common/components/Button'
+import Text from '@common/components/Text'
 import { toaster } from '@common/components/Toast'
 
 const acceptedFileTypes = {
@@ -39,43 +41,33 @@ export type DropzoneFile = File & { preview: string }
 type PromptProps = {
   icon: typeof ImagePlusIcon
   title: string
-  description: string
   compact?: boolean
 }
 
-const DropzonePrompt: FC<PromptProps> = ({ icon: Icon, title, description, compact = false }) => (
+const DropzonePrompt: FC<PromptProps> = ({ icon: Icon, title, compact = false }) => (
   <section
     className={cn(
       'flex size-full min-h-0 flex-col items-center justify-center text-center',
-      compact ? 'gap-1.5 px-2 py-3' : 'gap-3'
+      compact ? 'gap-1.5 px-2 py-3' : 'gap-3 px-4 py-6'
     )}
   >
     <div
       className={cn(
-        'grid shrink-0 place-content-center bg-foreground p-2 [&>svg]:stroke-background [&>svg]:stroke-2',
-        compact ? 'size-8 rounded-sm p-1.5 [&>svg]:size-4' : 'size-12 rounded-lg [&>svg]:size-7'
+        'bg-primary/15 text-primary grid shrink-0 place-content-center',
+        compact ? 'size-8 rounded-[12px] [&>svg]:size-4' : 'size-12 rounded-[16px] [&>svg]:size-6'
       )}
     >
       <Icon />
     </div>
     <div className={cn('flex min-w-0 flex-col items-center', compact ? 'gap-0.5' : 'gap-1')}>
-      <h2
-        className={cn(
-          'font-medium text-foreground',
-          compact ? 'text-[11px] leading-tight' : 'text-base'
-        )}
-      >
-        {title}
-      </h2>
-      <p
-        className={cn(
-          'text-muted-foreground max-w-full',
-          compact ? 'text-[10px] leading-snug' : 'text-sm'
-        )}
-      >
-        {description}
-      </p>
+      {compact && <Text.emphasis>{title}</Text.emphasis>}
+      {!compact && <Text.title>{title}</Text.title>}
     </div>
+    {!compact && (
+      <Button type='button' size='sm' variant='soft' className='rounded-full px-4'>
+        Explorar
+      </Button>
+    )}
   </section>
 )
 
@@ -155,8 +147,7 @@ const Dropzone: FC<Props> = ({
       <DropzonePrompt
         compact={compact}
         icon={StatusIcon}
-        title={isDragAccept ? (compact ? 'Suelta' : '¡Suelta para cargar!') : 'No válido'}
-        description={isDragAccept ? (compact ? 'Cargar imagen' : 'Se usará en local por ahora') : 'PNG, JPG o WebP'}
+        title={isDragAccept ? 'Suelta' : 'No válido'}
       />
     )
   } else if (!overlay && files.length > 0 && children) {
@@ -173,16 +164,7 @@ const Dropzone: FC<Props> = ({
     )
   } else if (!overlay) {
     content = (
-      <DropzonePrompt
-        compact={compact}
-        icon={StatusIcon}
-        title='Suelta o pega'
-        description={
-          compact
-            ? 'PNG · JPG · WebP'
-            : `${maxFiles > 1 ? 'Tus imágenes' : 'Una imagen'} · PNG, JPG o WebP`
-        }
-      />
+      <DropzonePrompt compact={compact} icon={StatusIcon} title='Añadir' />
     )
   }
 
@@ -199,8 +181,8 @@ const Dropzone: FC<Props> = ({
         'relative flex size-full min-h-0 cursor-pointer items-center justify-center overflow-hidden bg-background',
         FOCUS_RESET,
         compact
-          ? 'rounded-none border-0'
-          : 'overflow-auto rounded-lg border-[3.5px] border-background',
+          ? 'rounded-[12px] border-0'
+          : 'overflow-auto rounded-[16px] border border-border/60',
         acl(isDragActive && !compact, 'border-primary border-dashed'),
         acl(isDragActive && compact, 'border-primary border-2 border-dashed'),
         acl(isDragReject && !isDragActive, 'bg-semantic-error/20')

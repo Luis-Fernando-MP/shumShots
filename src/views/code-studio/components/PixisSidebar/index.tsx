@@ -5,14 +5,11 @@ import App from '@common/components/layout'
 import { PreferenceSearch, usePreferenceSearchState } from '@views/code-studio/components/preferences/PreferenceSearch'
 import UserPixisPreferences from '@views/code-studio/components/UserPixisPreferences'
 import usePixisPreferencesStore from '@views/code-studio/store/pixisPreferences.store'
-import useWorkspaceStore from '@views/code-studio/store/workspace.store'
 import { AppWindowIcon, RatioIcon } from 'lucide-react'
 import { type FC } from 'react'
 
 const PixisSidebar: FC = () => {
   const resetPixis = usePixisPreferencesStore(s => s.resetPixis)
-  const resetPreferences = usePixisPreferencesStore(s => s.resetPreferences)
-  const resetWorkspace = useWorkspaceStore(s => s.resetWorkspace)
   const { query, setQuery } = usePreferenceSearchState()
 
   return (
@@ -35,20 +32,9 @@ const PixisSidebar: FC = () => {
         </App.tab>
       </App.tabs>
 
-      <App.leftSidebar.footer className='flex flex-col gap-2'>
+      <App.leftSidebar.footer>
         <Button variant='dashed' status='primary' className='w-full rounded-[12px]' onClick={() => resetPixis()}>
           Resetear ventana y lienzo
-        </Button>
-        <Button
-          variant='dashed'
-          status='error'
-          className='w-full rounded-[12px]'
-          onClick={() => {
-            resetPreferences()
-            resetWorkspace()
-          }}
-        >
-          Resetear todo
         </Button>
       </App.leftSidebar.footer>
     </>

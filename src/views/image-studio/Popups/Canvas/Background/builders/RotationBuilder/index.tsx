@@ -1,35 +1,41 @@
 'use client'
 
 import SliderControl from '@common/components/SliderControl'
+import { cn } from '@common/utils/cn'
 import {
-  DEMO_SCENE_FILL,
   ROTATION_PRESETS,
+  THEME_PREVIEW_FILL,
   isImageBackground,
-  resolvePreviewFill,
-  rotationCoverScale
+  resolvePreviewFill
 } from '@views/image-studio/utils/backgroundStyle'
 import useBackgroundStore from '@views/image-studio/Popups/Canvas/Background/store/background/store'
 import type { FC } from 'react'
 
-import PresetCard from '@views/image-studio/Popups/common/components/PresetCard'
 import SectionBlock from '@views/image-studio/Popups/common/components/SectionBlock'
 
-const RotationPreview: FC<{ degrees: number; background: string | null }> = ({ degrees, background }) => {
+const RotationPreview: FC<{ degrees: number; background: string | null; active: boolean }> = ({
+  degrees,
+  background,
+  active
+}) => {
   const base =
-    background && isImageBackground(background) ? resolvePreviewFill(background) : DEMO_SCENE_FILL
-  const cover = rotationCoverScale(degrees)
+    background && isImageBackground(background) ? resolvePreviewFill(background) : THEME_PREVIEW_FILL
 
   return (
-    <div className='bg-muted relative h-14 w-full overflow-hidden rounded-md'>
+    <div
+      className={cn(
+        'relative h-16 w-full overflow-hidden rounded-[12px] border',
+        active ? 'border-primary' : 'border-border/60'
+      )}
+    >
       <div
-        className='absolute inset-[-18%]'
+        className='absolute inset-[12%]'
         style={{
           ...base,
-          transform: `rotate(${degrees}deg) scale(${cover})`,
+          transform: `rotate(${degrees}deg)`,
           transformOrigin: 'center'
         }}
       />
-      <div className='pointer-events-none absolute inset-2 rounded-sm border border-white/35 shadow-[0_0_0_1px_rgba(0,0,0,0.25)]' />
     </div>
   )
 }
@@ -40,20 +46,20 @@ const RotationBuilder: FC = () => {
   const setRotation = useBackgroundStore(s => s.setRotation)
 
   return (
-    <SectionBlock title='Rotación' description='Elige un tilt rápido o afina el ángulo (±15°).'>
-      <div className='grid grid-cols-2 gap-1.5'>
+    <SectionBlock title='Rotación'>
+      <div className='grid grid-cols-4 gap-1.5'>
         {ROTATION_PRESETS.map(item => {
           const active = Math.abs(rotation - item.value) < 0.5
           return (
-            <PresetCard
+            <button
               key={item.id}
-              active={active}
+              type='button'
+              aria-label={item.label}
+              aria-pressed={active}
               onClick={() => setRotation(item.value)}
-              className='gap-1 px-1 py-1.5'
             >
-              <RotationPreview degrees={item.value} background={background} />
-              <span className='text-[10px] font-medium'>{item.label}</span>
-            </PresetCard>
+              <RotationPreview degrees={item.value} background={background} active={active} />
+            </button>
           )
         })}
       </div>

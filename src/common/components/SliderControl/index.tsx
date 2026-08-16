@@ -1,5 +1,6 @@
 'use client'
 
+import Text from '@common/components/Text'
 import { cn } from '@common/utils/cn'
 import { type ChangeEvent, type InputHTMLAttributes, type JSX, memo, useMemo } from 'react'
 
@@ -12,18 +13,13 @@ interface Props extends Omit<InputHTMLAttributes<HTMLInputElement>, 'value' | 'o
 }
 
 /**
- * Control deslizante (Slider) personalizado para ajustes numéricos.
- * 
- * Proporciona una interfaz visual enriquecida con previsualización del valor,
- * barra de progreso y soporte para rangos dinámicos.
- * 
- * @param props - Propiedades del control.
- * @param props.containerClassName - Clases para el contenedor externo.
- * @param props.label - Etiqueta descriptiva del control.
- * @param props.value - Valor actual del slider.
- * @param props.onChangeRange - Callback que se ejecuta al cambiar el valor.
- * @param props.displayValue - Valor formateado a mostrar (opcional).
- * @returns El elemento JSX del control deslizante.
+ * Slider fino: etiqueta a la izquierda, valor a la derecha, pista de 4px.
+ *
+ * @param props.containerClassName - Clases del contenedor.
+ * @param props.label - Nombre del ajuste.
+ * @param props.value - Valor actual.
+ * @param props.onChangeRange - Callback al mover el control.
+ * @param props.displayValue - Texto del valor (si se omite, porcentaje).
  */
 const SliderControl = ({
   containerClassName,
@@ -52,31 +48,21 @@ const SliderControl = ({
     onChangeRange(Number(target.value))
   }
 
+  const shown = displayValue ?? `${Math.round(percent)}%`
+
   return (
-    <section
-      className={cn('relative flex min-w-0 flex-1 flex-col gap-1.5', containerClassName)}
-      style={{ width: width ?? '100%' }}
-    >
-      <div className='flex items-center justify-between px-0.5'>
-        {label && <span className='text-muted-foreground text-xs font-medium'>{label}</span>}
-        <span className='text-foreground ml-auto text-xs tabular-nums'>
-          {displayValue ?? `${Math.round(percent)}%`}
-        </span>
-      </div>
-
-      <div className='relative h-5 w-full'>
-        <div className='bg-muted absolute inset-x-0 top-1/2 h-1.5 -translate-y-1/2 rounded-full' />
-
+    <section className={cn('flex min-w-0 items-center gap-2', containerClassName)} style={{ width: width ?? '100%' }}>
+      {label ? <Text.caption className='w-16 shrink-0 truncate'>{label}</Text.caption> : null}
+      <div className='relative h-5 min-w-0 flex-1'>
+        <div className='bg-muted absolute inset-x-0 top-1/2 h-1 -translate-y-1/2 rounded-full' />
         <div
-          className='from-primary/40 via-primary/80 to-primary absolute top-1/2 left-0 h-1.5 -translate-y-1/2 rounded-full bg-linear-to-r'
+          className='bg-primary absolute top-1/2 left-0 h-1 -translate-y-1/2 rounded-full'
           style={{ width: `${percent}%` }}
         />
-
         <div
-          className='bg-primary/45 pointer-events-none absolute top-1/2 size-7 -translate-x-1/2 -translate-y-1/2 rounded-full blur-md'
+          className='bg-foreground pointer-events-none absolute top-1/2 size-2.5 -translate-x-1/2 -translate-y-1/2 rounded-full'
           style={{ left: `${percent}%` }}
         />
-
         <input
           {...props}
           type='range'
@@ -84,16 +70,11 @@ const SliderControl = ({
           max={maxNum}
           value={value}
           onChange={handleChange}
-          className={cn(
-            'absolute inset-0 z-10 size-full cursor-pointer appearance-none bg-transparent outline-none',
-            '[&::-webkit-slider-runnable-track]:h-full [&::-webkit-slider-runnable-track]:bg-transparent',
-            '[&::-moz-range-track]:h-full [&::-moz-range-track]:bg-transparent',
-            '[&::-webkit-slider-thumb]:size-3.5 [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:border-0 [&::-webkit-slider-thumb]:bg-foreground [&::-webkit-slider-thumb]:shadow-primary/50 [&::-webkit-slider-thumb]:shadow-[0_0_14px_3px]',
-            '[&::-moz-range-thumb]:size-3.5 [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:border-0 [&::-moz-range-thumb]:bg-foreground [&::-moz-range-thumb]:shadow-primary/50 [&::-moz-range-thumb]:shadow-[0_0_14px_3px]',
-            className
-          )}
+          aria-label={label || props['aria-label']}
+          className={cn('absolute inset-0 z-10 size-full cursor-pointer opacity-0', className)}
         />
       </div>
+      <Text.caption className='w-9 shrink-0 text-right tabular-nums'>{shown}</Text.caption>
     </section>
   )
 }

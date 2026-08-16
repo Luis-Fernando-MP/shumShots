@@ -21,6 +21,7 @@ const BackgroundCanvas: FC<Props> = ({ parentRef }) => {
     frameStyle,
     matStyle,
     fillStyle,
+    fillTransform,
     overlayStyle,
     overlayOpacity,
     duotoneLayers,
@@ -45,25 +46,27 @@ const BackgroundCanvas: FC<Props> = ({ parentRef }) => {
       <div className='editor-background relative' style={{ ...frameStyle, zIndex: APP_Z_INDEX.canvas.background }}>
         <div className='relative size-full' style={matStyle}>
           <div className='relative size-full overflow-hidden' style={contentClipStyle}>
-            <div className='absolute inset-0' style={{ ...fillStyle, zIndex: APP_Z_INDEX.canvas.fill }} />
-            {duotoneLayers && (
-              <>
+            <div className='absolute inset-0' style={fillTransform}>
+              <div className='absolute inset-0' style={{ ...fillStyle, zIndex: APP_Z_INDEX.canvas.fill }} />
+              {duotoneLayers && (
+                <>
+                  <div
+                    className='pointer-events-none absolute inset-0'
+                    style={{ ...duotoneLayers.shadow, zIndex: APP_Z_INDEX.canvas.duotone }}
+                  />
+                  <div
+                    className='pointer-events-none absolute inset-0'
+                    style={{ ...duotoneLayers.highlight, zIndex: APP_Z_INDEX.canvas.duotone }}
+                  />
+                </>
+              )}
+              {overlayOpacity > 0 && (
                 <div
                   className='pointer-events-none absolute inset-0'
-                  style={{ ...duotoneLayers.shadow, zIndex: APP_Z_INDEX.canvas.duotone }}
+                  style={{ ...overlayStyle, zIndex: APP_Z_INDEX.canvas.overlay }}
                 />
-                <div
-                  className='pointer-events-none absolute inset-0'
-                  style={{ ...duotoneLayers.highlight, zIndex: APP_Z_INDEX.canvas.duotone }}
-                />
-              </>
-            )}
-            {overlayOpacity > 0 && (
-              <div
-                className='pointer-events-none absolute inset-0'
-                style={{ ...overlayStyle, zIndex: APP_Z_INDEX.canvas.overlay }}
-              />
-            )}
+              )}
+            </div>
           </div>
         </div>
       </div>

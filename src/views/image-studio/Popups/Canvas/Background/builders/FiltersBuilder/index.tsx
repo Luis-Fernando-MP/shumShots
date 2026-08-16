@@ -1,14 +1,13 @@
 'use client'
 
+import SliceContainer from '@common/components/SliceContainer'
 import SliderControl from '@common/components/SliderControl'
-import { Button } from '@common/components/Button'
 import { cn } from '@common/utils/cn'
-import { FILTER_PRESETS, FILTER_SLIDERS, buildFilterCss, resolvePreviewFill } from '@views/image-studio/utils/backgroundStyle'
+import { FILTER_PRESETS, FILTER_SLIDERS, THEME_PREVIEW_FILL, buildFilterCss, isImageBackground, resolvePreviewFill } from '@views/image-studio/utils/backgroundStyle'
 import useBackgroundStore from '@views/image-studio/Popups/Canvas/Background/store/background/store'
-import { ChevronDownIcon } from 'lucide-react'
 import { type FC, useState } from 'react'
 
-import PresetCard from '@views/image-studio/Popups/common/components/PresetCard'
+import Button from '@common/components/Button'
 import SectionBlock from '@views/image-studio/Popups/common/components/SectionBlock'
 
 const FiltersBuilder: FC = () => {
@@ -27,7 +26,6 @@ const FiltersBuilder: FC = () => {
   const setGrayscale = useBackgroundStore(s => s.setGrayscale)
   const setSepia = useBackgroundStore(s => s.setSepia)
   const setHue = useBackgroundStore(s => s.setHue)
-  const resetFilters = useBackgroundStore(s => s.resetFilters)
 
   const [openAdvanced, setOpenAdvanced] = useState(false)
   const values = { brightness, contrast, saturate, grayscale, sepia, hue }
@@ -39,48 +37,47 @@ const FiltersBuilder: FC = () => {
     sepia: setSepia,
     hue: setHue
   }
+  const fill = background && isImageBackground(background) ? resolvePreviewFill(background) : THEME_PREVIEW_FILL
 
   return (
-    <SectionBlock
-      title='Filtros'
-      description='Looks rápidos para el fondo. Abre el control fino si quieres ajustar a mano.'
-    >
-      <div className='grid grid-cols-3 gap-1.5'>
+    <SectionBlock title='Filtros'>
+      <SliceContainer maxHeight={120} extendedMaxHeight={360} collapsedVisible={6} className='grid grid-cols-3 gap-1.5'>
         {FILTER_PRESETS.map(item => {
           const filter = buildFilterCss({ ...item.values, blur: 0 })
+          const active = filterPreset === item.id
           return (
-            <PresetCard key={item.id} active={filterPreset === item.id} onClick={() => applyFilterPreset(item.id)}>
-              <div className='bg-muted relative h-12 w-full overflow-hidden rounded-md'>
-                <div className='absolute inset-0' style={{ ...resolvePreviewFill(background), filter }} />
+            <button
+              key={item.id}
+              type='button'
+              aria-label={item.label}
+              aria-pressed={active}
+              onClick={() => applyFilterPreset(item.id)}
+            >
+              <div
+                className={cn(
+                  'h-12 w-full overflow-hidden rounded-[12px] border',
+                  active ? 'border-primary' : 'border-border/50'
+                )}
+              >
+                <div className='size-full' style={{ ...fill, filter }} />
               </div>
-              <span className='text-[11px] font-medium'>{item.label}</span>
-            </PresetCard>
+            </button>
           )
         })}
-      </div>
+      </SliceContainer>
 
       <Button
         type='button'
-        variant='outline'
+        variant='ghost'
         size='sm'
-        className='h-8 w-fit gap-1.5 px-3 text-xs'
+        className='h-7 w-fit rounded-[12px] px-2'
         onClick={() => setOpenAdvanced(prev => !prev)}
       >
-        <span>Control avanzado</span>
-        <ChevronDownIcon className={cn('size-3.5', openAdvanced && 'rotate-180')} />
+        {openAdvanced ? 'Menos' : 'Ajuste'}
       </Button>
 
       {openAdvanced && (
-        <div className='gap-grid flex flex-col'>
-          <div className='flex justify-end'>
-            <button
-              type='button'
-              className='text-muted-foreground hover:text-foreground text-[10px] underline-offset-2 hover:underline'
-              onClick={resetFilters}
-            >
-              Reset
-            </button>
-          </div>
+        <div className='flex flex-col gap-2'>
           {FILTER_SLIDERS.map(item => (
             <SliderControl
               key={item.key}
@@ -90,6 +87,7 @@ const FiltersBuilder: FC = () => {
               min={item.min}
               max={item.max}
               step={1}
+              displayValue={`${values[item.key]}`}
             />
           ))}
         </div>

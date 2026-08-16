@@ -8,8 +8,9 @@ import ImagesCount from '@views/image-studio/Popups/CanvasImages/ImagesCount'
 import Layout from '@views/image-studio/Popups/CanvasImages/Layout'
 import ShadowLight from '@views/image-studio/Popups/CanvasImages/ShadowLight'
 import SlotSize from '@views/image-studio/Popups/CanvasImages/SlotSize'
+import TextLayers from '@views/image-studio/Popups/CanvasImages/TextLayers'
 import { SectionSearchProvider } from '@views/image-studio/components/section-search'
-import { CloudSunIcon, LayoutGridIcon, MoveIcon, ScalingIcon, SmartphoneIcon, SquareRoundCornerIcon } from 'lucide-react'
+import { CloudSunIcon, LayoutGridIcon, MoveIcon, ScalingIcon, SmartphoneIcon, SquareRoundCornerIcon, TypeIcon } from 'lucide-react'
 import { type FC } from 'react'
 
 const CanvasImagesSidebar: FC = () => {
@@ -39,6 +40,9 @@ const CanvasImagesSidebar: FC = () => {
           </App.tab>
           <App.tab value='tamano' label='Tamaño' description='Ancho, alto y escala por capa' icon={ScalingIcon}>
             <SlotSize />
+          </App.tab>
+          <App.tab value='texto' label='Texto' description='Capas de copy sobre el shot' icon={TypeIcon}>
+            <TextLayers />
           </App.tab>
         </App.tabs>
       </SectionSearchProvider>

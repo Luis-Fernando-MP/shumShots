@@ -41,7 +41,7 @@ const IconInput: FC<Props> = ({
   ...props
 }) => {
   return (
-    <div className='flex w-fit max-w-full flex-row flex-wrap items-center gap-2 rounded-md bg-background p-2'>
+    <div className='flex w-full max-w-full flex-row flex-wrap items-center gap-2 rounded-md bg-background px-2 py-1.5'>
       {Icon && <div>{Icon}</div>}
       <Input
         className={`min-w-[50px] bg-transparent outline-none ${className}`}

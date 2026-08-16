@@ -31,9 +31,24 @@ const sanitizeBackground = (value: string | null | undefined): string | null => 
   return normalizeBackgroundValue(value)
 }
 
+const DUOTONE_IDS = new Set<string>([...DUOTONE_PRESETS.map(item => item.id), 'custom'])
+const VIGNETTE_IDS = new Set<string>(['none', 'custom', ...VIGNETTE_PRESETS.map(item => item.id)])
+const FILTER_IDS = new Set<string>([...FILTER_PRESETS.map(item => item.id), 'custom'])
+
 const mergeBackground = (persisted?: Partial<BackgroundState>): BackgroundState => {
   const defaults = initialState()
   if (!persisted) return defaults
+
+  const duotonePreset = persisted.duotonePreset && DUOTONE_IDS.has(persisted.duotonePreset)
+    ? persisted.duotonePreset
+    : defaults.duotonePreset
+  const vignettePreset = persisted.vignettePreset && VIGNETTE_IDS.has(persisted.vignettePreset)
+    ? persisted.vignettePreset
+    : defaults.vignettePreset
+  const filterPreset = persisted.filterPreset && FILTER_IDS.has(persisted.filterPreset)
+    ? persisted.filterPreset
+    : defaults.filterPreset
+  const vignettePoints = persisted.vignettePoints === 2 || persisted.vignettePoints === 3 ? persisted.vignettePoints : 1
 
   return {
     ...defaults,
@@ -53,12 +68,16 @@ const mergeBackground = (persisted?: Partial<BackgroundState>): BackgroundState 
     grayscale: clampPercent(persisted.grayscale ?? defaults.grayscale),
     sepia: clampPercent(persisted.sepia ?? defaults.sepia),
     hue: clampRange(persisted.hue ?? defaults.hue, 0, 360),
+    filterPreset,
+    duotonePreset,
     duotoneIntensity: clampPercent(persisted.duotoneIntensity ?? defaults.duotoneIntensity),
+    vignettePreset,
     vignetteIntensity: clampPercent(persisted.vignetteIntensity ?? defaults.vignetteIntensity),
     vignetteSize: clampPercent(persisted.vignetteSize ?? defaults.vignetteSize),
     vignetteSoftness: clampPercent(persisted.vignetteSoftness ?? defaults.vignetteSoftness),
     vignetteFocusX: clampPercent(persisted.vignetteFocusX ?? defaults.vignetteFocusX),
-    vignetteFocusY: clampPercent(persisted.vignetteFocusY ?? defaults.vignetteFocusY)
+    vignetteFocusY: clampPercent(persisted.vignetteFocusY ?? defaults.vignetteFocusY),
+    vignettePoints
   }
 }
 
@@ -132,6 +151,7 @@ const state: StateCreator<BackgroundStore> = (set, get) => ({
       vignetteFocusX: clampPercent(x),
       vignetteFocusY: clampPercent(y)
     }),
+  setVignettePoints: points => set({ vignettePoints: points }),
   applyVignettePreset: preset => {
     const found = VIGNETTE_PRESETS.find(item => item.id === preset)
     if (!found) return
@@ -142,7 +162,12 @@ const state: StateCreator<BackgroundStore> = (set, get) => ({
       vignetteSoftness: found.values.softness,
       vignetteColor: found.values.color,
       vignetteFocusX: found.values.focusX,
-      vignetteFocusY: found.values.focusY
+      vignetteFocusY: found.values.focusY,
+      vignettePoints: found.values.points ?? 1,
+      vignetteFocus2X: found.values.focus2X ?? 28,
+      vignetteFocus2Y: found.values.focus2Y ?? 38,
+      vignetteFocus3X: found.values.focus3X ?? 72,
+      vignetteFocus3Y: found.values.focus3Y ?? 62
     })
   },
   resetFilters: () => set({ ...FILTER_DEFAULTS }),
@@ -187,7 +212,12 @@ const useBackgroundStore = create(
       vignetteSoftness: s.vignetteSoftness,
       vignetteColor: s.vignetteColor,
       vignetteFocusX: s.vignetteFocusX,
-      vignetteFocusY: s.vignetteFocusY
+      vignetteFocusY: s.vignetteFocusY,
+      vignettePoints: s.vignettePoints,
+      vignetteFocus2X: s.vignetteFocus2X,
+      vignetteFocus2Y: s.vignetteFocus2Y,
+      vignetteFocus3X: s.vignetteFocus3X,
+      vignetteFocus3Y: s.vignetteFocus3Y
     }),
     merge: (persisted, current) => ({
       ...current,

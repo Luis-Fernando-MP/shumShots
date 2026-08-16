@@ -311,7 +311,27 @@ export const gradients = [
       linear-gradient(135deg, rgba(255, 20, 147, 0.5) 0%, rgba(0, 255, 255, 0.6) 25%, rgba(255, 105, 180, 0.7) 50%, rgba(255, 0, 0, 0.4) 75%, rgba(0, 128, 0, 0.5) 100%)
     `,
     blendMode: 'multiply, screen, overlay, soft-light'
-  }
+  },
+  { gradient: 'linear-gradient(135deg, #0f172a 0%, #1e3a8a 48%, #38bdf8 100%)' },
+  { gradient: 'linear-gradient(160deg, #1a0a08 0%, #9a3412 42%, #fbbf24 100%)' },
+  { gradient: 'linear-gradient(120deg, #14532d 0%, #16a34a 50%, #bbf7d0 100%)' },
+  { gradient: 'linear-gradient(90deg, #111827 0%, #6d28d9 45%, #f0abfc 100%)' },
+  { gradient: 'linear-gradient(180deg, #0c0a09 0%, #7f1d1d 40%, #fb7185 100%)' },
+  { gradient: 'linear-gradient(135deg, #022c22 0%, #0f766e 50%, #99f6e4 100%)' },
+  { gradient: 'linear-gradient(45deg, #1e1b4b 0%, #4338ca 40%, #a5b4fc 100%)' },
+  { gradient: 'linear-gradient(200deg, #431407 0%, #c2410c 55%, #fed7aa 100%)' },
+  { gradient: 'linear-gradient(110deg, #083344 0%, #0369a1 48%, #7dd3fc 100%)' },
+  { gradient: 'linear-gradient(70deg, #3b0764 0%, #a21caf 50%, #f5d0fe 100%)' },
+  { gradient: 'linear-gradient(150deg, #052e16 0%, #4d7c0f 46%, #d9f99d 100%)' },
+  { gradient: 'linear-gradient(25deg, #18181b 0%, #52525b 40%, #e4e4e7 100%)' },
+  { gradient: 'linear-gradient(190deg, #4c0519 0%, #be123c 50%, #fecdd3 100%)' },
+  { gradient: 'linear-gradient(100deg, #082f49 0%, #0284c7 42%, #e0f2fe 100%)' },
+  { gradient: 'linear-gradient(215deg, #1c1917 0%, #b45309 48%, #fde68a 100%)' },
+  { gradient: 'linear-gradient(80deg, #172554 0%, #2563eb 50%, #93c5fd 100%)' },
+  { gradient: 'linear-gradient(165deg, #042f2e 0%, #0d9488 52%, #ccfbf1 100%)' },
+  { gradient: 'linear-gradient(40deg, #2e1065 0%, #7c3aed 46%, #ddd6fe 100%)' },
+  { gradient: 'linear-gradient(130deg, #450a0a 0%, #dc2626 50%, #fecaca 100%)' },
+  { gradient: 'linear-gradient(95deg, #0a0a0a 0%, #57534e 55%, #d6d3d1 100%)' }
 ]
 
 export const circularGradients = [
@@ -377,5 +397,46 @@ export const circularGradients = [
   {
     gradient:
       'radial-gradient(at 67% 59%, hsla(208,71%,67%,1) 0px, transparent 50%), radial-gradient(at 28% 39%, hsla(202,69%,69%,1) 0px, transparent 50%), radial-gradient(at 91% 70%, hsla(314,99%,77%,1) 0px, transparent 50%), radial-gradient(at 83% 88%, hsla(198,66%,71%,1) 0px, transparent 50%)'
-  }
+  },
+  { gradient: 'radial-gradient(circle at 30% 20%, #fef3c7 0%, transparent 42%), radial-gradient(circle at 80% 80%, #fb7185 0%, #0f172a 70%)' },
+  { gradient: 'radial-gradient(circle at 70% 15%, #67e8f9 0%, transparent 40%), radial-gradient(circle at 20% 85%, #6366f1 0%, #020617 72%)' },
+  { gradient: 'radial-gradient(circle at 50% 0%, #fde68a 0%, transparent 45%), radial-gradient(circle at 50% 100%, #7c2d12 0%, #1c1917 70%)' },
+  { gradient: 'radial-gradient(circle at 10% 40%, #c4b5fd 0%, transparent 38%), radial-gradient(circle at 90% 60%, #db2777 0%, #111827 75%)' },
+  { gradient: 'radial-gradient(circle at 40% 70%, #86efac 0%, transparent 40%), radial-gradient(circle at 80% 20%, #065f46 0%, #022c22 70%)' },
+  { gradient: 'radial-gradient(circle at 60% 30%, #fda4af 0%, transparent 36%), radial-gradient(circle at 15% 80%, #1e3a8a 0%, #020617 72%)' },
+  { gradient: 'radial-gradient(circle at 25% 25%, #fef08a 0%, transparent 34%), radial-gradient(circle at 75% 75%, #ea580c 0%, #1c1917 70%)' },
+  { gradient: 'radial-gradient(circle at 85% 25%, #a5f3fc 0%, transparent 40%), radial-gradient(circle at 20% 70%, #0e7490 0%, #083344 72%)' },
+  { gradient: 'radial-gradient(circle at 50% 50%, #f5d0fe 0 18%, transparent 48%), radial-gradient(circle at 50% 50%, #6b21a8 0%, #1e1b4b 100%)' },
+  { gradient: 'radial-gradient(circle at 0% 0%, #bbf7d0 0%, transparent 42%), radial-gradient(circle at 100% 100%, #166534 0%, #052e16 70%)' },
+  { gradient: 'radial-gradient(circle at 100% 0%, #fecdd3 0%, transparent 40%), radial-gradient(circle at 0% 100%, #9f1239 0%, #4c0519 72%)' },
+  { gradient: 'radial-gradient(circle at 50% 20%, #e0e7ff 0%, transparent 38%), radial-gradient(circle at 50% 90%, #3730a3 0%, #1e1b4b 70%)' },
+  { gradient: 'radial-gradient(ellipse 80% 50% at 50% 0%, #fde047 0%, transparent 55%), radial-gradient(circle at 50% 80%, #b45309 0%, #1c1917 75%)' },
+  { gradient: 'radial-gradient(circle at 20% 50%, #67e8f9 0%, transparent 35%), radial-gradient(circle at 80% 50%, #c026d3 0%, #18181b 72%)' },
+  { gradient: 'radial-gradient(circle at 70% 40%, #fdba74 0%, transparent 38%), radial-gradient(circle at 30% 80%, #7f1d1d 0%, #0c0a09 70%)' },
+  { gradient: 'radial-gradient(circle at 40% 10%, #bfdbfe 0%, transparent 40%), radial-gradient(circle at 60% 90%, #1d4ed8 0%, #172554 72%)' },
+  { gradient: 'radial-gradient(circle at 15% 15%, #d9f99d 0%, transparent 36%), radial-gradient(circle at 85% 85%, #3f6212 0%, #14532d 70%)' },
+  { gradient: 'radial-gradient(circle at 90% 10%, #fbcfe8 0%, transparent 38%), radial-gradient(circle at 10% 90%, #9d174d 0%, #500724 72%)' },
+  { gradient: 'radial-gradient(circle at 50% 40%, #fef9c3 0 12%, transparent 42%), radial-gradient(circle at 50% 70%, #854d0e 0%, #1c1917 78%)' },
+  { gradient: 'radial-gradient(circle at 30% 80%, #99f6e4 0%, transparent 40%), radial-gradient(circle at 80% 20%, #0f766e 0%, #042f2e 70%)' },
+  { gradient: 'radial-gradient(circle at 75% 60%, #c7d2fe 0%, transparent 38%), radial-gradient(circle at 20% 20%, #4338ca 0%, #1e1b4b 72%)' },
+  { gradient: 'radial-gradient(circle at 10% 70%, #fed7aa 0%, transparent 36%), radial-gradient(circle at 90% 30%, #9a3412 0%, #431407 70%)' },
+  { gradient: 'radial-gradient(circle at 55% 15%, #a7f3d0 0%, transparent 40%), radial-gradient(circle at 45% 90%, #047857 0%, #022c22 72%)' },
+  { gradient: 'radial-gradient(circle at 80% 80%, #ddd6fe 0%, transparent 38%), radial-gradient(circle at 15% 25%, #6d28d9 0%, #2e1065 70%)' },
+  { gradient: 'radial-gradient(circle at 25% 40%, #fecaca 0%, transparent 36%), radial-gradient(circle at 70% 70%, #b91c1c 0%, #450a0a 72%)' },
+  { gradient: 'radial-gradient(circle at 60% 80%, #bae6fd 0%, transparent 40%), radial-gradient(circle at 20% 20%, #0369a1 0%, #082f49 70%)' },
+  { gradient: 'radial-gradient(circle at 40% 30%, #f5f5f4 0%, transparent 32%), radial-gradient(circle at 70% 80%, #44403c 0%, #0c0a09 75%)' },
+  { gradient: 'radial-gradient(circle at 90% 50%, #f0abfc 0%, transparent 38%), radial-gradient(circle at 10% 50%, #86198f 0%, #4a044e 72%)' },
+  { gradient: 'radial-gradient(circle at 50% 10%, #fef08a 0%, transparent 34%), radial-gradient(circle at 20% 90%, #365314 0%, #1a2e05 70%)' },
+  { gradient: 'radial-gradient(circle at 15% 85%, #7dd3fc 0%, transparent 38%), radial-gradient(circle at 85% 15%, #1e40af 0%, #0c1a4a 72%)' },
+  { gradient: 'radial-gradient(circle at 70% 70%, #fb7185 0%, transparent 36%), radial-gradient(circle at 25% 25%, #831843 0%, #1f0a14 70%)' },
+  { gradient: 'radial-gradient(circle at 35% 65%, #86efac 0%, transparent 38%), radial-gradient(circle at 80% 20%, #166534 0%, #052e16 72%)' },
+  { gradient: 'radial-gradient(circle at 50% 50%, #e879f9 0 10%, transparent 40%), radial-gradient(circle at 50% 50%, #581c87 0%, #1e1033 100%)' },
+  { gradient: 'radial-gradient(circle at 5% 50%, #fdba74 0%, transparent 34%), radial-gradient(circle at 95% 50%, #9a3412 0%, #1c1917 72%)' },
+  { gradient: 'radial-gradient(circle at 50% 5%, #bfdbfe 0%, transparent 36%), radial-gradient(circle at 50% 95%, #1e3a8a 0%, #0b1226 70%)' },
+  { gradient: 'radial-gradient(circle at 80% 40%, #fde68a 0%, transparent 38%), radial-gradient(circle at 20% 70%, #854d0e 0%, #1c1917 72%)' },
+  { gradient: 'radial-gradient(circle at 30% 20%, #a5b4fc 0%, transparent 36%), radial-gradient(circle at 70% 85%, #312e81 0%, #0f0e2e 70%)' },
+  { gradient: 'radial-gradient(circle at 65% 15%, #99f6e4 0%, transparent 38%), radial-gradient(circle at 20% 80%, #115e59 0%, #042f2e 72%)' },
+  { gradient: 'radial-gradient(circle at 40% 90%, #f9a8d4 0%, transparent 40%), radial-gradient(circle at 80% 20%, #9d174d 0%, #500724 70%)' },
+  { gradient: 'radial-gradient(circle at 10% 10%, #e2e8f0 0%, transparent 32%), radial-gradient(circle at 90% 90%, #334155 0%, #020617 75%)' },
+  { gradient: 'radial-gradient(circle at 55% 45%, #fca5a5 0%, transparent 34%), radial-gradient(circle at 20% 80%, #7f1d1d 0%, #1c0a0a 72%)' }
 ]

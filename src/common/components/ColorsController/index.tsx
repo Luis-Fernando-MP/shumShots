@@ -12,8 +12,8 @@ interface Props {
 }
 
 const ColorsController: FC<Props> = ({ background, setBackground, className }) => (
-  <section className={cn('gap-grid flex flex-col', className)}>
-    <div className='grid grid-cols-5 gap-2'>
+  <section className={cn('flex flex-col gap-3', className)}>
+    <div className='grid grid-cols-6 gap-2'>
       {basicColors.map(color => {
         const isActive = background === color
         return (
@@ -23,21 +23,21 @@ const ColorsController: FC<Props> = ({ background, setBackground, className }) =
             aria-label={`Color ${color}`}
             onClick={() => setBackground(color)}
             className={cn(
-              'size-8 justify-self-center rounded-full border transition-transform',
-              isActive ? 'border-primary scale-110 ring-2 ring-primary/40' : 'border-border/70 hover:scale-105'
+              'size-8 justify-self-center rounded-full transition-transform',
+              isActive ? 'ring-primary ring-2 ring-offset-2 ring-offset-background scale-105' : 'hover:scale-105'
             )}
             style={{ backgroundColor: color }}
           />
         )
       })}
+      <ColorPicker
+        variant='swatch'
+        value={background}
+        onChange={setBackground}
+        label='Color'
+        className='size-8 justify-self-center rounded-full'
+      />
     </div>
-    <ColorPicker
-      variant='swatch'
-      value={background}
-      onChange={setBackground}
-      label='Color personalizado'
-      className='rounded-[12px]'
-    />
   </section>
 )
 
