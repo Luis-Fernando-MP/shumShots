@@ -1,0 +1,247 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-08-16T05:00:00.000Z",
+  "title": "Design System: PIXIS",
+  "extensions": {
+    "colorMeta": {
+      "aurora-paper": {
+        "role": "neutral",
+        "displayName": "Aurora Paper",
+        "canonical": "rgb(245, 245, 250)",
+        "tonalRamp": [
+          "rgb(20, 20, 40)",
+          "rgb(48, 50, 72)",
+          "rgb(90, 96, 128)",
+          "rgb(140, 150, 180)",
+          "rgb(180, 188, 214)",
+          "rgb(210, 220, 240)",
+          "rgb(230, 235, 250)",
+          "rgb(245, 245, 250)"
+        ]
+      },
+      "aurora-panel": {
+        "role": "neutral",
+        "displayName": "Aurora Panel",
+        "canonical": "rgb(230, 235, 250)"
+      },
+      "aurora-muted": {
+        "role": "neutral",
+        "displayName": "Aurora Muted",
+        "canonical": "rgb(210, 220, 240)"
+      },
+      "ink-navy": {
+        "role": "neutral",
+        "displayName": "Ink Navy",
+        "canonical": "rgb(20, 20, 40)"
+      },
+      "ink-slate": {
+        "role": "neutral",
+        "displayName": "Ink Slate",
+        "canonical": "rgb(60, 90, 130)"
+      },
+      "rose-accent": {
+        "role": "primary",
+        "displayName": "Rose Accent",
+        "canonical": "rgb(255, 100, 150)",
+        "tonalRamp": [
+          "rgb(120, 20, 55)",
+          "rgb(170, 40, 85)",
+          "rgb(210, 60, 110)",
+          "rgb(255, 100, 150)",
+          "rgb(255, 140, 175)",
+          "rgb(255, 175, 200)",
+          "rgb(255, 210, 225)",
+          "rgb(255, 235, 242)"
+        ]
+      },
+      "mauve-secondary": {
+        "role": "secondary",
+        "displayName": "Mauve Secondary",
+        "canonical": "rgb(200, 150, 180)"
+      },
+      "mist-border": {
+        "role": "neutral",
+        "displayName": "Mist Border",
+        "canonical": "rgb(180, 183, 200)"
+      },
+      "on-accent": {
+        "role": "neutral",
+        "displayName": "On Accent",
+        "canonical": "rgb(255, 255, 255)"
+      },
+      "success": {
+        "role": "neutral",
+        "displayName": "Success",
+        "canonical": "rgb(5, 150, 105)"
+      },
+      "warning": {
+        "role": "neutral",
+        "displayName": "Warning",
+        "canonical": "rgb(180, 100, 10)"
+      },
+      "error": {
+        "role": "neutral",
+        "displayName": "Error",
+        "canonical": "rgb(200, 40, 70)"
+      },
+      "info": {
+        "role": "neutral",
+        "displayName": "Info",
+        "canonical": "rgb(2, 120, 190)"
+      }
+    },
+    "typographyMeta": {
+      "display": { "displayName": "Display", "purpose": "Popup and page titles on Plus Jakarta Sans." },
+      "headline": { "displayName": "Headline", "purpose": "Section subtitles." },
+      "title": { "displayName": "Title", "purpose": "Mid-level headings." },
+      "body": { "displayName": "Body", "purpose": "Default copy and control labels on Geist Sans." },
+      "label": { "displayName": "Label", "purpose": "Block titles and compact chrome labels." }
+    },
+    "shadows": [
+      {
+        "name": "thumb",
+        "value": "0 1px 2px 0 rgb(0 0 0 / 0.05)",
+        "purpose": "Switch thumb and color-picker trigger only."
+      },
+      {
+        "name": "float",
+        "value": "0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)",
+        "purpose": "Popover floating above the board."
+      },
+      {
+        "name": "overlay",
+        "value": "0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1)",
+        "purpose": "Select menu overlay."
+      }
+    ],
+    "motion": [
+      {
+        "name": "color-shift",
+        "value": "transition-colors",
+        "purpose": "Default state change on buttons, chips, and inputs."
+      },
+      {
+        "name": "fade-in-up",
+        "value": "fade-in-up 0.5s ease both",
+        "purpose": "Entrance for staged chrome, not looping decoration."
+      },
+      {
+        "name": "blurred-fade-in",
+        "value": "blurred-fade-in 0.4s ease both",
+        "purpose": "Soft reveal; keep off dense control strips."
+      }
+    ],
+    "breakpoints": []
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "Primary action. Rose tally-light on Aurora Day; remaps with --tn-primary.",
+      "html": "<button class=\"ds-btn-primary\" type=\"button\">Exportar</button>",
+      "css": ".ds-btn-primary { display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; height: 2.5rem; padding: 0 1rem; border: none; border-radius: 1.25rem; background: rgb(var(--tn-primary)); color: rgb(var(--fnt-active)); font-family: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif; font-size: 0.875rem; font-weight: 500; line-height: 1.25rem; cursor: pointer; transition: background-color 150ms ease; } .ds-btn-primary:hover { background: color-mix(in srgb, rgb(var(--tn-primary)) 90%, transparent); } .ds-btn-primary:focus-visible { outline: 2px solid rgb(var(--tn-primary)); outline-offset: 2px; } .ds-btn-primary:disabled { opacity: 0.5; pointer-events: none; }"
+    },
+    {
+      "name": "Secondary Button",
+      "kind": "button",
+      "refersTo": "button-secondary",
+      "description": "Quiet panel action on card fill.",
+      "html": "<button class=\"ds-btn-secondary\" type=\"button\">Cancelar</button>",
+      "css": ".ds-btn-secondary { display: inline-flex; align-items: center; justify-content: center; height: 2.5rem; padding: 0 1rem; border: none; border-radius: 1.25rem; background: rgb(var(--bg-secondary)); color: rgb(var(--fnt-primary)); font-size: 0.875rem; font-weight: 500; cursor: pointer; transition: background-color 150ms ease; } .ds-btn-secondary:hover { background: rgb(var(--bg-tertiary)); } .ds-btn-secondary:focus-visible { outline: 2px solid rgb(var(--tn-primary)); outline-offset: 2px; }"
+    },
+    {
+      "name": "Ghost Button",
+      "kind": "button",
+      "refersTo": "button-ghost",
+      "description": "Icon and tertiary chrome hits in HeaderBar / MainBar.",
+      "html": "<button class=\"ds-btn-ghost\" type=\"button\">Ajustes</button>",
+      "css": ".ds-btn-ghost { display: inline-flex; align-items: center; justify-content: center; height: 2.5rem; padding: 0 1rem; border: none; border-radius: 1.25rem; background: transparent; color: rgb(var(--fnt-primary)); font-size: 0.875rem; font-weight: 500; cursor: pointer; transition: background-color 150ms ease; } .ds-btn-ghost:hover { background: color-mix(in srgb, rgb(var(--bg-tertiary)) 70%, transparent); } .ds-btn-ghost:focus-visible { outline: 2px solid rgb(var(--tn-primary)); outline-offset: 2px; }"
+    },
+    {
+      "name": "Outline Button",
+      "kind": "button",
+      "refersTo": "button-outline",
+      "description": "Bordered alternative when fill would compete with the board.",
+      "html": "<button class=\"ds-btn-outline\" type=\"button\">Restablecer</button>",
+      "css": ".ds-btn-outline { display: inline-flex; align-items: center; justify-content: center; height: 2.5rem; padding: 0 1rem; border: 1px solid rgb(var(--tn-border)); border-radius: 1.25rem; background: transparent; color: rgb(var(--fnt-primary)); font-size: 0.875rem; font-weight: 500; cursor: pointer; transition: background-color 150ms ease; } .ds-btn-outline:hover { background: color-mix(in srgb, rgb(var(--bg-tertiary)) 70%, transparent); } .ds-btn-outline:focus-visible { outline: 2px solid rgb(var(--tn-primary)); outline-offset: 2px; }"
+    },
+    {
+      "name": "Soft Input",
+      "kind": "input",
+      "refersTo": "input-soft",
+      "description": "Default PIXIS field: card fill, rounded-md, focus border.",
+      "html": "<label class=\"ds-input-soft\"><input type=\"text\" placeholder=\"Nombre del shot\" /></label>",
+      "css": ".ds-input-soft { display: inline-flex; align-items: center; width: 100%; height: 2.25rem; padding: 0 0.75rem; border: 1px solid transparent; border-radius: 0.875rem; background: rgb(var(--bg-secondary)); color: rgb(var(--fnt-primary)); } .ds-input-soft:focus-within { border-color: rgb(var(--tn-border)); } .ds-input-soft input { flex: 1; min-width: 0; border: 0; background: transparent; color: inherit; font-size: 0.875rem; outline: none; } .ds-input-soft input::placeholder { color: rgb(var(--fnt-secondary)); }"
+    },
+    {
+      "name": "Default Chip",
+      "kind": "chip",
+      "refersTo": "chip-default",
+      "description": "Compact filter/tag. Primary chip uses rose wash, not a second button.",
+      "html": "<span class=\"ds-chip\">Layout</span>",
+      "css": ".ds-chip { display: inline-flex; align-items: center; height: 1.75rem; padding: 0 0.5rem; border: 1px solid rgb(var(--tn-border)); border-radius: 0.875rem; background: color-mix(in srgb, rgb(var(--bg-tertiary)) 50%, transparent); color: rgb(var(--fnt-primary)); font-size: 0.75rem; font-weight: 500; }"
+    },
+    {
+      "name": "Studio Tooltip",
+      "kind": "custom",
+      "refersTo": null,
+      "description": "Icon-button helper copy. Card fill, rose-tinted border.",
+      "html": "<div class=\"ds-tooltip\">Zoom del tablero</div>",
+      "css": ".ds-tooltip { display: inline-flex; align-items: center; max-width: 20rem; padding: 0.375rem 0.75rem; border: 1px solid color-mix(in srgb, rgb(var(--tn-primary)) 30%, transparent); border-radius: 0.875rem; background: rgb(var(--bg-secondary)); color: rgb(var(--fnt-primary)); font-size: 0.75rem; line-height: 1.25rem; }"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Aurora Console",
+    "overview": "PIXIS chrome is a quiet workbench around a loud artifact. The board — a Monaco snippet or a picture canvas — is the photograph. Header, detail bar, main bar, and popups are the console: dense, tokenized, and willing to disappear when a theme swap repaints every semantic slot.\n\nThe default look is cool pale paper with a rose accent used like a recording-studio tally light: present, rare, never a wash. Users can replace the entire palette (`THEMES` in `src/app/defaults/themes.ts`); the system is the token graph, not a single hex. SSR `:root` is a near-black fallback until the persisted theme hydrates — do not treat that dark fallback as the brand.",
+    "keyCharacteristics": [
+      "Semantic CSS variables (`bg-primary`, `tn-primary`, `gap-grid`, `rounded-radius`) are the only legal color/space/radius source for new UI.",
+      "Display type (Plus Jakarta Sans) for titles; Geist Sans for body and controls.",
+      "Soft, large radii on actions; slightly tighter radii on fields and chips.",
+      "Tonal layering for depth; shadows reserved for floating layers.",
+      "Studio is full-viewport; the composed shot, not the marketing shell, sets the mood."
+    ],
+    "rules": [
+      {
+        "name": "The Semantic Slot Rule",
+        "body": "Paint with Tailwind theme utilities (`bg-primary`, `text-foreground`, `border-border`, `bg-card`) or `rgb(var(--token))`. Never introduce `rpx-*` tokens, hardcoded hex in new product UI, or a second palette that ignores `data-theme`.",
+        "section": "colors"
+      },
+      {
+        "name": "The Tally-Light Rule",
+        "body": "Rose (or whichever `--tn-primary` the active theme provides) occupies a small fraction of chrome. The board may be vivid; the console stays tonal.",
+        "section": "colors"
+      },
+      {
+        "name": "The Type-Scale Rule",
+        "body": "Use `text-xs` … `text-xl` / `Typography` `size`. Do not invent fixed `px` font sizes in product UI.",
+        "section": "typography"
+      },
+      {
+        "name": "The Flat-By-Default Rule",
+        "body": "Surfaces are flat at rest. Shadows are a response to floating (popover, menu), never a default on cards or bars.",
+        "section": "elevation"
+      },
+      {
+        "name": "The No-Glow-Chrome Rule",
+        "body": "Glow, gradient text, and heavy shadows are for the composed shot (lights, vignette, board). Chrome uses borders and tonal fills.",
+        "section": "shapes"
+      }
+    ],
+    "dos": [
+      "Do use `bg-primary`, `text-foreground`, `rounded-radius`, `gap-grid` (and siblings) for new chrome.",
+      "Do put titles on `font-display` / `Typography.Title|Subtitle|Heading` and body on Geist / `text-sm`.",
+      "Do keep Operate density: compact controls, Spanish labels, tooltips on icon-only hits.",
+      "Do treat image-studio canvas effects (vignette, lights, 3D) as the artifact; keep chrome quieter than the board.",
+      "Do honor `APP_Z_INDEX` instead of inventing new stacking numbers."
+    ],
+    "donts": [
+      "Don't add Sass/SCSS or `rpx-*` tokens.",
+      "Don't hardcode a palette that breaks when the user leaves Aurora Day.",
+      "Don't put glow shadows, gradient text, or glassmorphism on studio chrome.",
+      "Don't use arbitrary `px` type or `rounded-[var(--radius)]` / `bg-[rgb(var(--…))]` when a theme utility exists.",
+      "Don't import domain stores into ShotEditor or fork a second design language for code-studio vs image-studio.",
+      "Don't fabricate testimonials, customers, or brand photography."
+    ]
+  }
+}

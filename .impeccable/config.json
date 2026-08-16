@@ -1,0 +1,30 @@
+{
+  "hook": {
+    "enabled": true,
+    "limits": {
+      "maxFindings": 5,
+      "maxChars": 8000
+    }
+  },
+  "detector": {
+    "ignoreRules": [],
+    "ignoreFiles": [
+      "src/shared/themes/**",
+      "public/monaco/**"
+    ],
+    "ignoreValues": [
+      {
+        "rule": "overused-font",
+        "value": "geist sans",
+        "createdAt": "2026-08-16T05:13:15.394Z",
+        "reason": "Agent: incumbent PIXIS body font from src/shared/fonts/page-fonts.ts"
+      },
+      {
+        "rule": "overused-font",
+        "value": "plus jakarta sans",
+        "createdAt": "2026-08-16T05:13:15.749Z",
+        "reason": "Agent: incumbent PIXIS display font from src/shared/fonts/page-fonts.ts"
+      }
+    ]
+  }
+}
