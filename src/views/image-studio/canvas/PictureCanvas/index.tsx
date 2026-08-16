@@ -2,6 +2,7 @@
 
 import useBoardStore from '@/shared/components/Board/board.store'
 import Dropzone from '@/shared/components/Dropzone'
+import APP_Z_INDEX from '@common/constants/z-index'
 import { framesQuery } from '@common/core'
 import { cn } from '@common/utils/cn'
 import useBackgroundStore from '@views/image-studio/Popups/Canvas/Background/store/background/store'
@@ -286,15 +287,18 @@ const PictureSlot = memo(function PictureSlot({
       className={cn(
         'absolute overflow-visible outline-none select-none',
         !hasDeviceFrame && 'rounded-sm',
-        selected && 'z-10',
-        altDrag.altDragging ? 'z-20 cursor-grabbing' : 'cursor-pointer'
+        altDrag.altDragging ? 'cursor-grabbing' : 'cursor-pointer'
       )}
       style={{
         left: slotLeft + left - (drawWidth - boxWidth) / 2,
         top: slotTop + top - (drawHeight - boxHeight) / 2,
         width: drawWidth,
         height: drawHeight,
-        zIndex: altDrag.altDragging ? 20 : zIndex,
+        zIndex: altDrag.altDragging
+          ? APP_Z_INDEX.slot.dragging
+          : selected
+            ? APP_Z_INDEX.slot.selected
+            : zIndex,
         transform,
         transformOrigin: 'center center',
         userSelect: 'none',
@@ -317,7 +321,11 @@ const PictureSlot = memo(function PictureSlot({
                   onSize={handleSize}
                 />
               )}
-              <div ref={lightsRef} className='pointer-events-none absolute inset-0 z-[1]' />
+              <div
+                ref={lightsRef}
+                className='pointer-events-none absolute inset-0'
+                style={{ zIndex: APP_Z_INDEX.slot.light }}
+              />
               <Dropzone onDrop={handleDropFile} maxFiles={1} overlay={Boolean(imageUrl)} compact={hasDeviceFrame} />
             </div>
           </div>
@@ -377,7 +385,11 @@ const PictureCanvas: FC = () => {
   ])
 
   return (
-    <div className='pointer-events-none absolute inset-0 z-[10] overflow-hidden select-none' id='picture-canvas-layer'>
+    <div
+      className='pointer-events-none absolute inset-0 overflow-hidden select-none'
+      id='picture-canvas-layer'
+      style={{ zIndex: APP_Z_INDEX.canvas.slots, isolation: 'isolate' }}
+    >
       <div className='pointer-events-auto relative size-full overflow-hidden'>
         {pictures.map((picture, index) => {
           const placement = placements[index]

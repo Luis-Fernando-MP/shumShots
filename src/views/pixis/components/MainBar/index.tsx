@@ -6,12 +6,13 @@ import { Separator } from '@common/ui/Separator'
 import { cn } from '@common/utils/cn'
 import { AppWindow, LayersIcon } from 'lucide-react'
 import { usePathname } from 'next/navigation'
-import type { FC, ReactNode } from 'react'
+import type { CSSProperties, FC, ReactNode } from 'react'
 
 import AboutShumShots from '../AboutShumShots'
 
 interface Props {
   className?: string
+  style?: CSSProperties
   children?: ReactNode
 }
 
@@ -28,7 +29,7 @@ const pages = [
   }
 ] as const
 
-const MainBar: FC<Props> = ({ className = '', children }) => {
+const MainBar: FC<Props> = ({ className = '', style, children }) => {
   const pathname = usePathname()
 
   return (
@@ -38,6 +39,7 @@ const MainBar: FC<Props> = ({ className = '', children }) => {
         'flex size-fit flex-row items-center justify-center border',
         className
       )}
+      style={style}
     >
       <Button href='/' variant='ghost' className='size-auto h-auto shrink-0 rounded-full p-1'>
         <ShumShots size='sm' radius='circle' transparent />

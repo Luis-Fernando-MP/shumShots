@@ -1,6 +1,7 @@
 'use client'
 
 import useBoardStore from '@/shared/components/Board/board.store'
+import APP_Z_INDEX from '@common/constants/z-index'
 import useShadowStore, {
   createDefaultShadowConfig
 } from '@views/image-studio/Popups/CanvasImages/ShadowLight/store/shadow-light/store'
@@ -128,7 +129,8 @@ const syncLightOverlays = (container: HTMLElement | null, overlays: CSSPropertie
     let node = container.children[index] as HTMLElement | undefined
     if (!node) {
       node = document.createElement('div')
-      node.className = 'pointer-events-none absolute inset-0 z-[1]'
+      node.className = 'pointer-events-none absolute inset-0'
+      node.style.zIndex = String(APP_Z_INDEX.slot.light)
       container.appendChild(node)
     }
     node.style.backgroundImage = typeof style.backgroundImage === 'string' ? style.backgroundImage : ''

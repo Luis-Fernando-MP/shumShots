@@ -1,8 +1,8 @@
 'use client'
 
 import useCanvasLightStore from '@views/image-studio/Popups/Canvas/Light/store/light/store'
+import APP_Z_INDEX from '@common/constants/z-index'
 import { resolveLightOverlayStyle } from '@views/image-studio/Popups/common/presets/light'
-import { cn } from '@common/utils/cn'
 import { type CSSProperties, type FC, useMemo } from 'react'
 
 const CanvasLightOverlay: FC = () => {
@@ -29,10 +29,11 @@ const CanvasLightOverlay: FC = () => {
 
   return (
     <div
-      className={cn(
-        'pointer-events-none absolute inset-0',
-        stackMode === 'above' ? 'z-[20]' : 'z-[5]'
-      )}
+      className='pointer-events-none absolute inset-0'
+      style={{
+        zIndex:
+          stackMode === 'above' ? APP_Z_INDEX.canvas.lightAbove : APP_Z_INDEX.canvas.lightBelow
+      }}
       aria-hidden
     >
       {overlays.map((style, index) => (

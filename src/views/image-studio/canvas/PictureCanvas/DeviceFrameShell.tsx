@@ -1,5 +1,6 @@
 'use client'
 
+import APP_Z_INDEX from '@common/constants/z-index'
 import { framesQuery } from '@common/core'
 import {
   useChromaFrame,
@@ -68,15 +69,15 @@ const DeviceFrameShell: FC<Props> = ({ frameId, className, style, filterTargetRe
           src={chroma.silhouetteUrl}
           alt=''
           draggable={false}
-          className='pointer-events-none absolute inset-0 z-0 size-full object-fill select-none'
+          className='pointer-events-none absolute inset-0 size-full object-fill select-none'
+          style={{ zIndex: APP_Z_INDEX.frame.silhouette }}
         />
       )}
       <div
-        className='z-[1]'
         style={
           chroma
-            ? { ...contentBoxStyle(contentRect), ...maskStyle(chroma.maskUrl) }
-            : { ...contentBoxStyle(contentRect), visibility: 'hidden' }
+            ? { ...contentBoxStyle(contentRect), ...maskStyle(chroma.maskUrl), zIndex: APP_Z_INDEX.frame.content }
+            : { ...contentBoxStyle(contentRect), visibility: 'hidden', zIndex: APP_Z_INDEX.frame.content }
         }
       >
         {children}
@@ -86,7 +87,8 @@ const DeviceFrameShell: FC<Props> = ({ frameId, className, style, filterTargetRe
         src={chroma?.frameUrl ?? frame.path}
         alt=''
         draggable={false}
-        className='pointer-events-none absolute inset-0 z-10 size-full object-fill select-none'
+        className='pointer-events-none absolute inset-0 size-full object-fill select-none'
+        style={{ zIndex: APP_Z_INDEX.frame.chrome }}
       />
     </div>
   )

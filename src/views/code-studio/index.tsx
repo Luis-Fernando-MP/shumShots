@@ -1,6 +1,7 @@
 'use client'
 
 import Board from '@/shared/components/Board'
+import APP_Z_INDEX from '@common/constants/z-index'
 import usePixisPreferencesStore from '@views/code-studio/store/pixisPreferences.store'
 import MainBar from '@views/pixis/components/MainBar'
 import { type FC } from 'react'
@@ -13,7 +14,10 @@ const CodeStudioView: FC = () => {
 
   return (
     <>
-      <MainBar className='absolute bottom-5 left-1/2 z-10 -translate-x-1/2'>
+      <MainBar
+        className='absolute bottom-5 left-1/2 -translate-x-1/2'
+        style={{ zIndex: APP_Z_INDEX.studio.mainBar }}
+      >
         <MainBarOptions />
       </MainBar>
 
