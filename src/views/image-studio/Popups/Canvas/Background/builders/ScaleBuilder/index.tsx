@@ -94,7 +94,8 @@ const ScaleBuilder: FC = () => {
               <Button
                 key={item.value}
                 type='button'
-                variant={active ? 'secondary' : 'outline'}
+                variant='outline'
+                isSelected={active}
                 size='sm'
                 className={cn('h-8 justify-between px-2.5 text-xs', active && 'ring-primary/40 ring-1')}
                 onClick={() => setScale(item.value)}

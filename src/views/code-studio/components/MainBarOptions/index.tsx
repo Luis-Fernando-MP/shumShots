@@ -7,8 +7,6 @@ import { LetterText } from 'lucide-react'
 import type { FC } from 'react'
 
 import useReferenceMonacoStore from '../../store/referenceMonaco'
-import UserMonacoPreferences from '../UserMonacoPreferences'
-import UserPixisPreferences from '../UserPixisPreferences'
 
 const MainBarOptions: FC = () => {
   const { $editor } = useReferenceMonacoStore()
@@ -37,9 +35,6 @@ const MainBarOptions: FC = () => {
           secondaryLabel: 'Sin fondo'
         }}
       />
-
-      <UserMonacoPreferences />
-      <UserPixisPreferences />
     </section>
   )
 }

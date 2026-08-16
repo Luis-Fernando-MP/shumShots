@@ -1,8 +1,9 @@
 'use client'
 
-import { type JSX, useEffect, useState } from 'react'
+import { type CSSProperties, type JSX, useEffect, useState } from 'react'
 
 import './style.css'
+import useBoardStore from './board.store'
 import useBoard from './useBoard'
 
 type TPositions = { x: number; y: number }
@@ -45,6 +46,8 @@ const Board = ({ children, className = '', isCenter = true, minScale, normalScal
     handleTouchMove,
     handleTouchEnd
   } = useBoard({ isCenter, minScale, normalScale })
+  const showGrid = useBoardStore(s => s.showGrid)
+  const gridSize = useBoardStore(s => s.gridSize)
 
   useEffect(() => {
     setReady(true)
@@ -65,6 +68,13 @@ const Board = ({ children, className = '', isCenter = true, minScale, normalScal
       onTouchMove={handleTouchMove}
       onTouchEnd={handleTouchEnd}
     >
+      {showGrid && (
+        <div
+          className='board-grid'
+          style={{ '--board-grid-size': `${gridSize}px` } as CSSProperties}
+          aria-hidden
+        />
+      )}
       <div className={`board-surface ${className}`} ref={$childrenRef}>
         {children(offset, scale, handleScaleCentered)}
       </div>

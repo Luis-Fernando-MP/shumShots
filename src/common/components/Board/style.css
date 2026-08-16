@@ -24,10 +24,22 @@
   will-change: transform;
 }
 
+.board-grid {
+  pointer-events: none;
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background-image:
+    linear-gradient(to right, rgba(var(--tn-border), 0.45) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(var(--tn-border), 0.45) 1px, transparent 1px);
+  background-size: var(--board-grid-size, 20px) var(--board-grid-size, 20px);
+}
+
 .board-surface {
   position: absolute;
   top: 0;
   left: 0;
+  z-index: 1;
   transform-origin: 0 0;
 }
 

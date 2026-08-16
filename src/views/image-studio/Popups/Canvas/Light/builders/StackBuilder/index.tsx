@@ -36,7 +36,8 @@ const StackBuilder: FC = () => {
             <Button
               key={option.id}
               type='button'
-              variant={active ? 'secondary' : 'outline'}
+              variant='outline'
+              isSelected={active}
               size='sm'
               aria-pressed={active}
               className={cn(

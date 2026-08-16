@@ -27,7 +27,7 @@ Two studios share one chrome:
 - **code-studio** (`/`): Monaco editor as the subject; theme, font, and window chrome around the snippet.
 - **image-studio** (`/editor`): canvas mockups — backgrounds, frames, lights, corners, multi-slot layout, device frames.
 
-The composed board is the artifact. Studio chrome (header, detail bar, main bar, popups) exists to operate the board, not to compete with it.
+The composed board is the artifact. Studio chrome (`App` sidebars, floating docks, popups) exists to operate the board, not to compete with it.
 
 ## Operating Context
 
@@ -35,7 +35,7 @@ Desktop web app (`pnpm dev` → Next.js 15 + Turbopack). Full-viewport studio: `
 
 Typical loop: pick a studio → place subject (code or images) → tune presets (background, frame, light, layout, size) → export.
 
-Shared chrome lives under the `(pixis)` route group. Domain state for image-studio lives in popup stores; the canvases apply it. ShotEditor composes canvases and does not import domain stores.
+Shared chrome lives in `@common/components/layout` (`App`) and `src/views/pixis`. `(pixis)` only hydrates. Domain state for image-studio lives in popup stores; the canvases apply it. ShotEditor composes canvases and does not import domain stores.
 
 ## Capabilities and Constraints
 

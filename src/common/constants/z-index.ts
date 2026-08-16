@@ -24,7 +24,10 @@ const APP_Z_INDEX = {
     chrome: 10
   },
   studio: {
-    mainBar: 40
+    mainBar: 30,
+    sidebar: 20,
+    dock: 30,
+    popup: 80
   }
 } as const
 

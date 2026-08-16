@@ -1,6 +1,10 @@
 'use client'
 
+import APP_Z_INDEX from '@common/constants/z-index'
 import { type MouseEvent, useCallback, useEffect, useRef, useState } from 'react'
+
+const POPUP_Z = String(APP_Z_INDEX.studio.popup)
+const POPUP_FRONT_Z = String(APP_Z_INDEX.studio.popup + 1)
 
 export type PopupPositions = { x: number; y: number }
 
@@ -94,9 +98,9 @@ const usePopup = ({ isOpen, clickPosition, onClose }: IUsePopupHook) => {
 
     document.querySelectorAll('.popup').forEach(popup => {
       if (!(popup instanceof HTMLElement)) return
-      popup.style.zIndex = '10'
+      popup.style.zIndex = POPUP_Z
     })
-    $popupRef.current.style.zIndex = '11'
+    $popupRef.current.style.zIndex = POPUP_FRONT_Z
   }, [])
 
   const handleMouseDown = (e: MouseEvent) => {

@@ -32,7 +32,8 @@ const IndividualBorderController: FC<Props> = props => {
     <section className='flex flex-col gap-2'>
       <Button
         type='button'
-        variant={activeIndividualBorder ? 'secondary' : 'outline'}
+        variant='outline'
+        isSelected={activeIndividualBorder}
         size='sm'
         className='h-8 w-fit gap-1.5 px-3 text-xs'
         onClick={() => setActiveIndividualBorder(!activeIndividualBorder)}

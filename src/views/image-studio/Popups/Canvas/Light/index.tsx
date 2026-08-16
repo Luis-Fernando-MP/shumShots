@@ -1,56 +1,29 @@
 'use client'
 
-import Popup from '@common/components/Popup'
-import { Button } from '@common/components/Button'
 import Separator from '@common/components/Separator'
 import useCanvasLightStore from '@views/image-studio/Popups/Canvas/Light/store/light/store'
-import { SunIcon } from 'lucide-react'
+import DomainPanel from '@views/image-studio/components/DomainPanel'
 import { Fragment, type FC } from 'react'
 
 import SECTIONS from './sections'
 
 /**
- * Popup de configuración de iluminación del lienzo.
- * 
- * Permite añadir y configurar fuentes de luz (puntos, focos, ambientes)
- * que afectan al fondo del canvas.
- * 
- * @returns El componente de popup para la luz del canvas.
+ * Panel de iluminación del lienzo.
+ *
+ * @returns El panel de luz para la sidebar.
  */
 const Light: FC = () => {
   const reset = useCanvasLightStore(s => s.reset)
 
   return (
-    <Popup className='h-[min(820px,90vh)] w-[360px]'>
-      <Popup.Trigger>
-        <Button variant='ghost' size='icon' tooltip='Luz del canvas'>
-          <SunIcon />
-        </Button>
-      </Popup.Trigger>
-
-      <Popup.Header>
-        <h5 className='font-display text-sm leading-tight font-medium tracking-wide'>
-          Canvas · Luz
-        </h5>
-      </Popup.Header>
-
-      <Popup.Content className='gap-grid-lg flex flex-col text-xs'>
-        <div className='gap-grid-lg flex flex-col'>
-          {SECTIONS.map(({ key, component: Component }, index) => (
-            <Fragment key={key}>
-              {index > 0 && <Separator orientation='horizontal' />}
-              <Component />
-            </Fragment>
-          ))}
-        </div>
-      </Popup.Content>
-
-      <Popup.Footer>
-        <Button type='button' variant='outline' size='sm' className='w-full text-xs' onClick={reset}>
-          Resetear cambios
-        </Button>
-      </Popup.Footer>
-    </Popup>
+    <DomainPanel onReset={reset}>
+      {SECTIONS.map(({ key, component: Component }, index) => (
+        <Fragment key={key}>
+          {index > 0 && <Separator orientation='horizontal' />}
+          <Component />
+        </Fragment>
+      ))}
+    </DomainPanel>
   )
 }
 

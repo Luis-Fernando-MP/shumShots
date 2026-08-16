@@ -30,11 +30,12 @@ const PREVIEW_HEIGHT = 100
 
 type Props = {
   onSelect: (url: string, photo?: Photo) => void
-  children: ReactElement | ReactNode
+  children?: ReactElement | ReactNode
   title?: string
+  embedded?: boolean
 }
 
-const UnsplashPicker: FC<Props> = ({ onSelect, children, title = 'Unsplash' }) => {
+const UnsplashPickerBody: FC<{ onSelect: Props['onSelect'] }> = ({ onSelect }) => {
   const [category, setCategory] = useState<string>(CATEGORIES[0].value)
   const [search, setSearch] = useDebounceValue('', 400)
 
@@ -53,74 +54,97 @@ const UnsplashPicker: FC<Props> = ({ onSelect, children, title = 'Unsplash' }) =
   const photos = data?.data.results ?? []
 
   return (
+    <div className='gap-grid-lg flex flex-col'>
+      <div className='gap-grid flex flex-col'>
+        <Input
+          variant='soft'
+          prefix={<SearchIcon className='size-4' />}
+          placeholder='Buscar en Unsplash…'
+          defaultValue=''
+          onChange={event => setSearch(event.target.value)}
+        />
+        <Select value={category} onValueChange={setCategory}>
+          <SelectTrigger aria-label='Categoría' className='rounded-[12px]'>
+            <SelectValue placeholder='Categoría' />
+          </SelectTrigger>
+          <SelectContent>
+            {CATEGORIES.map(item => (
+              <SelectItem key={item.value} value={item.value}>
+                {item.label}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </div>
+
+      {isLoading && <Typography.Small tone='secondary'>Cargando imágenes…</Typography.Small>}
+      {isError && <Typography.Small tone='secondary'>No se pudieron cargar las imágenes</Typography.Small>}
+      {!isLoading && !isError && photos.length === 0 && (
+        <Typography.Small tone='secondary'>Sin resultados para esta búsqueda</Typography.Small>
+      )}
+
+      {photos.length > 0 && (
+        <div className={cn('gap-grid grid grid-cols-2', isFetching && 'opacity-80')}>
+          {photos.map(photo => (
+            <button
+              key={photo.id}
+              type='button'
+              className='border-border group overflow-hidden rounded-[12px] border text-left'
+              onClick={() => onSelect(photo.urls.full, photo)}
+              aria-label={photo.alt}
+            >
+              <Image
+                src={photo.urls.raw}
+                alt={photo.alt}
+                layout='constrained'
+                width={PREVIEW_WIDTH}
+                height={PREVIEW_HEIGHT}
+                cdn='imgix'
+                loading='lazy'
+                decoding='async'
+                fetchPriority='low'
+                operations={{
+                  imgix: {
+                    q: 35,
+                    auto: 'format',
+                    fit: 'crop'
+                  }
+                }}
+                className='h-24 w-full object-cover transition-transform group-hover:scale-[1.02]'
+              />
+              <Typography.Small className='text-muted-foreground truncate px-2 py-1.5'>
+                {photo.photographer}
+              </Typography.Small>
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  )
+}
+
+/**
+ * Buscador de fotos Unsplash. En `embedded` se renderiza sin Popup.
+ *
+ * @param props.onSelect - Recibe la URL full y el foto opcional al elegir.
+ * @param props.embedded - Si es true, muestra el grid inline (sidebar). Default false.
+ * @param props.children - Trigger del Popup cuando no está embebido.
+ */
+const UnsplashPicker: FC<Props> = ({ onSelect, children, title = 'Unsplash', embedded = false }) => {
+  if (embedded) {
+    return (
+      <div className='min-h-0 flex-1 overflow-y-auto px-3 py-3 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden'>
+        <UnsplashPickerBody onSelect={onSelect} />
+      </div>
+    )
+  }
+
+  return (
     <Popup className='h-[640px] w-[380px]'>
       <Popup.Trigger>{children}</Popup.Trigger>
       <Popup.Header>{title}</Popup.Header>
-      <Popup.Content className='gap-grid-lg flex flex-col'>
-        <div className='gap-grid flex flex-col'>
-          <Input
-            variant='soft'
-            prefix={<SearchIcon className='size-4' />}
-            placeholder='Buscar en Unsplash…'
-            defaultValue=''
-            onChange={event => setSearch(event.target.value)}
-          />
-          <Select value={category} onValueChange={setCategory}>
-            <SelectTrigger aria-label='Categoría'>
-              <SelectValue placeholder='Categoría' />
-            </SelectTrigger>
-            <SelectContent>
-              {CATEGORIES.map(item => (
-                <SelectItem key={item.value} value={item.value}>
-                  {item.label}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
-
-        {isLoading && <Typography.Small tone='secondary'>Cargando imágenes…</Typography.Small>}
-        {isError && <Typography.Small tone='secondary'>No se pudieron cargar las imágenes</Typography.Small>}
-        {!isLoading && !isError && photos.length === 0 && (
-          <Typography.Small tone='secondary'>Sin resultados para esta búsqueda</Typography.Small>
-        )}
-
-        {photos.length > 0 && (
-          <div className={cn('gap-grid grid grid-cols-2', isFetching && 'opacity-80')}>
-            {photos.map(photo => (
-              <button
-                key={photo.id}
-                type='button'
-                className='border-border group overflow-hidden rounded-radius border text-left'
-                onClick={() => onSelect(photo.urls.full, photo)}
-                aria-label={photo.alt}
-              >
-                <Image
-                  src={photo.urls.raw}
-                  alt={photo.alt}
-                  layout='constrained'
-                  width={PREVIEW_WIDTH}
-                  height={PREVIEW_HEIGHT}
-                  cdn='imgix'
-                  loading='lazy'
-                  decoding='async'
-                  fetchPriority='low'
-                  operations={{
-                    imgix: {
-                      q: 35,
-                      auto: 'format',
-                      fit: 'crop'
-                    }
-                  }}
-                  className='h-24 w-full object-cover transition-transform group-hover:scale-[1.02]'
-                />
-                <Typography.Small className='text-muted-foreground truncate px-2 py-1.5'>
-                  {photo.photographer}
-                </Typography.Small>
-              </button>
-            ))}
-          </div>
-        )}
+      <Popup.Content>
+        <UnsplashPickerBody onSelect={onSelect} />
       </Popup.Content>
     </Popup>
   )

@@ -36,6 +36,8 @@ const useBoard = ({ isCenter, minScale = false, normalScale = false }: IUseBoard
   const offset = useBoardStore(s => s.offset)
   const scale = useBoardStore(s => s.scale)
   const enableScroll = useBoardStore(s => s.enableScroll)
+  const snapToGrid = useBoardStore(s => s.snapToGrid)
+  const gridSize = useBoardStore(s => s.gridSize)
   const setOffset = useBoardStore(s => s.setOffset)
   const setScale = useBoardStore(s => s.setScale)
   const setScaleCentered = useBoardStore(s => s.setScaleCentered)
@@ -53,10 +55,19 @@ const useBoard = ({ isCenter, minScale = false, normalScale = false }: IUseBoard
   const [childIndex, setChildIndex] = useState(0)
 
   const liveRef = useRef({ scale: 1, offset: { x: 0, y: 0 } })
-  const panRef = useRef<{ active: boolean; lastX: number; lastY: number }>({
+  const snapRef = useRef({ snapToGrid, gridSize })
+  snapRef.current = { snapToGrid, gridSize }
+
+  const resolvePanOffset = (next: Positions) => {
+    const snap = snapRef.current
+    return snapOffset(next, snap.snapToGrid ? snap.gridSize : undefined)
+  }
+  const panRef = useRef<{ active: boolean; lastX: number; lastY: number; rawX: number; rawY: number }>({
     active: false,
     lastX: 0,
-    lastY: 0
+    lastY: 0,
+    rawX: 0,
+    rawY: 0
   })
   const panRafRef = useRef<number | null>(null)
   const zoomRafRef = useRef<number | null>(null)
@@ -195,7 +206,13 @@ const useBoard = ({ isCenter, minScale = false, normalScale = false }: IUseBoard
     if (e.ctrlKey) {
       e.preventDefault()
       setIsMoving(true)
-      panRef.current = { active: true, lastX: e.clientX, lastY: e.clientY }
+      panRef.current = {
+        active: true,
+        lastX: e.clientX,
+        lastY: e.clientY,
+        rawX: liveRef.current.offset.x,
+        rawY: liveRef.current.offset.y
+      }
     }
   }
 
@@ -215,9 +232,11 @@ const useBoard = ({ isCenter, minScale = false, normalScale = false }: IUseBoard
       const deltaY = clientY - pan.lastY
       pan.lastX = clientX
       pan.lastY = clientY
+      pan.rawX += deltaX
+      pan.rawY += deltaY
 
       const live = liveRef.current
-      live.offset = { x: live.offset.x + deltaX, y: live.offset.y + deltaY }
+      live.offset = resolvePanOffset({ x: pan.rawX, y: pan.rawY })
       applySurfaceTransform($childrenRef.current, live.scale, live.offset)
     })
   }, [])
@@ -230,7 +249,7 @@ const useBoard = ({ isCenter, minScale = false, normalScale = false }: IUseBoard
       cancelAnimationFrame(panRafRef.current)
       panRafRef.current = null
     }
-    const snapped = snapOffset(liveRef.current.offset)
+    const snapped = resolvePanOffset(liveRef.current.offset)
     liveRef.current.offset = snapped
     applySurfaceTransform($childrenRef.current, liveRef.current.scale, snapped)
     setOffset(snapped)

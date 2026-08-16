@@ -1,27 +1,26 @@
 'use client'
 
 import Board from '@common/components/Board'
-import APP_Z_INDEX from '@common/constants/z-index'
+import App from '@common/components/layout'
 import usePixisPreferencesStore from '@views/code-studio/store/pixisPreferences.store'
-import MainBar from '@views/pixis/components/MainBar'
+import StudioTopDock from '@views/pixis/components/StudioTopDock'
 import { type FC } from 'react'
 
 import MainBarOptions from './components/MainBarOptions'
 import MonacoEditor from './components/MonacoEditor'
+import MonacoSidebar from './components/MonacoSidebar'
+import PixisSidebar from './components/PixisSidebar'
 
 const CodeStudioView: FC = () => {
   const pixis = usePixisPreferencesStore(s => s.pixis)
 
   return (
-    <>
-      <MainBar
-        className='absolute bottom-5 left-1/2 -translate-x-1/2'
-        style={{ zIndex: APP_Z_INDEX.studio.mainBar }}
-      >
-        <MainBarOptions />
-      </MainBar>
+    <App>
+      <App.leftSidebar>
+        <PixisSidebar />
+      </App.leftSidebar>
 
-      <main className='size-full'>
+      <App.canvas>
         <Board isCenter={false} normalScale>
           {() => (
             <div
@@ -36,8 +35,20 @@ const CodeStudioView: FC = () => {
             </div>
           )}
         </Board>
-      </main>
-    </>
+      </App.canvas>
+
+      <App.rightSidebar>
+        <MonacoSidebar />
+      </App.rightSidebar>
+
+      <App.topDock>
+        <StudioTopDock />
+      </App.topDock>
+
+      <App.bottomDock>
+        <MainBarOptions />
+      </App.bottomDock>
+    </App>
   )
 }
 

@@ -138,7 +138,7 @@ const Button: FC<ButtonProps> = ({
   
   const classes = cn(
     buttonVariants({ size, center }),
-    isSelected ? 'bg-primary text-primary-foreground hover:bg-primary/90' : statusStyles[variant][status],
+    isSelected ? 'bg-primary text-primary-foreground hover:bg-primary/90' : (statusStyles[variant]?.[status] ?? statusStyles.soft.default),
     className
   )
 

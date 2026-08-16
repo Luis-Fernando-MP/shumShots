@@ -60,7 +60,8 @@ const LayerPresets: FC<PanelProps> = ({ kind, tabId }) => {
             <Button
               key={preset.type}
               type='button'
-              variant={active ? 'secondary' : 'outline'}
+              variant='outline'
+              isSelected={active}
               size='sm'
               aria-pressed={active}
               onClick={() =>

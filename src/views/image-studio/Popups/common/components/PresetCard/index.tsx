@@ -14,7 +14,8 @@ type Props = {
 const PresetCard: FC<Props> = ({ active, onClick, children, className }) => (
   <Button
     type='button'
-    variant={active ? 'secondary' : 'outline'}
+    variant='outline'
+    isSelected={active}
     size='sm'
     onClick={onClick}
     className={cn('flex h-auto flex-col gap-1.5 px-1 py-2', active && 'ring-primary/40 ring-1', className)}

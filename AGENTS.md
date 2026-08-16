@@ -7,7 +7,7 @@
 | Tema | Abrir |
 | --- | --- |
 | Producto, usuarios, estudios, constraints | `PRODUCT.md` |
-| Color, tipo, radio (4px), layout, elevación, componentes visuales, do/don't | `DESIGN.md` |
+| Color, tipo, radio (4px builders; 12/16 chrome), layout, elevación, componentes visuales, do/don't | `DESIGN.md` |
 | Tokens machine-readable | `.impeccable/design.json` |
 | Temas runtime | `src/app/defaults/themes.ts` |
 | Tokens CSS / `@theme` | `src/app/globals.css` |

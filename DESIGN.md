@@ -102,14 +102,14 @@ components:
 
 **Creative North Star: "The Quiet Console"** [default theme **Geist Light**, pair **Geist Dark**]
 
-PIXIS chrome is a quiet workbench around a loud artifact. The board — a Monaco snippet or a picture canvas — is the photograph. Header, detail bar, main bar, and popups are the console: dense, tokenized, and willing to disappear when a theme swap repaints every semantic slot.
+PIXIS chrome is a quiet workbench around a loud artifact. The board — a Monaco snippet or a picture canvas — is the photograph. Sidebars, floating docks, and popups are the console: dense, tokenized, and willing to disappear when a theme swap repaints every semantic slot.
 
 The default look is Vercel/Geist: white paper, zinc panels, black as the only action color. Geist Dark inverts that pair (true black, white action). Catalog themes keep the same token graph with a hue of their own; the accent is a tally-light, never a page wash. SSR `:root` matches Geist Dark until the persisted theme hydrates.
 
 **Key Characteristics:**
 - Semantic CSS variables (`bg-primary`, `tn-primary`, `gap-grid`, `rounded-radius`) are the only legal color/space/radius source for new UI.
 - Display type (Plus Jakarta Sans) for titles; Geist Sans for body and controls.
-- Soft, 4px radii on actions, fields, and chips. `rounded-full` only for switch tracks/thumbs.
+- Soft, 4px radii on builders, canvas controls, and fields. Studio chrome (`App` sidebars/docks/tabs) is the exception: 16px shells, 12px controls. `rounded-full` only for switch tracks/thumbs.
 - Tonal layering for depth; shadows reserved for floating layers.
 - Studio is full-viewport; the composed shot, not the marketing shell, sets the mood.
 
@@ -163,13 +163,13 @@ Links use `text-primary` with a wavy primary underline (`mark: wavy`). Precautio
 
 ## Layout
 
-Full-viewport studio. `body` is `min-height: 100dvh`, `overflow: hidden`, `antialiased`. Shared `(pixis)` chrome: HeaderBar centered top, DetailBar top-left, MainBar as the operating strip. A large blurred primary→secondary orb sits behind the board as ambient wash (`blur-[250px]`).
+Full-viewport studio. `body` is `min-height: 100dvh`, `overflow: hidden`, `antialiased`. Each studio mounts `App` (`@common/components/layout`): left/right sidebars (~260px, flush to the viewport edge, inner radius 16px, `bg-card/80`), `App.canvas` as the Board hero, and floating top/bottom docks (`rounded-[16px]`, `bg-card/70`, `top-5` / `bottom-5`). `(pixis)` only hydrates and paints the ambient primary→secondary orb (`blur-[250px]`).
 
 Spacing rhythm is `--space-grid` (0.9375rem) exposed as `gap-grid`, `gap-grid-sm` … `gap-grid-xl`. Prefer those over ad-hoc gaps.
 
 Popups and section stacks are compact and vertical. Image-studio targeting uses the compound Tabs API; active-layer controls live in `Tabs.Content` only.
 
-The composed board scales with `translate3d` + `scale`. Canvas stacking order is `APP_Z_INDEX` (`src/common/constants/z-index.ts`): background 0 → slots 10 → vignette 20 → lightAbove 30 → mainBar 40.
+The composed board scales with `translate3d` + `scale`. Canvas stacking order is `APP_Z_INDEX` (`src/common/constants/z-index.ts`): background 0 → slots 10 → vignette 20 → lightAbove 30 → sidebar 20 → dock 30 → popup 80. Chrome (sidebars, docks) must never paint above a popup. The Board viewport can show a 10–50px graph-paper grid (`showGrid`); pan snap is opt-in (`snapToGrid`).
 
 No separate marketing breakpoint system is defined for the studio; it is a desktop operate surface. Do not silently invent a mobile marketing grid.
 
@@ -189,7 +189,7 @@ Ambient studio glow is a large blurred orb in the layout, not a card shadow. Can
 
 ## Shapes
 
-`--radius: 4px` is the canonical corner for all chrome. Tailwind `rounded-sm` / `md` / `lg` / `xl` / `radius` resolve to 4px. Use `rounded-full` only for switch tracks and thumbs; `rounded-none` only when a square is required. Do not invent ad-hoc radii.
+`--radius: 4px` is the canonical corner for builders, canvas widgets, and fields. Tailwind `rounded-sm` / `md` / `lg` / `xl` / `2xl` / `radius` all resolve to 4px — do not use those utilities expecting 12/16px. Studio chrome is the exception: sidebars and docks use `rounded-[16px]`; tabs, dock buttons, and chrome inputs use `rounded-[12px]`. Do not migrate image-studio builders or the shot itself to 12/16. Use `rounded-full` only for switch tracks and thumbs.
 
 Focus: `outline-2 outline-offset-2 outline-primary` on buttons. Inputs use `focus-within:border-primary` (or status color), not a glow.
 
@@ -224,7 +224,8 @@ Use `@common/components` primitives. Do not restyle a one-off button when `Butto
 - Suffix chips sit inside the field (`bg-muted`, `rounded-md`).
 
 ### Navigation
-- HeaderBar / DetailBar / MainBar: icon-forward, ghost buttons, tooltips. Absolute overlay on the board, not a boxed app nav.
+- `App.topDock` / `App.bottomDock`: icon-forward, ghost buttons, tooltips. Floating capsules over the board, not a boxed app nav.
+- `App.tabs` / `App.tab`: chrome tabs (12px pills). Image-studio destination Tabs stay in `Popups/common/components/tabs`.
 - Tooltip: `bg-card`, `border-primary/30`, `rounded-md`, `text-xs`.
 
 ### Signature: Theme + Board

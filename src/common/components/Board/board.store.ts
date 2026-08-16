@@ -1,12 +1,23 @@
 import { StateCreator, create } from 'zustand'
+import { persist } from 'zustand/middleware'
 
 export type Positions = { x: number; y: number }
 export type ZoomDirection = 'in' | 'out'
+
+export const GRID_SIZES = [10, 20, 30, 40, 50] as const
+export type GridSize = (typeof GRID_SIZES)[number]
+export const DEFAULT_GRID_SIZE = 20
+
+export const isGridSize = (value: unknown): value is GridSize =>
+  typeof value === 'number' && (GRID_SIZES as readonly number[]).includes(value)
 
 interface IBoardStore {
   scale: number
   offset: Positions
   enableScroll: boolean
+  showGrid: boolean
+  snapToGrid: boolean
+  gridSize: GridSize
   nextChild: () => void
   prevChild: () => void
   moveToChild: (index: number) => void
@@ -24,6 +35,9 @@ interface IBoardStore {
   setScaleAndOffset: (scale: number, offset: Positions) => void
   setEnableScroll: (enableScroll: boolean) => void
   setOffset: (offset: Positions) => void
+  setShowGrid: (showGrid: boolean) => void
+  setSnapToGrid: (snapToGrid: boolean) => void
+  setGridSize: (gridSize: GridSize) => void
 }
 
 export const MIN_SCALE = 0.1
@@ -38,10 +52,17 @@ export const snapToDevicePixel = (value: number): number => {
   return Math.round(value * dpr) / dpr
 }
 
-export const snapOffset = (offset: Positions): Positions => ({
-  x: snapToDevicePixel(offset.x),
-  y: snapToDevicePixel(offset.y)
-})
+export const snapOffset = (offset: Positions, gridSize?: number): Positions => {
+  const device = {
+    x: snapToDevicePixel(offset.x),
+    y: snapToDevicePixel(offset.y)
+  }
+  if (gridSize == null) return device
+  return {
+    x: snapToDevicePixel(Math.round(device.x / gridSize) * gridSize),
+    y: snapToDevicePixel(Math.round(device.y / gridSize) * gridSize)
+  }
+}
 
 const clampScale = (scale: number) => Math.max(MIN_SCALE, Math.min(MAX_SCALE, scale))
 
@@ -52,6 +73,9 @@ const state: StateCreator<IBoardStore> = (set, get) => ({
   scale: 1,
   offset: { x: 0, y: 0 },
   enableScroll: false,
+  showGrid: true,
+  snapToGrid: false,
+  gridSize: DEFAULT_GRID_SIZE,
   nextChild: () => {},
   prevChild: () => {},
   moveToChild: () => {},
@@ -89,6 +113,12 @@ const state: StateCreator<IBoardStore> = (set, get) => ({
     })
   },
   setOffset: offset => set({ offset: snapOffset(offset) }),
+  setShowGrid: showGrid => set({ showGrid }),
+  setSnapToGrid: snapToGrid => set({ snapToGrid }),
+  setGridSize: gridSize => {
+    if (!isGridSize(gridSize)) return
+    set({ gridSize })
+  },
   setScaleAndOffset: (scale, offset) => {
     const clampedScale = clampScale(scale)
     const { scale: prevScale, offset: prevOffset } = get()
@@ -104,6 +134,24 @@ const state: StateCreator<IBoardStore> = (set, get) => ({
   setZoomCentered: zoomCentered => set({ zoomCentered })
 })
 
-const useBoardStore = create(state)
+const useBoardStore = create(
+  persist(state, {
+    name: 'pixis-board-grid',
+    partialize: s => ({
+      showGrid: s.showGrid,
+      snapToGrid: s.snapToGrid,
+      gridSize: s.gridSize
+    }),
+    merge: (persisted, current) => {
+      const data = persisted as Partial<Pick<IBoardStore, 'showGrid' | 'snapToGrid' | 'gridSize'>> | undefined
+      return {
+        ...current,
+        showGrid: data?.showGrid ?? current.showGrid,
+        snapToGrid: data?.snapToGrid ?? current.snapToGrid,
+        gridSize: isGridSize(data?.gridSize) ? data.gridSize : current.gridSize
+      }
+    }
+  })
+)
 
 export default useBoardStore
