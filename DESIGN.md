@@ -2,19 +2,19 @@
 name: PIXIS
 description: Themeable studio chrome around a composed code or image shot.
 colors:
-  aurora-paper: "rgb(245, 245, 250)"
-  aurora-panel: "rgb(230, 235, 250)"
-  aurora-muted: "rgb(210, 220, 240)"
-  ink-navy: "rgb(20, 20, 40)"
-  ink-slate: "rgb(60, 90, 130)"
-  rose-accent: "rgb(255, 100, 150)"
-  mauve-secondary: "rgb(200, 150, 180)"
-  mist-border: "rgb(180, 183, 200)"
+  geist-paper: "rgb(255, 255, 255)"
+  geist-panel: "rgb(250, 250, 250)"
+  geist-muted: "rgb(244, 244, 245)"
+  ink: "rgb(10, 10, 10)"
+  ink-muted: "rgb(113, 113, 122)"
+  ink-accent: "rgb(23, 23, 23)"
+  zinc-secondary: "rgb(82, 82, 91)"
+  mist-border: "rgb(207, 207, 209)"
   on-accent: "rgb(255, 255, 255)"
-  success: "rgb(5, 150, 105)"
-  warning: "rgb(180, 100, 10)"
-  error: "rgb(200, 40, 70)"
-  info: "rgb(2, 120, 190)"
+  success: "rgb(22, 163, 74)"
+  warning: "rgb(217, 119, 6)"
+  error: "rgb(220, 38, 38)"
+  info: "rgb(37, 99, 235)"
 typography:
   display:
     fontFamily: "Plus Jakarta Sans, Geist Sans, ui-sans-serif, system-ui, sans-serif"
@@ -55,42 +55,42 @@ spacing:
   grid-xl: "1.875rem"
 components:
   button-primary:
-    backgroundColor: "{colors.rose-accent}"
+    backgroundColor: "{colors.ink-accent}"
     textColor: "{colors.on-accent}"
     rounded: "{rounded.radius}"
     padding: "0 1rem"
     height: "2.5rem"
     typography: "{typography.body}"
   button-primary-hover:
-    backgroundColor: "color-mix(in srgb, rgb(255, 100, 150) 90%, transparent)"
+    backgroundColor: "color-mix(in srgb, rgb(23, 23, 23) 90%, transparent)"
     textColor: "{colors.on-accent}"
     rounded: "{rounded.radius}"
     height: "2.5rem"
   button-secondary:
-    backgroundColor: "{colors.aurora-panel}"
-    textColor: "{colors.ink-navy}"
+    backgroundColor: "{colors.geist-panel}"
+    textColor: "{colors.ink}"
     rounded: "{rounded.radius}"
     padding: "0 1rem"
     height: "2.5rem"
   button-ghost:
     backgroundColor: "transparent"
-    textColor: "{colors.ink-navy}"
+    textColor: "{colors.ink}"
     rounded: "{rounded.radius}"
     height: "2.5rem"
   button-outline:
     backgroundColor: "transparent"
-    textColor: "{colors.ink-navy}"
+    textColor: "{colors.ink}"
     rounded: "{rounded.radius}"
     height: "2.5rem"
   input-soft:
-    backgroundColor: "{colors.aurora-panel}"
-    textColor: "{colors.ink-navy}"
+    backgroundColor: "{colors.geist-panel}"
+    textColor: "{colors.ink}"
     rounded: "{rounded.md}"
     height: "2.25rem"
     padding: "0 0.75rem"
   chip-default:
-    backgroundColor: "color-mix(in srgb, rgb(210, 220, 240) 50%, transparent)"
-    textColor: "{colors.ink-navy}"
+    backgroundColor: "color-mix(in srgb, rgb(244, 244, 245) 50%, transparent)"
+    textColor: "{colors.ink}"
     rounded: "{rounded.md}"
     height: "1.75rem"
     padding: "0 0.5rem"
@@ -100,11 +100,11 @@ components:
 
 ## Overview
 
-**Creative North Star: "The Aurora Console"** [inferred from default theme **Aurora Day** and Operate-mode studio chrome]
+**Creative North Star: "The Quiet Console"** [default theme **Geist Light**, pair **Geist Dark**]
 
 PIXIS chrome is a quiet workbench around a loud artifact. The board — a Monaco snippet or a picture canvas — is the photograph. Header, detail bar, main bar, and popups are the console: dense, tokenized, and willing to disappear when a theme swap repaints every semantic slot.
 
-The default look is cool pale paper with a rose accent used like a recording-studio tally light: present, rare, never a wash. Users can replace the entire palette (`THEMES` in `src/app/defaults/themes.ts`); the system is the token graph, not a single hex. SSR `:root` is a near-black fallback until the persisted theme hydrates — do not treat that dark fallback as the brand.
+The default look is Vercel/Geist: white paper, zinc panels, black as the only action color. Geist Dark inverts that pair (true black, white action). Catalog themes keep the same token graph with a hue of their own; the accent is a tally-light, never a page wash. SSR `:root` matches Geist Dark until the persisted theme hydrates.
 
 **Key Characteristics:**
 - Semantic CSS variables (`bg-primary`, `tn-primary`, `gap-grid`, `rounded-radius`) are the only legal color/space/radius source for new UI.
@@ -115,28 +115,28 @@ The default look is cool pale paper with a rose accent used like a recording-stu
 
 ## Colors
 
-Default documented palette is **Aurora Day** (persisted `app-theme`). Roles remap when the user picks another theme. Values below are `rgb()` triplets — the project's canonical format.
+Default documented palette is **Geist Light** (persisted `app-theme`). Roles remap when the user picks another theme. Values below are `rgb()` triplets — the project's canonical format.
 
 ### Primary
-- **Rose Accent** (`rgb(255, 100, 150)` / `--tn-primary` → `bg-primary`, `text-primary`, `outline-primary`): tally-light for primary actions, focus rings, selection highlight, and rare emphasis. Not a page fill.
+- **Ink Accent** (`rgb(23, 23, 23)` / `--tn-primary` → `bg-primary`, `text-primary`, `outline-primary`): Vercel-style black for primary actions, focus rings, and selection. Geist Dark swaps this to white. Not a page fill.
 
 ### Secondary
-- **Mauve Secondary** (`rgb(200, 150, 180)` / `--tn-secondary` → `bg-secondary`): companion accent (ambient glow in the pixis layout, chip secondary). Keep quieter than rose.
+- **Zinc Secondary** (`rgb(82, 82, 91)` / `--tn-secondary` → `bg-secondary`): quieter companion for ambient glow and secondary chips.
 
 ### Neutral
-- **Aurora Paper** (`rgb(245, 245, 250)` / `--bg-primary` → `background`): app ground.
-- **Aurora Panel** (`rgb(230, 235, 250)` / `--bg-secondary` → `card`): raised chrome, popovers, secondary buttons.
-- **Aurora Muted** (`rgb(210, 220, 240)` / `--bg-tertiary` → `muted`): pressed/hover wells, solid inputs.
-- **Ink Navy** (`rgb(20, 20, 40)` / `--fnt-primary` → `foreground`): primary text.
-- **Ink Slate** (`rgb(60, 90, 130)` / `--fnt-secondary` → `muted-foreground`): secondary copy, placeholders, captions.
-- **Mist Border** (`rgb(180, 183, 200)` / `--tn-border` → `border`): hairlines; mixed from panel toward ink, not a raw gray.
+- **Geist Paper** (`rgb(255, 255, 255)` / `--bg-primary` → `background`): app ground.
+- **Geist Panel** (`rgb(250, 250, 250)` / `--bg-secondary` → `card`): raised chrome, popovers, secondary buttons.
+- **Geist Muted** (`rgb(244, 244, 245)` / `--bg-tertiary` → `muted`): pressed/hover wells, solid inputs.
+- **Ink** (`rgb(10, 10, 10)` / `--fnt-primary` → `foreground`): primary text.
+- **Ink Muted** (`rgb(113, 113, 122)` / `--fnt-secondary` → `muted-foreground`): secondary copy, placeholders, captions.
+- **Mist Border** (`rgb(207, 207, 209)` / `--tn-border` → `border`): hairlines; mixed from panel toward ink, not a raw gray.
 
 ### Status
-- **Success** `rgb(5, 150, 105)` · **Warning** `rgb(180, 100, 10)` · **Error** `rgb(200, 40, 70)` · **Info** `rgb(2, 120, 190)` — light-theme status set. Dark themes swap to the `STATUS_DARK` set in `themes.ts`.
+- **Success** `rgb(22, 163, 74)` · **Warning** `rgb(217, 119, 6)` · **Error** `rgb(220, 38, 38)` · **Info** `rgb(37, 99, 235)` — light-theme status set. Dark themes swap to the `STATUS_DARK` set in `themes.ts`.
 
 **The Semantic Slot Rule.** Paint with Tailwind theme utilities (`bg-primary`, `text-foreground`, `border-border`, `bg-card`) or `rgb(var(--token))`. Never introduce `rpx-*` tokens, hardcoded hex in new product UI, or a second palette that ignores `data-theme`.
 
-**The Tally-Light Rule.** Rose (or whichever `--tn-primary` the active theme provides) occupies a small fraction of chrome. The board may be vivid; the console stays tonal.
+**The Tally-Light Rule.** The active `--tn-primary` occupies a small fraction of chrome. The board may be vivid; the console stays tonal.
 
 ## Typography
 
@@ -242,7 +242,7 @@ Use `@common/components` primitives. Do not restyle a one-off button when `Butto
 
 ### Don't:
 - **Don't** add Sass/SCSS or `rpx-*` tokens.
-- **Don't** hardcode a palette that breaks when the user leaves Aurora Day.
+- **Don't** hardcode a palette that breaks when the user leaves Geist Light.
 - **Don't** put glow shadows, gradient text, or glassmorphism on studio chrome.
 - **Don't** use arbitrary `px` type or `rounded-[var(--radius)]` / `bg-[rgb(var(--…))]` when a theme utility exists.
 - **Don't** import domain stores into ShotEditor or fork a second design language for code-studio vs image-studio.

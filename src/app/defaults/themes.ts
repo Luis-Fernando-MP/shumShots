@@ -24,6 +24,7 @@ export type ThemeKeys = keyof typeof THEMES
 type ThemeBase = Omit<
   Theme,
   | 'tn-border'
+  | 'fnt-active'
   | 'semantic-primary'
   | 'semantic-success'
   | 'semantic-success-text'
@@ -33,7 +34,9 @@ type ThemeBase = Omit<
   | 'semantic-error-text'
   | 'semantic-info'
   | 'semantic-info-text'
->
+> & {
+  'fnt-active'?: string
+}
 
 type ThemeStatus = Pick<
   Theme,
@@ -47,28 +50,28 @@ type ThemeStatus = Pick<
   | 'semantic-info-text'
 >
 
-type ThemeSemantic = ThemeStatus & Pick<Theme, 'semantic-primary' | 'tn-border'>
+type ThemeSemantic = ThemeStatus & Pick<Theme, 'semantic-primary' | 'tn-border' | 'fnt-active'>
 
 const STATUS_LIGHT = {
-  'semantic-success': '5, 150, 105',
+  'semantic-success': '22, 163, 74',
   'semantic-success-text': '255, 255, 255',
-  'semantic-warning': '180, 100, 10',
+  'semantic-warning': '217, 119, 6',
   'semantic-warning-text': '255, 255, 255',
-  'semantic-error': '200, 40, 70',
+  'semantic-error': '220, 38, 38',
   'semantic-error-text': '255, 255, 255',
-  'semantic-info': '2, 120, 190',
+  'semantic-info': '37, 99, 235',
   'semantic-info-text': '255, 255, 255'
 } as const satisfies ThemeStatus
 
 const STATUS_DARK = {
-  'semantic-success': '52, 211, 153',
-  'semantic-success-text': '10, 30, 20',
+  'semantic-success': '74, 222, 128',
+  'semantic-success-text': '6, 24, 14',
   'semantic-warning': '251, 191, 36',
   'semantic-warning-text': '30, 20, 0',
-  'semantic-error': '251, 113, 133',
-  'semantic-error-text': '40, 10, 20',
-  'semantic-info': '56, 189, 248',
-  'semantic-info-text': '5, 25, 40'
+  'semantic-error': '248, 113, 113',
+  'semantic-error-text': '40, 10, 16',
+  'semantic-info': '96, 165, 250',
+  'semantic-info-text': '8, 24, 48'
 } as const satisfies ThemeStatus
 
 const luminance = (rgb: string): number => {
@@ -87,671 +90,426 @@ const mixToward = (from: string, to: string, amount: number): string => {
 }
 
 const primaryContrast = (tnPrimary: string): string =>
-  luminance(tnPrimary) > 140 ? '20, 20, 20' : '255, 255, 255'
+  luminance(tnPrimary) > 140 ? '17, 17, 17' : '255, 255, 255'
 
 const borderTone = (base: ThemeBase): string =>
-  mixToward(
-    base['bg-secondary'],
-    base['fnt-primary'],
-    luminance(base['bg-primary']) > 140 ? 0.24 : 0.4
-  )
+  mixToward(base['bg-secondary'], base['fnt-primary'], luminance(base['bg-primary']) > 140 ? 0.18 : 0.28)
 
+/**
+ * Compone un tema PIXIS a partir de superficies, texto y acentos.
+ *
+ * Completa borde, contraste sobre el acento y estados semánticos según
+ * la luminancia del fondo. `tn-primary` es el color puro del tema:
+ * acciones, foco y el carácter de la paleta.
+ *
+ * @param base Superficies, tipografía y acentos en triplets `r, g, b`.
+ * @param semantic Overrides opcionales de borde o estados.
+ * @returns Tema completo listo para inyectar en `--*` del `<html>`.
+ * @example
+ * defineTheme({
+ *   'bg-primary': '255, 255, 255',
+ *   'bg-secondary': '250, 250, 250',
+ *   'bg-tertiary': '244, 244, 245',
+ *   'fnt-primary': '10, 10, 10',
+ *   'fnt-secondary': '113, 113, 122',
+ *   'tn-primary': '23, 23, 23',
+ *   'tn-secondary': '82, 82, 91'
+ * })
+ */
 export const defineTheme = (base: ThemeBase, semantic?: Partial<ThemeSemantic>): Theme => {
   const defaults = luminance(base['bg-primary']) > 140 ? STATUS_LIGHT : STATUS_DARK
+  const onAccent = base['fnt-active'] ?? primaryContrast(base['tn-primary'])
   return {
     ...base,
     ...defaults,
+    'fnt-active': onAccent,
     'tn-border': borderTone(base),
     'semantic-primary': primaryContrast(base['tn-primary']),
     ...semantic
   }
 }
 
+export const FEATURED_THEME_KEYS = ['Geist Light', 'Geist Dark'] as const
+
+export const isLightTheme = (theme: Pick<Theme, 'bg-primary'>): boolean => luminance(theme['bg-primary']) > 140
+
 export const THEMES: Record<string, Theme> = {
-  DeepOcean: defineTheme(
-    {
-      'bg-primary': '10, 30, 50',
-      'bg-secondary': '30, 60, 90',
-      'bg-tertiary': '50, 90, 120',
-      'fnt-primary': '220, 230, 240',
-      'fnt-secondary': '180, 200, 220',
-      'fnt-active': '100, 180, 220',
-      'tn-primary': '80, 150, 180',
-      'tn-secondary': '150, 200, 230'
-    },
-    {
-      'semantic-success': '45, 212, 191',
-      'semantic-success-text': '255, 255, 255',
-      'semantic-warning-text': '20, 20, 20',
-      'semantic-error-text': '255, 255, 255',
-      'semantic-info': '129, 140, 248',
-      'semantic-info-text': '255, 255, 255'
-    }
-  ),
-  AshMountains: defineTheme(
-    {
-      'bg-primary': '40, 40, 45',
-      'bg-secondary': '60, 60, 65',
-      'bg-tertiary': '80, 80, 85',
-      'fnt-primary': '230, 230, 235',
-      'fnt-secondary': '190, 190, 195',
-      'fnt-active': '0, 0, 0',
-      'tn-primary': '110, 110, 130',
-      'tn-secondary': '180, 180, 200'
-    },
-    {
-      'semantic-success-text': '255, 255, 255',
-      'semantic-warning-text': '20, 20, 20',
-      'semantic-error-text': '255, 255, 255',
-      'semantic-info-text': '255, 255, 255'
-    }
-  ),
-  StarryNight: defineTheme(
-    {
-      'bg-primary': '10, 10, 20',
-      'bg-secondary': '20, 20, 30',
-      'bg-tertiary': '30, 30, 40',
-      'fnt-primary': '240, 240, 250',
-      'fnt-secondary': '128, 128, 147',
-      'fnt-active': '0, 0, 0',
-      'tn-primary': '150, 150, 190',
-      'tn-secondary': '200, 200, 230'
-    },
-    {
-      'semantic-success-text': '255, 255, 255',
-      'semantic-warning-text': '20, 20, 20',
-      'semantic-error-text': '255, 255, 255',
-      'semantic-info-text': '255, 255, 255'
-    }
-  ),
-  // Claros
+  'Geist Light': defineTheme({
+    'bg-primary': '255, 255, 255',
+    'bg-secondary': '250, 250, 250',
+    'bg-tertiary': '244, 244, 245',
+    'fnt-primary': '10, 10, 10',
+    'fnt-secondary': '113, 113, 122',
+    'tn-primary': '0, 0, 0',
+    'tn-secondary': '82, 82, 91'
+  }),
+  'Geist Dark': defineTheme({
+    'bg-primary': '0, 0, 0',
+    'bg-secondary': '10, 10, 10',
+    'bg-tertiary': '23, 23, 23',
+    'fnt-primary': '255, 255, 255',
+    'fnt-secondary': '161, 161, 170',
+    'tn-primary': '255, 255, 255',
+    'tn-secondary': '161, 161, 170'
+  }),
   'Aurora Day': defineTheme({
-    'bg-primary': '245, 245, 250',
-    'bg-secondary': '230, 235, 250',
-    'bg-tertiary': '210, 220, 240',
-    'fnt-primary': '20, 20, 40',
-    'fnt-secondary': '60, 90, 130',
-    'fnt-active': '255, 255, 255',
-    'tn-primary': '255, 100, 150',
-    'tn-secondary': '200, 150, 180'
+    'bg-primary': '232, 228, 255',
+    'bg-secondary': '212, 204, 255',
+    'bg-tertiary': '188, 176, 250',
+    'fnt-primary': '32, 20, 72',
+    'fnt-secondary': '96, 72, 160',
+    'tn-primary': '255, 56, 140',
+    'tn-secondary': '160, 96, 255'
   }),
   'Pastel Horizon': defineTheme({
-    'bg-primary': '250, 245, 255',
-    'bg-secondary': '235, 225, 245',
-    'bg-tertiary': '220, 210, 235',
-    'fnt-primary': '40, 40, 70',
-    'fnt-secondary': '80, 100, 150',
-    'fnt-active': '255, 255, 255',
-    'tn-primary': '250, 150, 200',
-    'tn-secondary': '220, 120, 180'
+    'bg-primary': '244, 212, 255',
+    'bg-secondary': '232, 184, 252',
+    'bg-tertiary': '216, 156, 244',
+    'fnt-primary': '56, 16, 80',
+    'fnt-secondary': '128, 64, 168',
+    'tn-primary': '196, 48, 232',
+    'tn-secondary': '255, 96, 200'
   }),
-  Cloud: defineTheme(
-    {
-      'bg-primary': '240, 248, 255',
-      'bg-secondary': '224, 224, 255',
-      'bg-tertiary': '200, 220, 255',
-      'fnt-primary': '10, 10, 25',
-      'fnt-secondary': '50, 50, 100',
-      'fnt-active': '255, 255, 255',
-      'tn-primary': '0, 122, 204',
-      'tn-secondary': '0, 100, 180'
-    },
-    {
-      'semantic-info': '80, 60, 200'
-    }
-  ),
-  Pearl: defineTheme(
-    {
-      'bg-primary': '255, 250, 250',
-      'bg-secondary': '245, 240, 240',
-      'bg-tertiary': '235, 230, 230',
-      'fnt-primary': '40, 40, 40',
-      'fnt-secondary': '90, 90, 90',
-      'fnt-active': '255, 255, 255',
-      'tn-primary': '255, 120, 130',
-      'tn-secondary': '230, 100, 110'
-    },
-    {
-      'semantic-error': '160, 20, 50'
-    }
-  ),
-  Candy: defineTheme(
-    {
-      'bg-primary': '255, 200, 200',
-      'bg-secondary': '255, 180, 220',
-      'bg-tertiary': '240, 160, 210',
-      'fnt-primary': '50, 20, 50',
-      'fnt-secondary': '100, 40, 100',
-      'fnt-active': '255, 255, 255',
-      'tn-primary': '255, 90, 90',
-      'tn-secondary': '255, 105, 180'
-    },
-    {
-      'semantic-error': '150, 20, 60'
-    }
-  ),
+  Cloud: defineTheme({
+    'bg-primary': '186, 224, 255',
+    'bg-secondary': '156, 208, 255',
+    'bg-tertiary': '124, 188, 255',
+    'fnt-primary': '8, 32, 80',
+    'fnt-secondary': '32, 88, 168',
+    'tn-primary': '0, 122, 255',
+    'tn-secondary': '0, 184, 255'
+  }),
+  Pearl: defineTheme({
+    'bg-primary': '255, 228, 228',
+    'bg-secondary': '255, 208, 208',
+    'bg-tertiary': '255, 184, 188',
+    'fnt-primary': '72, 24, 32',
+    'fnt-secondary': '160, 72, 80',
+    'tn-primary': '255, 72, 96',
+    'tn-secondary': '255, 128, 140'
+  }),
+  Candy: defineTheme({
+    'bg-primary': '255, 176, 204',
+    'bg-secondary': '255, 148, 188',
+    'bg-tertiary': '255, 120, 172',
+    'fnt-primary': '80, 16, 48',
+    'fnt-secondary': '160, 40, 96',
+    'tn-primary': '255, 40, 112',
+    'tn-secondary': '255, 80, 176'
+  }),
   'Cotton Candy': defineTheme({
-    'bg-primary': '255, 200, 240',
-    'bg-secondary': '255, 180, 220',
-    'bg-tertiary': '255, 160, 200',
-    'fnt-primary': '50, 30, 50',
-    'fnt-secondary': '80, 50, 80',
-    'fnt-active': '255, 255, 255',
-    'tn-primary': '235, 130, 180',
-    'tn-secondary': '220, 130, 180'
+    'bg-primary': '255, 172, 228',
+    'bg-secondary': '255, 144, 212',
+    'bg-tertiary': '255, 116, 196',
+    'fnt-primary': '80, 16, 64',
+    'fnt-secondary': '160, 48, 128',
+    'tn-primary': '255, 64, 176',
+    'tn-secondary': '255, 112, 208'
   }),
-  'Rose Quartz': defineTheme(
-    {
-      'bg-primary': '255, 192, 203',
-      'bg-secondary': '255, 160, 180',
-      'bg-tertiary': '255, 128, 150',
-      'fnt-primary': '50, 30, 40',
-      'fnt-secondary': '100, 60, 80',
-      'fnt-active': '255, 255, 255',
-      'tn-primary': '255, 100, 120',
-      'tn-secondary': '255, 80, 100'
-    },
-    {
-      'semantic-error': '160, 30, 60'
-    }
-  ),
+  'Rose Quartz': defineTheme({
+    'bg-primary': '255, 186, 198',
+    'bg-secondary': '255, 160, 178',
+    'bg-tertiary': '255, 132, 158',
+    'fnt-primary': '72, 20, 40',
+    'fnt-secondary': '152, 48, 80',
+    'tn-primary': '255, 64, 112',
+    'tn-secondary': '255, 112, 144'
+  }),
   Lavender: defineTheme({
-    'bg-primary': '240, 230, 255',
-    'bg-secondary': '220, 210, 245',
-    'bg-tertiary': '200, 190, 235',
-    'fnt-primary': '50, 30, 70',
-    'fnt-secondary': '100, 80, 120',
-    'fnt-active': '255, 255, 255',
-    'tn-primary': '150, 100, 200',
-    'tn-secondary': '200, 150, 230'
+    'bg-primary': '216, 188, 255',
+    'bg-secondary': '196, 164, 255',
+    'bg-tertiary': '172, 140, 248',
+    'fnt-primary': '48, 16, 88',
+    'fnt-secondary': '104, 56, 168',
+    'tn-primary': '132, 64, 255',
+    'tn-secondary': '176, 120, 255'
   }),
   'Lavender Gray': defineTheme({
-    'bg-primary': '230, 230, 250',
-    'bg-secondary': '210, 210, 230',
-    'bg-tertiary': '190, 190, 210',
-    'fnt-primary': '50, 30, 70',
-    'fnt-secondary': '80, 60, 100',
-    'fnt-active': '0, 0, 0',
-    'tn-primary': '178, 150, 255',
-    'tn-secondary': '180, 160, 220'
+    'bg-primary': '212, 212, 240',
+    'bg-secondary': '192, 192, 228',
+    'bg-tertiary': '168, 168, 216',
+    'fnt-primary': '40, 32, 80',
+    'fnt-secondary': '96, 80, 160',
+    'tn-primary': '140, 112, 255',
+    'tn-secondary': '180, 160, 255'
   }),
   'Nebula Light': defineTheme({
-    'bg-primary': '255, 240, 255',
-    'bg-secondary': '245, 220, 245',
-    'bg-tertiary': '235, 200, 235',
-    'fnt-primary': '30, 30, 50',
-    'fnt-secondary': '60, 60, 80',
-    'fnt-active': '255, 255, 255',
-    'tn-primary': '200, 143, 200',
-    'tn-secondary': '235, 135, 235'
+    'bg-primary': '248, 188, 255',
+    'bg-secondary': '232, 160, 248',
+    'bg-tertiary': '216, 132, 236',
+    'fnt-primary': '64, 16, 80',
+    'fnt-secondary': '136, 48, 160',
+    'tn-primary': '208, 40, 232',
+    'tn-secondary': '255, 88, 220'
   }),
-  'Soft Pink': defineTheme(
-    {
-      'bg-primary': '255, 200, 200',
-      'bg-secondary': '255, 180, 180',
-      'bg-tertiary': '255, 160, 160',
-      'fnt-primary': '50, 30, 30',
-      'fnt-secondary': '80, 50, 50',
-      'fnt-active': '255, 255, 255',
-      'tn-primary': '255, 150, 150',
-      'tn-secondary': '220, 120, 120'
-    },
-    {
-      'semantic-error': '160, 20, 50'
-    }
-  ),
+  'Soft Pink': defineTheme({
+    'bg-primary': '255, 180, 180',
+    'bg-secondary': '255, 156, 156',
+    'bg-tertiary': '255, 128, 128',
+    'fnt-primary': '80, 16, 24',
+    'fnt-secondary': '160, 48, 56',
+    'tn-primary': '255, 64, 80',
+    'tn-secondary': '255, 112, 120'
+  }),
   'Pastel Pink': defineTheme({
-    'bg-primary': '255, 230, 230',
-    'bg-secondary': '250, 200, 200',
-    'bg-tertiary': '240, 170, 170',
-    'fnt-primary': '50, 30, 30',
-    'fnt-secondary': '80, 50, 50',
-    'fnt-active': '255, 255, 255',
-    'tn-primary': '235, 160, 160',
-    'tn-secondary': '220, 150, 150'
+    'bg-primary': '255, 208, 212',
+    'bg-secondary': '255, 180, 188',
+    'bg-tertiary': '255, 152, 164',
+    'fnt-primary': '80, 24, 32',
+    'fnt-secondary': '168, 64, 80',
+    'tn-primary': '255, 96, 120',
+    'tn-secondary': '255, 140, 156'
   }),
   Almond: defineTheme({
-    'bg-primary': '255, 235, 205',
-    'bg-secondary': '245, 225, 195',
-    'bg-tertiary': '235, 215, 185',
-    'fnt-primary': '80, 60, 40',
-    'fnt-secondary': '120, 80, 60',
-    'fnt-active': '255, 255, 255',
-    'tn-primary': '210, 150, 100',
-    'tn-secondary': '190, 140, 90'
+    'bg-primary': '255, 220, 168',
+    'bg-secondary': '252, 196, 132',
+    'bg-tertiary': '244, 172, 96',
+    'fnt-primary': '72, 40, 8',
+    'fnt-secondary': '152, 88, 24',
+    'tn-primary': '232, 112, 16',
+    'tn-secondary': '255, 168, 48'
   }),
-  Citrus: defineTheme(
-    {
-      'bg-primary': '250, 250, 200',
-      'bg-secondary': '255, 200, 150',
-      'bg-tertiary': '240, 150, 100',
-      'fnt-primary': '50, 50, 50',
-      'fnt-secondary': '100, 50, 0',
-      'fnt-active': '255, 255, 255',
-      'tn-primary': '200, 100, 0',
-      'tn-secondary': '255, 165, 0'
-    },
-    {
-      'semantic-warning': '180, 60, 20',
-      'semantic-error': '200, 40, 60'
-    }
-  ),
-  'Sunny Meadow': defineTheme(
-    {
-      'bg-primary': '245, 255, 240',
-      'bg-secondary': '230, 245, 220',
-      'bg-tertiary': '210, 235, 200',
-      'fnt-primary': '30, 40, 30',
-      'fnt-secondary': '80, 100, 60',
-      'fnt-active': '255, 255, 255',
-      'tn-primary': '240, 170, 50',
-      'tn-secondary': '180, 220, 90'
-    },
-    {
-      'semantic-success': '20, 130, 90',
-      'semantic-warning': '180, 90, 20'
-    }
-  ),
-  Emerald: defineTheme(
-    {
-      'bg-primary': '150, 220, 180',
-      'bg-secondary': '120, 190, 150',
-      'bg-tertiary': '90, 160, 120',
-      'fnt-primary': '20, 50, 30',
-      'fnt-secondary': '40, 80, 60',
-      'fnt-active': '255, 255, 255',
-      'tn-primary': '0, 150, 80',
-      'tn-secondary': '0, 200, 120'
-    },
-    {
-      'semantic-success': '0, 90, 70',
-      'semantic-info': '20, 100, 180'
-    }
-  ),
-  'Passionate Red': defineTheme(
-    {
-      'bg-primary': '255, 105, 180',
-      'bg-secondary': '255, 85, 160',
-      'bg-tertiary': '255, 65, 140',
-      'fnt-primary': '50, 30, 50',
-      'fnt-secondary': '80, 50, 80',
-      'fnt-active': '255, 255, 255',
-      'tn-primary': '255, 50, 100',
-      'tn-secondary': '220, 40, 80'
-    },
-    {
-      'semantic-warning': '240, 170, 40',
-      'semantic-warning-text': '20, 20, 20',
-      'semantic-error': '140, 20, 50'
-    }
-  ),
-  'Sunrise Glow': defineTheme(
-    {
-      'bg-primary': '255, 200, 150',
-      'bg-secondary': '255, 180, 120',
-      'bg-tertiary': '255, 160, 90',
-      'fnt-primary': '50, 30, 10',
-      'fnt-secondary': '80, 50, 20',
-      'fnt-active': '255, 255, 255',
-      'tn-primary': '255, 100, 50',
-      'tn-secondary': '220, 80, 40'
-    },
-    {
-      'semantic-warning': '160, 70, 20',
-      'semantic-error': '160, 20, 50'
-    }
-  ),
-  'Icy Blue': defineTheme(
-    {
-      'bg-primary': '180, 220, 255',
-      'bg-secondary': '160, 200, 245',
-      'bg-tertiary': '140, 180, 235',
-      'fnt-primary': '20, 30, 50',
-      'fnt-secondary': '40, 50, 70',
-      'fnt-active': '255, 255, 255',
-      'tn-primary': '0, 120, 240',
-      'tn-secondary': '0, 100, 200'
-    },
-    {
-      'semantic-info': '70, 50, 180'
-    }
-  ),
+  Citrus: defineTheme({
+    'bg-primary': '255, 236, 120',
+    'bg-secondary': '255, 212, 72',
+    'bg-tertiary': '255, 188, 32',
+    'fnt-primary': '64, 40, 0',
+    'fnt-secondary': '160, 96, 0',
+    'tn-primary': '255, 140, 0',
+    'tn-secondary': '255, 184, 0'
+  }),
+  'Sunny Meadow': defineTheme({
+    'bg-primary': '212, 244, 140',
+    'bg-secondary': '188, 232, 104',
+    'bg-tertiary': '160, 216, 72',
+    'fnt-primary': '24, 56, 8',
+    'fnt-secondary': '72, 120, 24',
+    'tn-primary': '255, 176, 0',
+    'tn-secondary': '96, 196, 16'
+  }),
+  Emerald: defineTheme({
+    'bg-primary': '132, 228, 176',
+    'bg-secondary': '96, 212, 152',
+    'bg-tertiary': '56, 192, 128',
+    'fnt-primary': '0, 48, 28',
+    'fnt-secondary': '0, 112, 68',
+    'tn-primary': '0, 176, 96',
+    'tn-secondary': '0, 220, 128'
+  }),
+  'Passionate Red': defineTheme({
+    'bg-primary': '255, 132, 176',
+    'bg-secondary': '255, 104, 156',
+    'bg-tertiary': '255, 76, 136',
+    'fnt-primary': '80, 8, 32',
+    'fnt-secondary': '160, 24, 64',
+    'tn-primary': '255, 24, 80',
+    'tn-secondary': '255, 72, 120'
+  }),
+  'Sunrise Glow': defineTheme({
+    'bg-primary': '255, 184, 120',
+    'bg-secondary': '255, 156, 88',
+    'bg-tertiary': '255, 128, 56',
+    'fnt-primary': '72, 28, 0',
+    'fnt-secondary': '160, 64, 16',
+    'tn-primary': '255, 80, 16',
+    'tn-secondary': '255, 140, 40'
+  }),
+  'Icy Blue': defineTheme({
+    'bg-primary': '160, 216, 255',
+    'bg-secondary': '128, 196, 255',
+    'bg-tertiary': '96, 176, 252',
+    'fnt-primary': '0, 32, 80',
+    'fnt-secondary': '16, 80, 168',
+    'tn-primary': '0, 112, 255',
+    'tn-secondary': '32, 168, 255'
+  }),
   'Marble White': defineTheme({
-    'bg-primary': '240, 240, 240',
-    'bg-secondary': '230, 230, 230',
-    'bg-tertiary': '220, 220, 220',
-    'fnt-primary': '30, 30, 50',
-    'fnt-secondary': '60, 60, 80',
-    'fnt-active': '255, 255, 255',
+    'bg-primary': '244, 244, 246',
+    'bg-secondary': '232, 232, 236',
+    'bg-tertiary': '216, 216, 222',
+    'fnt-primary': '16, 16, 20',
+    'fnt-secondary': '72, 72, 84',
     'tn-primary': '0, 0, 0',
-    'tn-secondary': '80, 80, 80'
+    'tn-secondary': '64, 64, 80'
   }),
-  'Obsidian Black': defineTheme(
-    {
-      'bg-primary': '30, 30, 30',
-      'bg-secondary': '20, 20, 20',
-      'bg-tertiary': '10, 10, 10',
-      'fnt-primary': '255, 255, 255',
-      'fnt-secondary': '170, 170, 170',
-      'fnt-active': '0, 0, 0',
-      'tn-primary': '255, 255, 255',
-      'tn-secondary': '200, 200, 200'
-    },
-    {
-      'semantic-success-text': '255, 255, 255',
-      'semantic-warning-text': '20, 20, 20',
-      'semantic-error-text': '255, 255, 255',
-      'semantic-info-text': '255, 255, 255'
-    }
-  ),
-  'Ebony Elegance': defineTheme(
-    {
-      'bg-primary': '50, 40, 30',
-      'bg-secondary': '40, 30, 20',
-      'bg-tertiary': '30, 20, 10',
-      'fnt-primary': '255, 255, 255',
-      'fnt-secondary': '170, 170, 170',
-      'fnt-active': '0, 0, 0',
-      'tn-primary': '250, 240, 230',
-      'tn-secondary': '150, 140, 130'
-    },
-    {
-      'semantic-success-text': '255, 255, 255',
-      'semantic-warning-text': '20, 20, 20',
-      'semantic-error-text': '255, 255, 255',
-      'semantic-info-text': '255, 255, 255'
-    }
-  ),
-  // Oscuros
-  'Twilight Purple': defineTheme(
-    {
-      'bg-primary': '25, 25, 35',
-      'bg-secondary': '40, 40, 55',
-      'bg-tertiary': '60, 60, 80',
-      'fnt-primary': '230, 230, 240',
-      'fnt-secondary': '160, 160, 180',
-      'fnt-active': '255, 255, 255',
-      'tn-primary': '140, 50, 240',
-      'tn-secondary': '180, 100, 250'
-    },
-    {
-      'semantic-success-text': '255, 255, 255',
-      'semantic-warning-text': '20, 20, 20',
-      'semantic-error-text': '255, 255, 255',
-      'semantic-info-text': '255, 255, 255'
-    }
-  ),
-  'Dark Slate': defineTheme(
-    {
-      'bg-primary': '40, 40, 40',
-      'bg-secondary': '50, 50, 50',
-      'bg-tertiary': '60, 60, 60',
-      'fnt-primary': '255, 255, 255',
-      'fnt-secondary': '180, 180, 180',
-      'fnt-active': '255, 255, 255',
-      'tn-primary': '0, 120, 240',
-      'tn-secondary': '0, 100, 200'
-    },
-    {
-      'semantic-success-text': '255, 255, 255',
-      'semantic-warning-text': '20, 20, 20',
-      'semantic-error-text': '255, 255, 255',
-      'semantic-info': '100, 200, 255',
-      'semantic-info-text': '20, 20, 20'
-    }
-  ),
-  Carbon: defineTheme(
-    {
-      'bg-primary': '12, 12, 12',
-      'bg-secondary': '22, 22, 22',
-      'bg-tertiary': '32, 32, 32',
-      'fnt-primary': '245, 245, 245',
-      'fnt-secondary': '160, 160, 160',
-      'fnt-active': '0, 0, 0',
-      'tn-primary': '50, 230, 130',
-      'tn-secondary': '40, 220, 130'
-    },
-    {
-      'semantic-success': '34, 211, 238',
-      'semantic-success-text': '20, 20, 20',
-      'semantic-warning-text': '20, 20, 20',
-      'semantic-error-text': '255, 255, 255',
-      'semantic-info-text': '255, 255, 255'
-    }
-  ),
-  Circuit: defineTheme(
-    {
-      'bg-primary': '10, 15, 25',
-      'bg-secondary': '20, 30, 40',
-      'bg-tertiary': '45, 50, 65',
-      'fnt-primary': '255, 20, 147',
-      'fnt-secondary': '0, 255, 255',
-      'fnt-active': '0, 0, 0',
-      'tn-primary': '0, 255, 0',
-      'tn-secondary': '0, 200, 0'
-    },
-    {
-      'semantic-success': '0, 200, 180',
-      'semantic-success-text': '255, 255, 255',
-      'semantic-warning-text': '20, 20, 20',
-      'semantic-error': '255, 80, 120',
-      'semantic-error-text': '255, 255, 255',
-      'semantic-info': '0, 180, 255',
-      'semantic-info-text': '255, 255, 255'
-    }
-  ),
-  'Synth wave 84': defineTheme(
-    {
-      'bg-primary': '10, 10, 30',
-      'bg-secondary': '20, 20, 40',
-      'bg-tertiary': '30, 30, 50',
-      'fnt-primary': '255, 0, 255',
-      'fnt-secondary': '0, 240, 255',
-      'fnt-active': '0, 0, 0',
-      'tn-primary': '255, 135, 210',
-      'tn-secondary': '220, 90, 160'
-    },
-    {
-      'semantic-success-text': '255, 255, 255',
-      'semantic-warning-text': '20, 20, 20',
-      'semantic-error': '244, 63, 94',
-      'semantic-error-text': '255, 255, 255',
-      'semantic-info-text': '255, 255, 255'
-    }
-  ),
-  Nebula: defineTheme(
-    {
-      'bg-primary': '20, 20, 40',
-      'bg-secondary': '30, 30, 60',
-      'bg-tertiary': '40, 40, 80',
-      'fnt-primary': '255, 220, 255',
-      'fnt-secondary': '200, 100, 255',
-      'fnt-active': '255, 255, 255',
-      'tn-primary': '255, 0, 128',
-      'tn-secondary': '220, 0, 110'
-    },
-    {
-      'semantic-success-text': '255, 255, 255',
-      'semantic-warning-text': '20, 20, 20',
-      'semantic-error-text': '255, 255, 255',
-      'semantic-info-text': '255, 255, 255'
-    }
-  ),
-  Eclipse: defineTheme(
-    {
-      'bg-primary': '5, 5, 5',
-      'bg-secondary': '15, 15, 15',
-      'bg-tertiary': '25, 25, 25',
-      'fnt-primary': '230, 230, 230',
-      'fnt-secondary': '160, 160, 160',
-      'fnt-active': '0, 0, 0',
-      'tn-primary': '255, 150, 50',
-      'tn-secondary': '230, 130, 40'
-    },
-    {
-      'semantic-success-text': '255, 255, 255',
-      'semantic-warning': '255, 200, 80',
-      'semantic-warning-text': '20, 20, 20',
-      'semantic-error': '244, 63, 94',
-      'semantic-error-text': '255, 255, 255',
-      'semantic-info-text': '255, 255, 255'
-    }
-  ),
-  'Forest Dawn': defineTheme(
-    {
-      'bg-primary': '25, 35, 25',
-      'bg-secondary': '35, 45, 35',
-      'bg-tertiary': '45, 55, 45',
-      'fnt-primary': '190, 210, 160',
-      'fnt-secondary': '140, 170, 110',
-      'fnt-active': '0, 0, 0',
-      'tn-primary': '230, 150, 50',
-      'tn-secondary': '180, 130, 70'
-    },
-    {
-      'semantic-success-text': '255, 255, 255',
-      'semantic-warning': '245, 158, 11',
-      'semantic-warning-text': '20, 20, 20',
-      'semantic-error': '244, 63, 94',
-      'semantic-error-text': '255, 255, 255',
-      'semantic-info-text': '255, 255, 255'
-    }
-  ),
-  'Forest Twilight': defineTheme(
-    {
-      'bg-primary': '30, 40, 30',
-      'bg-secondary': '40, 60, 40',
-      'bg-tertiary': '50, 80, 50',
-      'fnt-primary': '210, 230, 210',
-      'fnt-secondary': '150, 180, 150',
-      'fnt-active': '0, 0, 0',
-      'tn-primary': '0, 150, 50',
-      'tn-secondary': '0, 200, 100'
-    },
-    {
-      'semantic-success': '100, 220, 160',
-      'semantic-success-text': '20, 20, 20',
-      'semantic-warning-text': '20, 20, 20',
-      'semantic-error-text': '255, 255, 255',
-      'semantic-info-text': '255, 255, 255'
-    }
-  ),
-  Neon: defineTheme(
-    {
-      'bg-primary': '10, 10, 10',
-      'bg-secondary': '20, 20, 20',
-      'bg-tertiary': '30, 30, 30',
-      'fnt-primary': '0, 255, 0',
-      'fnt-secondary': '0, 200, 255',
-      'fnt-active': '0, 0, 0',
-      'tn-primary': '255, 255, 0',
-      'tn-secondary': '0, 128, 255'
-    },
-    {
-      'semantic-success': '0, 255, 170',
-      'semantic-success-text': '20, 20, 20',
-      'semantic-warning': '255, 180, 0',
-      'semantic-warning-text': '20, 20, 20',
-      'semantic-error': '255, 60, 100',
-      'semantic-error-text': '255, 255, 255',
-      'semantic-info': '80, 160, 255',
-      'semantic-info-text': '255, 255, 255'
-    }
-  ),
-  Aurora: defineTheme(
-    {
-      'bg-primary': '10, 20, 20',
-      'bg-secondary': '20, 30, 30',
-      'bg-tertiary': '30, 40, 40',
-      'fnt-primary': '0, 255, 128',
-      'fnt-secondary': '0, 192, 255',
-      'fnt-active': '0, 0, 0',
-      'tn-primary': '255, 0, 128',
-      'tn-secondary': '0, 255, 200'
-    },
-    {
-      'semantic-success': '45, 212, 191',
-      'semantic-success-text': '255, 255, 255',
-      'semantic-warning-text': '20, 20, 20',
-      'semantic-error-text': '255, 255, 255',
-      'semantic-info-text': '255, 255, 255'
-    }
-  ),
-  'Twilight Pink': defineTheme(
-    {
-      'bg-primary': '50, 10, 30',
-      'bg-secondary': '70, 20, 40',
-      'bg-tertiary': '90, 30, 50',
-      'fnt-primary': '255, 255, 255',
-      'fnt-secondary': '200, 200, 200',
-      'fnt-active': '0, 0, 0',
-      'tn-primary': '255, 100, 150',
-      'tn-secondary': '220, 80, 120'
-    },
-    {
-      'semantic-success-text': '255, 255, 255',
-      'semantic-warning-text': '20, 20, 20',
-      'semantic-error': '244, 63, 94',
-      'semantic-error-text': '255, 255, 255',
-      'semantic-info-text': '255, 255, 255'
-    }
-  ),
-  Velvet: defineTheme(
-    {
-      'bg-primary': '20, 10, 30',
-      'bg-secondary': '30, 20, 40',
-      'bg-tertiary': '40, 30, 50',
-      'fnt-primary': '220, 180, 255',
-      'fnt-secondary': '180, 140, 220',
-      'fnt-active': '0, 0, 0',
-      'tn-primary': '255, 105, 180',
-      'tn-secondary': '255, 20, 147'
-    },
-    {
-      'semantic-success-text': '255, 255, 255',
-      'semantic-warning-text': '20, 20, 20',
-      'semantic-error': '244, 63, 94',
-      'semantic-error-text': '255, 255, 255',
-      'semantic-info-text': '255, 255, 255'
-    }
-  ),
-  'Volcanic Magma': defineTheme(
-    {
-      'bg-primary': '55, 15, 15',
-      'bg-secondary': '75, 25, 25',
-      'bg-tertiary': '95, 35, 35',
-      'fnt-primary': '230, 190, 110',
-      'fnt-secondary': '210, 150, 70',
-      'fnt-active': '0, 0, 0',
-      'tn-primary': '230, 150, 50',
-      'tn-secondary': '200, 100, 40'
-    },
-    {
-      'semantic-success-text': '255, 255, 255',
-      'semantic-warning': '255, 200, 60',
-      'semantic-warning-text': '20, 20, 20',
-      'semantic-error': '255, 90, 90',
-      'semantic-error-text': '255, 255, 255',
-      'semantic-info-text': '255, 255, 255'
-    }
-  ),
-  Midnight: defineTheme(
-    {
-      'bg-primary': '10, 25, 50',
-      'bg-secondary': '20, 40, 70',
-      'bg-tertiary': '30, 60, 90',
-      'fnt-primary': '180, 200, 255',
-      'fnt-secondary': '150, 180, 230',
-      'fnt-active': '255, 255, 255',
-      'tn-primary': '50, 100, 255',
-      'tn-secondary': '40, 80, 220'
-    },
-    {
-      'semantic-success-text': '255, 255, 255',
-      'semantic-warning-text': '20, 20, 20',
-      'semantic-error-text': '255, 255, 255',
-      'semantic-info': '120, 200, 255',
-      'semantic-info-text': '20, 20, 20'
-    }
-  )
+  'Obsidian Black': defineTheme({
+    'bg-primary': '10, 10, 16',
+    'bg-secondary': '22, 22, 36',
+    'bg-tertiary': '38, 38, 58',
+    'fnt-primary': '255, 255, 255',
+    'fnt-secondary': '160, 176, 255',
+    'tn-primary': '255, 255, 255',
+    'tn-secondary': '120, 168, 255'
+  }),
+  'Ebony Elegance': defineTheme({
+    'bg-primary': '36, 18, 6',
+    'bg-secondary': '56, 30, 10',
+    'bg-tertiary': '80, 44, 14',
+    'fnt-primary': '255, 236, 200',
+    'fnt-secondary': '232, 176, 96',
+    'tn-primary': '255, 184, 48',
+    'tn-secondary': '255, 140, 24'
+  }),
+  DeepOcean: defineTheme({
+    'bg-primary': '0, 28, 64',
+    'bg-secondary': '0, 48, 96',
+    'bg-tertiary': '0, 72, 132',
+    'fnt-primary': '220, 248, 255',
+    'fnt-secondary': '64, 196, 255',
+    'tn-primary': '0, 220, 255',
+    'tn-secondary': '48, 160, 255'
+  }),
+  AshMountains: defineTheme({
+    'bg-primary': '32, 28, 44',
+    'bg-secondary': '48, 42, 68',
+    'bg-tertiary': '68, 60, 96',
+    'fnt-primary': '244, 240, 255',
+    'fnt-secondary': '176, 160, 255',
+    'tn-primary': '168, 136, 255',
+    'tn-secondary': '216, 196, 255'
+  }),
+  StarryNight: defineTheme({
+    'bg-primary': '8, 4, 40',
+    'bg-secondary': '20, 12, 72',
+    'bg-tertiary': '36, 24, 108',
+    'fnt-primary': '240, 236, 255',
+    'fnt-secondary': '168, 152, 255',
+    'tn-primary': '152, 128, 255',
+    'tn-secondary': '255, 212, 64'
+  }),
+  'Twilight Purple': defineTheme({
+    'bg-primary': '28, 0, 56',
+    'bg-secondary': '52, 8, 96',
+    'bg-tertiary': '80, 16, 140',
+    'fnt-primary': '248, 236, 255',
+    'fnt-secondary': '196, 152, 255',
+    'tn-primary': '160, 64, 255',
+    'tn-secondary': '216, 128, 255'
+  }),
+  'Dark Slate': defineTheme({
+    'bg-primary': '16, 24, 40',
+    'bg-secondary': '28, 40, 64',
+    'bg-tertiary': '44, 60, 92',
+    'fnt-primary': '236, 244, 255',
+    'fnt-secondary': '96, 176, 255',
+    'tn-primary': '0, 152, 255',
+    'tn-secondary': '64, 200, 255'
+  }),
+  Carbon: defineTheme({
+    'bg-primary': '4, 16, 12',
+    'bg-secondary': '8, 36, 24',
+    'bg-tertiary': '16, 60, 40',
+    'fnt-primary': '220, 255, 236',
+    'fnt-secondary': '64, 232, 168',
+    'tn-primary': '0, 255, 152',
+    'tn-secondary': '0, 232, 200'
+  }),
+  Circuit: defineTheme({
+    'bg-primary': '0, 16, 36',
+    'bg-secondary': '0, 32, 60',
+    'bg-tertiary': '0, 52, 92',
+    'fnt-primary': '220, 255, 255',
+    'fnt-secondary': '0, 220, 232',
+    'tn-primary': '0, 255, 220',
+    'tn-secondary': '64, 255, 120'
+  }),
+  'Synth wave 84': defineTheme({
+    'bg-primary': '24, 0, 52',
+    'bg-secondary': '48, 0, 88',
+    'bg-tertiary': '76, 8, 128',
+    'fnt-primary': '255, 232, 255',
+    'fnt-secondary': '200, 140, 255',
+    'tn-primary': '255, 48, 176',
+    'tn-secondary': '0, 236, 255'
+  }),
+  Nebula: defineTheme({
+    'bg-primary': '36, 0, 52',
+    'bg-secondary': '60, 0, 80',
+    'bg-tertiary': '88, 8, 112',
+    'fnt-primary': '255, 228, 255',
+    'fnt-secondary': '232, 120, 255',
+    'tn-primary': '255, 24, 160',
+    'tn-secondary': '196, 64, 255'
+  }),
+  Eclipse: defineTheme({
+    'bg-primary': '16, 6, 0',
+    'bg-secondary': '36, 16, 0',
+    'bg-tertiary': '60, 28, 0',
+    'fnt-primary': '255, 240, 220',
+    'fnt-secondary': '255, 176, 64',
+    'tn-primary': '255, 132, 0',
+    'tn-secondary': '255, 188, 32'
+  }),
+  'Forest Dawn': defineTheme({
+    'bg-primary': '16, 28, 0',
+    'bg-secondary': '28, 48, 0',
+    'bg-tertiary': '44, 72, 0',
+    'fnt-primary': '236, 255, 196',
+    'fnt-secondary': '176, 220, 48',
+    'tn-primary': '255, 176, 0',
+    'tn-secondary': '168, 232, 16'
+  }),
+  'Forest Twilight': defineTheme({
+    'bg-primary': '0, 28, 16',
+    'bg-secondary': '0, 48, 28',
+    'bg-tertiary': '0, 72, 44',
+    'fnt-primary': '220, 255, 232',
+    'fnt-secondary': '48, 220, 140',
+    'tn-primary': '0, 232, 120',
+    'tn-secondary': '64, 255, 168'
+  }),
+  Neon: defineTheme({
+    'bg-primary': '4, 12, 4',
+    'bg-secondary': '12, 28, 8',
+    'bg-tertiary': '24, 48, 12',
+    'fnt-primary': '236, 255, 220',
+    'fnt-secondary': '160, 255, 64',
+    'tn-primary': '168, 255, 0',
+    'tn-secondary': '0, 224, 255'
+  }),
+  Aurora: defineTheme({
+    'bg-primary': '0, 28, 28',
+    'bg-secondary': '0, 48, 48',
+    'bg-tertiary': '0, 72, 68',
+    'fnt-primary': '220, 255, 244',
+    'fnt-secondary': '48, 232, 200',
+    'tn-primary': '0, 255, 168',
+    'tn-secondary': '0, 196, 255'
+  }),
+  'Twilight Pink': defineTheme({
+    'bg-primary': '44, 0, 28',
+    'bg-secondary': '72, 0, 44',
+    'bg-tertiary': '104, 8, 64',
+    'fnt-primary': '255, 228, 240',
+    'fnt-secondary': '255, 128, 176',
+    'tn-primary': '255, 64, 144',
+    'tn-secondary': '255, 128, 184'
+  }),
+  Velvet: defineTheme({
+    'bg-primary': '32, 0, 48',
+    'bg-secondary': '56, 0, 76',
+    'bg-tertiary': '84, 8, 108',
+    'fnt-primary': '252, 228, 255',
+    'fnt-secondary': '224, 128, 255',
+    'tn-primary': '255, 80, 196',
+    'tn-secondary': '196, 80, 255'
+  }),
+  'Volcanic Magma': defineTheme({
+    'bg-primary': '44, 4, 0',
+    'bg-secondary': '72, 12, 0',
+    'bg-tertiary': '104, 24, 0',
+    'fnt-primary': '255, 228, 196',
+    'fnt-secondary': '255, 148, 64',
+    'tn-primary': '255, 64, 0',
+    'tn-secondary': '255, 152, 16'
+  }),
+  Midnight: defineTheme({
+    'bg-primary': '0, 12, 52',
+    'bg-secondary': '0, 28, 88',
+    'bg-tertiary': '0, 48, 128',
+    'fnt-primary': '220, 236, 255',
+    'fnt-secondary': '96, 160, 255',
+    'tn-primary': '32, 112, 255',
+    'tn-secondary': '80, 176, 255'
+  })
 }

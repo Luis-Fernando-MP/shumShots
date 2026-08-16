@@ -1,7 +1,7 @@
 import { StateCreator, create } from 'zustand'
 import { persist } from 'zustand/middleware'
 
-export const DEFAULT_THEME = 'Aurora Day'
+export const DEFAULT_THEME = 'Geist Light'
 
 interface IAppThemeStore {
   appTheme: string

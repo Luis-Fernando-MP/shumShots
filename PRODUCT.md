@@ -42,7 +42,7 @@ Shared chrome lives under the `(pixis)` route group. Domain state for image-stud
 Confirmed:
 
 - Next.js 15 App Router, React 19, Tailwind v4, Zustand, TanStack Query, pnpm `@10.18.3`.
-- Semantic PIXIS color tokens applied at runtime via `data-theme` and CSS variables (`src/app/defaults/themes.ts`). Default app theme: **Aurora Day**.
+- Semantic PIXIS color tokens applied at runtime via `data-theme` and CSS variables (`src/app/defaults/themes.ts`). Default app theme: **Geist Light** (pair **Geist Dark**).
 - Application themes live only in `src/app/defaults`. Monaco syntax themes stay under `src/shared/themes/` and are independent.
 - New UI uses `@common/components` primitives and Tailwind theme utilities (`rounded-radius`, `gap-grid`, `bg-primary`). No Sass/SCSS. No `rpx-*` tokens. No `../../../` imports; use `@app/*`, `@common/*`, `@features/*`, `@views/*`, `@common/*`.
 - `src/shared` is transitional legacy. Do not add new product architecture there.

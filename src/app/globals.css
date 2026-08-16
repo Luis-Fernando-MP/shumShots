@@ -88,24 +88,24 @@
 
 :root {
   --app-font-size: 16px;
-  --bg-primary: 13, 13, 13;
-  --bg-secondary: 19, 20, 23;
-  --bg-tertiary: 61, 61, 61;
-  --fnt-primary: 255, 255, 255;
-  --fnt-secondary: 119, 119, 120;
-  --fnt-active: 255, 255, 255;
-  --tn-primary: 164, 47, 238;
-  --tn-secondary: 45, 255, 238;
-  --tn-border: 90, 90, 96;
-  --semantic-primary: 255, 255, 255;
-  --semantic-success: 52, 211, 153;
-  --semantic-success-text: 10, 30, 20;
+  --bg-primary: 0, 0, 0;
+  --bg-secondary: 10, 10, 10;
+  --bg-tertiary: 23, 23, 23;
+  --fnt-primary: 250, 250, 250;
+  --fnt-secondary: 161, 161, 170;
+  --fnt-active: 17, 17, 17;
+  --tn-primary: 250, 250, 250;
+  --tn-secondary: 161, 161, 170;
+  --tn-border: 58, 58, 62;
+  --semantic-primary: 17, 17, 17;
+  --semantic-success: 74, 222, 128;
+  --semantic-success-text: 6, 24, 14;
   --semantic-warning: 251, 191, 36;
   --semantic-warning-text: 30, 20, 0;
-  --semantic-error: 251, 113, 133;
-  --semantic-error-text: 40, 10, 20;
-  --semantic-info: 56, 189, 248;
-  --semantic-info-text: 5, 25, 40;
+  --semantic-error: 248, 113, 113;
+  --semantic-error-text: 40, 10, 16;
+  --semantic-info: 96, 165, 250;
+  --semantic-info-text: 8, 24, 48;
   --radius: 4px;
   --space-grid: 0.9375rem;
 }
