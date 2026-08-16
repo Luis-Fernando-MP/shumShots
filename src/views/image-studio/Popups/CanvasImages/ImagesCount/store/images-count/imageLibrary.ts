@@ -31,6 +31,7 @@ type LibraryState = {
   setActive: (id: string, active: boolean) => void
   reorderImages: (activeId: string, overId: string) => void
   getById: (id: string) => LibraryImage | undefined
+  clearAll: () => void
 }
 
 const STORAGE_KEY = 'pixis-image-library'
@@ -132,7 +133,13 @@ const state: StateCreator<LibraryState> = (set, get) => ({
       return images ? { images } : s
     }),
 
-  getById: id => get().images.find(item => item.id === id)
+  getById: id => get().images.find(item => item.id === id),
+
+  clearAll: () => {
+    const ids = get().images.map(item => item.id)
+    for (const id of ids) void deleteImageBlob(id)
+    set({ images: [] })
+  }
 })
 
 const useImageLibraryStore = create(

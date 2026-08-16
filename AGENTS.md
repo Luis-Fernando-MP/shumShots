@@ -27,7 +27,7 @@ Tras UI nueva: lee `DESIGN.md` (no lo pegues) y corre `/polish`. `/audit` si hay
 
 | Carpeta | Qué va | Qué no |
 | --- | --- | --- |
-| `components/` | **Todo** componente reutilizable de la app (Button, Input, Typography, UnsplashPicker, monaco, …) | Controles de un solo view |
+| `components/` | **Todo** componente reutilizable de la app (Button, Input, Text, Typography, UnsplashPicker, monaco, …) | Controles de un solo view |
 | `core/` | Integraciones de API: service + query + types. El `index` exporta types y queries, nunca el service | UI, stores de view |
 | `hooks/` | Hooks **globales** de verdad (app-wide) | Wrappers de un `useState`, adapters de un solo call site, reexports de `lib` |
 | `lib/` | Utilidades de librería (ver abajo) | Componentes React de chrome |
@@ -38,7 +38,7 @@ No crees `src/common/ui`. Lo que estaba ahí vive en `components/`.
 
 ### `components/`
 
-Un folder por componente (`Button/index.tsx`). Reutiliza; no clones. Lista y anatomía visual: `DESIGN.md` → Components.
+Un folder por componente (`Button/index.tsx`). Reutiliza; no clones. Lista y anatomía visual: `DESIGN.md` → Components. Chrome de sidebar: `Text.*` (sin `#` / `##` en copy), controles `rounded-[12px]`, ancho 260px.
 
 Monaco (fuentes, language-meta, setup): `src/common/components/monaco`.
 

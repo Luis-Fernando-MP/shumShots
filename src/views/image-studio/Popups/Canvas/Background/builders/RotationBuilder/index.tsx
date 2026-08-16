@@ -41,7 +41,7 @@ const RotationBuilder: FC = () => {
 
   return (
     <SectionBlock title='Rotación' description='Elige un tilt rápido o afina el ángulo (±15°).'>
-      <div className='grid grid-cols-4 gap-1.5'>
+      <div className='grid grid-cols-2 gap-1.5'>
         {ROTATION_PRESETS.map(item => {
           const active = Math.abs(rotation - item.value) < 0.5
           return (

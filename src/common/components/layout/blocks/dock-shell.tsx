@@ -21,7 +21,7 @@ interface DockShellProps {
 const DockShell = ({ children, className, style, placement }: DockShellProps) => (
   <div
     className={cn(
-      'border-border/50 bg-card/70 backdrop-blur-panel pointer-events-auto flex size-fit flex-row items-center justify-center gap-grid rounded-[16px] border px-4 py-2.5',
+      'border-border/50 bg-card/70 backdrop-blur-panel pointer-events-auto flex size-fit flex-row items-center justify-center gap-2 rounded-[16px] border px-3 py-2',
       '[&_button]:rounded-[12px]',
       placement === 'top' ? 'absolute top-5 left-1/2 -translate-x-1/2' : 'absolute bottom-5 left-1/2 -translate-x-1/2',
       className

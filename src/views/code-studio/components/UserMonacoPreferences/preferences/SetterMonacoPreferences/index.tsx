@@ -26,7 +26,7 @@ const Section = ({
 }
 
 const SetterMonacoPreferences: FC = () => (
-  <div className='flex flex-col gap-5'>
+  <div className='flex flex-col gap-6'>
     <Section groupId='visual'>
       <SchemaPreferenceField fieldId='renderValidationDecorations' />
       <SchemaPreferenceField fieldId='lineNumbers' />

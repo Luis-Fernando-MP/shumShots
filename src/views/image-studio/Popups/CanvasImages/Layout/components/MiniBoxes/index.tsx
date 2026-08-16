@@ -18,7 +18,7 @@ const MiniBoxes: FC<Props> = ({ active, count, pattern }) => {
 
   if (pattern === 'stagger') {
     return (
-      <div className='relative h-10 w-full'>
+      <div className='relative h-full w-full'>
         {Array.from({ length: n }, (_, i) => (
           <div
             key={i}
@@ -36,7 +36,7 @@ const MiniBoxes: FC<Props> = ({ active, count, pattern }) => {
 
   if (pattern === 'stack') {
     return (
-      <div className='relative h-10 w-full'>
+      <div className='relative h-full w-full'>
         {Array.from({ length: n }, (_, i) => (
           <div
             key={i}
@@ -55,7 +55,7 @@ const MiniBoxes: FC<Props> = ({ active, count, pattern }) => {
   if (pattern === 'fan') {
     const mid = (n - 1) / 2
     return (
-      <div className='relative h-10 w-full'>
+      <div className='relative h-full w-full'>
         {Array.from({ length: n }, (_, i) => {
           const delta = i - mid
           return (
@@ -77,7 +77,7 @@ const MiniBoxes: FC<Props> = ({ active, count, pattern }) => {
 
   if (pattern === 'diagonal') {
     return (
-      <div className='relative h-10 w-full'>
+      <div className='relative h-full w-full'>
         {Array.from({ length: n }, (_, i) => {
           const t = n <= 1 ? 0.5 : i / (n - 1)
           return (
@@ -98,7 +98,7 @@ const MiniBoxes: FC<Props> = ({ active, count, pattern }) => {
   if (pattern === 'column') {
     const h = Math.min(28, 70 / n)
     return (
-      <div className='relative h-10 w-full'>
+      <div className='relative h-full w-full'>
         {Array.from({ length: n }, (_, i) => (
           <div
             key={i}
@@ -115,7 +115,7 @@ const MiniBoxes: FC<Props> = ({ active, count, pattern }) => {
 
   if (pattern === 'orbit') {
     return (
-      <div className='relative h-10 w-full'>
+      <div className='relative h-full w-full'>
         {Array.from({ length: n }, (_, i) => {
           const angle = n <= 1 ? -Math.PI / 2 : (i / n) * Math.PI * 2 - Math.PI / 2
           const cx = 50
@@ -145,7 +145,7 @@ const MiniBoxes: FC<Props> = ({ active, count, pattern }) => {
   const cellH = Math.min(40, 78 / rows)
 
   return (
-    <div className='relative h-10 w-full'>
+    <div className='relative h-full w-full'>
       {Array.from({ length: n }, (_, i) => {
         const col = i % cols
         const row = Math.floor(i / cols)

@@ -152,15 +152,15 @@ const field = <T>(def: PreferenceFieldDef<T>) => def
 export const pixisPreferenceGroups = [
   {
     id: 'chrome',
-    title: 'Chrome de ventana:',
+    title: 'Chrome de ventana',
     subtitle: 'Controles, tabs y marcos visuales del shot.',
-    panel: true
+    panel: false
   },
   {
     id: 'pixis',
-    title: 'Pixis:',
+    title: 'Pixis',
     subtitle: 'Detalles visuales del shot: radio y tamaño.',
-    panel: true
+    panel: false
   }
 ] satisfies PreferenceGroup[]
 

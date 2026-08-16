@@ -280,7 +280,7 @@ const Precaution: FC<TypographySlotProps> = ({
 const Block: FC<TypographyBlockProps> = ({ title, children, className, ...props }) => (
   <section className={cn('flex flex-col gap-1', className)} {...props}>
     {typeof title === 'string' ? (
-      <Label>{title.startsWith('#') ? title : `# ${title}`}</Label>
+      <Label>{typeof title === 'string' && title.startsWith('#') ? title.replace(/^#+\s*/, '') : title}</Label>
     ) : (
       title
     )}

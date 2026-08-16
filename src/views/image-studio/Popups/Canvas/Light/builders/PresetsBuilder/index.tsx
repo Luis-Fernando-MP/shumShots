@@ -1,6 +1,7 @@
 'use client'
 
 import { Button } from '@common/components/Button'
+import SliceContainer from '@common/components/SliceContainer'
 import { cn } from '@common/utils/cn'
 import { LIGHT_PRESETS, type LightType } from '@views/image-studio/Popups/common/presets/light'
 import { defaultLightLayer } from '@views/image-studio/Popups/Canvas/Light/store/light/initialState'
@@ -18,7 +19,7 @@ const PresetsBuilder: FC = () => {
 
   return (
     <SectionBlock title='Estilos' level={2} description='Elige un preset y afina con el foco y los ajustes.'>
-      <div className='grid grid-cols-3 gap-1.5'>
+      <SliceContainer maxHeight={150} extendedMaxHeight={360} className='grid grid-cols-2 gap-1.5'>
         {LIGHT_PRESETS.map(preset => {
           const active = light.type === preset.type
           return (
@@ -31,22 +32,19 @@ const PresetsBuilder: FC = () => {
               aria-pressed={active}
               onClick={() => applyLightPreset(preset.type as LightType)}
               className={cn(
-                'flex h-auto flex-col items-center gap-1.5 px-1 py-2',
+                'flex h-auto flex-col items-center gap-1.5 rounded-[12px] px-1 py-2',
                 active && 'border-primary'
               )}
             >
-              <div className='bg-muted/40 flex h-10 w-full items-center justify-center rounded-sm'>
+              <div className='bg-primary relative flex h-12 w-full items-end justify-center overflow-hidden rounded-[8px] px-2 pb-2'>
                 <div
-                  className={cn(
-                    'size-5 rounded-sm',
-                    preset.type === 'none' ? 'bg-muted-foreground/25' : 'bg-primary/40'
-                  )}
+                  className={cn('size-6 rounded-[3px]', preset.type === 'none' ? 'bg-primary-foreground/25' : 'bg-card')}
                   style={{ boxShadow: preset.type === 'none' ? 'none' : preset.preview }}
                 />
               </div>
               <span
                 className={cn(
-                  'text-xs leading-none font-medium',
+                  'text-chrome-ui font-semibold leading-none',
                   active ? 'text-foreground' : 'text-muted-foreground'
                 )}
               >
@@ -55,7 +53,7 @@ const PresetsBuilder: FC = () => {
             </Button>
           )
         })}
-      </div>
+      </SliceContainer>
     </SectionBlock>
   )
 }

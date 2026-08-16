@@ -41,7 +41,7 @@ const buttonVariants = cva(
 
 const statusStyles: Record<ButtonVariant, Record<StyleStatus, string>> = {
   soft: {
-    default: 'bg-card text-foreground hover:bg-muted',
+    default: 'bg-muted text-foreground hover:bg-muted/80',
     primary: 'bg-primary/15 text-foreground hover:bg-primary/25',
     success: 'bg-semantic-success/15 text-semantic-success hover:bg-semantic-success/25',
     warning: 'bg-semantic-warning/15 text-semantic-warning hover:bg-semantic-warning/25',

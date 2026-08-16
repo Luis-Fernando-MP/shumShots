@@ -113,7 +113,7 @@ const FocusPad: FC = () => {
       <div
         ref={padRef}
         className={cn(
-          'bg-muted/30 relative mx-auto flex aspect-square w-full max-w-[220px] touch-none items-center justify-center overflow-hidden rounded-md ring-1 ring-inset ring-border/40',
+          'bg-primary ring-border/40 relative mx-auto flex aspect-square w-full touch-none items-center justify-center overflow-hidden rounded-[12px] ring-1 ring-inset',
           disabled ? 'cursor-not-allowed opacity-50' : 'cursor-crosshair'
         )}
         onPointerDown={event => {

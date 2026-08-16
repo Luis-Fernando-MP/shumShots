@@ -14,7 +14,7 @@ const borders = [
 
 const DefaultBorders: FC<Props> = ({ borderValue, changeBorder }) => {
   return (
-    <section className='flex flex-row flex-wrap items-center gap-2'>
+    <section className='grid w-full grid-cols-3 gap-1.5'>
       {borders.map(border => (
         <IndividualDefaultBorder
           key={border.label}

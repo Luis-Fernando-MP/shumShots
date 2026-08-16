@@ -4,9 +4,11 @@ import { cn } from '@common/utils/cn'
 import * as TabsPrimitive from '@radix-ui/react-tabs'
 import { type ComponentPropsWithoutRef, type ElementRef, forwardRef } from 'react'
 
-const Tabs = TabsPrimitive.Root
+import { TabLayer } from './extension/layer'
 
-const TabsList = forwardRef<ElementRef<typeof TabsPrimitive.List>, ComponentPropsWithoutRef<typeof TabsPrimitive.List>>(
+const TabRoot = TabsPrimitive.Root
+
+const TabList = forwardRef<ElementRef<typeof TabsPrimitive.List>, ComponentPropsWithoutRef<typeof TabsPrimitive.List>>(
   ({ className, ...props }, ref) => (
     <TabsPrimitive.List
       ref={ref}
@@ -15,16 +17,16 @@ const TabsList = forwardRef<ElementRef<typeof TabsPrimitive.List>, ComponentProp
     />
   )
 )
-TabsList.displayName = TabsPrimitive.List.displayName
+TabList.displayName = 'Tab.List'
 
-const TabsTrigger = forwardRef<
+const TabTrigger = forwardRef<
   ElementRef<typeof TabsPrimitive.Trigger>,
   ComponentPropsWithoutRef<typeof TabsPrimitive.Trigger>
 >(({ className, ...props }, ref) => (
   <TabsPrimitive.Trigger
     ref={ref}
     className={cn(
-      'inline-flex items-center justify-center rounded-[12px] px-2.5 py-1.5 text-xs font-medium',
+      'inline-flex items-center justify-center gap-1.5 rounded-[12px] px-2.5 py-1.5 text-xs font-medium',
       'text-muted-foreground transition-colors',
       'hover:bg-muted/70 hover:text-foreground',
       'focus-visible:outline-primary focus-visible:outline-2 focus-visible:outline-offset-2',
@@ -35,14 +37,26 @@ const TabsTrigger = forwardRef<
     {...props}
   />
 ))
-TabsTrigger.displayName = TabsPrimitive.Trigger.displayName
+TabTrigger.displayName = 'Tab.Trigger'
 
-const TabsContent = forwardRef<
+const TabContent = forwardRef<
   ElementRef<typeof TabsPrimitive.Content>,
   ComponentPropsWithoutRef<typeof TabsPrimitive.Content>
 >(({ className, ...props }, ref) => (
   <TabsPrimitive.Content ref={ref} className={cn('min-h-0 outline-none', className)} {...props} />
 ))
-TabsContent.displayName = TabsPrimitive.Content.displayName
+TabContent.displayName = 'Tab.Content'
 
-export { Tabs, TabsContent, TabsList, TabsTrigger }
+const Tab = Object.assign(TabRoot, {
+  List: TabList,
+  Trigger: TabTrigger,
+  Content: TabContent,
+  Layer: TabLayer
+})
+
+const Tabs = TabRoot
+const TabsList = TabList
+const TabsTrigger = TabTrigger
+const TabsContent = TabContent
+
+export { Tab, TabContent, TabLayer, TabList, TabTrigger, Tabs, TabsContent, TabsList, TabsTrigger }

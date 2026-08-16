@@ -1,7 +1,8 @@
 'use client'
 
 import Button from '@common/components/Button'
-import Typography from '@common/components/Typography'
+import SectionGroup from '@common/components/SectionGroup'
+import Text from '@common/components/Text'
 import { cn } from '@common/utils/cn'
 import { createContext, useContext, type ReactNode } from 'react'
 
@@ -70,30 +71,14 @@ export const PreferenceField = ({
   return (
     <div data-preference-field className={cn('flex flex-col gap-2', className)}>
       <div className='flex flex-col gap-1'>
-        <Typography.Emphasis className='leading-snug'>{title}</Typography.Emphasis>
-
-        {subtitle != null && (
-          <Typography.Small weight='medium' className='text-foreground/70 leading-snug'>
-            {subtitle}
-          </Typography.Small>
-        )}
-
-        {description != null && (
-          <Typography.Paragraph tone='secondary' className='m-0 leading-snug'>
-            {description}
-          </Typography.Paragraph>
-        )}
-
-        {example != null && <Typography.Cite className='text-muted-foreground'>{example}</Typography.Cite>}
-
-        {note != null && (
-          <Typography.Text className='leading-snug'>
-            <Typography.Precaution>{note}</Typography.Precaution>
-          </Typography.Text>
-        )}
+        <Text.emphasis>{title}</Text.emphasis>
+        {subtitle != null && <Text.caption>{subtitle}</Text.caption>}
+        {description != null && <Text.paragraph className='text-muted-foreground'>{description}</Text.paragraph>}
+        {example != null && <Text.caption>{example}</Text.caption>}
+        {note != null && <Text.caption>{note}</Text.caption>}
       </div>
 
-      <div className='flex flex-wrap items-center gap-1.5'>{children}</div>
+      <div className='flex w-full flex-wrap items-center gap-1.5'>{children}</div>
     </div>
   )
 }
@@ -104,15 +89,7 @@ interface PreferencePanelProps {
 }
 
 export const PreferencePanel = ({ children, className }: PreferencePanelProps) => (
-  <div
-    className={cn(
-      'border-border/40 bg-card/40 flex flex-col gap-3 rounded-md border border-l-[3px] border-l-primary/70 p-3',
-      '[&:not(:has([data-preference-field]))]:hidden',
-      className
-    )}
-  >
-    {children}
-  </div>
+  <SectionGroup className={cn('[&:not(:has([data-preference-field]))]:hidden', className)}>{children}</SectionGroup>
 )
 
 interface PreferenceSectionProps {
@@ -131,18 +108,16 @@ export const PreferenceSection = ({ title, subtitle, keywords, children, classNa
 
   return (
     <PreferenceSearchProvider query={childQuery}>
-      <Typography.Block
-        title={title}
+      <section
         data-preference-section
-        className={cn('gap-3', query && '[&:not(:has([data-preference-field]))]:hidden', className)}
+        className={cn('flex flex-col gap-3', query && '[&:not(:has([data-preference-field]))]:hidden', className)}
       >
-        {subtitle != null && (
-          <Typography.Paragraph tone='secondary' className='m-0 -mt-1 leading-snug'>
-            {subtitle}
-          </Typography.Paragraph>
-        )}
+        <div className='flex flex-col gap-0.5'>
+          <Text.heading>{title}</Text.heading>
+          {subtitle != null && <Text.caption>{subtitle}</Text.caption>}
+        </div>
         <div className='flex flex-col gap-3.5'>{children}</div>
-      </Typography.Block>
+      </section>
     </PreferenceSearchProvider>
   )
 }

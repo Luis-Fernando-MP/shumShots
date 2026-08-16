@@ -1,7 +1,7 @@
 'use client'
 
 import { framesQuery, type Frame } from '@common/core'
-import Typography from '@common/components/Typography'
+import Text from '@common/components/Text'
 import { cn } from '@common/utils/cn'
 import useFrameStore, {
   createDefaultFrameConfig
@@ -37,9 +37,7 @@ const FrameThumb: FC<{
           className='absolute inset-0 size-full object-contain p-2'
         />
       </div>
-      <span className='text-muted-foreground group-hover:text-foreground truncate px-1.5 py-1.5 text-center text-[10px] leading-tight font-medium'>
-        {frame.label}
-      </span>
+      <Text.caption className='truncate px-1.5 py-1.5 text-center'>{frame.label}</Text.caption>
     </button>
   )
 }
@@ -64,11 +62,11 @@ const DeviceFramePresets: FC<Props> = ({ tabId }) => {
   const groups = data?.data?.groups ?? []
 
   if (isLoading) {
-    return <Typography.Small tone='secondary'>Cargando frames…</Typography.Small>
+    return <Text.caption>Cargando frames…</Text.caption>
   }
 
   if (isError) {
-    return <Typography.Small tone='secondary'>No se pudieron cargar los frames</Typography.Small>
+    return <Text.caption>No se pudieron cargar los frames</Text.caption>
   }
 
   return (
@@ -87,16 +85,14 @@ const DeviceFramePresets: FC<Props> = ({ tabId }) => {
       </button>
 
       {groups.length === 0 && (
-        <Typography.Small tone='secondary'>
+        <Text.caption>
           No hay frames en Cloudinary (<code className='text-foreground'>pixis/frames</code>).
-        </Typography.Small>
+        </Text.caption>
       )}
 
       {groups.map(group => (
         <div key={group.id ?? '__root'} className='flex flex-col gap-1.5'>
-          <Typography.Label size='xs' weight='semibold' className='text-muted-foreground tracking-wide'>
-            {group.label}
-          </Typography.Label>
+          <Text.heading>{group.label}</Text.heading>
           <div className='grid grid-cols-2 gap-2'>
             {group.frames.map(frame => (
               <FrameThumb

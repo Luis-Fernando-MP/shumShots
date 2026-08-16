@@ -1,5 +1,6 @@
 'use client'
 
+import Text from '@common/components/Text'
 import { cn } from '@common/utils/cn'
 import useFrameStore, {
   createDefaultFrameConfig,
@@ -16,17 +17,38 @@ const OPTIONS: { value: FrameFitMode; label: string; hint: string }[] = [
 
 type Props = { tabId: string; targetIds: string[] }
 
+const PhotoWindow: FC<{ mode: FrameFitMode; active: boolean }> = ({ mode, active }) => (
+  <span
+    className={cn(
+      'relative flex aspect-[4/3] w-full items-center justify-center overflow-hidden rounded-[8px]',
+      'bg-semantic-success/20'
+    )}
+  >
+    {mode === 'cover' && (
+      <span
+        className='absolute inset-[-18%] bg-linear-to-br from-primary/80 via-secondary/70 to-primary/40'
+        aria-hidden
+      />
+    )}
+    {mode === 'contain' && (
+      <span
+        className='h-[62%] w-[58%] rounded-[3px] bg-linear-to-br from-primary/80 via-secondary/70 to-primary/40'
+        aria-hidden
+      />
+    )}
+    {mode === 'fill' && (
+      <span className='absolute inset-0 bg-linear-to-br from-primary/80 via-secondary/70 to-primary/40' aria-hidden />
+    )}
+    {active && <span className='border-primary absolute inset-0 rounded-[8px] border' />}
+  </span>
+)
+
 const FitModeBuilder: FC<Props> = ({ tabId }) => {
-  const fitMode = useFrameStore(
-    s => s.byTab[tabId]?.fitMode ?? createDefaultFrameConfig().fitMode
-  )
+  const fitMode = useFrameStore(s => s.byTab[tabId]?.fitMode ?? createDefaultFrameConfig().fitMode)
   const setFitMode = useFrameStore(s => s.setFitMode)
 
   return (
-    <SectionBlock
-      title='Ajuste de imagen'
-      description='Cómo encaja la foto dentro de la zona verde del frame.'
-    >
+    <SectionBlock title='Ajuste de imagen' description='Cómo encaja la foto en el slot. Con frame, también recorta la zona verde.'>
       <div className='grid grid-cols-3 gap-1.5'>
         {OPTIONS.map(option => (
           <button
@@ -35,12 +57,16 @@ const FitModeBuilder: FC<Props> = ({ tabId }) => {
             title={option.hint}
             onClick={() => setFitMode(tabId, option.value)}
             className={cn(
-              'border-border/70 text-muted-foreground hover:bg-muted/50 hover:text-foreground flex h-9 items-center justify-center rounded-radius border px-1 text-[11px] font-medium transition-colors',
-              fitMode === option.value &&
-                'border-primary bg-secondary/40 text-foreground ring-primary/50 ring-1'
+              'flex flex-col gap-1.5 rounded-[12px] border p-1.5 transition-colors',
+              fitMode === option.value
+                ? 'border-primary bg-primary/5'
+                : 'border-border/70 hover:border-border hover:bg-muted/40'
             )}
           >
-            {option.label}
+            <PhotoWindow mode={option.value} active={fitMode === option.value} />
+            <Text.caption className={cn('text-center', fitMode === option.value && 'text-foreground')}>
+              {option.label}
+            </Text.caption>
           </button>
         ))}
       </div>

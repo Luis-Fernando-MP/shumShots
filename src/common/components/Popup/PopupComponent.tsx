@@ -1,6 +1,7 @@
 'use client'
 
 import APP_Z_INDEX from '@common/constants/z-index'
+import Text from '@common/components/Text'
 import { cn } from '@common/utils/cn'
 import {
   Children,
@@ -83,7 +84,7 @@ const PopupHeader = ({ children, className }: PopupHeaderProps) => {
     >
       <button type='button' className='bg-primary size-3.5 shrink-0 rounded-full' onClick={onClose} aria-label='Cerrar' />
       {typeof children === 'string' || typeof children === 'number' ? (
-        <h5 className='font-display text-md leading-tight font-medium tracking-wide'>{children}</h5>
+        <Text.title>{children}</Text.title>
       ) : (
         children
       )}

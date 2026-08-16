@@ -2,7 +2,7 @@
 
 import Button from '@common/components/Button'
 import { Input } from '@common/components/Input'
-import Typography from '@common/components/Typography'
+import Text from '@common/components/Text'
 import { cn } from '@common/utils/cn'
 import usePixisPreferencesStore from '@views/code-studio/store/pixisPreferences.store'
 import {
@@ -40,7 +40,7 @@ const AspectRatioButton: FC<{
       aria-pressed={selected}
       aria-label={`Aspect ratio ${label}`}
       onClick={onSelect}
-      className='h-auto w-[4.5rem] flex-col gap-1.5 px-1.5 py-2'
+      className='h-auto w-full flex-col gap-1.5 rounded-[12px] px-1.5 py-2'
     >
       <span
         className={cn(
@@ -69,13 +69,7 @@ const AspectRatioButton: FC<{
           />
         )}
       </span>
-      <Typography.Small
-        weight='medium'
-        tone={selected ? 'active' : 'secondary'}
-        className={cn('leading-none', selected && 'text-semantic-primary')}
-      >
-        {label}
-      </Typography.Small>
+      <Text.emphasis className={cn('leading-none', selected && 'text-semantic-primary')}>{label}</Text.emphasis>
     </Button>
   )
 }
@@ -143,7 +137,7 @@ const AspectRatioPreference: FC = () => {
       keywords='aspect ratio proporcion ancho alto default free'
     >
       <div className='flex w-full flex-col gap-2.5'>
-        <div className='flex flex-wrap gap-1.5'>
+        <div className='grid w-full grid-cols-2 gap-1.5'>
           <AspectRatioButton
             ratio={ASPECT_DEFAULT}
             label='Default'
@@ -184,9 +178,7 @@ const AspectRatioPreference: FC = () => {
               }}
               containerClassName='w-[4.5rem]'
             />
-            <Typography.Text weight='medium' tone='secondary'>
-              /
-            </Typography.Text>
+            <Text.caption>/</Text.caption>
             <Input
               type='number'
               size='sm'

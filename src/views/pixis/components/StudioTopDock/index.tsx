@@ -27,24 +27,25 @@ const pages = [
 
 /**
  * Chrome superior compartido por ambos estudios.
- *
- * @returns Tema, zoom, sistema, atajos, about y cambio de estudio.
  */
 const StudioTopDock: FC = () => {
   const pathname = usePathname()
 
   return (
     <>
-      <ThemeController />
-      <FullScreen />
+      <div className='flex items-center gap-0.5'>
+        <ThemeController />
+        <FullScreen />
+        <ZoomController />
+      </div>
       <Separator />
-      <ZoomController />
+      <div className='flex items-center gap-0.5'>
+        <SystemGridPopup />
+        <DetailBar />
+        <AboutShumShots />
+      </div>
       <Separator />
-      <SystemGridPopup />
-      <DetailBar />
-      <AboutShumShots />
-      <Separator />
-      <nav className='gap-grid-sm flex flex-row items-center'>
+      <nav className='flex flex-row items-center gap-0.5'>
         {pages.map(page => {
           const Icon = page.icon
           const isActive = pathname === page.path

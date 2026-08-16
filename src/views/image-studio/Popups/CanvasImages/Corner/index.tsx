@@ -1,10 +1,9 @@
 'use client'
 
-import Separator from '@common/components/Separator'
 import { TABS_SCOPES } from '@views/image-studio/constants'
 import { getTabsStore } from '@views/image-studio/Popups/common/components/tabs/store'
 import DomainPanel from '@views/image-studio/components/DomainPanel'
-import { type FC, Fragment, useEffect } from 'react'
+import { type FC, useEffect } from 'react'
 
 import useCornerStore from './store/corner/store'
 import SECTIONS from './sections'
@@ -27,7 +26,7 @@ const Corner: FC = () => {
 
   return (
     <DomainPanel
-      className='gap-grid-xl [&_h5]:text-xs [&_h5]:leading-snug [&_.text-sm]:text-xs'
+      resetLabel='Resetear esquinas'
       onReset={() => {
         resetCorner()
         getTabsStore(TABS_SCOPES.corner).getState().reset()
@@ -37,12 +36,9 @@ const Corner: FC = () => {
         <Tabs.Title>Destinos y estilo</Tabs.Title>
         <Tabs.Content>
           {({ selectedTab, selectedSlots }) => (
-            <div className='gap-grid-lg flex flex-col'>
-              {SECTIONS.map(({ key, component: Component }, index) => (
-                <Fragment key={key}>
-                  {index > 0 && <Separator orientation='horizontal' />}
-                  <Component tabId={selectedTab.id} targetIds={selectedSlots} />
-                </Fragment>
+            <div className='flex flex-col gap-6'>
+              {SECTIONS.map(({ key, component: Component }) => (
+                <Component key={key} tabId={selectedTab.id} targetIds={selectedSlots} />
               ))}
             </div>
           )}

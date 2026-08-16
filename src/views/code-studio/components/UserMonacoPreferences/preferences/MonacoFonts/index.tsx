@@ -19,7 +19,7 @@ const MonacoFonts: FC = () => {
   const selectedId = resolveMonacoFontId(typography)
 
   return (
-    <div className='grid w-full grid-cols-2 gap-1.5 sm:grid-cols-3'>
+    <div className='grid w-full grid-cols-2 gap-1.5'>
       {Object.entries(monacoFonts).map(([name, font]) => {
         const fontId = name as MonacoFontId
         const selected = selectedId === fontId

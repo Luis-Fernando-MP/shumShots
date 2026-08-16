@@ -1,5 +1,6 @@
 'use client'
 
+import SliceContainer from '@common/components/SliceContainer'
 import SliderControl from '@common/components/SliderControl'
 import ColorsController from '@common/components/ColorsController'
 import { extractColor } from '@common/components/extractColor'
@@ -53,7 +54,7 @@ const LayerPresets: FC<PanelProps> = ({ kind, tabId }) => {
 
   return (
     <SectionBlock title='Estilos' level={2} description='Elige un preset y afina con el foco y los ajustes.'>
-      <div className='grid grid-cols-3 gap-1.5'>
+      <SliceContainer maxHeight={150} extendedMaxHeight={360} className='grid grid-cols-2 gap-1.5'>
         {presets.map(preset => {
           const active = activeType === preset.type
           return (
@@ -70,22 +71,22 @@ const LayerPresets: FC<PanelProps> = ({ kind, tabId }) => {
                   : applyLightPreset(tabId, preset.type as LightType)
               }
               className={cn(
-                'flex h-auto flex-col items-center gap-1.5 px-1 py-2',
+                'flex h-auto flex-col items-center gap-1.5 rounded-[12px] px-1 py-2',
                 active && 'border-primary'
               )}
             >
-              <div className='bg-muted/40 flex h-10 w-full items-center justify-center rounded-sm'>
+              <div className='bg-muted relative flex h-12 w-full items-end justify-center overflow-hidden rounded-[8px] px-2 pb-2'>
                 <div
                   className={cn(
-                    'size-5 rounded-sm',
-                    preset.type === 'none' ? 'bg-muted-foreground/25' : 'bg-primary/40'
+                    'size-6 rounded-[3px]',
+                    preset.type === 'none' ? 'bg-muted-foreground/30' : 'bg-card'
                   )}
                   style={{ boxShadow: preset.type === 'none' ? 'none' : preset.preview }}
                 />
               </div>
               <span
                 className={cn(
-                  'text-xs leading-none font-medium',
+                  'text-chrome-ui font-semibold leading-none',
                   active ? 'text-foreground' : 'text-muted-foreground'
                 )}
               >
@@ -94,7 +95,7 @@ const LayerPresets: FC<PanelProps> = ({ kind, tabId }) => {
             </Button>
           )
         })}
-      </div>
+      </SliceContainer>
     </SectionBlock>
   )
 }

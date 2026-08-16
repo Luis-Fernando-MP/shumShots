@@ -1,11 +1,10 @@
 'use client'
 
-import Separator from '@common/components/Separator'
 import { TABS_SCOPES } from '@views/image-studio/constants'
 import useShadowStore from '@views/image-studio/Popups/CanvasImages/ShadowLight/store/shadow-light/store'
 import { getTabsStore } from '@views/image-studio/Popups/common/components/tabs/store'
 import DomainPanel from '@views/image-studio/components/DomainPanel'
-import { Fragment, type FC, useEffect } from 'react'
+import { type FC, useEffect } from 'react'
 
 import SECTIONS from './sections'
 import Tabs from '@views/image-studio/Popups/common/components/tabs'
@@ -27,6 +26,7 @@ const ShadowLight: FC = () => {
 
   return (
     <DomainPanel
+      resetLabel='Resetear sombra'
       onReset={() => {
         reset()
         getTabsStore(TABS_SCOPES.shadow).getState().reset()
@@ -36,15 +36,10 @@ const ShadowLight: FC = () => {
         <Tabs.Title>Destinos y efectos</Tabs.Title>
         <Tabs.Content>
           {({ selectedTab }) => (
-            <div className='gap-grid-lg flex flex-col'>
-              {SECTIONS.map((section, index) => {
+            <div className='flex flex-col gap-6'>
+              {SECTIONS.map(section => {
                 const Component = section.component
-                return (
-                  <Fragment key={section.key}>
-                    {index > 0 && <Separator orientation='horizontal' />}
-                    <Component tabId={selectedTab.id} />
-                  </Fragment>
-                )
+                return <Component key={section.key} tabId={selectedTab.id} />
               })}
             </div>
           )}

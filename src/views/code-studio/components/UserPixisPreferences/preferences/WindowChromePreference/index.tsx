@@ -1,7 +1,7 @@
 'use client'
 
 import Button from '@common/components/Button'
-import Typography from '@common/components/Typography'
+import Text from '@common/components/Text'
 import { cn } from '@common/utils/cn'
 import usePixisPreferencesStore from '@views/code-studio/store/pixisPreferences.store'
 import useWorkspaceStore from '@views/code-studio/store/workspace.store'
@@ -79,9 +79,6 @@ const PreviewCard: FC<{
   children: ReactNode
   className?: string
 }> = ({ label, selected, onSelect, children, className }) => {
-  let tone: 'active' | 'secondary' = 'secondary'
-  if (selected) tone = 'active'
-
   return (
     <Button
       type='button'
@@ -91,7 +88,7 @@ const PreviewCard: FC<{
       aria-pressed={selected}
       aria-label={label}
       onClick={onSelect}
-      className={cn('h-auto w-[6.75rem] flex-col gap-2 px-2 py-2.5', className)}
+      className={cn('h-auto w-full flex-col gap-2 rounded-[12px] px-2 py-2.5', className)}
     >
       <span
         className={cn(
@@ -101,13 +98,7 @@ const PreviewCard: FC<{
       >
         {children}
       </span>
-      <Typography.Small
-        weight='medium'
-        tone={tone}
-        className={cn('leading-none', selected && 'text-semantic-primary')}
-      >
-        {label}
-      </Typography.Small>
+      <Text.emphasis className={cn('leading-none', selected && 'text-semantic-primary')}>{label}</Text.emphasis>
     </Button>
   )
 }
@@ -146,6 +137,7 @@ const MiniWindow: FC<{
   fileExplorer?: boolean
   statusBar?: boolean
   breadcrumb?: boolean
+  size?: 'sm' | 'lg'
 }> = ({
   controls = 'mac',
   side = 'left',
@@ -154,12 +146,18 @@ const MiniWindow: FC<{
   activityBar = false,
   fileExplorer = false,
   statusBar = false,
-  breadcrumb = false
+  breadcrumb = false,
+  size = 'sm'
 }) => {
-  const headerH = Math.max(10, Math.round(HEADER_DENSITY_PX[density] * 0.32))
+  const headerH = Math.max(10, Math.round(HEADER_DENSITY_PX[density] * (size === 'lg' ? 0.42 : 0.32)))
 
   return (
-    <div className='bg-background/80 flex h-[3rem] w-[92%] flex-col overflow-hidden rounded-[4px] border border-current/15'>
+    <div
+      className={cn(
+        'bg-background/80 flex flex-col overflow-hidden rounded-[4px] border border-current/15',
+        size === 'lg' ? 'h-[5.5rem] w-full' : 'h-[3rem] w-[92%]'
+      )}
+    >
       <div className='flex items-center gap-0.5 px-1' style={{ height: headerH }}>
         <SideControls controls={controls} side={side} position='left' macColors={macColors} />
         <span className='flex min-w-0 flex-1 justify-center'>
@@ -254,28 +252,44 @@ const WindowChromePreference: FC = () => {
   return (
     <>
       <div className='flex flex-col gap-5'>
+        <div className='border-border/60 bg-muted/20 flex w-full items-center justify-center rounded-[12px] border p-3'>
+          <MiniWindow
+            size='lg'
+            controls={chrome.controls}
+            side={chrome.controlsSide}
+            macColors={chrome.macColors}
+            density={chrome.headerDensity}
+            activityBar={chrome.activityBar}
+            fileExplorer={chrome.fileExplorer}
+            statusBar={chrome.statusBar}
+            breadcrumb={chrome.breadcrumb}
+          />
+        </div>
+
         <Row
           title='Look presets'
           description='Atajos que aplican varios estilos. El activo queda marcado.'
           keywords='preset presets look macos vscode windows'
         >
-          {CHROME_LOOK_PRESETS.map(preset => (
-            <PreviewCard
-              key={preset.id}
-              label={preset.label}
-              selected={matchesChromePreset(chrome, preset.patch)}
-              onSelect={() => patchChrome(preset.patch)}
-            >
-              <MiniWindow
-                controls={preset.patch.controls}
-                side={preset.patch.controlsSide}
-                activityBar={preset.patch.activityBar}
-                fileExplorer={preset.patch.fileExplorer}
-                statusBar={preset.patch.statusBar}
-                breadcrumb={preset.patch.breadcrumb}
-              />
-            </PreviewCard>
-          ))}
+          <div className='grid w-full grid-cols-2 gap-1.5'>
+            {CHROME_LOOK_PRESETS.map(preset => (
+              <PreviewCard
+                key={preset.id}
+                label={preset.label}
+                selected={matchesChromePreset(chrome, preset.patch)}
+                onSelect={() => patchChrome(preset.patch)}
+              >
+                <MiniWindow
+                  controls={preset.patch.controls}
+                  side={preset.patch.controlsSide}
+                  activityBar={preset.patch.activityBar}
+                  fileExplorer={preset.patch.fileExplorer}
+                  statusBar={preset.patch.statusBar}
+                  breadcrumb={preset.patch.breadcrumb}
+                />
+              </PreviewCard>
+            ))}
+          </div>
         </Row>
 
         <Row
@@ -283,16 +297,18 @@ const WindowChromePreference: FC = () => {
           description='Bolitas Mac, iconos Windows o sin controles.'
           keywords='controls mac windows traffic lights'
         >
-          {(['mac', 'windows', 'none'] as const).map(style => (
-            <PreviewCard
-              key={style}
-              label={CONTROLS_LABEL[style]}
-              selected={chrome.controls === style}
-              onSelect={() => set('controls', style)}
-            >
-              <MiniWindow controls={style} side={chrome.controlsSide} macColors={chrome.macColors} />
-            </PreviewCard>
-          ))}
+          <div className='grid w-full grid-cols-2 gap-1.5'>
+            {(['mac', 'windows', 'none'] as const).map(style => (
+              <PreviewCard
+                key={style}
+                label={CONTROLS_LABEL[style]}
+                selected={chrome.controls === style}
+                onSelect={() => set('controls', style)}
+              >
+                <MiniWindow controls={style} side={chrome.controlsSide} macColors={chrome.macColors} />
+              </PreviewCard>
+            ))}
+          </div>
         </Row>
 
         {(chrome.controls !== 'none' || searching) && (
@@ -308,16 +324,18 @@ const WindowChromePreference: FC = () => {
 
         {(chrome.controls === 'mac' || searching) && (
           <Row title='Colores Mac' description='Paleta de las tres bolitas.' keywords='macColors classic graphite candy mono'>
-            {(Object.keys(MAC_TRAFFIC_PRESETS) as MacTrafficPreset[]).map(preset => (
-              <PreviewCard
-                key={preset}
-                label={MAC_TRAFFIC_PRESETS[preset].label}
-                selected={chrome.macColors === preset}
-                onSelect={() => set('macColors', preset)}
-              >
-                <MiniWindow controls='mac' side={chrome.controlsSide} macColors={preset} />
-              </PreviewCard>
-            ))}
+            <div className='grid w-full grid-cols-2 gap-1.5'>
+              {(Object.keys(MAC_TRAFFIC_PRESETS) as MacTrafficPreset[]).map(preset => (
+                <PreviewCard
+                  key={preset}
+                  label={MAC_TRAFFIC_PRESETS[preset].label}
+                  selected={chrome.macColors === preset}
+                  onSelect={() => set('macColors', preset)}
+                >
+                  <MiniWindow controls='mac' side={chrome.controlsSide} macColors={preset} />
+                </PreviewCard>
+              ))}
+            </div>
           </Row>
         )}
 
@@ -391,16 +409,18 @@ const WindowChromePreference: FC = () => {
             description='Cómo se separan las carpetas del path del archivo.'
             keywords='breadcrumbSeparator separator'
           >
-            {BREADCRUMB_SEPARATORS.map(sep => (
-              <PreviewCard
-                key={sep}
-                label={SEPARATOR_LABEL[sep]}
-                selected={chrome.breadcrumbSeparator === sep}
-                onSelect={() => set('breadcrumbSeparator', sep)}
-              >
-                <BreadcrumbPreview separator={sep} />
-              </PreviewCard>
-            ))}
+            <div className='grid w-full grid-cols-2 gap-1.5'>
+              {BREADCRUMB_SEPARATORS.map(sep => (
+                <PreviewCard
+                  key={sep}
+                  label={SEPARATOR_LABEL[sep]}
+                  selected={chrome.breadcrumbSeparator === sep}
+                  onSelect={() => set('breadcrumbSeparator', sep)}
+                >
+                  <BreadcrumbPreview separator={sep} />
+                </PreviewCard>
+              ))}
+            </div>
           </Row>
         )}
 
@@ -414,16 +434,18 @@ const WindowChromePreference: FC = () => {
 
         {(chrome.statusBar || searching) && (
           <Row title='Densidad status bar' description='Vista previa del contenido de la barra.' keywords='statusBarDensity'>
-            {STATUS_DENSITY.map(({ id, label, compact }) => (
-              <PreviewCard
-                key={id}
-                label={label}
-                selected={chrome.statusBarDensity === id}
-                onSelect={() => set('statusBarDensity', id)}
-              >
-                <StatusBarPreview compact={compact} />
-              </PreviewCard>
-            ))}
+            <div className='grid w-full grid-cols-2 gap-1.5'>
+              {STATUS_DENSITY.map(({ id, label, compact }) => (
+                <PreviewCard
+                  key={id}
+                  label={label}
+                  selected={chrome.statusBarDensity === id}
+                  onSelect={() => set('statusBarDensity', id)}
+                >
+                  <StatusBarPreview compact={compact} />
+                </PreviewCard>
+              ))}
+            </div>
           </Row>
         )}
 
@@ -452,9 +474,7 @@ const WindowChromePreference: FC = () => {
                   key={id}
                   className='bg-background/70 flex items-center justify-between gap-2 rounded-md px-2 py-1.5'
                 >
-                  <Typography.Small weight='medium' className='leading-none'>
-                    {ACTIVITY_ICON_META[id].label}
-                  </Typography.Small>
+                  <Text.emphasis className='leading-none'>{ACTIVITY_ICON_META[id].label}</Text.emphasis>
                   <div className='flex gap-0.5'>
                     <Button
                       type='button'

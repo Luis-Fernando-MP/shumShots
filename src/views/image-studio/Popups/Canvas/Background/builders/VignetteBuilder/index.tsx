@@ -2,7 +2,7 @@
 
 import SliderControl from '@common/components/SliderControl'
 import ColorPicker from '@common/components/ColorPicker'
-import Typography from '@common/components/Typography'
+import Text from '@common/components/Text'
 import {
   VIGNETTE_PRESETS,
   clampPercent,
@@ -119,9 +119,7 @@ const VignetteBuilder: FC = () => {
 
       {showEditor && (
         <div className='gap-grid flex flex-col rounded-radius bg-muted/20 p-2 ring-1 ring-inset ring-border/40'>
-          <Typography.Label size='xs' weight='semibold' className='text-foreground tracking-wide'>
-            ## Ajuste fino
-          </Typography.Label>
+          <Text.heading>Ajuste fino</Text.heading>
           <div
             ref={padRef}
             className='relative aspect-[4/3] touch-none overflow-hidden rounded-radius ring-1 ring-inset ring-border/40 cursor-grab active:cursor-grabbing'

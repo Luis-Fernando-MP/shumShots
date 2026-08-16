@@ -75,8 +75,8 @@ const PictureViewer: FC<Props> = ({
         slotId,
         createDefaultFrameConfig()
       )
-      const fitMode = frameActive ? resolved.fitMode : 'cover'
-      const position = frameActive ? (frameState.slotPan[slotId] ?? defaultSlotPan) : defaultSlotPan
+      const fitMode = resolved.fitMode
+      const position = frameState.slotPan[slotId] ?? defaultSlotPan
       const objectPosition = `${position.x * 100}% ${position.y * 100}%`
 
       if (image.style.objectFit !== fitMode) image.style.objectFit = fitMode

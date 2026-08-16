@@ -1,21 +1,21 @@
 'use client'
 
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@common/components/Tabs'
+import { Tab } from '@common/components/Tabs'
+import Text from '@common/components/Text'
 import { cn } from '@common/utils/cn'
-import { Children, type ReactElement, type ReactNode, isValidElement } from 'react'
+import { type LucideIcon } from 'lucide-react'
+import { Children, type ReactElement, type ReactNode, isValidElement, useState } from 'react'
 
 interface AppTabProps {
   value: string
   label: string
+  description?: string
+  icon?: LucideIcon
   children?: ReactNode
 }
 
 /**
  * Pestaña de chrome. Solo se usa como hijo de `App.tabs`.
- *
- * @param props.value - Identificador de la pestaña.
- * @param props.label - Texto visible en el trigger.
- * @param props.children - Panel que se muestra al activarla.
  */
 const AppTab = (_props: AppTabProps) => null
 
@@ -26,7 +26,6 @@ interface AppTabsProps {
   defaultValue?: string
   value?: string
   onValueChange?: (value: string) => void
-  footer?: ReactNode
   className?: string
 }
 
@@ -34,14 +33,9 @@ const isAppTab = (child: ReactNode): child is ReactElement<AppTabProps> =>
   isValidElement(child) && child.type === AppTab
 
 /**
- * Lista de pestañas del chrome de estudio (radio 12px, tokens PIXIS).
- *
- * @param props.children - Uno o más `App.tab`.
- * @param props.defaultValue - Pestaña inicial. Por defecto, la primera.
- * @param props.footer - Pie opcional (búsqueda, resets) bajo el contenido.
- * @returns El conjunto de triggers y paneles.
+ * Tabs de sidebar: intro del tab activo + triggers con icono.
  */
-const AppTabs = ({ children, defaultValue, value, onValueChange, footer, className }: AppTabsProps) => {
+const AppTabs = ({ children, defaultValue, value, onValueChange, className }: AppTabsProps) => {
   const tabs: AppTabProps[] = []
 
   Children.forEach(children, child => {
@@ -49,32 +43,58 @@ const AppTabs = ({ children, defaultValue, value, onValueChange, footer, classNa
   })
 
   const initial = defaultValue ?? tabs[0]?.value
+  const [uncontrolled, setUncontrolled] = useState(initial)
+  const current = value ?? uncontrolled
+  const active = tabs.find(tab => tab.value === current) ?? tabs[0]
+  const ActiveIcon = active?.icon
+
+  const handleChange = (next: string) => {
+    if (value == null) setUncontrolled(next)
+    onValueChange?.(next)
+  }
 
   return (
-    <Tabs
+    <Tab
       defaultValue={value ? undefined : initial}
-      value={value}
-      onValueChange={onValueChange}
-      className={cn('flex h-full min-h-0 flex-col', className)}
+      value={value ?? uncontrolled}
+      onValueChange={handleChange}
+      className={cn('flex min-h-0 flex-1 flex-col', className)}
     >
-      <TabsList className='border-border/50 shrink-0 border-b px-3 py-2.5'>
-        {tabs.map(tab => (
-          <TabsTrigger key={tab.value} value={tab.value}>
-            {tab.label}
-          </TabsTrigger>
-        ))}
-      </TabsList>
+      <div className='border-border/50 shrink-0 space-y-3 border-b px-3 py-3'>
+        {active && (
+          <div className='flex items-start gap-2.5'>
+            {ActiveIcon && (
+              <span className='bg-muted text-foreground mt-0.5 grid size-8 place-content-center rounded-[12px]'>
+                <ActiveIcon className='size-4' />
+              </span>
+            )}
+            <div className='min-w-0'>
+              <Text.title>{active.label}</Text.title>
+              {active.description && <Text.subtitle className='mt-0.5'>{active.description}</Text.subtitle>}
+            </div>
+          </div>
+        )}
+        <Tab.List>
+          {tabs.map(tab => {
+            const Icon = tab.icon
+            return (
+              <Tab.Trigger key={tab.value} value={tab.value}>
+                {Icon && <Icon className='size-3.5' />}
+                {tab.label}
+              </Tab.Trigger>
+            )
+          })}
+        </Tab.List>
+      </div>
 
       <div className='min-h-0 flex-1 overflow-hidden'>
         {tabs.map(tab => (
-          <TabsContent key={tab.value} value={tab.value} className='flex h-full flex-col overflow-hidden'>
+          <Tab.Content key={tab.value} value={tab.value} className='flex h-full flex-col overflow-hidden'>
             {tab.children}
-          </TabsContent>
+          </Tab.Content>
         ))}
       </div>
-
-      {footer}
-    </Tabs>
+    </Tab>
   )
 }
 

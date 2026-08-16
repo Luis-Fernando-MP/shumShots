@@ -46,6 +46,14 @@
   --text-xs--line-height: 1rem;
   --text-sm: 0.875rem;
   --text-sm--line-height: 1.25rem;
+  --text-chrome-title: 0.875rem;
+  --text-chrome-title--line-height: 1.25rem;
+  --text-chrome-heading: 0.8125rem;
+  --text-chrome-heading--line-height: 1.125rem;
+  --text-chrome-ui: 0.75rem;
+  --text-chrome-ui--line-height: 1.05rem;
+  --text-chrome-meta: 0.6875rem;
+  --text-chrome-meta--line-height: 0.9375rem;
   --text-md: 1rem;
   --text-md--line-height: 1.5rem;
   --text-base: 1rem;
@@ -87,7 +95,7 @@
 }
 
 :root {
-  --app-font-size: 14px;
+  --app-font-size: 16px;
   --bg-primary: 0, 0, 0;
   --bg-secondary: 10, 10, 10;
   --bg-tertiary: 23, 23, 23;

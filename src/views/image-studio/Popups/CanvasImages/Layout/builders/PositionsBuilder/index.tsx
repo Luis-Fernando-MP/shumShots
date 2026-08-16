@@ -1,6 +1,8 @@
 'use client'
 
+import Text from '@common/components/Text'
 import { cn } from '@common/utils/cn'
+import useBackgroundStore from '@views/image-studio/Popups/Canvas/Background/store/background/store'
 import usePicturesStore from '@views/image-studio/Popups/CanvasImages/ImagesCount/store/images-count/pictures'
 import {
   getPositionsForCount,
@@ -12,6 +14,8 @@ import { type FC, useEffect, useMemo } from 'react'
 
 const PositionsBuilder: FC = () => {
   const count = usePicturesStore(s => s.count)
+  const canvasW = useBackgroundStore(s => s.backgroundWidth)
+  const canvasH = useBackgroundStore(s => s.backgroundHeight)
   const positionId = useLayoutStore(s => s.positionId)
   const setPositionId = useLayoutStore(s => s.setPositionId)
   const syncPositionForCount = useLayoutStore(s => s.syncPositionForCount)
@@ -26,7 +30,7 @@ const PositionsBuilder: FC = () => {
       title='Posiciones'
       description='Estilos de composición para el número de slots actual.'
     >
-      <div className='grid grid-cols-4 gap-1.5'>
+      <div className='grid grid-cols-2 gap-1.5'>
         {entries.map(item => {
           const active = positionId === item.id
           const Preview = item.preview
@@ -36,21 +40,22 @@ const PositionsBuilder: FC = () => {
               type='button'
               onClick={() => setPositionId(item.id as SlotPositionId)}
               className={cn(
-                'relative flex flex-col gap-1 rounded-sm border p-1.5 transition-colors',
+                'relative flex flex-col gap-1 rounded-[12px] border p-1.5 transition-colors',
                 active
                   ? 'border-primary bg-primary/5'
                   : 'border-border/60 hover:border-border hover:bg-muted/40'
               )}
             >
               {item.is3d && (
-                <span className='text-primary absolute top-1 right-1 z-[1] text-[9px] font-semibold tracking-wide'>
-                  3D
-                </span>
+                <Text.caption className='text-primary absolute top-1 right-1 z-[1]'>3D</Text.caption>
               )}
-              <Preview active={active} count={count} />
-              <span className='text-muted-foreground text-center text-[10px] leading-tight font-medium'>
-                {item.title}
-              </span>
+              <div
+                className='bg-muted w-full overflow-hidden rounded-[6px]'
+                style={{ aspectRatio: `${canvasW} / ${canvasH}` }}
+              >
+                <Preview active={active} count={count} />
+              </div>
+              <Text.caption className={cn('text-center', active && 'text-foreground')}>{item.title}</Text.caption>
             </button>
           )
         })}

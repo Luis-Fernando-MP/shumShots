@@ -1,29 +1,26 @@
 'use client'
 
-import Typography from '@common/components/Typography'
+import Text from '@common/components/Text'
+import { useSectionSearch } from '@views/image-studio/components/section-search'
 import type { FC, ReactNode } from 'react'
 
 type Props = {
   title: string
   level?: 1 | 2
   description?: string
+  keywords?: string
   children: ReactNode
 }
 
-const SectionBlock: FC<Props> = ({ title, level = 1, description, children }) => {
-  const prefix = level === 1 ? '#' : '##'
+const SectionBlock: FC<Props> = ({ title, description, keywords, children }) => {
+  const visible = useSectionSearch([title, description, keywords])
+  if (!visible) return null
 
   return (
-    <section className='gap-grid flex flex-col'>
+    <section className='flex flex-col gap-2' data-section-block>
       <div className='flex flex-col gap-0.5'>
-        <Typography.Label size='xs' weight='semibold' className='text-foreground tracking-wide'>
-          {prefix} {title}
-        </Typography.Label>
-        {description && (
-          <Typography.Small tone='secondary' className='text-xs leading-relaxed'>
-            {description}
-          </Typography.Small>
-        )}
+        <Text.heading>{title}</Text.heading>
+        {description && <Text.caption>{description}</Text.caption>}
       </div>
       {children}
     </section>

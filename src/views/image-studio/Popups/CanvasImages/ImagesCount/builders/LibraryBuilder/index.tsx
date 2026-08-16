@@ -2,7 +2,8 @@
 
 import Dropzone, { type DropzoneFile } from '@common/components/Dropzone'
 import Input from '@common/components/Input'
-import Typography from '@common/components/Typography'
+import Switch from '@common/components/Switch'
+import Text from '@common/components/Text'
 import { cn } from '@common/utils/cn'
 import {
   DndContext,
@@ -70,8 +71,8 @@ const SortableLibraryRow: FC<{ image: LibraryImage }> = ({ image }) => {
       ref={setNodeRef}
       style={style}
       className={cn(
-        'bg-muted/25 border-border/60 flex items-center gap-2.5 rounded-lg border px-2.5 py-2',
-        isDragging && 'bg-card shadow-md'
+        'bg-muted flex items-center gap-2 rounded-[12px] px-2 py-1.5',
+        isDragging && 'ring-primary/40 ring-1'
       )}
     >
       <button
@@ -89,9 +90,9 @@ const SortableLibraryRow: FC<{ image: LibraryImage }> = ({ image }) => {
         <div className='bg-muted size-10 shrink-0 rounded-md' />
       )}
       <div className='flex min-w-0 flex-1 flex-col gap-0.5'>
-        <p className='text-muted-foreground truncate text-[11px] tabular-nums'>
+        <Text.caption className='truncate tabular-nums'>
           {image.width} × {image.height} · {formatBytes(image.bytes)}
-        </p>
+        </Text.caption>
         <Input
           value={name}
           onChange={event => setName(event.target.value)}
@@ -105,22 +106,12 @@ const SortableLibraryRow: FC<{ image: LibraryImage }> = ({ image }) => {
           aria-label='Nombre único'
         />
       </div>
-      <button
-        type='button'
-        onClick={() => setActive(image.id, !image.active)}
-        className={cn(
-          'flex shrink-0 items-center gap-1.5 text-xs font-medium',
-          image.active ? 'text-semantic-success' : 'text-muted-foreground'
-        )}
-      >
-        <span
-          className={cn(
-            'size-2 rounded-full',
-            image.active ? 'bg-semantic-success' : 'bg-muted-foreground/50'
-          )}
-        />
-        {image.active ? 'Activo' : 'Inactivo'}
-      </button>
+      <Switch
+        size='sm'
+        on={image.active}
+        aria-label={image.active ? 'Activo' : 'Inactivo'}
+        onChange={() => setActive(image.id, !image.active)}
+      />
       <button
         type='button'
         aria-label='Eliminar'
@@ -158,6 +149,7 @@ const LibraryBuilder: FC = () => {
     >
       <div className='flex flex-col gap-3'>
         <Dropzone
+          compact
           maxFiles={MAX_LIBRARY_IMAGES}
           onDrop={files => {
             void importFiles(files)
@@ -168,9 +160,7 @@ const LibraryBuilder: FC = () => {
           <SortableContext items={images.map(item => item.id)} strategy={verticalListSortingStrategy}>
             <div className='flex flex-col gap-2'>
               {images.length === 0 && (
-                <Typography.Small tone='secondary'>
-                  Aún no hay imágenes en la biblioteca.
-                </Typography.Small>
+                <Text.caption>Aún no hay imágenes en la biblioteca.</Text.caption>
               )}
               {images.map(image => (
                 <SortableLibraryRow key={image.id} image={image} />

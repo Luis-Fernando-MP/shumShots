@@ -36,7 +36,7 @@ const SoloBox: FC<PreviewProps & SoloLayout> = ({
 }) => {
   const has3d = rotateX !== 0 || rotateY !== 0
   return (
-    <div className='relative h-10 w-full overflow-hidden'>
+    <div className='relative h-full w-full overflow-hidden'>
       <div
         className={cn('absolute rounded-[2px]', active ? 'bg-primary' : 'bg-foreground/30')}
         style={{

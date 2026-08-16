@@ -153,7 +153,8 @@ Mapped from `Typography` (`src/common/components/Typography`) and `@theme` type 
 - **Display / Title** (`2xl` / 1.5rem / bold / display): page or popup titles (`Typography.Title`).
 - **Headline / Subtitle** (`xl` / 1.25rem / semibold / display): section titles.
 - **Title / Heading** (`lg` / 1.125rem / semibold / display): mid-level headings.
-- **Label** (`md` / 1rem / semibold / display): block titles, often prefixed `#` in `Typography.Block`.
+- **Label** (`md` / 1rem / semibold / display): block titles. `Typography.Block` strips a leading `#` if present; do not write `#` / `##` in UI copy.
+- **Sidebar chrome** (`Text` in `src/common/components/Text`, tokens `--text-chrome-*`): title 14/700, heading 13/600, emphasis 12/600, paragraph/subtitle 12/400, caption 11/400. Never same weight for title and helper.
 - **Body** (`sm` / 0.875rem / regular / sans): default copy and button text.
 - **Small** (`xs` / 0.75rem / regular / muted): captions, tooltips, fine print.
 
@@ -197,7 +198,7 @@ Focus: `outline-2 outline-offset-2 outline-primary` on buttons. Inputs use `focu
 
 ## Components
 
-Use `@common/components` primitives. Do not restyle a one-off button when `Button` / `Input` / `Chip` / `Typography` already cover the case.
+Use `@common/components` primitives. Do not restyle a one-off button when `Button` / `Input` / `Chip` / `Text` / `Typography` already cover the case. Sidebar and dock chrome use `Text` and `rounded-[12px]` controls; builders on the shot stay at 4px.
 
 ### Buttons
 - **Shape:** `rounded-radius` (4px), `text-sm font-medium`, heights `h-8` / `h-10` / `h-12`.
@@ -225,7 +226,8 @@ Use `@common/components` primitives. Do not restyle a one-off button when `Butto
 
 ### Navigation
 - `App.topDock` / `App.bottomDock`: icon-forward, ghost buttons, tooltips. Floating capsules over the board, not a boxed app nav.
-- `App.tabs` / `App.tab`: chrome tabs (12px pills). Image-studio destination Tabs stay in `Popups/common/components/tabs`.
+- `App.tabs` / `App.tab`: chrome tabs (12px pills, icon + word). The active tab also paints an intro (`Text.title` + `Text.subtitle`) above the list. Slots: `App.leftSidebar` / `App.rightSidebar` `.header` / `.content` / `.footer`.
+- Image-studio destination layers use `Tab.Layer` (`src/common/components/Tabs/extension/layer.tsx`); the store stays in `Popups/common/components/tabs`.
 - Tooltip: `bg-card`, `border-primary/30`, `rounded-md`, `text-xs`.
 
 ### Signature: Theme + Board
@@ -236,7 +238,7 @@ Use `@common/components` primitives. Do not restyle a one-off button when `Butto
 
 ### Do:
 - **Do** use `bg-primary`, `text-foreground`, `rounded-radius`, `gap-grid` (and siblings) for new chrome.
-- **Do** put titles on `font-display` / `Typography.Title|Subtitle|Heading` and body on Geist / `text-sm`.
+- **Do** put sidebar, dock, and popup chrome on `Text.*`. Clusters use 24px gap; fields inside a section use 8px.
 - **Do** keep Operate density: compact controls, Spanish labels, tooltips on icon-only hits.
 - **Do** treat image-studio canvas effects (vignette, lights, 3D) as the artifact; keep chrome quieter than the board.
 - **Do** honor `APP_Z_INDEX` instead of inventing new stacking numbers.
@@ -248,3 +250,4 @@ Use `@common/components` primitives. Do not restyle a one-off button when `Butto
 - **Don't** use arbitrary `px` type or `rounded-[var(--radius)]` / `bg-[rgb(var(--…))]` when a theme utility exists.
 - **Don't** import domain stores into ShotEditor or fork a second design language for code-studio vs image-studio.
 - **Don't** fabricate testimonials, customers, or brand photography.
+- **Don't** prefix UI titles with `#` or `##`.

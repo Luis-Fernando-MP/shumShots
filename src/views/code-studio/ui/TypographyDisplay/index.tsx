@@ -1,5 +1,5 @@
 import { monacoFonts } from '@common/components/monaco'
-import Typography from '@common/components/Typography'
+import Text from '@common/components/Text'
 import { cn } from '@common/utils/cn'
 import { CheckIcon } from 'lucide-react'
 import type { ButtonHTMLAttributes, FC } from 'react'
@@ -10,7 +10,9 @@ interface Props extends ButtonHTMLAttributes<HTMLButtonElement> {
   selected?: boolean
 }
 
-/** Font preview card for Monaco typography selection. */
+/**
+ * Card de tipografía Monaco: nombre, muestra Aa y glifos.
+ */
 const TypographyDisplay: FC<Props> = ({ font, title, className = '', selected = false, ...props }) => {
   const { className: fontClassName } = font
 
@@ -19,9 +21,9 @@ const TypographyDisplay: FC<Props> = ({ font, title, className = '', selected = 
       type='button'
       aria-pressed={selected}
       className={cn(
-        'group relative flex min-h-[5.5rem] flex-col items-stretch gap-2 rounded-md border px-2.5 py-2.5 text-left transition-colors',
-        'border-border/50 bg-card/60 hover:bg-muted/50',
-        'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary',
+        'group relative flex min-h-[5.5rem] flex-col items-stretch gap-2 rounded-[12px] border px-2.5 py-2.5 text-left transition-colors',
+        'border-border/50 bg-muted/40 hover:bg-muted/70',
+        'focus-visible:outline-primary focus-visible:outline-2 focus-visible:outline-offset-2',
         selected && 'border-primary bg-primary/15 hover:bg-primary/20',
         className
       )}
@@ -33,25 +35,15 @@ const TypographyDisplay: FC<Props> = ({ font, title, className = '', selected = 
         </span>
       )}
 
-      <Typography.Small
-        weight='medium'
-        className={cn('text-muted-foreground pr-5 leading-none tracking-wide', selected && 'text-foreground/75')}
-      >
-        {title}
-      </Typography.Small>
+      <Text.caption className={cn('pr-5', selected && 'text-foreground/75')}>{title}</Text.caption>
 
-      <span
-        className={cn(
-          'text-foreground text-[1.35rem] leading-none tracking-tight antialiased',
-          fontClassName
-        )}
-      >
+      <span className={cn('text-foreground text-[1.35rem] leading-none tracking-tight antialiased', fontClassName)}>
         Aa
       </span>
 
       <span
         className={cn(
-          'text-muted-foreground text-[11px] leading-tight antialiased',
+          'text-muted-foreground text-chrome-meta leading-tight antialiased',
           selected && 'text-foreground/80',
           fontClassName
         )}

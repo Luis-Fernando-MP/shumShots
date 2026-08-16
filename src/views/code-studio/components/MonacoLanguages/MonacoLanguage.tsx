@@ -1,5 +1,5 @@
 import { MonacoLanguage as MonacoLanguageType } from '@common/components/monaco/languages'
-import Typography from '@common/components/Typography'
+import Text from '@common/components/Text'
 import usePixisPreferencesStore from '@views/code-studio/store/pixisPreferences.store'
 import useWorkspaceStore, { selectActiveFile } from '@views/code-studio/store/workspace.store'
 import {
@@ -31,9 +31,7 @@ const MonacoLanguage: FC<Props> = ({ language }) => {
 
   return (
     <div className='flex flex-col gap-1.5'>
-      <Typography.Small weight='medium' className='text-muted-foreground tracking-wide uppercase'>
-        {section}
-      </Typography.Small>
+      <Text.heading className='capitalize'>{section}</Text.heading>
 
       <div className='flex flex-row flex-wrap gap-1.5'>
         {Object.entries(languages).map(([key, languageProps]) => (

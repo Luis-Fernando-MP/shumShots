@@ -19,6 +19,7 @@ const FullScreen: FC = () => {
   return (
     <Button
       size='icon'
+      variant='ghost'
       tooltip={isFullScreen ? 'Minimizar la aplicación' : 'Maximizar la aplicación'}
       tooltipPosition='bottom'
       className={acl(isFullScreen)}

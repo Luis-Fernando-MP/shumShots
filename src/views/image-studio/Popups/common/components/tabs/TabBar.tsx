@@ -1,9 +1,7 @@
 'use client'
 
-import { Button } from '@common/components/Button'
-import { cn } from '@common/utils/cn'
-import { PlusIcon, XIcon } from 'lucide-react'
-import type { FC, MouseEvent } from 'react'
+import { Tab } from '@common/components/Tabs'
+import type { FC } from 'react'
 
 type TabItem = {
   id: string
@@ -22,79 +20,6 @@ type Props = {
   addDisabledReason?: string
 }
 
-const TabBar: FC<Props> = ({
-  items,
-  activeId,
-  onSelect,
-  onAdd,
-  onRemove,
-  addLabel = 'Nueva capa',
-  labelPrefix = 'Capa',
-  addDisabled = false,
-  addDisabledReason
-}) => {
-  const remove = (event: MouseEvent, id: string) => {
-    event.stopPropagation()
-    onRemove(id)
-  }
-
-  return (
-    <div className='flex flex-wrap items-center gap-1.5'>
-      {items.map((item, index) => {
-        const active = item.id === activeId
-        const title = item.label?.trim() || `${labelPrefix} ${index + 1}`
-
-        return (
-          <div
-            key={item.id}
-            className={cn(
-              'group inline-flex h-8 items-center overflow-hidden rounded-md border text-xs transition-colors',
-              active
-                ? 'border-primary/40 bg-primary/10 text-foreground'
-                : 'border-border/70 bg-card/40 text-muted-foreground hover:border-border hover:bg-muted/40 hover:text-foreground'
-            )}
-          >
-            <button
-              type='button'
-              className='max-w-[9rem] truncate px-2.5 py-1.5 font-medium'
-              onClick={() => onSelect(item.id)}
-            >
-              {title}
-            </button>
-            {items.length > 1 && (
-              <button
-                type='button'
-                aria-label={`Quitar ${title}`}
-                className={cn(
-                  'border-l px-1.5 py-1.5 transition-colors',
-                  active
-                    ? 'border-primary/25 text-muted-foreground hover:bg-primary/15 hover:text-foreground'
-                    : 'border-border/60 text-muted-foreground/80 hover:bg-muted hover:text-foreground'
-                )}
-                onClick={event => remove(event, item.id)}
-              >
-                <XIcon className='size-3' />
-              </button>
-            )}
-          </div>
-        )
-      })}
-
-      <Button
-        type='button'
-        variant='outline'
-        size='sm'
-        className='text-muted-foreground hover:text-foreground h-8 gap-1 border-dashed px-2.5 text-xs'
-        aria-label={addLabel}
-        title={addDisabled ? addDisabledReason : undefined}
-        disabled={addDisabled}
-        onClick={onAdd}
-      >
-        <PlusIcon className='size-3.5' />
-        <span className='hidden sm:inline'>{addLabel}</span>
-      </Button>
-    </div>
-  )
-}
+const TabBar: FC<Props> = props => <Tab.Layer {...props} />
 
 export default TabBar

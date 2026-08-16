@@ -276,10 +276,9 @@ export const BACKGROUND_SIZE_PRESETS = [
   { id: 'default', label: 'Default', width: 900, height: 600, isDefault: true },
   { id: 'ig-post', label: 'IG Post', width: 900, height: 900, isDefault: false },
   { id: 'story', label: 'Story', width: 900, height: 1600, isDefault: false },
-  { id: 'youtube', label: 'YouTube', width: 1067, height: 600, isDefault: false },
-  { id: 'x', label: 'X', width: 1067, height: 600, isDefault: false },
-  { id: 'linkedin', label: 'LinkedIn', width: 1146, height: 600, isDefault: false },
-  { id: 'facebook', label: 'Facebook', width: 1143, height: 600, isDefault: false }
+  { id: 'youtube', label: 'YouTube', width: 1280, height: 720, isDefault: false },
+  { id: 'linkedin', label: 'LinkedIn', width: 1200, height: 627, isDefault: false },
+  { id: 'facebook', label: 'Facebook', width: 1080, height: 1350, isDefault: false }
 ] as const
 
 export const DEFAULT_BACKGROUND_SIZE = {

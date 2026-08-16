@@ -92,27 +92,27 @@ const field = <T>(def: PreferenceFieldDef<T>) => def
 export const monacoPreferenceGroups = [
   {
     id: 'visual',
-    title: 'Visual:',
+    title: 'Visual',
     subtitle: 'Aspecto del editor: márgenes, wrap y resaltados.'
   },
   {
     id: 'typography',
-    title: 'Tipografía:',
+    title: 'Tipografía',
     subtitle: 'Tamaño, ritmo y detalle tipográfico del código.'
   },
   {
     id: 'highlightLines',
-    title: 'Highlight Lines:',
+    title: 'Highlight Lines',
     subtitle: 'Rangos en editor normal, o Diff Editor (paralelo / inline).'
   },
   {
     id: 'keywordHighlight',
-    title: 'Palabras clave:',
+    title: 'Palabras clave',
     subtitle: 'Términos resaltados e iconos en el margen glyph.'
   },
   {
     id: 'minimap',
-    title: 'Minimapa:',
+    title: 'Minimapa',
     subtitle: 'Vista previa compacta del archivo a un lado.'
   },
   {
@@ -122,17 +122,17 @@ export const monacoPreferenceGroups = [
   },
   {
     id: 'stickyScroll',
-    title: 'Scroll pegajoso:',
+    title: 'Scroll pegajoso',
     subtitle: 'Mantiene el encabezado del bloque visible al hacer scroll.'
   },
   {
     id: 'cursor',
-    title: 'Cursor:',
+    title: 'Cursor',
     subtitle: 'Forma, parpadeo y comportamiento del caret.'
   },
   {
     id: 'editor',
-    title: 'Editor:',
+    title: 'Editor',
     subtitle: 'Comportamiento al editar, plegar y auto-cerrar.'
   }
 ] satisfies PreferenceGroup[]

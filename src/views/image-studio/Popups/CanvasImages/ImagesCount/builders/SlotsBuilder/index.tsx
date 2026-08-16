@@ -9,7 +9,7 @@ import {
   SelectTrigger,
   SelectValue
 } from '@common/components/Select'
-import Typography from '@common/components/Typography'
+import Text from '@common/components/Text'
 import { cn } from '@common/utils/cn'
 import {
   DndContext,
@@ -76,15 +76,13 @@ const SortableSlotCard: FC<{
       ref={setNodeRef}
       style={style}
       className={cn(
-        'border-border/70 bg-card/50 flex flex-col gap-2.5 rounded-lg border p-2.5 transition-colors',
+        'border-border/60 bg-muted flex flex-col gap-2 rounded-[12px] border p-2 transition-colors',
         selected && 'border-primary ring-primary/30 bg-secondary/15 ring-1',
         isDragging && 'shadow-lg'
       )}
     >
       <div className='flex items-center justify-between gap-2'>
-        <Typography.Small className='text-muted-foreground text-[11px] font-semibold tracking-wide uppercase'>
-          {picture.id}
-        </Typography.Small>
+        <Text.emphasis>{picture.id}</Text.emphasis>
         <button
           type='button'
           className='text-muted-foreground hover:text-foreground touch-none rounded-sm p-0.5'
@@ -107,7 +105,7 @@ const SortableSlotCard: FC<{
         {!src && (
           <span className='text-muted-foreground flex size-full flex-col items-center justify-center gap-1.5 text-xs'>
             <ImagePlusIcon className='size-4 opacity-70' />
-            Vacío
+            <Text.caption>Vacío</Text.caption>
           </span>
         )}
       </button>

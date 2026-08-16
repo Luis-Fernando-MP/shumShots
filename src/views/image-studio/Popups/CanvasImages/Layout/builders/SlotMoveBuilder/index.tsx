@@ -202,7 +202,7 @@ const SlotMoveBuilder: FC<Props> = ({ targetIds }) => {
       <div
         ref={padRef}
         className={cn(
-          'bg-muted/40 relative mx-auto w-full max-w-[240px] touch-none overflow-hidden rounded-xl ring-1 ring-inset ring-border/50',
+          'bg-muted/40 ring-border/50 relative mx-auto w-full touch-none overflow-hidden rounded-[12px] ring-1 ring-inset',
           'cursor-crosshair'
         )}
         style={{ aspectRatio: `${canvasW} / ${canvasH}` }}

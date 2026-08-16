@@ -7,6 +7,7 @@ import UserMonacoPreferences from '@views/code-studio/components/UserMonacoPrefe
 import useDiffHistoryStore from '@views/code-studio/store/diffHistory.store'
 import useMonacoThemeStore from '@views/code-studio/store/monacoTheme.store'
 import usePixisPreferencesStore from '@views/code-studio/store/pixisPreferences.store'
+import { PaletteIcon, SlidersHorizontalIcon } from 'lucide-react'
 import { type FC } from 'react'
 
 const MonacoSidebar: FC = () => {
@@ -16,39 +17,45 @@ const MonacoSidebar: FC = () => {
   const { query, setQuery } = usePreferenceSearchState()
 
   return (
-    <App.tabs
-      defaultValue='temas'
-      footer={
-        <footer className='border-border/50 flex shrink-0 flex-col gap-2 border-t px-3 py-2.5'>
-          <PreferenceSearch value={query} onChange={setQuery} />
-          <Button
-            variant='dashed'
-            status='primary'
-            className='w-full rounded-[12px]'
-            onClick={() => {
-              resetMonaco()
-              resetTheme()
-              resetDiffHistory()
-            }}
-          >
-            Restablecer configuración
-          </Button>
-        </footer>
-      }
-    >
-      <App.tab value='temas' label='Temas'>
-        <UserMonacoPreferences tab='themes' query={query} />
-      </App.tab>
-      <App.tab value='lenguaje' label='Lenguaje'>
-        <UserMonacoPreferences tab='languages' query={query} />
-      </App.tab>
-      <App.tab value='fuente' label='Fuente'>
-        <UserMonacoPreferences tab='fonts' query={query} />
-      </App.tab>
-      <App.tab value='editor' label='Editor'>
-        <UserMonacoPreferences tab='editor' query={query} />
-      </App.tab>
-    </App.tabs>
+    <>
+      <App.rightSidebar.header>
+        <PreferenceSearch value={query} onChange={setQuery} />
+      </App.rightSidebar.header>
+
+      <App.tabs defaultValue='apariencia'>
+        <App.tab
+          value='apariencia'
+          label='Apariencia'
+          description='Tema, lenguaje y tipografía del shot'
+          icon={PaletteIcon}
+        >
+          <UserMonacoPreferences tab='appearance' query={query} />
+        </App.tab>
+        <App.tab
+          value='editor'
+          label='Editor'
+          description='Wrap, cursor, minimapa y comportamiento'
+          icon={SlidersHorizontalIcon}
+        >
+          <UserMonacoPreferences tab='editor' query={query} />
+        </App.tab>
+      </App.tabs>
+
+      <App.rightSidebar.footer>
+        <Button
+          variant='dashed'
+          status='primary'
+          className='w-full rounded-[12px]'
+          onClick={() => {
+            resetMonaco()
+            resetTheme()
+            resetDiffHistory()
+          }}
+        >
+          Resetear editor
+        </Button>
+      </App.rightSidebar.footer>
+    </>
   )
 }
 

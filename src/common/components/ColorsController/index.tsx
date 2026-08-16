@@ -11,33 +11,34 @@ interface Props {
   className?: string
 }
 
-const ColorsController: FC<Props> = ({ background, setBackground, className }) => {
-  return (
-    <section className={cn('gap-grid flex flex-col', className)}>
-      <div className='border-border/40 ring-border/40 grid grid-cols-9 overflow-hidden rounded-md ring-1'>
-        {basicColors.map(color => {
-          const isActive = background === color
-          return (
-            <button
-              type='button'
-              className={cn('aspect-square w-full transition-transform', isActive && 'ring-primary z-10 ring-2 ring-inset')}
-              style={{ backgroundColor: color }}
-              key={color}
-              aria-label={`Color ${color}`}
-              onClick={() => setBackground(color)}
-            />
-          )
-        })}
-      </div>
-      <ColorPicker
-        variant='swatch'
-        value={background}
-        onChange={setBackground}
-        label='Color personalizado'
-        className='rounded-md'
-      />
-    </section>
-  )
-}
+const ColorsController: FC<Props> = ({ background, setBackground, className }) => (
+  <section className={cn('gap-grid flex flex-col', className)}>
+    <div className='grid grid-cols-5 gap-2'>
+      {basicColors.map(color => {
+        const isActive = background === color
+        return (
+          <button
+            type='button'
+            key={color}
+            aria-label={`Color ${color}`}
+            onClick={() => setBackground(color)}
+            className={cn(
+              'size-8 justify-self-center rounded-full border transition-transform',
+              isActive ? 'border-primary scale-110 ring-2 ring-primary/40' : 'border-border/70 hover:scale-105'
+            )}
+            style={{ backgroundColor: color }}
+          />
+        )
+      })}
+    </div>
+    <ColorPicker
+      variant='swatch'
+      value={background}
+      onChange={setBackground}
+      label='Color personalizado'
+      className='rounded-[12px]'
+    />
+  </section>
+)
 
 export default ColorsController

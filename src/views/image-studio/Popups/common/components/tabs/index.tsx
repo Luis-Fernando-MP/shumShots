@@ -1,6 +1,6 @@
 'use client'
 
-import Typography from '@common/components/Typography'
+import Text from '@common/components/Text'
 import type { TabScope } from '@views/image-studio/constants'
 import usePicturesStore from '@views/image-studio/Popups/CanvasImages/ImagesCount/store/images-count/pictures'
 import {
@@ -54,11 +54,7 @@ type ContentProps = {
   children: ReactNode | ((args: TabsContentArgs) => ReactNode)
 }
 
-const TabsTitle: FC<TitleProps> = ({ children }) => (
-  <Typography.Label size='xs' weight='semibold' className='text-foreground tracking-wide'>
-    {children}
-  </Typography.Label>
-)
+const TabsTitle: FC<TitleProps> = ({ children }) => <Text.heading>{children}</Text.heading>
 TabsTitle.displayName = 'Tabs.Title'
 
 const TabsContent: FC<ContentProps> = ({ children }) => {
