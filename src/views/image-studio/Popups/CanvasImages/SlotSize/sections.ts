@@ -8,7 +8,7 @@ const SECTIONS = [
   {
     key: 'size-controls',
     title: 'Ancho · Alto',
-    description: 'Presets y valores manuales. Se ignora si el slot tiene frame.',
+    description: 'La proporción del preset se mantiene. Escala o cambia un lado y el otro sigue.',
     SectionIcon: createElement(ScalingIcon, { className: 'size-3.5' }),
     component: SizeControlsBuilder
   }

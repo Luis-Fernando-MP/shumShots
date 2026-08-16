@@ -7,5 +7,6 @@ import { DEFAULT_SLOT_OFFSET, type LayoutStateShape } from './type.layout'
 export const initialLayoutState: LayoutStateShape = {
   constrainToParent: true,
   positionId: DEFAULT_POSITION_ID,
-  slotOffset: {}
+  slotOffset: {},
+  advancedPose: null
 }

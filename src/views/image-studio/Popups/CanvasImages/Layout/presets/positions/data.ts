@@ -8,6 +8,7 @@ import {
   FanPreview,
   GridPreview,
   OrbitPreview,
+  soloPreview,
   StackPreview,
   StaggerPreview
 } from '@views/image-studio/Popups/CanvasImages/Layout/components/position-previews'
@@ -115,21 +116,190 @@ const META = {
   }
 } as const
 
-const withBuilders = (
+const ONE_META = {
+  grid: {
+    id: 'grid',
+    key: 'grid',
+    title: 'Centro',
+    description: 'Centrado, sin giro',
+    is3d: false,
+    preview: soloPreview({ left: 28, top: 22, w: 44, h: 56 })
+  },
+  'center-tilt': {
+    id: 'center-tilt',
+    key: 'center-tilt',
+    title: 'Inclinado',
+    description: 'Centro con giro suave',
+    is3d: false,
+    preview: soloPreview({ left: 28, top: 22, w: 44, h: 56, rotateZ: -8 })
+  },
+  'center-tilt-right': {
+    id: 'center-tilt-right',
+    key: 'center-tilt-right',
+    title: 'Giro derecho',
+    description: 'Centro rotado a la derecha',
+    is3d: false,
+    preview: soloPreview({ left: 28, top: 22, w: 44, h: 56, rotateZ: 12 })
+  },
+  hero: {
+    id: 'hero',
+    key: 'hero',
+    title: 'Héroe',
+    description: 'Grande al centro',
+    is3d: false,
+    preview: soloPreview({ left: 18, top: 14, w: 64, h: 72 })
+  },
+  'bottom-right': {
+    id: 'bottom-right',
+    key: 'bottom-right',
+    title: 'Abajo der.',
+    description: 'Sale por la esquina inferior derecha',
+    is3d: false,
+    preview: soloPreview({ left: 48, top: 46, w: 56, h: 60 })
+  },
+  'bottom-left': {
+    id: 'bottom-left',
+    key: 'bottom-left',
+    title: 'Abajo izq.',
+    description: 'Sale por la esquina inferior izquierda',
+    is3d: false,
+    preview: soloPreview({ left: -8, top: 46, w: 56, h: 60 })
+  },
+  'top-right': {
+    id: 'top-right',
+    key: 'top-right',
+    title: 'Arriba der.',
+    description: 'Sale por la esquina superior derecha',
+    is3d: false,
+    preview: soloPreview({ left: 50, top: -8, w: 54, h: 56 })
+  },
+  'top-left': {
+    id: 'top-left',
+    key: 'top-left',
+    title: 'Arriba izq.',
+    description: 'Sale por la esquina superior izquierda',
+    is3d: false,
+    preview: soloPreview({ left: -8, top: -8, w: 54, h: 56 })
+  },
+  'offset-right': {
+    id: 'offset-right',
+    key: 'offset-right',
+    title: 'Desplazado',
+    description: 'A la derecha, leve giro',
+    is3d: false,
+    preview: soloPreview({ left: 40, top: 22, w: 48, h: 54, rotateZ: 5 })
+  },
+  low: {
+    id: 'low',
+    key: 'low',
+    title: 'Bajo',
+    description: 'Bajo al centro',
+    is3d: false,
+    preview: soloPreview({ left: 24, top: 42, w: 52, h: 50 })
+  },
+  editorial: {
+    id: 'editorial',
+    key: 'editorial',
+    title: 'Editorial',
+    description: 'Offset izquierdo, giro fino',
+    is3d: false,
+    preview: soloPreview({ left: 12, top: 20, w: 42, h: 52, rotateZ: -5 })
+  },
+  'yaw-right': {
+    id: 'yaw-right',
+    key: 'yaw-right',
+    title: 'Persp. der.',
+    description: 'Giro 3D hacia la derecha',
+    is3d: true,
+    preview: soloPreview({ left: 24, top: 18, w: 50, h: 58, rotateY: -28, rotateX: 4 })
+  },
+  'yaw-left': {
+    id: 'yaw-left',
+    key: 'yaw-left',
+    title: 'Persp. izq.',
+    description: 'Giro 3D hacia la izquierda',
+    is3d: true,
+    preview: soloPreview({ left: 24, top: 18, w: 50, h: 58, rotateY: 28, rotateX: 4 })
+  },
+  pitch: {
+    id: 'pitch',
+    key: 'pitch',
+    title: 'Inclinación',
+    description: 'Perspectiva hacia atrás',
+    is3d: true,
+    preview: soloPreview({ left: 24, top: 16, w: 50, h: 62, rotateX: 18 })
+  },
+  float: {
+    id: 'float',
+    key: 'float',
+    title: 'Flotante',
+    description: 'Sale en esquina con giro 3D',
+    is3d: true,
+    preview: soloPreview({ left: 50, top: 48, w: 54, h: 56, rotateZ: 6, rotateY: -18, rotateX: 4 })
+  },
+  'crop-right': {
+    id: 'crop-right',
+    key: 'crop-right',
+    title: 'Sale der.',
+    description: 'Cortado por el borde derecho',
+    is3d: false,
+    preview: soloPreview({ left: 52, top: 18, w: 58, h: 64 })
+  },
+  'crop-bottom': {
+    id: 'crop-bottom',
+    key: 'crop-bottom',
+    title: 'Sale abajo',
+    description: 'Cortado por el borde inferior',
+    is3d: false,
+    preview: soloPreview({ left: 22, top: 48, w: 56, h: 62 })
+  },
+  'crop-3d': {
+    id: 'crop-3d',
+    key: 'crop-3d',
+    title: 'Sale 3D',
+    description: 'Esquina recortada con perspectiva',
+    is3d: true,
+    preview: soloPreview({ left: 46, top: 42, w: 58, h: 62, rotateY: -24, rotateX: 6 })
+  }
+} as const
+
+const withCatalog = (
+  meta: Record<string, Omit<SlotPositionEntry, 'builder'>>,
   source: Record<string, (ctx: SlotBuildContext) => SlotPlacement[]>
 ): Record<string, SlotPositionEntry> => {
   const catalog: Record<string, SlotPositionEntry> = {}
   for (const [id, builder] of Object.entries(source)) {
-    const meta = META[id as keyof typeof META]
-    if (!meta) continue
-    catalog[id] = { ...meta, builder }
+    const entry = meta[id]
+    if (!entry) continue
+    catalog[id] = { ...entry, builder }
   }
   return catalog
 }
 
+const withBuilders = (
+  source: Record<string, (ctx: SlotBuildContext) => SlotPlacement[]>
+): Record<string, SlotPositionEntry> => withCatalog(META, source)
+
 export const SLOT_POSITION_LIST = {
-  [SLOT_QUANTITY_CONFIG.ONE]: withBuilders({
-    grid: one.buildGrid
+  [SLOT_QUANTITY_CONFIG.ONE]: withCatalog(ONE_META, {
+    grid: one.buildGrid,
+    'center-tilt': one.buildCenterTilt,
+    'center-tilt-right': one.buildCenterTiltRight,
+    hero: one.buildHero,
+    'bottom-right': one.buildBottomRight,
+    'bottom-left': one.buildBottomLeft,
+    'top-right': one.buildTopRight,
+    'top-left': one.buildTopLeft,
+    'offset-right': one.buildOffsetRight,
+    low: one.buildLowCenter,
+    editorial: one.buildEditorial,
+    'yaw-right': one.buildYawRight,
+    'yaw-left': one.buildYawLeft,
+    pitch: one.buildPitch,
+    float: one.buildFloatCorner,
+    'crop-right': one.buildCropRight,
+    'crop-bottom': one.buildCropBottom,
+    'crop-3d': one.buildCrop3d
   }),
   [SLOT_QUANTITY_CONFIG.TWO]: withBuilders({
     grid: two.buildGrid,

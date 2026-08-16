@@ -26,6 +26,7 @@ type Props = {
   disabled?: boolean
   disabledHint?: string
   embedded?: boolean
+  forceLockAspect?: boolean
 }
 
 const AspectThumb: FC<{ width: number; height: number; active: boolean }> = ({
@@ -60,7 +61,8 @@ const SizePresetsSection: FC<Props> = ({
   level = 1,
   disabled = false,
   disabledHint,
-  embedded = false
+  embedded = false,
+  forceLockAspect = false
 }) => {
   const body = disabled ? (
     <p className='text-muted-foreground text-xs leading-relaxed'>
@@ -85,7 +87,13 @@ const SizePresetsSection: FC<Props> = ({
         })}
       </div>
 
-      <SizeController width={width} height={height} setWidth={setWidth} setHeight={setHeight} />
+      <SizeController
+        width={width}
+        height={height}
+        setWidth={setWidth}
+        setHeight={setHeight}
+        forceLockAspect={forceLockAspect}
+      />
     </div>
   )
 

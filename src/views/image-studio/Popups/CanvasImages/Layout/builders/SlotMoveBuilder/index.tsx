@@ -6,7 +6,7 @@ import { getPositionEntry } from '@views/image-studio/Popups/CanvasImages/Layout
 import useLayoutStore, {
   DEFAULT_SLOT_OFFSET
 } from '@views/image-studio/Popups/CanvasImages/Layout/store/layout/store'
-import { SLOT_OFFSET_MAX_SHIFT } from '@views/image-studio/Popups/CanvasImages/Layout/store/layout/type.layout'
+import { applySlotOffset } from '@views/image-studio/Popups/CanvasImages/Layout/store/layout/slotOffset'
 import usePicturesStore from '@views/image-studio/Popups/CanvasImages/ImagesCount/store/images-count/pictures'
 import useSizeStore, {
   resolveSlotSizeFromState
@@ -104,14 +104,16 @@ const SlotMoveBuilder: FC<Props> = ({ targetIds }) => {
         dragOffset && (targetIds.length === 0 || targetIds.includes(picture.id))
           ? dragOffset
           : (slotOffset[picture.id] ?? DEFAULT_SLOT_OFFSET)
-      const shiftX = (offset.x - 0.5) * 2 * SLOT_OFFSET_MAX_SHIFT * backgroundWidth
-      const shiftY = (offset.y - 0.5) * 2 * SLOT_OFFSET_MAX_SHIFT * backgroundHeight
+      const visual = applySlotOffset(placement, offset, {
+        width: backgroundWidth,
+        height: backgroundHeight
+      })
 
       const slotBox = {
-        left: placement.x + shiftX,
-        top: placement.y + shiftY,
-        width: placement.width,
-        height: placement.height
+        left: visual.x,
+        top: visual.y,
+        width: visual.width,
+        height: visual.height
       }
 
       const frameAspect =
@@ -124,6 +126,8 @@ const SlotMoveBuilder: FC<Props> = ({ targetIds }) => {
         id: picture.id,
         box,
         rotateZ: placement.rotateZ,
+        rotateX: placement.rotateX,
+        rotateY: placement.rotateY,
         zIndex: placement.zIndex,
         hasFrame: Boolean(frameAspect),
         targeted: targetIds.length === 0 || targetIds.includes(picture.id)
@@ -218,6 +222,7 @@ const SlotMoveBuilder: FC<Props> = ({ targetIds }) => {
           {previewBoxes.map(item => {
             if (!item) return null
             const { box } = item
+            const has3d = item.rotateX !== 0 || item.rotateY !== 0
             return (
               <div
                 key={item.id}
@@ -233,7 +238,10 @@ const SlotMoveBuilder: FC<Props> = ({ targetIds }) => {
                   top: `${(box.top / canvasH) * 100}%`,
                   width: `${(box.width / canvasW) * 100}%`,
                   height: `${(box.height / canvasH) * 100}%`,
-                  transform: `rotate(${item.rotateZ}deg)`,
+                  transform: has3d
+                    ? `perspective(280px) rotateX(${item.rotateX}deg) rotateY(${item.rotateY}deg) rotate(${item.rotateZ}deg)`
+                    : `rotate(${item.rotateZ}deg)`,
+                  transformOrigin: 'center center',
                   zIndex: item.zIndex
                 }}
               />

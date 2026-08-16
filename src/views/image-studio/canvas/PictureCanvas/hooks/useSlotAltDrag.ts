@@ -2,7 +2,10 @@ import useBoardStore from '@/shared/components/Board/board.store'
 import useLayoutStore, {
   DEFAULT_SLOT_OFFSET
 } from '@views/image-studio/Popups/CanvasImages/Layout/store/layout/store'
-import { SLOT_OFFSET_MAX_SHIFT } from '@views/image-studio/Popups/CanvasImages/Layout/store/layout/type.layout'
+import {
+  applySlotOffset,
+  visualPositionToOffset
+} from '@views/image-studio/Popups/CanvasImages/Layout/store/layout/slotOffset'
 import {
   type PointerEvent as ReactPointerEvent,
   useEffect,
@@ -10,20 +13,40 @@ import {
   useState
 } from 'react'
 
-const clamp01 = (value: number) => Math.min(1, Math.max(0, value))
+const isSlotMoveModifier = (event: { altKey: boolean; shiftKey: boolean }) =>
+  event.altKey || event.shiftKey
 
 type DragState = {
   pointerId: number
   startClientX: number
   startClientY: number
-  startOffsetX: number
-  startOffsetY: number
+  startX: number
+  startY: number
+}
+
+type Args = {
+  slotId: string
+  canvasWidth: number
+  canvasHeight: number
+  baseX: number
+  baseY: number
+  slotWidth: number
+  slotHeight: number
 }
 
 /**
- * Alt + drag on a picture slot updates that slot's layout offset (shared with SlotMoveBuilder).
+ * Alt/Shift + drag updates that slot's layout offset (shared with SlotMoveBuilder).
+ * Travel is limited by the parent canvas, not by the active position preset.
  */
-const useSlotAltDrag = (slotId: string, canvasWidth: number, canvasHeight: number) => {
+const useSlotAltDrag = ({
+  slotId,
+  canvasWidth,
+  canvasHeight,
+  baseX,
+  baseY,
+  slotWidth,
+  slotHeight
+}: Args) => {
   const setOffsetForSlots = useLayoutStore(s => s.setOffsetForSlots)
   const drag = useRef<DragState | null>(null)
   const pending = useRef<{ x: number; y: number } | null>(null)
@@ -58,30 +81,37 @@ const useSlotAltDrag = (slotId: string, canvasWidth: number, canvasHeight: numbe
     const dy = (event.clientY - state.startClientY) / boardScale
     if (Math.abs(dx) > 1 || Math.abs(dy) > 1) moved.current = true
 
-    const maxShiftX = Math.max(1, canvasWidth * SLOT_OFFSET_MAX_SHIFT)
-    const maxShiftY = Math.max(1, canvasHeight * SLOT_OFFSET_MAX_SHIFT)
-
-    queue({
-      x: clamp01(state.startOffsetX + dx / (2 * maxShiftX)),
-      y: clamp01(state.startOffsetY + dy / (2 * maxShiftY))
-    })
+    const placement = { x: baseX, y: baseY, width: slotWidth, height: slotHeight }
+    const canvas = { width: canvasWidth, height: canvasHeight }
+    queue(
+      visualPositionToOffset(
+        placement,
+        { x: state.startX + dx, y: state.startY + dy },
+        canvas
+      )
+    )
   }
 
   const onPointerDown = (event: ReactPointerEvent<HTMLDivElement>) => {
-    if (!event.altKey || event.button !== 0) return
+    if (!isSlotMoveModifier(event) || event.button !== 0) return
     event.preventDefault()
     event.stopPropagation()
     moved.current = false
-    const current = useLayoutStore.getState().slotOffset[slotId] ?? DEFAULT_SLOT_OFFSET
+
+    const offset = useLayoutStore.getState().slotOffset[slotId] ?? DEFAULT_SLOT_OFFSET
+    const placement = { x: baseX, y: baseY, width: slotWidth, height: slotHeight }
+    const canvas = { width: canvasWidth, height: canvasHeight }
+    const visual = applySlotOffset(placement, offset, canvas)
+
     drag.current = {
       pointerId: event.pointerId,
       startClientX: event.clientX,
       startClientY: event.clientY,
-      startOffsetX: current.x,
-      startOffsetY: current.y
+      startX: visual.x,
+      startY: visual.y
     }
-    setActive(true)
     event.currentTarget.setPointerCapture(event.pointerId)
+    setActive(true)
   }
 
   const onPointerMove = (event: ReactPointerEvent<HTMLDivElement>) => {

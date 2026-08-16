@@ -108,7 +108,8 @@ const PictureViewer: FC<Props> = ({
     <img
       ref={imageRef}
       src={imageUrl}
-      className='pointer-events-none absolute inset-0 size-full'
+      className='pointer-events-none absolute inset-0 size-full select-none'
+      style={{ imageRendering: 'auto' }}
       alt='Imagen del shot'
       decoding='async'
       draggable={false}

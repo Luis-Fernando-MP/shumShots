@@ -1,29 +1,43 @@
 'use client'
 
+import useBoardStore from '@/shared/components/Board/board.store'
 import Dropzone from '@/shared/components/Dropzone'
 import { framesQuery } from '@common/core'
 import { cn } from '@common/utils/cn'
-import useFrameStore, { createDefaultFrameConfig } from '@views/image-studio/Popups/CanvasImages/Frame/store/frame/store'
-import DeviceFrameShell from '@views/image-studio/canvas/PictureCanvas/DeviceFrameShell'
-import PictureViewer from '@views/image-studio/canvas/PictureCanvas/PictureViewer'
-import { TABS_SCOPES } from '@views/image-studio/constants'
-import { layerAppliesTo } from '@views/image-studio/Popups/common/lib/fx-shared/targeting'
-import usePictureSlot from '@views/image-studio/canvas/PictureCanvas/hooks/usePictureSlot'
-import { useShadowLightDom } from '@views/image-studio/canvas/PictureCanvas/hooks/useShadowLightDom'
-import { getTabsStore } from '@views/image-studio/Popups/common/components/tabs/store'
-import { getPositionEntry } from '@views/image-studio/Popups/CanvasImages/Layout/presets/positions/data'
 import useBackgroundStore from '@views/image-studio/Popups/Canvas/Background/store/background/store'
 import { resolveSmoothCornerStyle } from '@views/image-studio/Popups/Canvas/CanvasBorder/store/canvas-border/radius.store'
 import useCornerStore, { createDefaultCornerConfig } from '@views/image-studio/Popups/CanvasImages/Corner/store/corner/store'
-import useLayoutStore, {
-  DEFAULT_SLOT_OFFSET
-} from '@views/image-studio/Popups/CanvasImages/Layout/store/layout/store'
-import { SLOT_OFFSET_MAX_SHIFT } from '@views/image-studio/Popups/CanvasImages/Layout/store/layout/type.layout'
-import usePicturesStore, { type PictureItem } from '@views/image-studio/Popups/CanvasImages/ImagesCount/store/images-count/pictures'
+import useFrameStore, { createDefaultFrameConfig } from '@views/image-studio/Popups/CanvasImages/Frame/store/frame/store'
+import usePicturesStore, {
+  type PictureItem
+} from '@views/image-studio/Popups/CanvasImages/ImagesCount/store/images-count/pictures'
+import { getPositionEntry } from '@views/image-studio/Popups/CanvasImages/Layout/presets/positions/data'
+import { placeSolo } from '@views/image-studio/Popups/CanvasImages/Layout/presets/positions/helpers'
+import { applySlotOffset } from '@views/image-studio/Popups/CanvasImages/Layout/store/layout/slotOffset'
+import useLayoutStore, { DEFAULT_SLOT_OFFSET } from '@views/image-studio/Popups/CanvasImages/Layout/store/layout/store'
 import useSizeStore, { resolveSlotSizeFromState } from '@views/image-studio/Popups/CanvasImages/SlotSize/store/slot-size/store'
-import { buildCanvasFrameStyle, insetBorderRadius } from '@views/image-studio/utils/borderFrame'
+import { getTabsStore } from '@views/image-studio/Popups/common/components/tabs/store'
+import { layerAppliesTo } from '@views/image-studio/Popups/common/lib/fx-shared/targeting'
+import DeviceFrameShell from '@views/image-studio/canvas/PictureCanvas/DeviceFrameShell'
+import PictureViewer from '@views/image-studio/canvas/PictureCanvas/PictureViewer'
+import usePictureSlot from '@views/image-studio/canvas/PictureCanvas/hooks/usePictureSlot'
+import { useShadowLightDom } from '@views/image-studio/canvas/PictureCanvas/hooks/useShadowLightDom'
 import useSlotAltDrag from '@views/image-studio/canvas/PictureCanvas/hooks/useSlotAltDrag'
+import { TABS_SCOPES } from '@views/image-studio/constants'
+import { buildCanvasFrameStyle, insetBorderRadius } from '@views/image-studio/utils/borderFrame'
 import { type CSSProperties, type FC, memo, useCallback, useMemo, useRef, useState } from 'react'
+
+const SLOT_RASTER_MAX = 4
+
+const slotRasterScale = (has3d: boolean, boardScale: number) => {
+  if (!has3d) return 1
+  const dpr = typeof window !== 'undefined' ? window.devicePixelRatio || 1 : 1
+  const needed = dpr * Math.max(1, boardScale)
+  if (needed <= 1.25) return 1
+  if (needed <= 2.25) return 2
+  if (needed <= 3.25) return 3
+  return SLOT_RASTER_MAX
+}
 
 const fitFrameInSlot = (slot: { left: number; top: number; width: number; height: number }, aspect: number) => {
   const slotAspect = slot.width / Math.max(1, slot.height)
@@ -59,6 +73,8 @@ type SlotProps = {
   picture: PictureItem
   left: number
   top: number
+  baseX: number
+  baseY: number
   slotWidth: number
   slotHeight: number
   rotateZ: number
@@ -74,6 +90,8 @@ const PictureSlot = memo(function PictureSlot({
   picture,
   left: slotLeft,
   top: slotTop,
+  baseX,
+  baseY,
   slotWidth,
   slotHeight,
   rotateZ,
@@ -85,7 +103,15 @@ const PictureSlot = memo(function PictureSlot({
   canvasHeight
 }: SlotProps) {
   const { isLoading, setIsLoading, handleLoadError, handleDropFile, handleSize, select, imageUrl } = usePictureSlot(picture.id)
-  const altDrag = useSlotAltDrag(picture.id, canvasWidth, canvasHeight)
+  const altDrag = useSlotAltDrag({
+    slotId: picture.id,
+    canvasWidth,
+    canvasHeight,
+    baseX,
+    baseY,
+    slotWidth,
+    slotHeight
+  })
 
   const cornerLayers = getTabsStore(TABS_SCOPES.corner)(s => s.layers)
   const cornerTabId = useMemo(() => resolveLayerIdForSlot(cornerLayers, picture.id), [cornerLayers, picture.id])
@@ -116,9 +142,7 @@ const PictureSlot = memo(function PictureSlot({
         : null
 
   const { data: framesData } = framesQuery.list()
-  const catalogFrame = resolvedFrameId
-    ? (framesData?.data?.frames.find(item => item.id === resolvedFrameId) ?? null)
-    : null
+  const catalogFrame = resolvedFrameId ? (framesData?.data?.frames.find(item => item.id === resolvedFrameId) ?? null) : null
   const frameAspect = storedFrameAspect ?? catalogFrame?.aspect ?? null
   const hasDeviceFrame = Boolean(resolvedFrameId)
 
@@ -129,16 +153,17 @@ const PictureSlot = memo(function PictureSlot({
   }, [frameAspect, slotHeight, slotWidth])
 
   const { left, top, width: boxWidth, height: boxHeight } = frameBox
-  const edgePx = Math.min(boxWidth, boxHeight)
+  const boardScale = useBoardStore(s => s.scale)
   const has3d = rotateX !== 0 || rotateY !== 0
-  const transform = [
-    has3d ? `perspective(900px)` : '',
-    `rotateX(${rotateX}deg)`,
-    `rotateY(${rotateY}deg)`,
-    `rotateZ(${rotateZ}deg)`
-  ]
-    .filter(Boolean)
-    .join(' ')
+  const rasterScale = slotRasterScale(has3d, boardScale)
+  const qx = (value: number) => value * rasterScale
+  const drawWidth = qx(boxWidth)
+  const drawHeight = qx(boxHeight)
+  const edgePx = Math.min(drawWidth, drawHeight)
+  const perspectivePx = Math.round(Math.max(canvasWidth, canvasHeight) * 1.75 * rasterScale)
+  const transform = has3d
+    ? `${rasterScale !== 1 ? `scale(${1 / rasterScale}) ` : ''}perspective(${perspectivePx}px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) rotateZ(${rotateZ}deg)`
+    : `rotateZ(${rotateZ}deg)`
 
   const rootRef = useRef<HTMLDivElement>(null)
   const boxShadowRef = useRef<HTMLDivElement>(null)
@@ -149,17 +174,17 @@ const PictureSlot = memo(function PictureSlot({
   }, [])
 
   const radiusCss = activeIndividualBorder
-    ? `${borderLTRadius}px ${borderRTRadius}px ${borderRBRadius}px ${borderLBRadius}px`
-    : `${borderRadiusValue}px`
+    ? `${qx(borderLTRadius)}px ${qx(borderRTRadius)}px ${qx(borderRBRadius)}px ${qx(borderLBRadius)}px`
+    : `${qx(borderRadiusValue)}px`
 
   const cornerShapeCss = useMemo(() => resolveSmoothCornerStyle(borderSmooth).cornerShape, [borderSmooth])
   const showMat = !hasDeviceFrame && matEnabled && matTop + matRight + matBottom + matLeft > 0
-  const strokeWidth = hasDeviceFrame || type === 'none' ? 0 : size
-  const matInset = showMat ? Math.min(matTop, matRight, matBottom, matLeft) : 0
+  const strokeWidth = hasDeviceFrame || type === 'none' ? 0 : qx(size)
+  const matInset = showMat ? qx(Math.min(matTop, matRight, matBottom, matLeft)) : 0
 
   const effectiveRadiusCss = hasDeviceFrame ? '0px' : radiusCss
   const effectiveBorderType = hasDeviceFrame ? 'none' : type
-  const effectiveBorderSize = hasDeviceFrame ? 0 : size
+  const effectiveBorderSize = strokeWidth
 
   const { contentFrameStyle, baseBoxShadow } = useMemo(() => {
     const style = buildCanvasFrameStyle({
@@ -205,7 +230,7 @@ const PictureSlot = memo(function PictureSlot({
     const style: CSSProperties = {
       boxSizing: 'border-box',
       borderRadius: insetBorderRadius(effectiveRadiusCss, strokeWidth),
-      padding: showMat ? `${matTop}px ${matRight}px ${matBottom}px ${matLeft}px` : 0,
+      padding: showMat ? `${qx(matTop)}px ${qx(matRight)}px ${qx(matBottom)}px ${qx(matLeft)}px` : 0,
       backgroundColor: showMat ? matColor : 'transparent',
       width: '100%',
       height: '100%',
@@ -213,7 +238,19 @@ const PictureSlot = memo(function PictureSlot({
     }
     if (!hasDeviceFrame && cornerShapeCss) Object.assign(style, { cornerShape: cornerShapeCss })
     return style
-  }, [cornerShapeCss, effectiveRadiusCss, hasDeviceFrame, matBottom, matColor, matLeft, matRight, matTop, showMat, strokeWidth])
+  }, [
+    cornerShapeCss,
+    effectiveRadiusCss,
+    hasDeviceFrame,
+    matBottom,
+    matColor,
+    matLeft,
+    matRight,
+    matTop,
+    qx,
+    showMat,
+    strokeWidth
+  ])
 
   const contentStyle = useMemo((): CSSProperties => {
     const style: CSSProperties = {
@@ -232,7 +269,7 @@ const PictureSlot = memo(function PictureSlot({
       role='button'
       tabIndex={0}
       onClick={event => {
-        if (event.altKey || altDrag.altDragging) return
+        if (event.altKey || event.shiftKey || altDrag.altDragging) return
         select()
       }}
       onClickCapture={altDrag.onClickCapture}
@@ -247,21 +284,23 @@ const PictureSlot = memo(function PictureSlot({
       onPointerUp={altDrag.onPointerUp}
       onPointerCancel={altDrag.onPointerCancel}
       className={cn(
-        'absolute overflow-visible outline-none',
+        'absolute overflow-visible outline-none select-none',
         !hasDeviceFrame && 'rounded-sm',
         selected && 'z-10',
-        altDrag.altDragging ? 'cursor-grabbing z-20' : 'cursor-pointer'
+        altDrag.altDragging ? 'z-20 cursor-grabbing' : 'cursor-pointer'
       )}
       style={{
-        left: slotLeft + left,
-        top: slotTop + top,
-        width: boxWidth,
-        height: boxHeight,
-        zIndex: altDrag.altDragging ? 999 : zIndex,
+        left: slotLeft + left - (drawWidth - boxWidth) / 2,
+        top: slotTop + top - (drawHeight - boxHeight) / 2,
+        width: drawWidth,
+        height: drawHeight,
+        zIndex: altDrag.altDragging ? 20 : zIndex,
         transform,
-        transformOrigin: 'center center'
+        transformOrigin: 'center center',
+        userSelect: 'none',
+        WebkitUserSelect: 'none'
       }}
-      title='Alt + arrastrar para mover'
+      title='Alt o Shift + arrastrar para mover'
     >
       <DeviceFrameShell frameId={resolvedFrameId} className='size-full overflow-visible' filterTargetRef={bindFilterTarget}>
         <div ref={boxShadowRef} className='relative size-full overflow-visible' style={contentFrameStyle}>
@@ -297,41 +336,49 @@ const PictureCanvas: FC = () => {
   const constrainToParent = useLayoutStore(s => s.constrainToParent)
   const positionId = useLayoutStore(s => s.positionId)
   const slotOffset = useLayoutStore(s => s.slotOffset)
+  const advancedPose = useLayoutStore(s => s.advancedPose)
 
   const placements = useMemo(() => {
     const slotSizes = pictures.map(picture => resolveSlotSizeFromState(sizeLayers, picture.id))
-    const entry = getPositionEntry(pictures.length, positionId)
-    const base = entry.builder({
+    const ctx = {
       count: pictures.length,
       canvasWidth: backgroundWidth,
       canvasHeight: backgroundHeight,
       slotSizes,
       constrainToParent
-    })
-    const maxShiftX = backgroundWidth * SLOT_OFFSET_MAX_SHIFT
-    const maxShiftY = backgroundHeight * SLOT_OFFSET_MAX_SHIFT
+    }
+    const entry = getPositionEntry(pictures.length, positionId)
+    let base = entry.builder(ctx)
+    if (advancedPose) {
+      const selectedIndex = pictures.findIndex(picture => picture.id === selectedId)
+      const index = pictures.length === 1 ? 0 : Math.max(0, selectedIndex)
+      const solo = placeSolo({ ...ctx, slotSizes: [slotSizes[index] ?? slotSizes[0]] }, advancedPose)[0]
+      if (solo) {
+        base = base.map((placement, i) => (i === index ? { ...solo, zIndex: placement.zIndex } : placement))
+      }
+    }
+    const canvas = { width: backgroundWidth, height: backgroundHeight }
     return base.map((placement, index) => {
       const slotId = pictures[index]?.id
       const offset = slotId ? (slotOffset[slotId] ?? DEFAULT_SLOT_OFFSET) : DEFAULT_SLOT_OFFSET
-      return {
-        ...placement,
-        x: placement.x + (offset.x - 0.5) * 2 * maxShiftX,
-        y: placement.y + (offset.y - 0.5) * 2 * maxShiftY
-      }
+      const visual = applySlotOffset(placement, offset, canvas)
+      return { ...visual, baseX: placement.x, baseY: placement.y }
     })
   }, [
+    advancedPose,
     backgroundHeight,
     backgroundWidth,
     constrainToParent,
     pictures,
     positionId,
+    selectedId,
     sizeLayers,
     slotOffset
   ])
 
   return (
-    <div className='pointer-events-none absolute inset-0 z-[10]' id='picture-canvas-layer'>
-      <div className='pointer-events-auto relative size-full'>
+    <div className='pointer-events-none absolute inset-0 z-[10] overflow-hidden select-none' id='picture-canvas-layer'>
+      <div className='pointer-events-auto relative size-full overflow-hidden'>
         {pictures.map((picture, index) => {
           const placement = placements[index]
           if (!placement) return null
@@ -341,6 +388,8 @@ const PictureCanvas: FC = () => {
               picture={picture}
               left={placement.x}
               top={placement.y}
+              baseX={placement.baseX}
+              baseY={placement.baseY}
               slotWidth={placement.width}
               slotHeight={placement.height}
               rotateZ={placement.rotateZ}

@@ -8,16 +8,19 @@ interface Props {
   height: number
   setWidth: (width: number) => void
   setHeight: (height: number) => void
+  forceLockAspect?: boolean
 }
 
-const SizeController: FC<Props> = ({ width, height, setWidth, setHeight }) => {
-  const [lockAspectRatio, setLockAspectRatio] = useState(false)
-  const aspectRatio = width / height
+const SizeController: FC<Props> = ({ width, height, setWidth, setHeight, forceLockAspect = false }) => {
+  const [lockAspectRatio, setLockAspectRatio] = useState(forceLockAspect)
+  const locked = forceLockAspect || lockAspectRatio
+  const aspectRatio = width / Math.max(1, height)
 
   const aspectRatioFraction = useMemo(() => {
     const commonRatios = [
       { ratio: 16 / 9, display: '16:9' },
       { ratio: 4 / 3, display: '4:3' },
+      { ratio: 3 / 4, display: '3:4' },
       { ratio: 3 / 2, display: '3:2' },
       { ratio: 1, display: '1:1' },
       { ratio: 9 / 16, display: '9:16' },
@@ -61,38 +64,40 @@ const SizeController: FC<Props> = ({ width, height, setWidth, setHeight }) => {
   const handleWidthChange = useCallback(
     (newWidth: number) => {
       if (!Number.isFinite(newWidth) || newWidth < 100) return setWidth(100)
-      if (!lockAspectRatio) return setWidth(newWidth)
+      if (!locked) return setWidth(newWidth)
 
       const newHeight = Math.round(newWidth / aspectRatio)
       setHeight(newHeight)
       setWidth(newWidth)
     },
-    [lockAspectRatio, aspectRatio, setWidth, setHeight]
+    [locked, aspectRatio, setWidth, setHeight]
   )
 
   const handleHeightChange = useCallback(
     (newHeight: number) => {
       if (!Number.isFinite(newHeight) || newHeight < 100) return setHeight(100)
-      if (!lockAspectRatio) return setHeight(newHeight)
+      if (!locked) return setHeight(newHeight)
 
       const newWidth = Math.round(newHeight * aspectRatio)
       setWidth(newWidth)
       setHeight(newHeight)
     },
-    [lockAspectRatio, aspectRatio, setWidth, setHeight]
+    [locked, aspectRatio, setWidth, setHeight]
   )
 
   return (
     <section className='relative flex size-[300px] aspect-square flex-col rounded-lg bg-background'>
-      <Button
-        tooltipPosition='right'
-        onClick={toggleAspectRatioLock}
-        active={lockAspectRatio}
-        className='absolute left-2 top-2'
-      >
-        <ProportionsIcon />
-        <h5>{lockAspectRatio ? 'Desbloquear relación' : 'Bloquear relación'}</h5>
-      </Button>
+      {!forceLockAspect && (
+        <Button
+          tooltipPosition='right'
+          onClick={toggleAspectRatioLock}
+          active={lockAspectRatio}
+          className='absolute left-2 top-2'
+        >
+          <ProportionsIcon />
+          <h5>{lockAspectRatio ? 'Desbloquear relación' : 'Bloquear relación'}</h5>
+        </Button>
+      )}
 
       <div
         className='absolute left-1/2 top-[45%] grid max-h-[250px] -translate-x-1/2 -translate-y-1/2 place-content-center rounded-md bg-muted'

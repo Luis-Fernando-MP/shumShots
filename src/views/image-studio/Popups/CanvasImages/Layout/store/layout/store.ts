@@ -5,6 +5,11 @@ import {
   getPositionEntry,
   type SlotPositionId
 } from '@views/image-studio/Popups/CanvasImages/Layout/presets/positions/data'
+import {
+  resolveSoloPose,
+  type SoloPose
+} from '@views/image-studio/Popups/CanvasImages/Layout/presets/positions/helpers'
+import { getOnePose } from '@views/image-studio/Popups/CanvasImages/Layout/presets/positions/one.build'
 
 import { initialLayoutState } from './initialState'
 import {
@@ -20,6 +25,8 @@ type LayoutState = LayoutStateShape & {
   setOffsetForSlots: (targetIds: string[], allSlotIds: string[], offset: SlotOffset) => void
   getOffsetForSlot: (slotId: string) => SlotOffset
   purgeSlotOffsets: (slotIds: string[]) => void
+  patchAdvancedPose: (partial: Partial<SoloPose>) => void
+  clearAdvancedPose: () => void
   reset: () => void
 }
 
@@ -36,12 +43,12 @@ const normalizeOffset = (value: unknown): SlotOffset => {
 const state: StateCreator<LayoutState> = (set, get) => ({
   ...initialLayoutState,
   setConstrainToParent: value => set({ constrainToParent: value }),
-  setPositionId: id => set({ positionId: id }),
+  setPositionId: id => set({ positionId: id, advancedPose: null }),
   syncPositionForCount: count => {
     const current = get().positionId
     const family = current.replace(/-\d+$/, '')
     const next = getPositionEntry(count, family).id
-    if (next !== current) set({ positionId: next })
+    if (next !== current) set({ positionId: next, advancedPose: null })
   },
   setOffsetForSlots: (targetIds, allSlotIds, offset) => {
     const next = normalizeOffset(offset)
@@ -62,6 +69,12 @@ const state: StateCreator<LayoutState> = (set, get) => ({
       return { slotOffset }
     })
   },
+  patchAdvancedPose: partial => {
+    const current = get()
+    const base = current.advancedPose ?? getOnePose(current.positionId)
+    set({ advancedPose: resolveSoloPose({ ...base, ...partial }) })
+  },
+  clearAdvancedPose: () => set({ advancedPose: null }),
   reset: () => set({ ...initialLayoutState })
 })
 

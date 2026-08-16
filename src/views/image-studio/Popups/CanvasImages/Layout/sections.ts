@@ -1,7 +1,8 @@
 import type SectionBuilder from '@views/image-studio/types/sections.types'
-import { LinkIcon, MapPinIcon, MoveIcon } from 'lucide-react'
+import { LinkIcon, MapPinIcon, MoveIcon, SlidersHorizontalIcon } from 'lucide-react'
 import { createElement } from 'react'
 
+import AdvancedPoseBuilder from './builders/AdvancedPoseBuilder'
 import ConstrainBuilder from './builders/ConstrainBuilder'
 import PositionsBuilder from './builders/PositionsBuilder'
 import SlotMoveBuilder from './builders/SlotMoveBuilder'
@@ -20,6 +21,13 @@ export const GLOBAL_SECTIONS = [
     description: 'Estilos de composición para el número de slots actual.',
     SectionIcon: createElement(MapPinIcon, { className: 'size-3.5' }),
     component: PositionsBuilder
+  },
+  {
+    key: 'advanced',
+    title: 'Ajustes avanzados',
+    description: 'Ajuste manual de posición, escala y transformación del slot seleccionado.',
+    SectionIcon: createElement(SlidersHorizontalIcon, { className: 'size-3.5' }),
+    component: AdvancedPoseBuilder
   }
 ] satisfies SectionBuilder[]
 

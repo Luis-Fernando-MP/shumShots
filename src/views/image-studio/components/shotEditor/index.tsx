@@ -9,7 +9,12 @@ const ShotEditor: FC = () => {
   const editorRef = useRef<HTMLDivElement>(null)
 
   return (
-    <div id='editor' ref={editorRef} className='relative size-fit h-fit w-fit overflow-hidden'>
+    <div
+      id='editor'
+      ref={editorRef}
+      className='relative size-fit h-fit w-fit overflow-hidden'
+      style={{ isolation: 'isolate' }}
+    >
       <BackgroundCanvas parentRef={editorRef} />
       <PictureCanvas />
       <CanvasLightOverlay />
