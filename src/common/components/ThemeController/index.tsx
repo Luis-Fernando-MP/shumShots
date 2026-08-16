@@ -4,8 +4,8 @@ import { FEATURED_THEME_KEYS, type Theme, isLightTheme } from '@app/defaults/the
 import Button from '@common/components/Button'
 import Popup from '@common/components/Popup'
 import Text from '@common/components/Text'
+import { chromeFrame } from '@common/utils/chrome'
 import { cn } from '@common/utils/cn'
-import { CheckIcon } from 'lucide-react'
 import { type FC } from 'react'
 
 import useAppTheme from './useAppTheme'
@@ -42,10 +42,7 @@ const ThemeHero = ({
   <button
     type='button'
     onClick={onSelect}
-    className={cn(
-      'overflow-hidden rounded-[12px] border text-left transition-colors',
-      selected ? 'border-primary' : 'border-border/60 hover:border-border'
-    )}
+    className={cn('overflow-hidden text-left', chromeFrame(selected))}
   >
     <div className='h-16 w-full' style={{ backgroundColor: toCss(theme['bg-primary']) }}>
       <div className='flex h-full items-end p-2'>
@@ -53,9 +50,8 @@ const ThemeHero = ({
         <span className='ml-1 size-6 rounded-full' style={{ backgroundColor: toCss(theme['tn-secondary']) }} />
       </div>
     </div>
-    <div className='flex items-center justify-between px-2.5 py-2'>
+    <div className='px-2.5 py-2'>
       <Text.emphasis>{name}</Text.emphasis>
-      {selected && <CheckIcon className='text-primary size-3.5' />}
     </div>
   </button>
 )
@@ -76,10 +72,7 @@ const ThemeSwatch = ({
     onClick={onSelect}
     title={name}
     aria-label={name}
-    className={cn(
-      'relative aspect-square overflow-hidden rounded-[12px] border',
-      selected ? 'border-primary ring-primary/30 ring-2' : 'border-border/50 hover:border-border'
-    )}
+    className={cn('relative aspect-square overflow-hidden', chromeFrame(selected))}
     style={{ backgroundColor: toCss(theme['bg-primary']) }}
   >
     <span className='absolute inset-x-0 bottom-0 h-1/3' style={{ backgroundColor: toCss(theme['tn-primary']) }} />
@@ -87,7 +80,6 @@ const ThemeSwatch = ({
       className='absolute right-1 bottom-1 size-2.5 rounded-full'
       style={{ backgroundColor: toCss(theme['tn-secondary']) }}
     />
-    {selected && <CheckIcon className='text-primary-foreground absolute top-1 left-1 size-3' />}
     <span className='bg-background/80 text-foreground absolute inset-x-0 bottom-0 truncate px-1 py-0.5 text-[10px] opacity-0 transition-opacity hover:opacity-100'>
       {name}
     </span>
@@ -149,7 +141,7 @@ const ThemeController: FC = () => {
         {light.length > 0 && (
           <section className='gap-grid flex flex-col'>
             <Text.heading>Claros</Text.heading>
-            <div className='grid grid-cols-4 gap-1.5'>
+            <div className='grid grid-cols-4 gap-2'>
               {light.map(([key, theme]) => (
                 <ThemeSwatch
                   key={key}
@@ -166,7 +158,7 @@ const ThemeController: FC = () => {
         {dark.length > 0 && (
           <section className='gap-grid flex flex-col'>
             <Text.heading>Oscuros</Text.heading>
-            <div className='grid grid-cols-4 gap-1.5'>
+            <div className='grid grid-cols-4 gap-2'>
               {dark.map(([key, theme]) => (
                 <ThemeSwatch
                   key={key}

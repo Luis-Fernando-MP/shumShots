@@ -54,10 +54,10 @@ const TabLayer: FC<TabLayerProps> = ({
           <div
             key={item.id}
             className={cn(
-              'group inline-flex h-8 items-center overflow-hidden rounded-[12px] border text-xs transition-colors',
+              'group inline-flex h-8 items-center overflow-hidden rounded-[12px] text-xs transition-colors',
               active
-                ? 'border-primary bg-primary/10 text-foreground'
-                : 'border-border/70 bg-card/40 text-muted-foreground hover:border-border hover:bg-muted/40 hover:text-foreground'
+                ? 'bg-primary/25 text-foreground'
+                : 'bg-muted text-muted-foreground hover:bg-muted/80 hover:text-foreground'
             )}
           >
             <button type='button' className='max-w-[7.5rem] truncate px-2.5 py-1.5 font-medium' onClick={() => onSelect(item.id)}>
@@ -68,10 +68,10 @@ const TabLayer: FC<TabLayerProps> = ({
                 type='button'
                 aria-label={`Quitar ${title}`}
                 className={cn(
-                  'border-l px-1.5 py-1.5 transition-colors',
+                  'px-1.5 py-1.5 transition-colors',
                   active
-                    ? 'border-primary/25 text-muted-foreground hover:bg-primary/15 hover:text-foreground'
-                    : 'border-border/60 text-muted-foreground/80 hover:bg-muted hover:text-foreground'
+                    ? 'text-muted-foreground hover:bg-primary/15 hover:text-foreground'
+                    : 'text-muted-foreground/80 hover:bg-muted hover:text-foreground'
                 )}
                 onClick={event => remove(event, item.id)}
               >
@@ -84,9 +84,9 @@ const TabLayer: FC<TabLayerProps> = ({
 
       <Button
         type='button'
-        variant='outline'
+        variant='dashed'
         size='sm'
-        className='text-muted-foreground hover:text-foreground h-8 gap-1 rounded-[12px] border-dashed px-2.5 text-xs'
+        className='text-muted-foreground hover:text-foreground h-8 gap-1 rounded-[12px] px-2.5 text-xs'
         aria-label={addLabel}
         title={addDisabled ? addDisabledReason : undefined}
         disabled={addDisabled}

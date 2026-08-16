@@ -1,8 +1,8 @@
 'use client'
 
-import Button from '@common/components/Button'
-import { Input } from '@common/components/Input'
+import SizeController from '@common/components/SizeController'
 import Text from '@common/components/Text'
+import { chromeTile } from '@common/utils/chrome'
 import { cn } from '@common/utils/cn'
 import usePixisPreferencesStore from '@views/code-studio/store/pixisPreferences.store'
 import {
@@ -10,67 +10,49 @@ import {
   ASPECT_FREE,
   ASPECT_PRESETS,
   heightFromWidth,
+  isAspectLocked,
   isAspectSelected,
-  parseAspect,
-  resolveAspectSelection,
-  simplifyAspect
+  parseAspect
 } from '../../utils/aspectRatio'
 import { getDefaultState, getField } from '@views/code-studio/utils/preferences'
-import { type FC, useState } from 'react'
+import { type FC } from 'react'
 
 import { PreferenceField } from '@views/code-studio/components/preferences/PreferenceField'
 
-const AspectRatioButton: FC<{
-  ratio?: string
+const RatioTile: FC<{
   label: string
   selected: boolean
+  ratio?: string
   free?: boolean
   onSelect: () => void
-}> = ({ ratio = '1:1', label, selected, free = false, onSelect }) => {
-  const parsed = parseAspect(ratio)
-  const aspectCss = parsed ? `${parsed[0]} / ${parsed[1]}` : '1 / 1'
-  const landscape = parsed ? parsed[0] >= parsed[1] : true
+}> = ({ label, selected, ratio = '1:1', free = false, onSelect }) => {
+  const parsed = parseAspect(ratio) ?? [1, 1]
+  const landscape = parsed[0] >= parsed[1]
 
   return (
-    <Button
+    <button
       type='button'
-      size='sm'
-      variant='soft'
-      isSelected={selected}
       aria-pressed={selected}
-      aria-label={`Aspect ratio ${label}`}
+      aria-label={`Proporción ${label}`}
       onClick={onSelect}
-      className='h-auto w-full flex-col gap-1.5 rounded-[12px] px-1.5 py-2'
+      className='flex min-w-0 flex-col items-center gap-1'
     >
-      <span
-        className={cn(
-          'border-border/60 bg-muted/40 flex size-10 items-center justify-center rounded-sm border',
-          selected && 'border-primary-foreground/40'
-        )}
-      >
+      <div className={cn('grid h-9 w-full place-content-center', chromeTile(selected))}>
         {free ? (
-          <span
-            className={cn(
-              'border-border size-[70%] rounded-[2px] border border-dashed',
-              selected && 'border-primary-foreground/70'
-            )}
-          />
+          <span className='border-foreground/45 size-[18px] rounded-[2px] border border-dashed' />
         ) : (
-          <span
-            className={cn(
-              'border-primary/50 bg-primary/35 max-h-[78%] max-w-[78%] rounded-[2px] border',
-              selected && 'border-primary-foreground/50 bg-primary-foreground/35'
-            )}
+          <div
+            className={cn('rounded-[2px]', selected ? 'bg-foreground/70' : 'bg-foreground/45')}
             style={{
-              aspectRatio: aspectCss,
-              width: landscape ? '78%' : undefined,
-              height: landscape ? undefined : '78%'
+              aspectRatio: `${parsed[0]} / ${parsed[1]}`,
+              width: landscape ? '22px' : undefined,
+              height: landscape ? undefined : '22px'
             }}
           />
         )}
-      </span>
-      <Text.emphasis className={cn('leading-none', selected && 'text-semantic-primary')}>{label}</Text.emphasis>
-    </Button>
+      </div>
+      <Text.caption className='text-center'>{label}</Text.caption>
+    </button>
   )
 }
 
@@ -80,10 +62,6 @@ const AspectRatioPreference: FC = () => {
   const setPixis = usePixisPreferencesStore(s => s.setPixis)
   const patchPixis = usePixisPreferencesStore(s => s.patchPixis)
   const defaults = getDefaultState().pixis
-
-  const parsedAspect = parseAspect(pixis.aspectRatio)
-  const [customW, setCustomW] = useState(String(parsedAspect?.[0] ?? 16))
-  const [customH, setCustomH] = useState(String(parsedAspect?.[1] ?? 9))
 
   const handleSelectAspect = (ratio: string) => {
     if (ratio === ASPECT_FREE) {
@@ -97,15 +75,7 @@ const AspectRatioPreference: FC = () => {
         containerWidth: defaults.containerWidth,
         containerHeight: defaults.containerHeight
       })
-      setCustomW('3')
-      setCustomH('2')
       return
-    }
-
-    const parsed = parseAspect(ratio)
-    if (parsed) {
-      setCustomW(String(parsed[0]))
-      setCustomH(String(parsed[1]))
     }
 
     const height = heightFromWidth(pixis.containerWidth, ratio)
@@ -117,16 +87,6 @@ const AspectRatioPreference: FC = () => {
     setPixis('aspectRatio', ratio)
   }
 
-  const handleApplyCustomAspect = () => {
-    const w = Number(customW)
-    const h = Number(customH)
-    if (!Number.isFinite(w) || !Number.isFinite(h) || w <= 0 || h <= 0) return
-    const [sw, sh] = simplifyAspect(w, h)
-    setCustomW(String(sw))
-    setCustomH(String(sh))
-    handleSelectAspect(resolveAspectSelection(w, h))
-  }
-
   return (
     <PreferenceField
       title={field.title}
@@ -136,22 +96,22 @@ const AspectRatioPreference: FC = () => {
       note={field.note}
       keywords='aspect ratio proporcion ancho alto default free'
     >
-      <div className='flex w-full flex-col gap-2.5'>
-        <div className='grid w-full grid-cols-2 gap-1.5'>
-          <AspectRatioButton
+      <div className='flex w-full flex-col gap-3'>
+        <div className='grid w-full grid-cols-3 gap-2'>
+          <RatioTile
             ratio={ASPECT_DEFAULT}
             label='Default'
             selected={pixis.aspectRatio === ASPECT_DEFAULT}
             onSelect={() => handleSelectAspect(ASPECT_DEFAULT)}
           />
-          <AspectRatioButton
+          <RatioTile
             free
-            label='Free'
+            label='Libre'
             selected={pixis.aspectRatio === ASPECT_FREE}
             onSelect={() => handleSelectAspect(ASPECT_FREE)}
           />
           {ASPECT_PRESETS.map(preset => (
-            <AspectRatioButton
+            <RatioTile
               key={preset.id}
               ratio={preset.id}
               label={preset.label}
@@ -161,44 +121,13 @@ const AspectRatioPreference: FC = () => {
           ))}
         </div>
 
-        {pixis.aspectRatio === ASPECT_FREE && (
-          <div className='flex flex-wrap items-center gap-1.5'>
-            <Input
-              type='number'
-              size='sm'
-              variant='outline'
-              value={customW}
-              min={1}
-              max={99}
-              step={1}
-              aria-label='Aspecto ancho'
-              onChange={e => setCustomW(e.target.value)}
-              onKeyDown={e => {
-                if (e.key === 'Enter') handleApplyCustomAspect()
-              }}
-              containerClassName='w-[4.5rem]'
-            />
-            <Text.caption>/</Text.caption>
-            <Input
-              type='number'
-              size='sm'
-              variant='outline'
-              value={customH}
-              min={1}
-              max={99}
-              step={1}
-              aria-label='Aspecto alto'
-              onChange={e => setCustomH(e.target.value)}
-              onKeyDown={e => {
-                if (e.key === 'Enter') handleApplyCustomAspect()
-              }}
-              containerClassName='w-[4.5rem]'
-            />
-            <Button type='button' size='sm' variant='outline' onClick={handleApplyCustomAspect}>
-              Aplicar
-            </Button>
-          </div>
-        )}
+        <SizeController
+          width={pixis.containerWidth}
+          height={pixis.containerHeight}
+          setWidth={width => setPixis('containerWidth', width)}
+          setHeight={height => setPixis('containerHeight', height)}
+          forceLockAspect={isAspectLocked(pixis.aspectRatio)}
+        />
       </div>
     </PreferenceField>
   )

@@ -1,7 +1,6 @@
 'use client'
 
 import { Button } from '@common/components/Button'
-import { cn } from '@common/utils/cn'
 import { clampRange, isImageBackground, toCssImageUrl } from '@views/image-studio/utils/backgroundStyle'
 import useBackgroundStore from '@views/image-studio/Popups/Canvas/Background/store/background/store'
 import { type FC, type PointerEvent as ReactPointerEvent, useRef } from 'react'
@@ -62,7 +61,7 @@ const ScaleBuilder: FC = () => {
     >
       <div className='gap-grid grid grid-cols-[1.2fr_1fr] items-stretch'>
         <div
-          className='bg-muted/40 relative aspect-square touch-none overflow-hidden rounded-radius ring-1 ring-inset ring-border/50 cursor-ns-resize'
+          className='bg-muted/40 relative aspect-square cursor-ns-resize touch-none overflow-hidden rounded-[12px] ring-1 ring-inset ring-border/50'
           onPointerDown={handlePointerDown}
           onPointerMove={handlePointerMove}
           onPointerUp={handlePointerUp}
@@ -94,10 +93,10 @@ const ScaleBuilder: FC = () => {
               <Button
                 key={item.value}
                 type='button'
-                variant='outline'
+                variant='soft'
                 isSelected={active}
                 size='sm'
-                className={cn('h-8 justify-between px-2.5 text-xs', active && 'ring-primary/40 ring-1')}
+                className='h-8 justify-between px-2.5 text-xs'
                 onClick={() => setScale(item.value)}
               >
                 <span>{item.label}</span>

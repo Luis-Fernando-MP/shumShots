@@ -18,7 +18,7 @@ const OverlayBuilder: FC = () => {
       title='Overlay'
       description='Capa de color encima del fondo para bajar contraste o teñir la escena.'
     >
-      <div className='gap-grid flex items-end'>
+      <div className='flex flex-col gap-3'>
         <ColorPicker
           variant='swatch'
           value={overlayColor}

@@ -24,7 +24,7 @@ const PaletteSphere: FC<Props> = ({ title, theme, className, selected = false, .
     <Button
       size='sm'
       isSelected={selected}
-      className={cn('max-w-[9.5rem] justify-start border border-transparent', selected && 'border-primary', className)}
+      className={cn('max-w-[9.5rem] justify-start', className)}
       {...props}
     >
       <span className='flex items-center -space-x-1.5'>

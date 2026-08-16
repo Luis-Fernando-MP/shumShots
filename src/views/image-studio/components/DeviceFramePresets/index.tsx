@@ -2,6 +2,7 @@
 
 import { framesQuery, type Frame } from '@common/core'
 import Text from '@common/components/Text'
+import { chromeFrame, chromeTile } from '@common/utils/chrome'
 import { cn } from '@common/utils/cn'
 import useFrameStore, {
   createDefaultFrameConfig
@@ -24,8 +25,8 @@ const FrameThumb: FC<{
       aria-label={`Frame ${frame.label}`}
       title={frame.label}
       className={cn(
-        'group border-border/70 bg-muted/30 hover:border-border hover:bg-muted/50 flex flex-col overflow-hidden rounded-radius border text-left transition-colors',
-        active && 'border-primary ring-primary/50 bg-secondary/40 ring-1'
+        'group flex flex-col overflow-hidden text-left',
+        chromeFrame(active)
       )}
     >
       <div className={cn('relative w-full overflow-hidden', isLandscape ? 'h-14' : 'h-28')}>
@@ -76,8 +77,8 @@ const DeviceFramePresets: FC<Props> = ({ tabId }) => {
         onClick={() => setFrameId(tabId, null, null)}
         aria-label='Sin frame'
         className={cn(
-          'border-border/70 text-muted-foreground hover:bg-muted/50 hover:text-foreground flex h-9 w-full items-center justify-center gap-2 rounded-radius border px-2 text-[11px] font-medium transition-colors',
-          frameId === null && 'border-primary bg-secondary/40 text-foreground ring-primary/50 ring-1'
+          'text-muted-foreground flex h-9 w-full items-center justify-center gap-2 px-2 text-[11px] font-medium',
+          chromeTile(frameId === null)
         )}
       >
         <CircleOffIcon className='size-3.5 shrink-0' />
@@ -86,12 +87,12 @@ const DeviceFramePresets: FC<Props> = ({ tabId }) => {
 
       {groups.length === 0 && (
         <Text.caption>
-          No hay frames en Cloudinary (<code className='text-foreground'>pixis/frames</code>).
+          No hay marcos disponibles.
         </Text.caption>
       )}
 
       {groups.map(group => (
-        <div key={group.id ?? '__root'} className='flex flex-col gap-1.5'>
+        <div key={group.id ?? '__root'} className='flex flex-col gap-3'>
           <Text.heading>{group.label}</Text.heading>
           <div className='grid grid-cols-2 gap-2'>
             {group.frames.map(frame => (

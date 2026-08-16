@@ -2,7 +2,9 @@
 
 import Button from '@common/components/Button'
 import { Input } from '@common/components/Input'
-import Typography from '@common/components/Typography'
+import Text from '@common/components/Text'
+import { chromeTile } from '@common/utils/chrome'
+import { cn } from '@common/utils/cn'
 import {
   PreferenceField,
   PreferencePanel,
@@ -26,18 +28,18 @@ const STYLES: readonly KeywordHighlightStyle[] = ['primary', 'amber', 'blue', 'g
 
 const STYLE_SWATCH: Record<KeywordHighlightStyle, string> = {
   primary: 'border-primary bg-primary/30',
-  amber: 'border-[#e5c07b] bg-[rgba(229,192,123,0.35)]',
-  blue: 'border-[#61afef] bg-[rgba(97,175,239,0.35)]',
-  green: 'border-[#98c379] bg-[rgba(152,195,121,0.35)]',
-  pink: 'border-[#c678dd] bg-[rgba(198,120,221,0.35)]'
+  amber: 'border-semantic-warning bg-semantic-warning/35',
+  blue: 'border-semantic-info bg-semantic-info/35',
+  green: 'border-semantic-success bg-semantic-success/35',
+  pink: 'border-secondary bg-secondary/40'
 }
 
 const STYLE_TEXT: Record<KeywordHighlightStyle, string> = {
   primary: 'text-primary',
-  amber: 'text-[#e5c07b]',
-  blue: 'text-[#61afef]',
-  green: 'text-[#98c379]',
-  pink: 'text-[#c678dd]'
+  amber: 'text-semantic-warning',
+  blue: 'text-semantic-info',
+  green: 'text-semantic-success',
+  pink: 'text-secondary'
 }
 
 const Swatch = ({
@@ -57,12 +59,10 @@ const Swatch = ({
     aria-label={title}
     aria-pressed={selected}
     onClick={onClick}
-    className={[
-      'flex size-8 items-center justify-center rounded-md border p-1',
-      selected
-        ? 'border-primary bg-primary/10 ring-2 ring-primary/40'
-        : 'border-border bg-muted/20 hover:border-foreground/30'
-    ].join(' ')}
+    className={cn(
+      'flex size-8 items-center justify-center border p-1',
+      chromeTile(selected)
+    )}
   >
     {children}
   </button>
@@ -107,12 +107,10 @@ const KeywordHighlightPreference: FC = () => {
           {groups.map((group, index) => (
             <div
               key={group.id}
-              className='border-border/50 bg-background/40 flex flex-col gap-2.5 rounded-md border p-2.5'
+              className='bg-muted/40 flex flex-col gap-2.5 rounded-[12px] p-2.5'
             >
               <div className='flex items-center gap-2'>
-                <Typography.Small weight='medium' className='shrink-0 text-foreground/80'>
-                  Grupo {index + 1}
-                </Typography.Small>
+                <Text.caption className='shrink-0'>Grupo {index + 1}</Text.caption>
                 <Input
                   type='text'
                   size='sm'
@@ -138,9 +136,7 @@ const KeywordHighlightPreference: FC = () => {
               </div>
 
               <div className='flex flex-wrap items-center gap-1.5'>
-                <Typography.Small weight='medium' className='w-14 text-foreground/70'>
-                  Color
-                </Typography.Small>
+                <Text.caption className='w-14'>Color</Text.caption>
                 {STYLES.map(style => (
                   <Swatch
                     key={style}
@@ -155,9 +151,7 @@ const KeywordHighlightPreference: FC = () => {
 
               {glyphMargin && (
                 <div className='flex flex-wrap items-center gap-1.5'>
-                  <Typography.Small weight='medium' className='w-14 text-foreground/70'>
-                    Icono
-                  </Typography.Small>
+                  <Text.caption className='w-14'>Icono</Text.caption>
                   {KEYWORD_GLYPHS.map(({ id, Icon }) => (
                     <Swatch
                       key={id}

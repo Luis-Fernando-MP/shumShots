@@ -1,5 +1,7 @@
 'use client'
 
+import Text from '@common/components/Text'
+import { chromeTile } from '@common/utils/chrome'
 import { cn } from '@common/utils/cn'
 import type { BorderConfigurationState } from '@views/image-studio/Popups/common/components/createBorderStore'
 import type { BorderFinish } from '@views/image-studio/utils/borderFinish'
@@ -138,7 +140,7 @@ const FrameTemplatePresets: FC<Props> = ({ borderState, onApplyRadius }) => {
   }
 
   return (
-    <div className='grid grid-cols-3 gap-1.5'>
+    <div className='grid grid-cols-3 gap-2'>
       {FRAME_TEMPLATES.map(template => {
         const active = isActive(template)
         return (
@@ -146,15 +148,10 @@ const FrameTemplatePresets: FC<Props> = ({ borderState, onApplyRadius }) => {
             key={template.id}
             type='button'
             onClick={() => apply(template)}
-            className={cn(
-              'flex flex-col gap-0.5 rounded-md p-1 text-left transition-colors',
-              active ? 'bg-secondary ring-primary/40 ring-1' : 'hover:bg-muted/50'
-            )}
+            className={cn('flex flex-col gap-1 p-1 text-left', chromeTile(active))}
           >
             <TemplatePreview template={template} />
-            <span className='text-muted-foreground px-0.5 text-center text-[10px] leading-tight font-medium'>
-              {template.label}
-            </span>
+            <Text.caption className='px-0.5 text-center'>{template.label}</Text.caption>
           </button>
         )
       })}

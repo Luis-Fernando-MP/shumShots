@@ -64,7 +64,7 @@ const SizeController: FC<Props> = ({ width, height, setWidth, setHeight, forceLo
       {!forceLockAspect && (
         <Button
           size='icon'
-          variant={locked ? 'solid' : 'ghost'}
+          variant='ghost'
           isSelected={locked}
           tooltip={locked ? 'Desbloquear relación' : 'Bloquear relación'}
           className='size-8 shrink-0 rounded-[12px]'

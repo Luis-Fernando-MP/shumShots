@@ -1,6 +1,7 @@
 'use client'
 
 import Text from '@common/components/Text'
+import { chromeTile } from '@common/utils/chrome'
 import { cn } from '@common/utils/cn'
 import useBackgroundStore from '@views/image-studio/Popups/Canvas/Background/store/background/store'
 import { SLOT_QUANTITIES } from '@views/image-studio/Popups/CanvasImages/ImagesCount/slotQuantity'
@@ -53,7 +54,7 @@ const CountBuilder: FC = () => {
 
   return (
     <SectionBlock title='Slots en el canvas' description='Solo añade o quita imágenes; no cambia el tamaño.'>
-      <div className='grid grid-cols-5 gap-1'>
+      <div className='grid grid-cols-5 gap-2'>
         {SLOT_QUANTITIES.map(value => {
           const active = count === value
           return (
@@ -66,8 +67,8 @@ const CountBuilder: FC = () => {
                 syncPositionForCount(value)
               }}
               className={cn(
-                'flex flex-col gap-1 rounded-[12px] border p-1 transition-colors',
-                active ? 'border-primary bg-primary/5' : 'border-transparent hover:border-border hover:bg-muted/40'
+                'flex flex-col gap-1 p-1',
+                chromeTile(active)
               )}
             >
               <LayoutPreview count={value} aspect={aspect} />

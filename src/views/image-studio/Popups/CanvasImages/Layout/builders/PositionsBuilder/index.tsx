@@ -1,6 +1,7 @@
 'use client'
 
 import Text from '@common/components/Text'
+import { chromeTile } from '@common/utils/chrome'
 import { cn } from '@common/utils/cn'
 import useBackgroundStore from '@views/image-studio/Popups/Canvas/Background/store/background/store'
 import usePicturesStore from '@views/image-studio/Popups/CanvasImages/ImagesCount/store/images-count/pictures'
@@ -30,7 +31,7 @@ const PositionsBuilder: FC = () => {
       title='Posiciones'
       description='Estilos de composición para el número de slots actual.'
     >
-      <div className='grid grid-cols-2 gap-1.5'>
+      <div className='grid grid-cols-2 gap-2'>
         {entries.map(item => {
           const active = positionId === item.id
           const Preview = item.preview
@@ -39,12 +40,7 @@ const PositionsBuilder: FC = () => {
               key={item.id}
               type='button'
               onClick={() => setPositionId(item.id as SlotPositionId)}
-              className={cn(
-                'relative flex flex-col gap-1 rounded-[12px] border p-1.5 transition-colors',
-                active
-                  ? 'border-primary bg-primary/5'
-                  : 'border-border/60 hover:border-border hover:bg-muted/40'
-              )}
+              className={cn('relative flex flex-col gap-1 p-1.5', chromeTile(active))}
             >
               {item.is3d && (
                 <Text.caption className='text-primary absolute top-1 right-1 z-[1]'>3D</Text.caption>

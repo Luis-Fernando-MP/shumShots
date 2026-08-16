@@ -1,6 +1,7 @@
 'use client'
 
 import Text from '@common/components/Text'
+import { chromeTile } from '@common/utils/chrome'
 import { cn } from '@common/utils/cn'
 import useFrameStore, {
   createDefaultFrameConfig,
@@ -17,13 +18,8 @@ const OPTIONS: { value: FrameFitMode; label: string; hint: string }[] = [
 
 type Props = { tabId: string; targetIds: string[] }
 
-const PhotoWindow: FC<{ mode: FrameFitMode; active: boolean }> = ({ mode, active }) => (
-  <span
-    className={cn(
-      'relative flex aspect-[4/3] w-full items-center justify-center overflow-hidden rounded-[8px]',
-      'bg-semantic-success/20'
-    )}
-  >
+const PhotoWindow: FC<{ mode: FrameFitMode }> = ({ mode }) => (
+  <span className='bg-semantic-success/20 relative flex aspect-[4/3] w-full items-center justify-center overflow-hidden rounded-[8px]'>
     {mode === 'cover' && (
       <span
         className='absolute inset-[-18%] bg-linear-to-br from-primary/80 via-secondary/70 to-primary/40'
@@ -39,7 +35,6 @@ const PhotoWindow: FC<{ mode: FrameFitMode; active: boolean }> = ({ mode, active
     {mode === 'fill' && (
       <span className='absolute inset-0 bg-linear-to-br from-primary/80 via-secondary/70 to-primary/40' aria-hidden />
     )}
-    {active && <span className='border-primary absolute inset-0 rounded-[8px] border' />}
   </span>
 )
 
@@ -49,21 +44,16 @@ const FitModeBuilder: FC<Props> = ({ tabId }) => {
 
   return (
     <SectionBlock title='Ajuste de imagen' description='Cómo encaja la foto en el slot. Con frame, también recorta la zona verde.'>
-      <div className='grid grid-cols-3 gap-1.5'>
+      <div className='grid grid-cols-3 gap-2'>
         {OPTIONS.map(option => (
           <button
             key={option.value}
             type='button'
             title={option.hint}
             onClick={() => setFitMode(tabId, option.value)}
-            className={cn(
-              'flex flex-col gap-1.5 rounded-[12px] border p-1.5 transition-colors',
-              fitMode === option.value
-                ? 'border-primary bg-primary/5'
-                : 'border-border/70 hover:border-border hover:bg-muted/40'
-            )}
+            className={cn('flex flex-col gap-1.5 p-1.5', chromeTile(fitMode === option.value))}
           >
-            <PhotoWindow mode={option.value} active={fitMode === option.value} />
+            <PhotoWindow mode={option.value} />
             <Text.caption className={cn('text-center', fitMode === option.value && 'text-foreground')}>
               {option.label}
             </Text.caption>

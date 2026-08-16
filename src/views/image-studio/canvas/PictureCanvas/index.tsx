@@ -21,6 +21,7 @@ import { getTabsStore } from '@views/image-studio/Popups/common/components/tabs/
 import { layerAppliesTo } from '@views/image-studio/Popups/common/lib/fx-shared/targeting'
 import DeviceFrameShell from '@views/image-studio/canvas/PictureCanvas/DeviceFrameShell'
 import PictureViewer from '@views/image-studio/canvas/PictureCanvas/PictureViewer'
+import SlotFocusGizmos from '@views/image-studio/canvas/PictureCanvas/SlotFocusGizmos'
 import usePictureSlot from '@views/image-studio/canvas/PictureCanvas/hooks/usePictureSlot'
 import { useShadowLightDom } from '@views/image-studio/canvas/PictureCanvas/hooks/useShadowLightDom'
 import useSlotAltDrag from '@views/image-studio/canvas/PictureCanvas/hooks/useSlotAltDrag'
@@ -132,6 +133,8 @@ const PictureSlot = memo(function PictureSlot({
 
   const frameLayers = getTabsStore(TABS_SCOPES.frame)(s => s.layers)
   const frameTabId = useMemo(() => resolveLayerIdForSlot(frameLayers, picture.id), [frameLayers, picture.id])
+  const shadowLayers = getTabsStore(TABS_SCOPES.shadow)(s => s.layers)
+  const shadowTabId = useMemo(() => resolveLayerIdForSlot(shadowLayers, picture.id), [shadowLayers, picture.id])
   const defaultFrame = useMemo(() => createDefaultFrameConfig(), [])
   const frameConfig = useFrameStore(s => (frameTabId ? s.byTab[frameTabId] : undefined) ?? defaultFrame)
   const resolvedFrameId = frameConfig.frameId
@@ -270,7 +273,7 @@ const PictureSlot = memo(function PictureSlot({
       role='button'
       tabIndex={0}
       onClick={event => {
-        if (event.altKey || event.shiftKey || altDrag.altDragging) return
+        if (event.altKey || event.shiftKey || event.ctrlKey || event.metaKey || altDrag.altDragging) return
         select()
       }}
       onClickCapture={altDrag.onClickCapture}
@@ -304,7 +307,7 @@ const PictureSlot = memo(function PictureSlot({
         userSelect: 'none',
         WebkitUserSelect: 'none'
       }}
-      title='Alt o Shift + arrastrar para mover'
+      title='Alt, Ctrl o Shift + arrastrar para mover'
     >
       <DeviceFrameShell frameId={resolvedFrameId} className='size-full overflow-visible' filterTargetRef={bindFilterTarget}>
         <div ref={boxShadowRef} className='relative size-full overflow-visible' style={contentFrameStyle}>
@@ -331,6 +334,7 @@ const PictureSlot = memo(function PictureSlot({
           </div>
         </div>
       </DeviceFrameShell>
+      {shadowTabId && <SlotFocusGizmos tabId={shadowTabId} hostRef={rootRef} />}
     </div>
   )
 })

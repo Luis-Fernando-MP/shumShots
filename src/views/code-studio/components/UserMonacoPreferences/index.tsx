@@ -29,11 +29,8 @@ const StudioSection = ({
   if (!matchesPreferenceSearch(query, [title, subtitle, keywords])) return null
 
   return (
-    <section className='flex flex-col gap-2' data-preference-field>
-      <div className='flex flex-col gap-0.5'>
-        <Text.heading>{title}</Text.heading>
-        <Text.caption>{subtitle}</Text.caption>
-      </div>
+    <section className='flex flex-col gap-3' data-preference-field>
+      <Text.heading>{title}</Text.heading>
       {children}
     </section>
   )
@@ -64,7 +61,7 @@ const UserMonacoPreferences: FC<UserMonacoPreferencesProps> = ({ tab, query }) =
               keywords='theme themes sintaxis color esquema'
               query={query}
             >
-              <SliceContainer maxHeight={160} extendedMaxHeight={480} className='grid grid-cols-2 gap-1.5'>
+              <SliceContainer maxHeight={160} extendedMaxHeight={480} className='grid grid-cols-2 gap-2'>
                 <ThemeSelectorPreference />
               </SliceContainer>
             </StudioSection>

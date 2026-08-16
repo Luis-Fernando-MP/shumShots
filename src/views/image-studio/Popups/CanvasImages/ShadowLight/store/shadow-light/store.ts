@@ -17,6 +17,7 @@ import { resolveTabConfig, syncTabBuckets } from '@views/image-studio/Popups/com
 
 import {
   createDefaultShadowConfig,
+  EMPTY_SHADOW_CONFIG,
   defaultLightLayer,
   defaultShadowLayer
 } from './initialState'
@@ -245,7 +246,7 @@ const useShadowStore = create(
 )
 
 export const selectTabConfig = (tabId: string) => (state: ShadowState) =>
-  state.byTab[tabId] ?? createDefaultShadowConfig()
+  state.byTab[tabId] ?? EMPTY_SHADOW_CONFIG
 
 export const getActiveShadow = (tabId: string) => (state: ShadowState) => {
   const config = selectTabConfig(tabId)(state)
@@ -261,5 +262,5 @@ export const getActiveLight = (tabId: string) => (state: ShadowState) => {
   return sanitizeLightLayer(layer)
 }
 
-export { createDefaultShadowConfig }
+export { createDefaultShadowConfig, EMPTY_SHADOW_CONFIG }
 export default useShadowStore

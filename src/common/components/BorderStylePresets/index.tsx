@@ -1,5 +1,7 @@
 'use client'
 
+import Text from '@common/components/Text'
+import { chromeTile } from '@common/utils/chrome'
 import { cn } from '@common/utils/cn'
 import type {
   BorderConfigurationState,
@@ -123,7 +125,7 @@ const BorderStylePresets: FC<Props> = ({ borderState }) => {
   }
 
   return (
-    <div className='grid grid-cols-3 gap-1.5'>
+    <div className='grid grid-cols-3 gap-2'>
       {BORDER_STYLE_PRESETS.map(preset => {
         const active = isActive(preset)
         return (
@@ -131,10 +133,7 @@ const BorderStylePresets: FC<Props> = ({ borderState }) => {
             key={preset.id}
             type='button'
             onClick={() => apply(preset)}
-            className={cn(
-              'flex flex-col gap-0.5 rounded-md p-1 text-left transition-colors',
-              active ? 'bg-secondary ring-primary/40 ring-1' : 'hover:bg-muted/50'
-            )}
+            className={cn('flex flex-col gap-1 p-1 text-left', chromeTile(active))}
           >
             <CornerPreview
               color={preset.color}
@@ -142,9 +141,7 @@ const BorderStylePresets: FC<Props> = ({ borderState }) => {
               finish={preset.finish}
               empty={preset.type === 'none'}
             />
-            <span className='text-muted-foreground px-0.5 text-center text-[10px] leading-tight font-medium'>
-              {preset.label}
-            </span>
+            <Text.caption className='px-0.5 text-center'>{preset.label}</Text.caption>
           </button>
         )
       })}

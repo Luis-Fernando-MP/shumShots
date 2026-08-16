@@ -166,7 +166,7 @@ const ShotCapture: FC<ShotCaptureProps> = ({
 
       <Button
         tooltip={`Descargar imagen (x${exportScale})`}
-        variant='dashed'
+        variant='solid'
         status='primary'
         size='icon'
         disabled={busy}
@@ -177,7 +177,7 @@ const ShotCapture: FC<ShotCaptureProps> = ({
 
       <Button
         tooltip={`Copiar imagen (x${exportScale})`}
-        variant='dashed'
+        variant='solid'
         status='primary'
         size='icon'
         disabled={busy}

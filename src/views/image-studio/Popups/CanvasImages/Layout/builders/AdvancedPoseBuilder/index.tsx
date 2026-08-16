@@ -46,7 +46,7 @@ const AdvancedPoseBuilder: FC = () => {
           min={0}
           max={100}
           step={1}
-          displayValue={`${Math.round(pose.ax * 100)}%`}
+          unit='%'
         />
         <SliderControl
           label='Posición Y'
@@ -55,7 +55,7 @@ const AdvancedPoseBuilder: FC = () => {
           min={0}
           max={100}
           step={1}
-          displayValue={`${Math.round(pose.ay * 100)}%`}
+          unit='%'
         />
         <SliderControl
           label='Escala'
@@ -64,6 +64,7 @@ const AdvancedPoseBuilder: FC = () => {
           min={40}
           max={180}
           step={1}
+          unit='×'
           displayValue={`${round(pose.scale, 2)}×`}
         />
         <SliderControl
@@ -73,7 +74,7 @@ const AdvancedPoseBuilder: FC = () => {
           min={0}
           max={40}
           step={1}
-          displayValue={`${Math.round(pose.bleed * 100)}%`}
+          unit='%'
         />
         <SliderControl
           label='Rotación Z'
@@ -82,7 +83,7 @@ const AdvancedPoseBuilder: FC = () => {
           min={-45}
           max={45}
           step={1}
-          displayValue={`${Math.round(pose.rotateZ)}°`}
+          unit='°'
         />
         <SliderControl
           label='Rotación X'
@@ -91,7 +92,7 @@ const AdvancedPoseBuilder: FC = () => {
           min={-40}
           max={40}
           step={1}
-          displayValue={`${Math.round(pose.rotateX)}°`}
+          unit='°'
         />
         <SliderControl
           label='Rotación Y'
@@ -100,7 +101,7 @@ const AdvancedPoseBuilder: FC = () => {
           min={-50}
           max={50}
           step={1}
-          displayValue={`${Math.round(pose.rotateY)}°`}
+          unit='°'
         />
 
         {advancedPose && (

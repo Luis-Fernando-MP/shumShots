@@ -102,7 +102,7 @@ export const monacoPreferenceGroups = [
   },
   {
     id: 'highlightLines',
-    title: 'Highlight Lines',
+    title: 'Resaltar líneas',
     subtitle: 'Rangos en editor normal, o Diff Editor (paralelo / inline).'
   },
   {

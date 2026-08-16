@@ -230,7 +230,7 @@ export const pixisPreferenceFields = {
     groupId: 'pixis',
     path: 'pixis.aspectRatio',
     kind: 'custom',
-    title: 'Aspect ratio',
+    title: 'Proporción',
     subtitle: 'Proporción ancho × alto',
     description: 'La caja grande es el marco; la interna muestra la proporción.',
     example: 'Ej: Default = 900×600; Free = ratio personalizado',

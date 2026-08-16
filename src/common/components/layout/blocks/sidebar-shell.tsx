@@ -35,7 +35,7 @@ interface SidebarSlotProps {
 }
 
 const SidebarHeader = ({ children, className }: SidebarSlotProps) => (
-  <header className={cn('border-border/50 shrink-0 border-b px-2 py-2', className)}>{children}</header>
+  <header className={cn('shrink-0 px-2 py-2', className)}>{children}</header>
 )
 
 const SidebarContent = ({ children, className }: SidebarSlotProps) => (

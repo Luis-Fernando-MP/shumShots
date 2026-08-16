@@ -15,7 +15,7 @@ type Props = HTMLAttributes<HTMLDivElement> & {
 const SectionGroup = ({ children, className, ...props }: Props) => (
   <div
     className={cn(
-      'border-border/50 bg-muted/40 border-l-primary flex flex-col gap-3 rounded-[12px] border border-l-[3px] p-3',
+      'bg-muted/40 flex flex-col gap-3 rounded-[12px] p-3',
       className
     )}
     {...props}

@@ -12,7 +12,8 @@ const APP_Z_INDEX = {
     vignette: 20,
     portrait: 25,
     lightAbove: 30,
-    text: 32
+    text: 32,
+    gizmo: 40
   },
   slot: {
     base: 0,

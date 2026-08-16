@@ -1,10 +1,8 @@
 'use client'
 
 import ColorPicker from '@common/components/ColorPicker'
-import SliceContainer from '@common/components/SliceContainer'
 import SliderControl from '@common/components/SliderControl'
 import Text from '@common/components/Text'
-import { cn } from '@common/utils/cn'
 import {
   VIGNETTE_PRESETS,
   type VignettePoints,
@@ -17,6 +15,7 @@ import { type FC, useMemo, useRef } from 'react'
 
 import Button from '@common/components/Button'
 import SectionBlock from '@views/image-studio/Popups/common/components/SectionBlock'
+import { VisualPresetGrid, VisualPresetTile } from '@views/image-studio/Popups/common/components/VisualPresetGrid'
 import { useIncrementalPadDrag } from '@views/image-studio/Popups/common/components/useIncrementalPadDrag'
 
 const POINT_OPTIONS: VignettePoints[] = [1, 2, 3]
@@ -88,24 +87,16 @@ const VignetteBuilder: FC = () => {
 
   return (
     <SectionBlock title='Viñeta'>
-      <SliceContainer maxHeight={150} extendedMaxHeight={420} collapsedVisible={6} className='grid grid-cols-3 gap-1.5'>
-        <button
-          type='button'
-          aria-pressed={vignettePreset === 'none'}
+      <VisualPresetGrid>
+        <VisualPresetTile
+          active={vignettePreset === 'none'}
           onClick={() => {
             setVignettePreset('none')
             setVignetteIntensity(0)
           }}
         >
-          <div
-            className={cn(
-              'relative h-12 overflow-hidden rounded-[12px] border',
-              vignettePreset === 'none' ? 'border-primary' : 'border-border/50'
-            )}
-          >
-            <div className='absolute inset-0' style={resolvePreviewFill(null)} />
-          </div>
-        </button>
+          <div className='absolute inset-0' style={resolvePreviewFill(null)} />
+        </VisualPresetTile>
 
         {VIGNETTE_PRESETS.map(item => {
           const style = resolveVignetteStyle({
@@ -124,20 +115,18 @@ const VignetteBuilder: FC = () => {
           })
           const active = vignettePreset === item.id
           return (
-            <button key={item.id} type='button' aria-label={item.label} aria-pressed={active} onClick={() => applyVignettePreset(item.id)}>
-              <div
-                className={cn(
-                  'relative h-12 overflow-hidden rounded-[12px] border',
-                  active ? 'border-primary' : 'border-border/50'
-                )}
-              >
-                <div className='absolute inset-0' style={resolvePreviewFill(null)} />
-                {style && <div className='absolute inset-0' style={style} />}
-              </div>
-            </button>
+            <VisualPresetTile
+              key={item.id}
+              active={active}
+              aria-label={item.label}
+              onClick={() => applyVignettePreset(item.id)}
+            >
+              <div className='absolute inset-0' style={resolvePreviewFill(null)} />
+              {style && <div className='absolute inset-0' style={style} />}
+            </VisualPresetTile>
           )
         })}
-      </SliceContainer>
+      </VisualPresetGrid>
 
       {showEditor && (
         <div className='flex flex-col gap-2'>
@@ -148,9 +137,9 @@ const VignetteBuilder: FC = () => {
                 key={count}
                 type='button'
                 size='sm'
-                variant={vignettePoints === count ? 'solid' : 'outline'}
+                variant='soft'
                 isSelected={vignettePoints === count}
-                className='min-w-8 rounded-full'
+                className='min-w-8'
                 onClick={() => setVignettePoints(count)}
               >
                 {count}
@@ -167,10 +156,8 @@ const VignetteBuilder: FC = () => {
             {liveStyle && <div className='absolute inset-0' style={liveStyle} />}
           </div>
 
-          <div className='flex items-center gap-2'>
-            <ColorPicker variant='swatch' value={vignetteColor} onChange={setVignetteColor} label='Color' disableAlpha />
-            <SliderControl label='Intensidad' value={vignetteIntensity} onChangeRange={setVignetteIntensity} min={0} max={100} step={1} />
-          </div>
+          <ColorPicker variant='swatch' value={vignetteColor} onChange={setVignetteColor} label='Color' disableAlpha />
+          <SliderControl label='Intensidad' value={vignetteIntensity} onChangeRange={setVignetteIntensity} min={0} max={100} step={1} />
           <SliderControl label='Alcance' value={vignetteSize} onChangeRange={setVignetteSize} min={10} max={80} step={1} />
           <SliderControl label='Suavizado' value={vignetteSoftness} onChangeRange={setVignetteSoftness} min={5} max={90} step={1} />
         </div>

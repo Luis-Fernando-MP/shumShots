@@ -5,6 +5,7 @@ import ColorPicker from '@common/components/ColorPicker'
 import SliderControl from '@common/components/SliderControl'
 import { Tab } from '@common/components/Tabs'
 import Text from '@common/components/Text'
+import { chromeTile } from '@common/utils/chrome'
 import { cn } from '@common/utils/cn'
 import DomainPanel from '@views/image-studio/components/DomainPanel'
 import useTextLayersStore, {
@@ -57,8 +58,8 @@ const LayerRow: FC<{ layer: TextLayer; index: number; selected: boolean }> = ({ 
   return (
     <div
       className={cn(
-        'flex items-center gap-2 rounded-[12px] border px-2 py-1.5',
-        selected ? 'border-primary' : 'border-border/50'
+        'flex items-center gap-2 rounded-[12px] px-2 py-1.5',
+        chromeTile(selected)
       )}
     >
       <button type='button' className='flex min-w-0 flex-1 items-center gap-2 text-left' onClick={() => selectLayer(layer.id)}>
@@ -102,7 +103,7 @@ const TextLayers: FC = () => {
         <button
           type='button'
           onClick={addLayer}
-          className='border-border/70 bg-muted/40 flex min-h-24 w-full flex-col items-center justify-center gap-2 rounded-[16px] border border-dashed'
+          className='border-border/70 bg-muted/40 flex min-h-24 w-full flex-col items-center justify-center gap-2 rounded-[12px] border border-dashed'
         >
           <PlusIcon className='text-muted-foreground size-5' />
           <Text.caption>Añadir</Text.caption>
@@ -144,40 +145,34 @@ const TextLayers: FC = () => {
               onChange={event => updateLayer(selected.id, { content: event.target.value })}
               className='bg-muted min-h-20 w-full resize-none rounded-[12px] px-3 py-2 text-sm outline-none'
             />
-            <div className='grid grid-cols-4 gap-1.5'>
+            <div className='grid grid-cols-4 gap-2'>
               {FONTS.map(font => (
                 <button
                   key={font.id}
                   type='button'
                   onClick={() => updateLayer(selected.id, { fontFamily: font.id })}
                   aria-label={font.id}
-                  className={cn(
-                    'rounded-[12px] border py-2 text-sm',
-                    selected.fontFamily === font.id ? 'border-primary' : 'border-border/50'
-                  )}
+                  className={cn('py-2 text-sm', chromeTile(selected.fontFamily === font.id))}
                   style={{ fontFamily: font.id }}
                 >
                   {font.sample}
                 </button>
               ))}
             </div>
-            <div className='grid grid-cols-3 gap-1.5'>
+            <div className='grid grid-cols-3 gap-2'>
               {WEIGHTS.map(weight => (
                 <button
                   key={weight}
                   type='button'
                   onClick={() => updateLayer(selected.id, { weight })}
-                  className={cn(
-                    'rounded-[12px] border py-1.5 text-xs',
-                    selected.weight === weight ? 'border-primary' : 'border-border/50'
-                  )}
+                  className={cn('py-1.5 text-xs', chromeTile(selected.weight === weight))}
                   style={{ fontWeight: weight }}
                 >
                   {weight}
                 </button>
               ))}
             </div>
-            <div className='grid grid-cols-3 gap-1.5'>
+            <div className='grid grid-cols-3 gap-2'>
               {ALIGNS.map(item => {
                 const Icon = item.Icon
                 return (
@@ -186,10 +181,7 @@ const TextLayers: FC = () => {
                     type='button'
                     aria-label={item.id}
                     onClick={() => updateLayer(selected.id, { align: item.id })}
-                    className={cn(
-                      'grid place-content-center rounded-[12px] border py-1.5',
-                      selected.align === item.id ? 'border-primary' : 'border-border/50'
-                    )}
+                    className={cn('grid place-content-center py-1.5', chromeTile(selected.align === item.id))}
                   >
                     <Icon className='size-3.5' />
                   </button>
@@ -197,7 +189,7 @@ const TextLayers: FC = () => {
               })}
             </div>
             <SliderControl
-              label='Size'
+              label='Tamaño'
               value={selected.fontSize}
               onChangeRange={value => updateLayer(selected.id, { fontSize: value })}
               min={12}
@@ -218,7 +210,7 @@ const TextLayers: FC = () => {
                 label='Color'
               />
               <SliderControl
-                label='Opacity'
+                label='Opacidad'
                 value={selected.opacity}
                 onChangeRange={value => updateLayer(selected.id, { opacity: value })}
                 min={10}
@@ -227,7 +219,7 @@ const TextLayers: FC = () => {
               />
             </div>
             <SliderControl
-              label='Tracking'
+              label='Espaciado'
               value={selected.tracking}
               onChangeRange={value => updateLayer(selected.id, { tracking: value })}
               min={-8}
@@ -257,7 +249,7 @@ const TextLayers: FC = () => {
               displayValue={`${Math.round(selected.y)}`}
             />
             <SliderControl
-              label='Rotation'
+              label='Rotación'
               value={selected.rotation}
               onChangeRange={value => updateLayer(selected.id, { rotation: value })}
               min={-30}
@@ -266,7 +258,7 @@ const TextLayers: FC = () => {
               displayValue={`${selected.rotation}°`}
             />
             <SliderControl
-              label='Stroke'
+              label='Trazo'
               value={selected.strokeWidth}
               onChangeRange={value =>
                 updateLayer(selected.id, {
@@ -280,7 +272,7 @@ const TextLayers: FC = () => {
               displayValue={`${selected.strokeWidth}px`}
             />
             <SliderControl
-              label='Shadow'
+              label='Sombra'
               value={selected.shadowBlur}
               onChangeRange={value => updateLayer(selected.id, { shadowBlur: value })}
               min={0}
@@ -291,14 +283,17 @@ const TextLayers: FC = () => {
           </Tab.Content>
 
           <Tab.Content value='presets' className='mt-3'>
-            <div className='grid grid-cols-3 gap-1.5'>
+            <div className='grid grid-cols-3 gap-2'>
               {POSITIONS.map(item => (
                 <button
                   key={`${item.x}-${item.y}`}
                   type='button'
                   aria-label={`Posición ${item.x} ${item.y}`}
                   onClick={() => updateLayer(selected.id, { x: item.x, y: item.y })}
-                  className='bg-muted relative flex aspect-[4/3] items-center justify-center overflow-hidden rounded-[12px]'
+                  className={cn(
+                    'relative flex aspect-[4/3] items-center justify-center overflow-hidden',
+                    chromeTile(Math.abs(selected.x - item.x) < 1 && Math.abs(selected.y - item.y) < 1)
+                  )}
                 >
                   <span
                     className='bg-foreground/80 text-background absolute rounded-full px-1.5 py-0.5 text-[9px] font-semibold'

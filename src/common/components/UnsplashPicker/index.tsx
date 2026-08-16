@@ -3,7 +3,8 @@
 import { photosQuery, type Photo } from '@common/core'
 import Input from '@common/components/Input'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@common/components/Select'
-import Typography from '@common/components/Typography'
+import Text from '@common/components/Text'
+import { chromeFrame } from '@common/utils/chrome'
 import { cn } from '@common/utils/cn'
 import Popup from '@common/components/Popup'
 import { Image } from '@unpic/react'
@@ -77,10 +78,10 @@ const UnsplashPickerBody: FC<{ onSelect: Props['onSelect'] }> = ({ onSelect }) =
         </Select>
       </div>
 
-      {isLoading && <Typography.Small tone='secondary'>Cargando imágenes…</Typography.Small>}
-      {isError && <Typography.Small tone='secondary'>No se pudieron cargar las imágenes</Typography.Small>}
+      {isLoading && <Text.caption>Cargando imágenes…</Text.caption>}
+      {isError && <Text.caption>No se pudieron cargar las imágenes</Text.caption>}
       {!isLoading && !isError && photos.length === 0 && (
-        <Typography.Small tone='secondary'>Sin resultados para esta búsqueda</Typography.Small>
+        <Text.caption>Sin resultados para esta búsqueda</Text.caption>
       )}
 
       {photos.length > 0 && (
@@ -89,7 +90,7 @@ const UnsplashPickerBody: FC<{ onSelect: Props['onSelect'] }> = ({ onSelect }) =
             <button
               key={photo.id}
               type='button'
-              className='border-border group overflow-hidden rounded-[12px] border text-left'
+              className={cn('overflow-hidden text-left', chromeFrame())}
               onClick={() => onSelect(photo.urls.full, photo)}
               aria-label={photo.alt}
             >
@@ -112,9 +113,7 @@ const UnsplashPickerBody: FC<{ onSelect: Props['onSelect'] }> = ({ onSelect }) =
                 }}
                 className='h-24 w-full object-cover transition-transform group-hover:scale-[1.02]'
               />
-              <Typography.Small className='text-muted-foreground truncate px-2 py-1.5'>
-                {photo.photographer}
-              </Typography.Small>
+              <Text.caption className='truncate px-2 py-1.5'>{photo.photographer}</Text.caption>
             </button>
           ))}
         </div>
@@ -132,11 +131,7 @@ const UnsplashPickerBody: FC<{ onSelect: Props['onSelect'] }> = ({ onSelect }) =
  */
 const UnsplashPicker: FC<Props> = ({ onSelect, children, title = 'Unsplash', embedded = false }) => {
   if (embedded) {
-    return (
-      <div className='min-h-0 flex-1 overflow-y-auto px-3 py-3 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden'>
-        <UnsplashPickerBody onSelect={onSelect} />
-      </div>
-    )
+    return <UnsplashPickerBody onSelect={onSelect} />
   }
 
   return (

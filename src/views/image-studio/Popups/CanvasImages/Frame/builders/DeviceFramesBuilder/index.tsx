@@ -8,7 +8,7 @@ import type { FC } from 'react'
 type Props = { tabId: string; targetIds: string[] }
 
 const DeviceFramesBuilder: FC<Props> = ({ tabId }) => (
-  <SectionBlock title='Device frames' description='Se aplica a los destinos del tab activo.'>
+  <SectionBlock title='Marcos' description='Se aplica a los destinos del tab activo.'>
     <SliceContainer maxHeight={180} extendedMaxHeight={520}>
       <DeviceFramePresets tabId={tabId} />
     </SliceContainer>

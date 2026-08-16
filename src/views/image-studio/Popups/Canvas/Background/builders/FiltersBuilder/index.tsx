@@ -1,14 +1,13 @@
 'use client'
 
-import SliceContainer from '@common/components/SliceContainer'
 import SliderControl from '@common/components/SliderControl'
-import { cn } from '@common/utils/cn'
 import { FILTER_PRESETS, FILTER_SLIDERS, THEME_PREVIEW_FILL, buildFilterCss, isImageBackground, resolvePreviewFill } from '@views/image-studio/utils/backgroundStyle'
 import useBackgroundStore from '@views/image-studio/Popups/Canvas/Background/store/background/store'
 import { type FC, useState } from 'react'
 
 import Button from '@common/components/Button'
 import SectionBlock from '@views/image-studio/Popups/common/components/SectionBlock'
+import { VisualPresetGrid, VisualPresetTile } from '@views/image-studio/Popups/common/components/VisualPresetGrid'
 
 const FiltersBuilder: FC = () => {
   const background = useBackgroundStore(s => s.background)
@@ -41,30 +40,22 @@ const FiltersBuilder: FC = () => {
 
   return (
     <SectionBlock title='Filtros'>
-      <SliceContainer maxHeight={120} extendedMaxHeight={360} collapsedVisible={6} className='grid grid-cols-3 gap-1.5'>
+      <VisualPresetGrid>
         {FILTER_PRESETS.map(item => {
           const filter = buildFilterCss({ ...item.values, blur: 0 })
           const active = filterPreset === item.id
           return (
-            <button
+            <VisualPresetTile
               key={item.id}
-              type='button'
+              active={active}
               aria-label={item.label}
-              aria-pressed={active}
               onClick={() => applyFilterPreset(item.id)}
             >
-              <div
-                className={cn(
-                  'h-12 w-full overflow-hidden rounded-[12px] border',
-                  active ? 'border-primary' : 'border-border/50'
-                )}
-              >
-                <div className='size-full' style={{ ...fill, filter }} />
-              </div>
-            </button>
+              <div className='size-full' style={{ ...fill, filter }} />
+            </VisualPresetTile>
           )
         })}
-      </SliceContainer>
+      </VisualPresetGrid>
 
       <Button
         type='button'
@@ -87,7 +78,7 @@ const FiltersBuilder: FC = () => {
               min={item.min}
               max={item.max}
               step={1}
-              displayValue={`${values[item.key]}`}
+              unit={item.key === 'hue' ? '°' : '%'}
             />
           ))}
         </div>

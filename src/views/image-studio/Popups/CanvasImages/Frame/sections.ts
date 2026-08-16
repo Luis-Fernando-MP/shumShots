@@ -9,7 +9,7 @@ import FitModeBuilder from './builders/FitModeBuilder'
 const SECTIONS = [
   {
     key: 'device-frames',
-    title: 'Device frames',
+    title: 'Marcos',
     description: 'Se aplica a los destinos del tab activo.',
     SectionIcon: createElement(SmartphoneIcon, { className: 'size-3.5' }),
     component: DeviceFramesBuilder

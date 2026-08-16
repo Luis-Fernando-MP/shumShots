@@ -90,15 +90,10 @@ const PreviewCard: FC<{
       onClick={onSelect}
       className={cn('h-auto w-full flex-col gap-2 rounded-[12px] px-2 py-2.5', className)}
     >
-      <span
-        className={cn(
-          'border-border/60 bg-muted/40 flex h-14 w-full items-center justify-center overflow-hidden rounded-md border',
-          selected && 'border-primary-foreground/50 ring-primary/40 ring-2 ring-offset-1'
-        )}
-      >
+      <span className='bg-muted/40 flex h-14 w-full items-center justify-center overflow-hidden rounded-[8px]'>
         {children}
       </span>
-      <Text.emphasis className={cn('leading-none', selected && 'text-semantic-primary')}>{label}</Text.emphasis>
+      <Text.emphasis className='leading-none'>{label}</Text.emphasis>
     </Button>
   )
 }
@@ -251,7 +246,7 @@ const WindowChromePreference: FC = () => {
 
   return (
     <>
-      <div className='flex flex-col gap-5'>
+      <div className='flex flex-col gap-6'>
         <div className='border-border/60 bg-muted/20 flex w-full items-center justify-center rounded-[12px] border p-3'>
           <MiniWindow
             size='lg'
@@ -267,11 +262,11 @@ const WindowChromePreference: FC = () => {
         </div>
 
         <Row
-          title='Look presets'
+          title='Estilos'
           description='Atajos que aplican varios estilos. El activo queda marcado.'
           keywords='preset presets look macos vscode windows'
         >
-          <div className='grid w-full grid-cols-2 gap-1.5'>
+          <div className='grid w-full grid-cols-2 gap-2'>
             {CHROME_LOOK_PRESETS.map(preset => (
               <PreviewCard
                 key={preset.id}
@@ -297,7 +292,7 @@ const WindowChromePreference: FC = () => {
           description='Bolitas Mac, iconos Windows o sin controles.'
           keywords='controls mac windows traffic lights'
         >
-          <div className='grid w-full grid-cols-2 gap-1.5'>
+          <div className='grid w-full grid-cols-2 gap-2'>
             {(['mac', 'windows', 'none'] as const).map(style => (
               <PreviewCard
                 key={style}
@@ -324,7 +319,7 @@ const WindowChromePreference: FC = () => {
 
         {(chrome.controls === 'mac' || searching) && (
           <Row title='Colores Mac' description='Paleta de las tres bolitas.' keywords='macColors classic graphite candy mono'>
-            <div className='grid w-full grid-cols-2 gap-1.5'>
+            <div className='grid w-full grid-cols-2 gap-2'>
               {(Object.keys(MAC_TRAFFIC_PRESETS) as MacTrafficPreset[]).map(preset => (
                 <PreviewCard
                   key={preset}
@@ -409,7 +404,7 @@ const WindowChromePreference: FC = () => {
             description='Cómo se separan las carpetas del path del archivo.'
             keywords='breadcrumbSeparator separator'
           >
-            <div className='grid w-full grid-cols-2 gap-1.5'>
+            <div className='grid w-full grid-cols-2 gap-2'>
               {BREADCRUMB_SEPARATORS.map(sep => (
                 <PreviewCard
                   key={sep}
@@ -434,7 +429,7 @@ const WindowChromePreference: FC = () => {
 
         {(chrome.statusBar || searching) && (
           <Row title='Densidad status bar' description='Vista previa del contenido de la barra.' keywords='statusBarDensity'>
-            <div className='grid w-full grid-cols-2 gap-1.5'>
+            <div className='grid w-full grid-cols-2 gap-2'>
               {STATUS_DENSITY.map(({ id, label, compact }) => (
                 <PreviewCard
                   key={id}

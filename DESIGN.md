@@ -201,16 +201,27 @@ Focus: `outline-2 outline-offset-2 outline-primary` on buttons. Inputs use `focu
 Use `@common/components` primitives. Do not restyle a one-off button when `Button` / `Input` / `Chip` / `Text` / `Typography` already cover the case. Sidebar and dock chrome use `Text` and `rounded-[12px]` controls; builders on the shot stay at 4px.
 
 ### Buttons
-- **Shape:** `rounded-radius` (4px), `text-sm font-medium`, heights `h-8` / `h-10` / `h-12`.
-- **Primary:** `bg-primary text-primary-foreground`; hover `bg-primary/90`.
+- **Shape:** `rounded-[12px]`, `text-sm font-medium`, heights `h-8` / `h-10` / `h-12`. Builders on the shot stay at 4px.
+- **Selected (preset / tab / chip):** `chromeTile` / `chromeFrame` / `Button isSelected` — wash `bg-primary/25`, no hairline at rest. The fill must read as primary so active controls are obvious without a cage of borders. Previews (`chromeFrame`) may add 1px `border-primary/60` only when selected, because the fill hides the wash. No `ring-2`, no check, no glow, no opaque `border-primary`.
+- **Idle tiles:** muted fill, `border-transparent`. Never a grid of `border-border` boxes.
+- **Primary action (descargar / copiar):** `variant='solid' status='primary'`.
+- **Reset de panel:** `variant='outline'` (error en “Resetear todo”).
+- **Vacío / soltar / añadir:** el único dashed. Dropzone, empty search, empty TextLayers. No en reset ni en export.
+- **Toolbar (docks):** `ghost` + `isSelected`.
 - **Secondary:** `bg-card text-foreground`; hover `bg-muted`.
 - **Ghost:** transparent; hover `bg-muted/70`.
 - **Outline:** `border-border`; hover `bg-muted/70`.
 - **Focus:** 2px primary outline, 2px offset. Disabled: `opacity-50`, no pointer.
 
+### Rhythm
+- Between sections: 24px (`gap-6`). DomainPanel, preference stacks, and tabbed domain wrappers share this cluster.
+- Title → controls: 12px (`gap-3`). `SectionBlock` and `PreferenceSection` match.
+- Controls inside a field: 8px (`gap-2`).
+- Do not nest a second cluster gap inside DomainPanel.
+
 ### Chips
-- Default: muted wash + `border-border`, `rounded-md`, `text-xs font-medium`, `h-7`.
-- Primary: `bg-primary/10 border-primary/40` — selected/filter, not a second primary button.
+- Default: muted wash, no hairline, `rounded-md`, `text-xs font-medium`, `h-7`.
+- Primary: `bg-primary/25` — selected/filter, not a second primary button. No hairline.
 - Optional remove control uses a 12px icon, muted until hover.
 
 ### Cards / Containers
@@ -223,7 +234,7 @@ Use `@common/components` primitives. Do not restyle a one-off button when `Butto
 - Focus: border becomes `border-border` (soft) or `border-primary` (outline).
 - Status variants tint background and border with semantic success/warning/error/info.
 - Suffix chips sit inside the field (`bg-muted`, `rounded-md`).
-- `SliderControl`: thin 4px track, label left, value right. Not a filled `h-9` pill.
+- `SliderControl`: thick `h-8` track, `rounded-[12px]`, `bg-muted/60`. Label and value inside. Fill has a subtle linear gradient. Cursor: `cursor-ew-resize`. Props: `min`, `max`, `value`.
 
 ### Navigation
 - `App.topDock` / `App.bottomDock`: icon-forward, ghost buttons, tooltips. Floating capsules over the board, not a boxed app nav.
@@ -239,7 +250,9 @@ Use `@common/components` primitives. Do not restyle a one-off button when `Butto
 
 ### Do:
 - **Do** use `bg-primary`, `text-foreground`, `rounded-radius`, `gap-grid` (and siblings) for new chrome.
-- **Do** put sidebar, dock, and popup chrome on `Text.*`. Clusters use 16px gap; fields inside a section use 8px.
+- **Do** put sidebar, dock, and popup chrome on `Text.*`. Clusters use 24px gap; title to controls 12px; fields inside a section use 8px.
+- **Do** select chrome with a primary wash (`bg-primary/25` via `chromeTile` / `Button isSelected`). Idle tiles have no hairline. `chromeFrame` may use 1px `border-primary/60` only when selected. Never `ring-2` or a solid primary fill on tiles.
+- **Do** reserve dashed for empty / drop / add. Reset is outline. Export is solid primary.
 - **Do** keep Operate density: compact controls, Spanish labels, tooltips on icon-only hits.
 - **Do** treat image-studio canvas effects (vignette, lights, 3D) as the artifact; keep chrome quieter than the board.
 - **Do** honor `APP_Z_INDEX` instead of inventing new stacking numbers.
@@ -252,3 +265,5 @@ Use `@common/components` primitives. Do not restyle a one-off button when `Butto
 - **Don't** import domain stores into ShotEditor or fork a second design language for code-studio vs image-studio.
 - **Don't** fabricate testimonials, customers, or brand photography.
 - **Don't** prefix UI titles with `#` or `##`.
+- **Don't** use `variant='dashed'` on reset or primary actions. Dashed means empty.
+- **Don't** cage idle tiles, tabs, or chips with `border-border`. Hairlines belong on shells (sidebar, dock, popup) and on empty/dashed.

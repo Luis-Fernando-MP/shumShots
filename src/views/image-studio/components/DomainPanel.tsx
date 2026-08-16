@@ -27,7 +27,7 @@ const DomainPanel: FC<DomainPanelProps> = ({
   <div className='flex h-full min-h-0 flex-col'>
     <div
       className={cn(
-        'flex min-h-0 flex-1 flex-col gap-4 overflow-y-auto px-3 py-3 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden',
+        'flex min-h-0 flex-1 flex-col gap-6 overflow-y-auto px-3 py-3 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden',
         className
       )}
     >

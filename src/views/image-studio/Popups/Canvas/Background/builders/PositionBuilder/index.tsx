@@ -67,7 +67,7 @@ const PositionBuilder: FC = () => {
         <div
           ref={padRef}
           className={cn(
-            'bg-muted/40 relative aspect-square touch-none overflow-hidden rounded-radius outline-none',
+            'bg-muted/40 relative aspect-square touch-none overflow-hidden rounded-[12px] outline-none',
             'cursor-grab active:cursor-grabbing ring-border/50 ring-1 ring-inset',
             positionPreset === 'free' && 'ring-primary/70'
           )}

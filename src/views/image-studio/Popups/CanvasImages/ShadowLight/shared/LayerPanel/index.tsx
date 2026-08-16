@@ -1,14 +1,13 @@
 'use client'
 
-import SliceContainer from '@common/components/SliceContainer'
 import SliderControl from '@common/components/SliderControl'
 import ColorsController from '@common/components/ColorsController'
 import { extractColor } from '@common/components/extractColor'
-import { Button } from '@common/components/Button'
-import { cn } from '@common/utils/cn'
 import { LIGHT_PRESETS, type LightType } from '@views/image-studio/Popups/common/presets/light'
 import { SHADOW_PRESETS, type ShadowType } from '@views/image-studio/Popups/CanvasImages/ShadowLight/presets/shadow'
 import { useActiveLayerPreview } from '@views/image-studio/canvas/PictureCanvas/hooks/useShadowVisualStyles'
+import EffectPresetGrid from '@views/image-studio/Popups/common/components/EffectPresetGrid'
+import LightAdjustments from '@views/image-studio/Popups/common/components/LightAdjustments'
 import SectionBlock from '@views/image-studio/Popups/common/components/SectionBlock'
 import TabBar from '@views/image-studio/Popups/common/components/tabs/TabBar'
 import useShadowStore, {
@@ -54,48 +53,16 @@ const LayerPresets: FC<PanelProps> = ({ kind, tabId }) => {
 
   return (
     <SectionBlock title='Estilos' level={2} description='Elige un preset y afina con el foco y los ajustes.'>
-      <SliceContainer maxHeight={150} extendedMaxHeight={360} className='grid grid-cols-2 gap-1.5'>
-        {presets.map(preset => {
-          const active = activeType === preset.type
-          return (
-            <Button
-              key={preset.type}
-              type='button'
-              variant='outline'
-              isSelected={active}
-              size='sm'
-              aria-pressed={active}
-              onClick={() =>
-                kind === 'shadow'
-                  ? applyShadowPreset(tabId, preset.type as ShadowType)
-                  : applyLightPreset(tabId, preset.type as LightType)
-              }
-              className={cn(
-                'flex h-auto flex-col items-center gap-1.5 rounded-[12px] px-1 py-2',
-                active && 'border-primary'
-              )}
-            >
-              <div className='bg-muted relative flex h-12 w-full items-end justify-center overflow-hidden rounded-[8px] px-2 pb-2'>
-                <div
-                  className={cn(
-                    'size-6 rounded-[3px]',
-                    preset.type === 'none' ? 'bg-muted-foreground/30' : 'bg-card'
-                  )}
-                  style={{ boxShadow: preset.type === 'none' ? 'none' : preset.preview }}
-                />
-              </div>
-              <span
-                className={cn(
-                  'text-chrome-ui font-semibold leading-none',
-                  active ? 'text-foreground' : 'text-muted-foreground'
-                )}
-              >
-                {preset.label}
-              </span>
-            </Button>
-          )
-        })}
-      </SliceContainer>
+      <EffectPresetGrid
+        presets={presets}
+        activeType={activeType}
+        onSelect={type =>
+          kind === 'shadow'
+            ? applyShadowPreset(tabId, type as ShadowType)
+            : applyLightPreset(tabId, type as LightType)
+        }
+        tone={kind === 'light' ? 'light' : 'shadow'}
+      />
     </SectionBlock>
   )
 }
@@ -117,7 +84,7 @@ const LayerAdjustments: FC<PanelProps> = ({ kind, tabId }) => {
             step={1}
             min={0}
             max={100}
-            displayValue={`${Math.round(shadow.opacity * 100)}%`}
+            unit='%'
           />
           <SliderControl
             label='Difuminado'
@@ -126,7 +93,7 @@ const LayerAdjustments: FC<PanelProps> = ({ kind, tabId }) => {
             step={1}
             min={0}
             max={140}
-            displayValue={`${Math.round(shadow.blur)}`}
+            unit='px'
           />
         </div>
       </SectionBlock>
@@ -136,26 +103,12 @@ const LayerAdjustments: FC<PanelProps> = ({ kind, tabId }) => {
   if (!light || light.type === 'none') return null
   return (
     <SectionBlock title='Ajustes' level={2} description='Intensidad y qué tan amplia se siente la luz.'>
-      <div className='flex flex-col gap-3'>
-        <SliderControl
-          label='Intensidad'
-          onChangeRange={v => updateActiveLight(tabId, { opacity: v / 100 })}
-          value={Math.round(light.opacity * 100)}
-          step={1}
-          min={0}
-          max={100}
-          displayValue={`${Math.round(light.opacity * 100)}%`}
-        />
-        <SliderControl
-          label='Alcance'
-          onChangeRange={size => updateActiveLight(tabId, { size })}
-          value={Math.round(light.size)}
-          step={1}
-          min={20}
-          max={100}
-          displayValue={`${Math.round(light.size)}`}
-        />
-      </div>
+      <LightAdjustments
+        opacity={light.opacity}
+        size={light.size}
+        onOpacity={opacity => updateActiveLight(tabId, { opacity })}
+        onSize={size => updateActiveLight(tabId, { size })}
+      />
     </SectionBlock>
   )
 }
@@ -187,7 +140,7 @@ const LayerPanel: FC<PanelProps> = ({ kind, tabId }) => {
   const title = kind === 'shadow' ? 'Sombra' : 'Luz'
 
   return (
-    <section className='gap-grid-lg flex flex-col'>
+    <section className='flex flex-col gap-6'>
       <SectionBlock title={title} description='Estilo, foco e intensidad para los destinos del tab.'>
         <LayerTabs kind={kind} tabId={tabId} />
       </SectionBlock>

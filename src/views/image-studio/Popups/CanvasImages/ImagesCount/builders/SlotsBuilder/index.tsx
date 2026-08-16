@@ -10,6 +10,7 @@ import {
   SelectValue
 } from '@common/components/Select'
 import Text from '@common/components/Text'
+import { chromeTile } from '@common/utils/chrome'
 import { cn } from '@common/utils/cn'
 import {
   DndContext,
@@ -76,8 +77,8 @@ const SortableSlotCard: FC<{
       ref={setNodeRef}
       style={style}
       className={cn(
-        'border-border/60 bg-muted flex flex-col gap-2 rounded-[12px] border p-2 transition-colors',
-        selected && 'border-primary ring-primary/30 bg-secondary/15 ring-1',
+        'flex flex-col gap-2 p-2',
+        chromeTile(selected),
         isDragging && 'shadow-lg'
       )}
     >

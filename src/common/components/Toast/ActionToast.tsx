@@ -56,7 +56,8 @@ const ActionToast: FC<Props> = ({
         {actionLabel && (
           <Button
             size='sm'
-            variant='primary'
+            variant='solid'
+            status='primary'
             className='w-full'
             onClick={() => {
               dismiss()
@@ -71,7 +72,7 @@ const ActionToast: FC<Props> = ({
           <Button
             size='sm'
             variant='outline'
-            className='w-full border-dashed border-primary'
+            className='w-full'
             onClick={() => {
               dismiss()
               onSecondAction?.()

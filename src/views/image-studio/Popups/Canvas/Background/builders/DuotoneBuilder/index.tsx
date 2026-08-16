@@ -1,7 +1,6 @@
 'use client'
 
 import ColorPicker from '@common/components/ColorPicker'
-import SliceContainer from '@common/components/SliceContainer'
 import SliderControl from '@common/components/SliderControl'
 import {
   DUOTONE_PRESETS,
@@ -11,36 +10,30 @@ import {
   resolvePreviewFill
 } from '@views/image-studio/utils/backgroundStyle'
 import useBackgroundStore from '@views/image-studio/Popups/Canvas/Background/store/background/store'
-import { cn } from '@common/utils/cn'
-import type { FC } from 'react'
+import type { CSSProperties, FC } from 'react'
 
 import SectionBlock from '@views/image-studio/Popups/common/components/SectionBlock'
+import { VisualPresetGrid, VisualPresetTile } from '@views/image-studio/Popups/common/components/VisualPresetGrid'
 
-const DuotonePreview: FC<{
+const DuotoneFill: FC<{
   shadow: string
   highlight: string
   intensity: number
   background: string | null
-  active: boolean
-}> = ({ shadow, highlight, intensity, background, active }) => {
+}> = ({ shadow, highlight, intensity, background }) => {
   const layers = intensity > 0 ? resolveDuotoneLayers(shadow, highlight, intensity) : null
   const base = background && isImageBackground(background) ? resolvePreviewFill(background) : THEME_PREVIEW_FILL
 
   return (
-    <div
-      className={cn(
-        'relative h-12 w-full overflow-hidden rounded-[12px] border',
-        active ? 'border-primary' : 'border-border/50'
-      )}
-    >
+    <>
       <div className='absolute inset-0' style={{ ...base, filter: 'grayscale(100%) contrast(1.12)' }} />
       {layers && (
         <>
-          <div className='absolute inset-0' style={layers.shadow} />
-          <div className='absolute inset-0' style={layers.highlight} />
+          <div className='absolute inset-0' style={layers.shadow as CSSProperties} />
+          <div className='absolute inset-0' style={layers.highlight as CSSProperties} />
         </>
       )}
-    </div>
+    </>
   )
 }
 
@@ -59,29 +52,27 @@ const DuotoneBuilder: FC = () => {
 
   return (
     <SectionBlock title='Duotone'>
-      <SliceContainer maxHeight={140} extendedMaxHeight={420} collapsedVisible={6} className='grid grid-cols-3 gap-1.5'>
+      <VisualPresetGrid>
         {DUOTONE_PRESETS.map(item => {
           const active =
             item.id === 'none' ? duotonePreset === 'none' || duotoneIntensity === 0 : duotonePreset === item.id
           return (
-            <button
+            <VisualPresetTile
               key={item.id}
-              type='button'
+              active={active}
               aria-label={item.label}
-              aria-pressed={active}
               onClick={() => applyDuotonePreset(item.id)}
             >
-              <DuotonePreview
+              <DuotoneFill
                 shadow={item.shadow}
                 highlight={item.highlight}
                 intensity={item.intensity}
                 background={background}
-                active={active}
               />
-            </button>
+            </VisualPresetTile>
           )
         })}
-      </SliceContainer>
+      </VisualPresetGrid>
 
       {showFine && (
         <div className='flex items-center gap-2'>
@@ -100,6 +91,7 @@ const DuotoneBuilder: FC = () => {
             min={0}
             max={100}
             step={1}
+            unit='%'
           />
         </div>
       )}

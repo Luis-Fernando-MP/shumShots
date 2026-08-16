@@ -24,7 +24,7 @@ const SECTIONS = [
   {
     key: 'library',
     title: 'Biblioteca',
-    description: 'Hasta 10 imágenes. Metadata en local · blobs en IndexedDB.',
+    description: 'Hasta 10 imágenes en la biblioteca.',
     SectionIcon: createElement(FolderOpenIcon, { className: 'size-3.5' }),
     component: LibraryBuilder
   }

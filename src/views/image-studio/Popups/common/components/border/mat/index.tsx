@@ -3,8 +3,7 @@
 import ColorsController from '@common/components/ColorsController'
 import SliderControl from '@common/components/SliderControl'
 import { Button } from '@common/components/Button'
-import Switch from '@common/components/Switch'
-import Typography from '@common/components/Typography'
+import SwitchRow from '@views/image-studio/Popups/common/components/SwitchRow'
 import type { BorderConfigurationState } from '@views/image-studio/Popups/common/components/createBorderStore'
 import SectionBlock from '@views/image-studio/Popups/common/components/SectionBlock'
 import type { FC } from 'react'
@@ -29,17 +28,16 @@ const BorderMat: FC<Props> = ({ borderState }) => {
 
   return (
     <SectionBlock title='Passepartout' description='Marco interno, independiente del stroke.'>
-      <div className='flex items-center justify-between gap-3'>
-        <Typography.Small tone='secondary' className='text-[10px]'>
-          {matEnabled ? 'Activado' : 'Desactivado'}
-        </Typography.Small>
-        <Switch size='sm' on={matEnabled} onChange={() => setMatEnabled(!matEnabled)} />
-      </div>
+      <SwitchRow
+        on={matEnabled}
+        onChange={() => setMatEnabled(!matEnabled)}
+        ariaLabel='Activar passepartout'
+      />
 
       {matEnabled && (
         <>
           <ColorsController background={matColor} setBackground={setMatColor} />
-          <div className='gap-grid flex items-end'>
+          <div className='flex items-center gap-2'>
             <SliderControl
               label='Inset'
               value={matSize}
@@ -47,6 +45,8 @@ const BorderMat: FC<Props> = ({ borderState }) => {
               min={0}
               max={80}
               step={1}
+              unit='px'
+              containerClassName='flex-1'
             />
             <Button
               type='button'

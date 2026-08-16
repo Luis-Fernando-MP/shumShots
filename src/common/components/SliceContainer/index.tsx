@@ -120,15 +120,12 @@ const SliceContainer = ({
       {showToggle && (
         <Button
           type='button'
-          variant='soft'
+          variant='outline'
           size='sm'
           aria-expanded={isOpen}
           aria-controls={contentId}
           onClick={() => setOpen(!isOpen)}
-          className={cn(
-            'text-foreground h-8 w-full justify-center gap-1.5 rounded-full px-3 text-xs font-medium',
-            'bg-primary/12 hover:bg-primary/18'
-          )}
+          className='h-8 w-full justify-center gap-1.5 rounded-[12px] px-3 text-xs'
         >
           {isOpen ? collapseLabel : moreLabel}
           <ChevronDownIcon

@@ -20,7 +20,7 @@ const SectionBlock: FC<Props> = ({ title, description, keywords, children }) => 
   if (!visible) return null
 
   return (
-    <section className='flex flex-col gap-2' data-section-block>
+    <section className='flex flex-col gap-3' data-section-block>
       <Text.heading>{title}</Text.heading>
       {children}
     </section>

@@ -38,3 +38,6 @@ export const createDefaultShadowConfig = (): ShadowTabConfig => {
     linkFocus: false
   }
 }
+
+/** Fallback estable para selectores de Zustand (getSnapshot no puede crear un objeto nuevo). */
+export const EMPTY_SHADOW_CONFIG: ShadowTabConfig = createDefaultShadowConfig()

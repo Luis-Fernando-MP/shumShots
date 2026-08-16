@@ -63,7 +63,7 @@ const SystemGridPopup: FC = () => {
               <Button
                 key={size}
                 size='sm'
-                variant={gridSize === size ? 'solid' : 'outline'}
+                variant='soft'
                 isSelected={gridSize === size}
                 className='min-w-10 rounded-[12px]'
                 onClick={() => setGridSize(size)}
@@ -74,7 +74,7 @@ const SystemGridPopup: FC = () => {
           </div>
         </div>
 
-        <Button variant='dashed' status='error' className='w-full rounded-[12px]' onClick={handleResetAll}>
+        <Button variant='outline' status='error' className='w-full rounded-[12px]' onClick={handleResetAll}>
           Resetear todo
         </Button>
       </Popup.Content>

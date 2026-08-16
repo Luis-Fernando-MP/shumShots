@@ -69,9 +69,9 @@ export const PreferenceField = ({
   }
 
   return (
-    <div data-preference-field className={cn('flex flex-col gap-1.5', className)}>
+    <div data-preference-field className={cn('flex flex-col gap-2', className)}>
       <Text.emphasis>{title}</Text.emphasis>
-      <div className='flex w-full flex-wrap items-center gap-1.5'>{children}</div>
+      <div className='flex w-full flex-wrap items-center gap-2'>{children}</div>
     </div>
   )
 }
@@ -106,7 +106,7 @@ export const PreferenceSection = ({ title, subtitle, keywords, children, classNa
         className={cn('flex flex-col gap-3', query && '[&:not(:has([data-preference-field]))]:hidden', className)}
       >
         <Text.heading>{title}</Text.heading>
-        <div className='flex flex-col gap-3'>{children}</div>
+        <div className='flex flex-col gap-2'>{children}</div>
       </section>
     </PreferenceSearchProvider>
   )
@@ -133,7 +133,7 @@ export function PreferenceToggle<T extends string | number | boolean>({
         const isNormal = normal !== undefined && option === normal
         const text =
           label?.(option) ??
-          (typeof option === 'boolean' ? (option ? 'On' : 'Off') : isNormal ? 'Normal' : String(option))
+          (typeof option === 'boolean' ? (option ? 'Sí' : 'No') : isNormal ? 'Normal' : String(option))
 
         return (
           <Button

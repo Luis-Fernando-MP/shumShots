@@ -43,9 +43,9 @@ const MonacoSidebar: FC = () => {
 
       <App.rightSidebar.footer>
         <Button
-          variant='dashed'
-          status='primary'
-          className='w-full rounded-[12px]'
+          variant='outline'
+          size='sm'
+          className='w-full rounded-[12px] text-xs'
           onClick={() => {
             resetMonaco()
             resetTheme()

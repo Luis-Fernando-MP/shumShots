@@ -175,6 +175,34 @@ export type VignetteState = {
 const radialHole = (at: string, size: number, outer: number, color: string, inner = 'transparent') =>
   `radial-gradient(circle at ${at}, ${inner} ${size}%, ${color} ${outer}%)`
 
+/**
+ * Agujero radial + borde oscuro. Motor compartido de Viñeta (soft) y Retrato Stage.
+ *
+ * @param props.at - Centro `x% y%`.
+ * @param props.hole - Tamaño del claro 5–95.
+ * @param props.falloff - Suavizado del borde.
+ * @param props.color - Color del oscurecido.
+ * @param props.opacity - 0–1.
+ */
+export const resolveRadialDarken = ({
+  at,
+  hole,
+  falloff,
+  color,
+  opacity
+}: {
+  at: string
+  hole: number
+  falloff: number
+  color: string
+  opacity: number
+}): CSSProperties | null => {
+  if (opacity <= 0) return null
+  const size = Math.max(5, Math.min(95, hole))
+  const outer = Math.min(100, size + Math.max(1, falloff) * 0.45)
+  return { opacity, background: radialHole(at, size, outer, color) }
+}
+
 export const resolveVignetteStyle = (state: VignetteState): CSSProperties | null => {
   if (state.preset === 'none') return null
   const intensity = state.intensity / 100
@@ -246,7 +274,7 @@ export const resolveVignetteStyle = (state: VignetteState): CSSProperties | null
     }
   }
 
-  return { opacity: intensity, background: radialHole(at, size, outer, color) }
+  return resolveRadialDarken({ at, hole: size, falloff: soft, color, opacity: intensity })
 }
 
 export const BLUR_PRESETS = [

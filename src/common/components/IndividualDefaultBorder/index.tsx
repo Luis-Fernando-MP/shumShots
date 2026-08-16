@@ -1,3 +1,4 @@
+import { chromeTile } from '@common/utils/chrome'
 import { cn } from '@common/utils/cn'
 import type { FC, MouseEvent } from 'react'
 
@@ -21,14 +22,11 @@ const IndividualDefaultBorder: FC<Props> = ({ value, onClick, label, selected })
     type='button'
     aria-label={label}
     aria-pressed={selected}
-    className={cn(
-      'grid size-8 place-content-center rounded-[12px]',
-      selected ? 'bg-primary text-primary-foreground' : 'bg-muted text-muted-foreground hover:bg-muted/80'
-    )}
+    className={cn('grid size-8 place-content-center', chromeTile(selected))}
     onClick={onClick}
   >
     <span
-      className={cn('size-4 border-2', selected ? 'border-primary-foreground' : 'border-current')}
+      className='border-foreground/55 size-4 border-2'
       style={{ borderRadius: `${Math.min(8, value * 0.1)}px` }}
     />
   </button>

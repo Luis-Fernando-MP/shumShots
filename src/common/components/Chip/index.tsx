@@ -10,10 +10,10 @@ const chipVariants = cva(
   {
     variants: {
       variant: {
-        default: 'border-border bg-muted/50 text-foreground',
+        default: 'border-transparent bg-muted/50 text-foreground',
         secondary: 'border-transparent bg-secondary text-secondary-foreground',
         outline: 'border-border bg-transparent text-foreground',
-        primary: 'border-primary/40 bg-primary/10 text-foreground'
+        primary: 'border-transparent bg-primary/25 text-foreground'
       },
       size: {
         sm: 'h-6 px-1.5',

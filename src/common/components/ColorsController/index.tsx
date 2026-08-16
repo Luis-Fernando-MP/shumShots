@@ -23,8 +23,8 @@ const ColorsController: FC<Props> = ({ background, setBackground, className }) =
             aria-label={`Color ${color}`}
             onClick={() => setBackground(color)}
             className={cn(
-              'size-8 justify-self-center rounded-full transition-transform',
-              isActive ? 'ring-primary ring-2 ring-offset-2 ring-offset-background scale-105' : 'hover:scale-105'
+              'size-8 justify-self-center rounded-full border border-border/50',
+              isActive && 'border-primary/40'
             )}
             style={{ backgroundColor: color }}
           />

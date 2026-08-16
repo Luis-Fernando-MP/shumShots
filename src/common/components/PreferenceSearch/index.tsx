@@ -19,8 +19,7 @@ export const PreferenceSearch: FC<PreferenceSearchProps> = ({ value, onChange, c
     <Input
       type='text'
       size='default'
-      variant='outline'
-      status='primary'
+      variant='solid'
       value={value}
       onChange={e => onChange(e.target.value)}
       placeholder='Buscar…'

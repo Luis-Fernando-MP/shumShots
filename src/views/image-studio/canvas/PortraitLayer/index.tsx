@@ -2,6 +2,7 @@
 
 import APP_Z_INDEX from '@common/constants/z-index'
 import usePortraitStore from '@views/image-studio/Popups/Canvas/Portrait/store/portrait/store'
+import { resolveRadialDarken } from '@views/image-studio/utils/backgroundStyle'
 import {
   type PointerEvent as ReactPointerEvent,
   type ReactNode,
@@ -32,6 +33,7 @@ const PortraitLayer = ({ children }: { children: ReactNode }) => {
   const focusY = usePortraitStore(s => s.focusY)
   const size = usePortraitStore(s => s.size)
   const amount = usePortraitStore(s => s.amount)
+  const softness = usePortraitStore(s => s.softness)
   const zoom = usePortraitStore(s => s.zoom)
   const noise = usePortraitStore(s => s.noise)
   const canvasBlur = usePortraitStore(s => s.canvasBlur)
@@ -59,7 +61,6 @@ const PortraitLayer = ({ children }: { children: ReactNode }) => {
   const inner = `${size}%`
   const outer = `${Math.min(96, size + 18)}%`
   const blurPx = 4 + (amount / 100) * 18
-  const dark = amount / 100
   const loupeD = (size / 100) * box.w * 1.6
   const focusPxX = (focusX / 100) * box.w
   const focusPxY = (focusY / 100) * box.h
@@ -94,7 +95,13 @@ const PortraitLayer = ({ children }: { children: ReactNode }) => {
             className='pointer-events-none absolute inset-0'
             style={{
               zIndex: APP_Z_INDEX.canvas.portrait,
-              background: `radial-gradient(circle at ${focusX}% ${focusY}%, transparent ${inner}, rgba(0,0,0,${0.35 + dark * 0.5}) ${outer})`
+              ...resolveRadialDarken({
+                at: `${focusX}% ${focusY}%`,
+                hole: size,
+                falloff: softness,
+                color: 'rgb(0, 0, 0)',
+                opacity: Math.max(0.12, amount / 100) * 0.85
+              })
             }}
           />
         )}

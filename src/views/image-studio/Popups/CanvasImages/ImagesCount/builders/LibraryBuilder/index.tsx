@@ -145,7 +145,7 @@ const LibraryBuilder: FC = () => {
   return (
     <SectionBlock
       title='Biblioteca'
-      description={`Hasta ${MAX_LIBRARY_IMAGES} imágenes. Metadata en local · blobs en IndexedDB.`}
+      description={`Hasta ${MAX_LIBRARY_IMAGES} imágenes en la biblioteca.`}
     >
       <div className='flex flex-col gap-3'>
         <Dropzone

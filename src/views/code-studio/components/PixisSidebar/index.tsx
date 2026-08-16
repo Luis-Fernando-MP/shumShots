@@ -33,7 +33,7 @@ const PixisSidebar: FC = () => {
       </App.tabs>
 
       <App.leftSidebar.footer>
-        <Button variant='dashed' status='primary' className='w-full rounded-[12px]' onClick={() => resetPixis()}>
+        <Button variant='outline' size='sm' className='w-full rounded-[12px] text-xs' onClick={() => resetPixis()}>
           Resetear ventana y lienzo
         </Button>
       </App.leftSidebar.footer>

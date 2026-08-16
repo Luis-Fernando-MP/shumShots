@@ -13,7 +13,7 @@ type ButtonVariant = 'soft' | 'solid' | 'outline' | 'ghost' | 'dashed'
 
 const buttonVariants = cva(
   [
-    'relative inline-flex items-center justify-center gap-2 rounded-radius text-sm font-medium no-underline',
+    'relative inline-flex items-center justify-center gap-2 rounded-[12px] text-sm font-medium no-underline',
     'transition-colors select-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary',
     'disabled:pointer-events-none disabled:opacity-50',
     '[&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg]:size-4'
@@ -113,13 +113,12 @@ type ButtonAsLink = ButtonOwnProps &
 export type ButtonProps = ButtonAsButton | ButtonAsLink
 
 /**
- * Botón estándar de PIXIS con soporte para estados semánticos, tooltips y enlaces.
- * 
- * Implementa las variantes definidas en DESIGN.md y asegura el cumplimiento del
- * radio canónico de 4px.
- * 
- * @param props - Propiedades del botón.
- * @returns El elemento JSX del botón o enlace.
+ * Botón de chrome PIXIS: 12px, variantes de rol (soft / solid / outline / ghost).
+ * `isSelected` pinta el wash primario (`bg-primary/25`), sin marco extra.
+ * `dashed` queda para vacíos; no usarlo en reset ni en acciones primarias.
+ *
+ * @param props - Variante, estado, tamaño y tooltip.
+ * @returns Botón o enlace con el contrato de chrome.
  */
 const Button: FC<ButtonProps> = ({
   children,
@@ -138,7 +137,9 @@ const Button: FC<ButtonProps> = ({
   
   const classes = cn(
     buttonVariants({ size, center }),
-    isSelected ? 'bg-primary text-primary-foreground hover:bg-primary/90' : (statusStyles[variant]?.[status] ?? statusStyles.soft.default),
+    isSelected
+      ? 'bg-primary/25 text-foreground hover:bg-primary/30'
+      : (statusStyles[variant]?.[status] ?? statusStyles.soft.default),
     className
   )
 

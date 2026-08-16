@@ -1,6 +1,5 @@
 import { MonacoLanguage } from '@common/components/monaco/languages'
 import Button from '@common/components/Button'
-import { cn } from '@common/utils/cn'
 import { type FC, memo } from 'react'
 
 interface Props {
@@ -20,10 +19,7 @@ const IconLanguage: FC<Props> = ({ language, onClick, selected }) => {
       isSelected={selected}
       onClick={() => onClick(language)}
       aria-label={lang}
-      className={cn(
-        'size-10 [&_svg]:size-6',
-        selected && '[&_svg]:drop-shadow-[0_4px_6px_rgb(var(--tn-primary))]'
-      )}
+      className='size-10 [&_svg]:size-6'
     >
       <Icon />
     </Button>

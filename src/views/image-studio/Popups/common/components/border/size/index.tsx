@@ -27,8 +27,17 @@ const BorderSize: FC<Props> = ({
 
   return (
     <SectionBlock title={title} description={description}>
-      <div className='gap-grid flex items-end'>
-        <SliderControl label='Tamaño' value={size} onChangeRange={setSize} min={0} max={40} step={1} />
+      <div className='flex items-center gap-2'>
+        <SliderControl
+          label='Tamaño'
+          value={size}
+          onChangeRange={setSize}
+          min={0}
+          max={40}
+          step={1}
+          unit='px'
+          containerClassName='flex-1'
+        />
         <Button
           type='button'
           variant='outline'

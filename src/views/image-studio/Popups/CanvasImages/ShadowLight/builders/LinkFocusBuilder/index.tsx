@@ -1,7 +1,6 @@
 'use client'
 
-import Switch from '@common/components/Switch'
-import Typography from '@common/components/Typography'
+import SwitchRow from '@views/image-studio/Popups/common/components/SwitchRow'
 import SectionBlock from '@views/image-studio/Popups/common/components/SectionBlock'
 import useShadowStore, {
   getActiveLight,
@@ -29,24 +28,15 @@ const LinkFocusBuilder: FC<Props> = ({ tabId }) => {
           : 'Elige un estilo distinto de Limpio en sombra y luz para habilitar.'
       }
     >
-      <div className='flex items-center justify-between gap-3'>
-        <Typography.Small tone='secondary' className='text-xs leading-relaxed'>
-          {canLink
-            ? active
-              ? 'Unido · solo capas activas'
-              : 'Desunido · cada foco aparte'
-            : 'Necesitas sombra y luz con estilo'}
-        </Typography.Small>
-        <Switch
-          size='sm'
-          on={active}
-          disabled={!canLink}
-          onChange={() => {
-            if (!canLink) return
-            setLinkFocus(tabId, !linkFocus)
-          }}
-        />
-      </div>
+      <SwitchRow
+        on={active}
+        disabled={!canLink}
+        onChange={() => {
+          if (!canLink) return
+          setLinkFocus(tabId, !linkFocus)
+        }}
+        ariaLabel='Unir foco de sombra y luz'
+      />
     </SectionBlock>
   )
 }

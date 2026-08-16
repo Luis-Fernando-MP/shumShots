@@ -24,6 +24,7 @@ const BorderRadiusConfiguration: FC<Props> = ({ borderState }) => {
         min={0}
         max={MAX_RADIUS}
         step={10}
+        unit='px'
       />
       <IndividualBorderController {...borderState} />
       <SliderControl

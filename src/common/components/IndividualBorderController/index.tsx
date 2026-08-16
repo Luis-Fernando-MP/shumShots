@@ -35,7 +35,7 @@ const IndividualBorderController: FC<Props> = props => {
         variant='outline'
         isSelected={activeIndividualBorder}
         size='sm'
-        className='h-8 w-fit gap-1.5 px-3 text-xs'
+        className='h-8 w-fit gap-1.5 rounded-[12px] px-3 text-xs'
         onClick={() => setActiveIndividualBorder(!activeIndividualBorder)}
       >
         <span>Bordes individuales</span>
@@ -48,11 +48,11 @@ const IndividualBorderController: FC<Props> = props => {
             <RenderInputBorders {...borders} />
           </div>
           <div className='flex flex-row flex-wrap items-center gap-1.5'>
-            <Button type='button' variant='outline' size='sm' className='h-8 w-fit gap-1.5 px-3 text-xs' onClick={handleBalance}>
+            <Button type='button' variant='outline' size='sm' className='h-8 w-fit gap-1.5 rounded-[12px] px-3 text-xs' onClick={handleBalance}>
               <span>Equilibrar</span>
               <ScaleIcon className='size-3.5' />
             </Button>
-            <Button type='button' variant='outline' size='sm' className='h-8 w-fit gap-1.5 px-3 text-xs' onClick={handleEquals}>
+            <Button type='button' variant='outline' size='sm' className='h-8 w-fit gap-1.5 rounded-[12px] px-3 text-xs' onClick={handleEquals}>
               <span>Restablecer</span>
               <RotateCcwIcon className='size-3.5' />
             </Button>

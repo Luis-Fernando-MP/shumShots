@@ -13,8 +13,8 @@ import {
   useState
 } from 'react'
 
-const isSlotMoveModifier = (event: { altKey: boolean; shiftKey: boolean }) =>
-  event.altKey || event.shiftKey
+const isSlotMoveModifier = (event: { altKey: boolean; shiftKey: boolean; ctrlKey: boolean; metaKey: boolean }) =>
+  event.altKey || event.shiftKey || event.ctrlKey || event.metaKey
 
 type DragState = {
   pointerId: number
@@ -35,7 +35,7 @@ type Args = {
 }
 
 /**
- * Alt/Shift + drag updates that slot's layout offset (shared with SlotMoveBuilder).
+ * Alt/Ctrl/Shift + drag updates that slot's layout offset (shared with SlotMoveBuilder).
  * Travel is limited by the parent canvas, not by the active position preset.
  */
 const useSlotAltDrag = ({

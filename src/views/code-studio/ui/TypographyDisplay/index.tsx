@@ -1,7 +1,7 @@
 import { monacoFonts } from '@common/components/monaco'
 import Text from '@common/components/Text'
+import { chromeTile } from '@common/utils/chrome'
 import { cn } from '@common/utils/cn'
-import { CheckIcon } from 'lucide-react'
 import type { ButtonHTMLAttributes, FC } from 'react'
 
 interface Props extends ButtonHTMLAttributes<HTMLButtonElement> {
@@ -21,21 +21,14 @@ const TypographyDisplay: FC<Props> = ({ font, title, className = '', selected = 
       type='button'
       aria-pressed={selected}
       className={cn(
-        'group relative flex min-h-[5.5rem] flex-col items-stretch gap-2 rounded-[12px] border px-2.5 py-2.5 text-left transition-colors',
-        'border-border/50 bg-muted/40 hover:bg-muted/70',
+        'group relative flex min-h-[5.5rem] flex-col items-stretch gap-2 px-2.5 py-2.5 text-left',
         'focus-visible:outline-primary focus-visible:outline-2 focus-visible:outline-offset-2',
-        selected && 'border-primary bg-primary/15 hover:bg-primary/20',
+        chromeTile(selected),
         className
       )}
       {...props}
     >
-      {selected && (
-        <span className='bg-primary text-semantic-primary absolute top-1.5 right-1.5 inline-flex size-4 items-center justify-center rounded-full'>
-          <CheckIcon className='size-2.5' strokeWidth={3} aria-hidden />
-        </span>
-      )}
-
-      <Text.caption className={cn('pr-5', selected && 'text-foreground/75')}>{title}</Text.caption>
+      <Text.caption>{title}</Text.caption>
 
       <span className={cn('text-foreground text-[1.35rem] leading-none tracking-tight antialiased', fontClassName)}>
         Aa

@@ -1,3 +1,4 @@
+import { chromeTile } from '@common/utils/chrome'
 import { cn } from '@common/utils/cn'
 import { CircleOffIcon } from 'lucide-react'
 import type { FC, MouseEvent } from 'react'
@@ -12,10 +13,7 @@ const EmptyBlock: FC<Props> = ({ onClick, className = '', selected }) => {
   return (
     <button type='button' className={cn('aspect-[4/3] w-full', className)} onClick={onClick}>
       <div
-        className={cn(
-          'grid size-full place-content-center rounded-md bg-muted [&>svg]:size-5',
-          selected ? 'ring-primary ring-2' : 'ring-border/40 ring-1'
-        )}
+        className={cn('grid size-full place-content-center [&>svg]:size-5', chromeTile(selected))}
       >
         <CircleOffIcon className='text-muted-foreground' />
       </div>

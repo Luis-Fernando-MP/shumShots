@@ -2,7 +2,8 @@
 
 import { wallpapersQuery, type Wallpaper } from '@common/core'
 import SliceContainer from '@common/components/SliceContainer'
-import Typography from '@common/components/Typography'
+import Text from '@common/components/Text'
+import { chromeFrame } from '@common/utils/chrome'
 import { cn } from '@common/utils/cn'
 import useBackgroundStore from '@views/image-studio/Popups/Canvas/Background/store/background/store'
 import { Image } from '@unpic/react/nextjs'
@@ -32,8 +33,8 @@ const WallpaperThumb: FC<{ item: Wallpaper; isActive: boolean; onSelect: (path: 
     <button
       type='button'
       className={cn(
-        'border-border box-border h-14 w-full overflow-hidden rounded-radius border text-left transition-opacity hover:opacity-90',
-        isActive && 'ring-primary ring-2 ring-offset-1'
+        'box-border h-14 w-full overflow-hidden text-left',
+        chromeFrame(isActive)
       )}
       onClick={() => onSelect(item.path)}
       aria-label={`Fondo ${item.name}`}
@@ -77,10 +78,10 @@ const WallpapersBuilder: FC = () => {
       title='Fondos precargados'
       description='Elige un wallpaper listo para usar como fondo del shot.'
     >
-      {isLoading && <Typography.Small tone='secondary'>Cargando fondos…</Typography.Small>}
-      {isError && <Typography.Small tone='secondary'>No se pudieron cargar los fondos</Typography.Small>}
+      {isLoading && <Text.caption>Cargando fondos…</Text.caption>}
+      {isError && <Text.caption>No se pudieron cargar los fondos</Text.caption>}
       {!isLoading && !isError && wallpapers.length === 0 && (
-        <Typography.Small tone='secondary'>No hay wallpapers en /public/wallpapers</Typography.Small>
+        <Text.caption>No hay fondos precargados</Text.caption>
       )}
       {wallpapers.length > 0 && (
         <SliceContainer maxHeight={COLLAPSED_MAX} className='grid grid-cols-3 gap-2'>

@@ -1,5 +1,6 @@
 import { ThemeMonacoName, monacoThemes, type ThemeMonaco } from '@common/components/monaco/themes/monacoThemes'
 import Text from '@common/components/Text'
+import { chromeFrame } from '@common/utils/chrome'
 import { cn } from '@common/utils/cn'
 import useMonacoThemeStore from '@views/code-studio/store/monacoTheme.store'
 import type { FC } from 'react'
@@ -64,10 +65,7 @@ const ThemeSelectorPreference: FC = () => {
             type='button'
             aria-pressed={selected}
             onClick={() => setThemeName(theme.name as ThemeMonacoName)}
-            className={cn(
-              'overflow-hidden rounded-[12px] border text-left transition-colors',
-              selected ? 'border-primary' : 'border-border/60 hover:border-border'
-            )}
+            className={cn('overflow-hidden text-left', chromeFrame(selected))}
           >
             <div
               className='px-2 py-1.5 font-mono text-[9px] leading-3.5'

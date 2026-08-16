@@ -22,23 +22,29 @@ const Section = ({
   return group.panel ? <PreferencePanel>{body}</PreferencePanel> : body
 }
 
+const PixisFields = () => (
+  <>
+    <SchemaPreferenceField fieldId='borderRadius' />
+    <SchemaPreferenceField fieldId='containerBorderRadius' />
+    <AspectRatioPreference />
+    <SchemaPreferenceField fieldId='containerPadding' />
+    <SchemaPreferenceField fieldId='exportScale' />
+  </>
+)
+
 const SetterPixisPreferences: FC<{ groupId?: 'chrome' | 'pixis' }> = ({ groupId }) => (
-  <div className='flex flex-col gap-5'>
-    {(!groupId || groupId === 'chrome') && (
+  <div className='flex flex-col gap-6'>
+    {groupId === 'chrome' && <WindowChromePreference />}
+    {!groupId && (
       <Section groupId='chrome'>
         <WindowChromePreference />
       </Section>
     )}
 
-    {(!groupId || groupId === 'pixis') && (
+    {groupId === 'pixis' && <PixisFields />}
+    {!groupId && (
       <Section groupId='pixis'>
-        <SchemaPreferenceField fieldId='borderRadius' />
-        <SchemaPreferenceField fieldId='containerBorderRadius' />
-        <SchemaPreferenceField fieldId='containerHeight' />
-        <SchemaPreferenceField fieldId='containerWidth' />
-        <AspectRatioPreference />
-        <SchemaPreferenceField fieldId='containerPadding' />
-        <SchemaPreferenceField fieldId='exportScale' />
+        <PixisFields />
       </Section>
     )}
   </div>

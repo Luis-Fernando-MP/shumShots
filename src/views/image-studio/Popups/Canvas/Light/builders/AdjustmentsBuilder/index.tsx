@@ -1,11 +1,11 @@
 'use client'
 
-import SliderControl from '@common/components/SliderControl'
 import ColorsController from '@common/components/ColorsController'
 import { extractColor } from '@common/components/extractColor'
 import { defaultLightLayer } from '@views/image-studio/Popups/Canvas/Light/store/light/initialState'
 import useCanvasLightStore from '@views/image-studio/Popups/Canvas/Light/store/light/store'
 import type { CanvasLightLayer } from '@views/image-studio/Popups/Canvas/Light/store/light/type.light'
+import LightAdjustments from '@views/image-studio/Popups/common/components/LightAdjustments'
 import SectionBlock from '@views/image-studio/Popups/common/components/SectionBlock'
 import { Fragment, type FC } from 'react'
 
@@ -21,26 +21,12 @@ const AdjustmentsBuilder: FC = () => {
   return (
     <Fragment>
       <SectionBlock title='Ajustes' level={2} description='Intensidad y qué tan amplia se siente la luz.'>
-        <div className='flex flex-col gap-3'>
-          <SliderControl
-            label='Intensidad'
-            onChangeRange={v => updateLight({ opacity: v / 100 })}
-            value={Math.round(light.opacity * 100)}
-            step={1}
-            min={0}
-            max={100}
-            displayValue={`${Math.round(light.opacity * 100)}%`}
-          />
-          <SliderControl
-            label='Alcance'
-            onChangeRange={size => updateLight({ size })}
-            value={Math.round(light.size)}
-            step={1}
-            min={20}
-            max={100}
-            displayValue={`${Math.round(light.size)}`}
-          />
-        </div>
+        <LightAdjustments
+          opacity={light.opacity}
+          size={light.size}
+          onOpacity={opacity => updateLight({ opacity })}
+          onSize={size => updateLight({ size })}
+        />
       </SectionBlock>
 
       <SectionBlock title='Color' level={2}>

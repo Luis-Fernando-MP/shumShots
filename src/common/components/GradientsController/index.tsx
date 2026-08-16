@@ -3,6 +3,7 @@
 import { circularGradients, gradients } from '@common/constants/background-style'
 import SliceContainer from '@common/components/SliceContainer'
 import Text from '@common/components/Text'
+import { chromeFrame } from '@common/utils/chrome'
 import { cn } from '@common/utils/cn'
 import type { FC } from 'react'
 
@@ -34,9 +35,9 @@ const GradientTile = ({
     aria-label={label}
     aria-pressed={selected}
     className={cn(
-      'overflow-hidden transition-transform',
-      shape === 'linear' ? 'aspect-[2.4/1] rounded-[12px]' : 'aspect-square rounded-[12px]',
-      selected ? 'ring-primary ring-2 ring-offset-2 ring-offset-background' : 'hover:scale-[1.02]'
+      'overflow-hidden',
+      shape === 'linear' ? 'aspect-[2.4/1]' : 'aspect-square',
+      chromeFrame(selected)
     )}
     style={{ background: gradient, backgroundBlendMode: blendMode }}
   />
