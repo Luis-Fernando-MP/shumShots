@@ -1,7 +1,7 @@
 'use client'
 
-import Input from '@common/ui/Input'
-import { Popover, PopoverContent, PopoverTrigger } from '@common/ui/Popover'
+import Input from '@common/components/Input'
+import { Popover, PopoverContent, PopoverTrigger } from '@common/components/Popover'
 import { cn } from '@common/utils/cn'
 import {
   type HsvaColor,

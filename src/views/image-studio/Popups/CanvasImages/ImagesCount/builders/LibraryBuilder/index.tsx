@@ -1,8 +1,8 @@
 'use client'
 
 import Dropzone, { type DropzoneFile } from '@/shared/components/Dropzone'
-import Input from '@common/ui/Input'
-import Typography from '@common/ui/Typography'
+import Input from '@common/components/Input'
+import Typography from '@common/components/Typography'
 import { cn } from '@common/utils/cn'
 import {
   DndContext,
@@ -28,7 +28,7 @@ import useImageLibraryStore, {
 } from '@views/image-studio/Popups/CanvasImages/ImagesCount/store/images-count/imageLibrary'
 import usePicturesStore from '@views/image-studio/Popups/CanvasImages/ImagesCount/store/images-count/pictures'
 import { formatBytes, importStudioImage } from '@views/image-studio/utils/imageLibrary'
-import { toaster } from '@common/ui/Toast'
+import { toaster } from '@common/components/Toast'
 import { GripVerticalIcon, Trash2Icon } from 'lucide-react'
 import { type CSSProperties, type FC, useEffect, useState } from 'react'
 

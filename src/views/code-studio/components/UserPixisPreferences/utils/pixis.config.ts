@@ -1,5 +1,5 @@
 import monacoLanguagesIcons from '@/shared/monaco-languages'
-import { DEFAULT_MONACO_FONT_ID } from '@common/monaco'
+import { DEFAULT_MONACO_FONT_ID } from '@common/components/monaco'
 import type {
   HeaderDensity,
   MacTrafficPreset,

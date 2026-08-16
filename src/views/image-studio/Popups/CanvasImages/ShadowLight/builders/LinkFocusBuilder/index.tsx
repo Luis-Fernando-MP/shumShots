@@ -1,7 +1,7 @@
 'use client'
 
-import Switch from '@common/ui/Switch'
-import Typography from '@common/ui/Typography'
+import Switch from '@common/components/Switch'
+import Typography from '@common/components/Typography'
 import SectionBlock from '@views/image-studio/Popups/common/components/SectionBlock'
 import useShadowStore, {
   getActiveLight,

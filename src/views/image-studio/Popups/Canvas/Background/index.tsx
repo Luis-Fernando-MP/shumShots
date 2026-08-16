@@ -2,8 +2,8 @@
 
 import Popup from '@/shared/components/Popup'
 import Button from '@/shared/ui/Button'
-import { Button as UiButton } from '@common/ui/Button'
-import Separator from '@common/ui/Separator'
+import { Button as UiButton } from '@common/components/Button'
+import Separator from '@common/components/Separator'
 import useBackgroundStore from '@views/image-studio/Popups/Canvas/Background/store/background/store'
 import { BlendIcon } from 'lucide-react'
 import { Fragment, type FC } from 'react'

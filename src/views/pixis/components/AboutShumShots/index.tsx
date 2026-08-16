@@ -5,8 +5,8 @@ import { EMAIL_LINK, GITHUB_LINK, INSPIRATION_LINK, ISSUES_GITHUB_LINK, SHUM_DEV
 import Button from '@/shared/ui/Button'
 import ShumDev from '@/shared/ui/ShumDev'
 import ShumShots from '@/shared/ui/ShumShots'
-import { Separator } from '@common/ui/Separator'
-import Typography from '@common/ui/Typography'
+import { Separator } from '@common/components/Separator'
+import Typography from '@common/components/Typography'
 import { CircleHelpIcon, CoffeeIcon, GithubIcon, MailIcon } from 'lucide-react'
 import type { FC, ReactNode } from 'react'
 

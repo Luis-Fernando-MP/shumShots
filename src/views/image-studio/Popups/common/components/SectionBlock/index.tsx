@@ -1,6 +1,6 @@
 'use client'
 
-import Typography from '@common/ui/Typography'
+import Typography from '@common/components/Typography'
 import type { FC, ReactNode } from 'react'
 
 type Props = {

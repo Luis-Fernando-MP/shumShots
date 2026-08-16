@@ -3,7 +3,7 @@
 import SectionBlock from '@views/image-studio/Popups/common/components/SectionBlock'
 import useCanvasLightStore from '@views/image-studio/Popups/Canvas/Light/store/light/store'
 import type { LightStackMode } from '@views/image-studio/Popups/Canvas/Light/store/light/type.light'
-import { Button } from '@common/ui/Button'
+import { Button } from '@common/components/Button'
 import { cn } from '@common/utils/cn'
 import type { FC } from 'react'
 

@@ -1,9 +1,9 @@
 'use client'
 
 import { photosQuery, type Photo } from '@common/core'
-import Input from '@common/ui/Input'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@common/ui/Select'
-import Typography from '@common/ui/Typography'
+import Input from '@common/components/Input'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@common/components/Select'
+import Typography from '@common/components/Typography'
 import { cn } from '@common/utils/cn'
 import Popup from '@/shared/components/Popup'
 import { Image } from '@unpic/react'

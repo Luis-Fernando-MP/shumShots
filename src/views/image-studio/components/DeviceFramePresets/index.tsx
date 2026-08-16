@@ -1,7 +1,7 @@
 'use client'
 
 import { framesQuery, type Frame } from '@common/core'
-import Typography from '@common/ui/Typography'
+import Typography from '@common/components/Typography'
 import { cn } from '@common/utils/cn'
 import useFrameStore, {
   createDefaultFrameConfig

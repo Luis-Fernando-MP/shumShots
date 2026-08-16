@@ -6,7 +6,7 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue
-} from '@common/ui/Select'
+} from '@common/components/Select'
 import { cn } from '@common/utils/cn'
 import useFrameStore, { defaultSlotPan } from '@views/image-studio/Popups/CanvasImages/Frame/store/frame/store'
 import SectionBlock from '@views/image-studio/Popups/common/components/SectionBlock'

@@ -1,7 +1,7 @@
 'use client'
 
 import Button from '@/shared/ui/Button'
-import { Input } from '@common/ui/Input'
+import { Input } from '@common/components/Input'
 import {
   PreferenceField,
   PreferencePanel,

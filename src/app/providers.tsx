@@ -1,6 +1,6 @@
 'use client'
 
-import Tooltip from '@common/ui/Tooltip'
+import Tooltip from '@common/components/Tooltip'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { type JSX, type ReactNode } from 'react'
 

@@ -2,8 +2,8 @@
 
 import Button from '@/shared/ui/Button'
 import ShumShots from '@/shared/ui/ShumShots'
-import { Separator } from '@common/ui/Separator'
-import Typography from '@common/ui/Typography'
+import { Separator } from '@common/components/Separator'
+import Typography from '@common/components/Typography'
 import { cn } from '@common/utils/cn'
 import { ArrowUpRightIcon, ChevronDownIcon, ChevronUpIcon } from 'lucide-react'
 import Link from 'next/link'

@@ -1,4 +1,4 @@
-import { resolveLanguageMeta, resolveMonacoFontId } from '@common/monaco'
+import { resolveLanguageMeta, resolveMonacoFontId } from '@common/components/monaco'
 import { getDefaultMonacoState } from '@views/code-studio/components/UserMonacoPreferences/utils'
 import {
   applyPixisDom,

@@ -1,8 +1,8 @@
 'use client'
 
 import SliderControl from '@/shared/components/SliderControl'
-import { Button } from '@common/ui/Button'
-import Typography from '@common/ui/Typography'
+import { Button } from '@common/components/Button'
+import Typography from '@common/components/Typography'
 import usePicturesStore from '@views/image-studio/Popups/CanvasImages/ImagesCount/store/images-count/pictures'
 import { getPositionEntry } from '@views/image-studio/Popups/CanvasImages/Layout/presets/positions/data'
 import {

@@ -44,7 +44,7 @@ Confirmed:
 - Next.js 15 App Router, React 19, Tailwind v4, Zustand, TanStack Query, pnpm `@10.18.3`.
 - Semantic PIXIS color tokens applied at runtime via `data-theme` and CSS variables (`src/app/defaults/themes.ts`). Default app theme: **Aurora Day**.
 - Application themes live only in `src/app/defaults`. Monaco syntax themes stay under `src/shared/themes/` and are independent.
-- New UI uses `@common/ui` primitives and Tailwind theme utilities (`rounded-radius`, `gap-grid`, `bg-primary`). No Sass/SCSS. No `rpx-*` tokens. No `../../../` imports; use `@app/*`, `@common/*`, `@features/*`, `@views/*`, `@shared/*`.
+- New UI uses `@common/components` primitives and Tailwind theme utilities (`rounded-radius`, `gap-grid`, `bg-primary`). No Sass/SCSS. No `rpx-*` tokens. No `../../../` imports; use `@app/*`, `@common/*`, `@features/*`, `@views/*`, `@shared/*`.
 - `src/shared` is transitional legacy. Do not add new product architecture there.
 - image-studio is domain-first under `src/views/image-studio/`. Popup domains own their Zustand stores. Canvas hooks apply DOM from those stores.
 - Image slots: 1–5, position catalogs per count, optional 3D pose, Alt/Shift drag across the parent canvas.
@@ -80,4 +80,4 @@ Undecided (do not invent):
 
 ## Accessibility & Inclusion
 
-No product-specific WCAG target was established. Confirmed: Spanish UI. Keyboard and contrast work should follow the incumbent `@common/ui` controls (focus-visible rings on primary, disabled opacity) rather than inventing a new a11y system.
+No product-specific WCAG target was established. Confirmed: Spanish UI. Keyboard and contrast work should follow the incumbent `@common/components` controls (focus-visible rings on primary, disabled opacity) rather than inventing a new a11y system.

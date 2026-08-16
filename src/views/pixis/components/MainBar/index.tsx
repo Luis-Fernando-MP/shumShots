@@ -2,7 +2,7 @@
 
 import Button from '@/shared/ui/Button'
 import ShumShots from '@/shared/ui/ShumShots'
-import { Separator } from '@common/ui/Separator'
+import { Separator } from '@common/components/Separator'
 import { cn } from '@common/utils/cn'
 import { AppWindow, LayersIcon } from 'lucide-react'
 import { usePathname } from 'next/navigation'

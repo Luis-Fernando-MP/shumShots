@@ -1,8 +1,8 @@
 'use client'
 
 import SliderControl from '@/shared/components/SliderControl'
-import ColorPicker from '@common/ui/ColorPicker'
-import Typography from '@common/ui/Typography'
+import ColorPicker from '@common/components/ColorPicker'
+import Typography from '@common/components/Typography'
 import {
   VIGNETTE_PRESETS,
   clampPercent,

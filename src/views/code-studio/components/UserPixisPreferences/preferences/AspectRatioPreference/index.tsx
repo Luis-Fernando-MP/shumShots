@@ -1,8 +1,8 @@
 'use client'
 
 import Button from '@/shared/ui/Button'
-import { Input } from '@common/ui/Input'
-import Typography from '@common/ui/Typography'
+import { Input } from '@common/components/Input'
+import Typography from '@common/components/Typography'
 import { cn } from '@common/utils/cn'
 import usePixisPreferencesStore from '@views/code-studio/store/pixisPreferences.store'
 import {

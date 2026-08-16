@@ -1,6 +1,6 @@
 'use client'
 
-import { Button } from '@common/ui/Button'
+import { Button } from '@common/components/Button'
 import { cn } from '@common/utils/cn'
 import { PlusIcon, XIcon } from 'lucide-react'
 import type { FC, MouseEvent } from 'react'

@@ -1,11 +1,11 @@
 import { MonacoLanguage as MonacoLanguageType } from '@/shared/monaco-languages'
-import Typography from '@common/ui/Typography'
+import Typography from '@common/components/Typography'
 import usePixisPreferencesStore from '@views/code-studio/store/pixisPreferences.store'
 import useWorkspaceStore, { selectActiveFile } from '@views/code-studio/store/workspace.store'
 import {
   getLanguageMetaFromFileName,
   replaceFileExtension
-} from '@common/monaco'
+} from '@common/components/monaco'
 import type { FC } from 'react'
 
 import IconLanguage from './IconLanguage'

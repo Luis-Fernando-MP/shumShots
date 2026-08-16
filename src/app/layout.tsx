@@ -1,6 +1,6 @@
 import Offline from '@/shared/components/Offline'
 import { bodyFonts } from '@/shared/fonts/page-fonts'
-import { Toaster } from '@common/ui/Toast'
+import { Toaster } from '@common/components/Toast'
 import NextTopLoader from 'nextjs-toploader'
 import type { JSX, ReactNode } from 'react'
 

@@ -1,7 +1,7 @@
 'use client'
 
-import Tooltip from '@common/ui/Tooltip'
-import type { StyleStatus } from '@common/ui/common/types'
+import Tooltip from '@common/components/Tooltip'
+import type { StyleStatus } from '@common/components/common/types'
 import { cn } from '@common/utils/cn'
 import { type VariantProps, cva } from 'class-variance-authority'
 import Link, { type LinkProps } from 'next/link'

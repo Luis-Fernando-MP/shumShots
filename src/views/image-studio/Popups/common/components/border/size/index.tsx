@@ -1,7 +1,7 @@
 'use client'
 
 import SliderControl from '@/shared/components/SliderControl'
-import { Button } from '@common/ui/Button'
+import { Button } from '@common/components/Button'
 import SectionBlock from '@views/image-studio/Popups/common/components/SectionBlock'
 import type { BorderConfigurationState } from '@views/image-studio/Popups/common/components/createBorderStore'
 import type { FC } from 'react'

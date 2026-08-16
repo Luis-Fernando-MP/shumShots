@@ -1,6 +1,6 @@
 'use client'
 
-import { Button } from '@common/ui/Button'
+import { Button } from '@common/components/Button'
 import { cn } from '@common/utils/cn'
 import { ChevronDownIcon } from 'lucide-react'
 import {

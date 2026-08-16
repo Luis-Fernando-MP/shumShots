@@ -1,8 +1,8 @@
 'use client'
 
 import { wallpapersQuery, type Wallpaper } from '@common/core'
-import SliceContainer from '@common/ui/SliceContainer'
-import Typography from '@common/ui/Typography'
+import SliceContainer from '@common/components/SliceContainer'
+import Typography from '@common/components/Typography'
 import { cn } from '@common/utils/cn'
 import useBackgroundStore from '@views/image-studio/Popups/Canvas/Background/store/background/store'
 import { Image } from '@unpic/react/nextjs'

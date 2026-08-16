@@ -1,6 +1,6 @@
 'use client'
 
-import { Button } from '@common/ui/Button'
+import { Button } from '@common/components/Button'
 import { cn } from '@common/utils/cn'
 import { LIGHT_PRESETS, type LightType } from '@views/image-studio/Popups/common/presets/light'
 import { defaultLightLayer } from '@views/image-studio/Popups/Canvas/Light/store/light/initialState'

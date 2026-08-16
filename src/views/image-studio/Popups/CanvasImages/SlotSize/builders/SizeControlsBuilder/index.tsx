@@ -1,6 +1,6 @@
 'use client'
 
-import { Button } from '@common/ui/Button'
+import { Button } from '@common/components/Button'
 import SectionBlock from '@views/image-studio/Popups/common/components/SectionBlock'
 import SizePresetsSection from '@views/image-studio/Popups/common/components/SizePresetsSection'
 import { getTabsStore } from '@views/image-studio/Popups/common/components/tabs/store'

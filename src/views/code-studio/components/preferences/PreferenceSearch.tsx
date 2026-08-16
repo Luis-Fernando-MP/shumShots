@@ -1,6 +1,6 @@
 'use client'
 
-import { Input } from '@common/ui/Input'
+import { Input } from '@common/components/Input'
 import { cn } from '@common/utils/cn'
 import { Search, X } from 'lucide-react'
 import { type FC, useDeferredValue, useState } from 'react'

@@ -2,8 +2,8 @@
 
 import Popup from '@/shared/components/Popup'
 import Button from '@/shared/ui/Button'
-import SliceContainer from '@common/ui/SliceContainer'
-import Typography from '@common/ui/Typography'
+import SliceContainer from '@common/components/SliceContainer'
+import Typography from '@common/components/Typography'
 import {
   matchesPreferenceSearch,
   PreferenceSearchProvider

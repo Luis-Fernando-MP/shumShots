@@ -1,6 +1,6 @@
 'use client'
 
-import { monacoFonts, resolveMonacoFontId, type MonacoFontId } from '@common/monaco'
+import { monacoFonts, resolveMonacoFontId, type MonacoFontId } from '@common/components/monaco'
 import usePixisPreferencesStore from '@views/code-studio/store/pixisPreferences.store'
 import dynamic from 'next/dynamic'
 import type { FC } from 'react'

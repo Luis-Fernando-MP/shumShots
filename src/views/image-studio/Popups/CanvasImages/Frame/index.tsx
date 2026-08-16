@@ -2,8 +2,8 @@
 
 import Popup from '@/shared/components/Popup'
 import Button from '@/shared/ui/Button'
-import { Button as UiButton } from '@common/ui/Button'
-import Separator from '@common/ui/Separator'
+import { Button as UiButton } from '@common/components/Button'
+import Separator from '@common/components/Separator'
 import { TABS_SCOPES } from '@views/image-studio/constants'
 import useFrameStore from '@views/image-studio/Popups/CanvasImages/Frame/store/frame/store'
 import Tabs from '@views/image-studio/Popups/common/components/tabs'

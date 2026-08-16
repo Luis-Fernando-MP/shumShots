@@ -2,9 +2,9 @@
 
 import ColorsController from '@/shared/components/ColorsController'
 import SliderControl from '@/shared/components/SliderControl'
-import { Button } from '@common/ui/Button'
-import Switch from '@common/ui/Switch'
-import Typography from '@common/ui/Typography'
+import { Button } from '@common/components/Button'
+import Switch from '@common/components/Switch'
+import Typography from '@common/components/Typography'
 import type { BorderConfigurationState } from '@views/image-studio/Popups/common/components/createBorderStore'
 import SectionBlock from '@views/image-studio/Popups/common/components/SectionBlock'
 import type { FC } from 'react'

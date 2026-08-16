@@ -1,15 +1,15 @@
 'use client'
 
 import { type DropzoneFile } from '@/shared/components/Dropzone'
-import { Button } from '@common/ui/Button'
+import { Button } from '@common/components/Button'
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue
-} from '@common/ui/Select'
-import Typography from '@common/ui/Typography'
+} from '@common/components/Select'
+import Typography from '@common/components/Typography'
 import { cn } from '@common/utils/cn'
 import {
   DndContext,
@@ -34,7 +34,7 @@ import usePicturesStore, {
   type PictureItem
 } from '@views/image-studio/Popups/CanvasImages/ImagesCount/store/images-count/pictures'
 import { importStudioImage } from '@views/image-studio/utils/imageLibrary'
-import { toaster } from '@common/ui/Toast'
+import { toaster } from '@common/components/Toast'
 import { GripVerticalIcon, ImagePlusIcon, UploadIcon } from 'lucide-react'
 import { type CSSProperties, type FC, useRef } from 'react'
 

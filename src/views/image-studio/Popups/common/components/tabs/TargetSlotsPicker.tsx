@@ -1,14 +1,14 @@
 'use client'
 
-import Chip from '@common/ui/Chip'
+import Chip from '@common/components/Chip'
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue
-} from '@common/ui/Select'
-import Typography from '@common/ui/Typography'
+} from '@common/components/Select'
+import Typography from '@common/components/Typography'
 import useImageLibraryStore from '@views/image-studio/Popups/CanvasImages/ImagesCount/store/images-count/imageLibrary'
 import usePicturesStore from '@views/image-studio/Popups/CanvasImages/ImagesCount/store/images-count/pictures'
 import { type FC, useMemo } from 'react'

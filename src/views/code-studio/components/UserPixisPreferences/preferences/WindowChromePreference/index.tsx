@@ -1,7 +1,7 @@
 'use client'
 
 import Button from '@/shared/ui/Button'
-import Typography from '@common/ui/Typography'
+import Typography from '@common/components/Typography'
 import { cn } from '@common/utils/cn'
 import usePixisPreferencesStore from '@views/code-studio/store/pixisPreferences.store'
 import useWorkspaceStore from '@views/code-studio/store/workspace.store'

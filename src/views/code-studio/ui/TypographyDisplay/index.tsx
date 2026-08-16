@@ -1,5 +1,5 @@
-import { monacoFonts } from '@common/monaco'
-import Typography from '@common/ui/Typography'
+import { monacoFonts } from '@common/components/monaco'
+import Typography from '@common/components/Typography'
 import { cn } from '@common/utils/cn'
 import { CheckIcon } from 'lucide-react'
 import type { ButtonHTMLAttributes, FC } from 'react'

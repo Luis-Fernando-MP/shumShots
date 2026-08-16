@@ -1,6 +1,6 @@
 'use client'
 
-import { Button } from '@common/ui/Button'
+import { Button } from '@common/components/Button'
 import { cn } from '@common/utils/cn'
 import { clampRange, isImageBackground, toCssImageUrl } from '@views/image-studio/utils/backgroundStyle'
 import useBackgroundStore from '@views/image-studio/Popups/Canvas/Background/store/background/store'

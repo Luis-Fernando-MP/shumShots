@@ -1,4 +1,4 @@
-import type { StyleStatus } from '@common/ui/common/types'
+import type { StyleStatus } from '@common/components/common/types'
 import { cn } from '@common/utils/cn'
 import { type VariantProps, cva } from 'class-variance-authority'
 import type { InputHTMLAttributes, ReactNode } from 'react'

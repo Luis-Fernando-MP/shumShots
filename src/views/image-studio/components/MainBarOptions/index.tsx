@@ -1,6 +1,6 @@
 'use client'
 
-import ShotCapture from '@common/ui/ShotCapture'
+import ShotCapture from '@common/components/ShotCapture'
 import type { FC } from 'react'
 
 import CanvasImagesOptions from './CanvasImagesOptions'

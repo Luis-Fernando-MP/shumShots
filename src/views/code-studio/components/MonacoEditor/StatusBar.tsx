@@ -1,6 +1,6 @@
 'use client'
 
-import { languageIdFromFileName } from '@common/monaco'
+import { languageIdFromFileName } from '@common/components/monaco'
 import { cn } from '@common/utils/cn'
 import useReferenceMonacoStore from '@views/code-studio/store/referenceMonaco'
 import useWorkspaceStore, { selectActiveFile } from '@views/code-studio/store/workspace.store'

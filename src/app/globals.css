@@ -27,10 +27,15 @@
   --font-weight-medium: 500;
   --font-weight-semibold: 600;
   --font-weight-bold: 700;
+  --radius-xs: var(--radius);
+  --radius-sm: var(--radius);
+  --radius-md: var(--radius);
+  --radius-lg: var(--radius);
+  --radius-xl: var(--radius);
+  --radius-2xl: var(--radius);
+  --radius-3xl: var(--radius);
+  --radius-4xl: var(--radius);
   --radius-radius: var(--radius);
-  --radius-sm: calc(var(--radius) * 0.5);
-  --radius-md: calc(var(--radius) * 0.7);
-  --radius-lg: calc(var(--radius) * 1.3);
   --spacing-grid: var(--space-grid);
   --spacing-grid-sm: calc(var(--space-grid) * 0.5);
   --spacing-grid-md: calc(var(--space-grid) * 0.8);
@@ -101,7 +106,7 @@
   --semantic-error-text: 40, 10, 20;
   --semantic-info: 56, 189, 248;
   --semantic-info-text: 5, 25, 40;
-  --radius: 1.25rem;
+  --radius: 4px;
   --space-grid: 0.9375rem;
 }
 

@@ -1,7 +1,7 @@
 'use client'
 
 import SliderControl from '@/shared/components/SliderControl'
-import ColorPicker from '@common/ui/ColorPicker'
+import ColorPicker from '@common/components/ColorPicker'
 import {
   DEMO_SCENE_FILL,
   DUOTONE_PRESETS,

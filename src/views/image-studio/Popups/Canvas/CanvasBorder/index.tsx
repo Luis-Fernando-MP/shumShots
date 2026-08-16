@@ -2,8 +2,8 @@
 
 import Popup from '@/shared/components/Popup'
 import Button from '@/shared/ui/Button'
-import { Button as UiButton } from '@common/ui/Button'
-import Separator from '@common/ui/Separator'
+import { Button as UiButton } from '@common/components/Button'
+import Separator from '@common/components/Separator'
 import useCanvasBorderStore from '@views/image-studio/Popups/Canvas/CanvasBorder/store/canvas-border/border.store'
 import useCanvasRadiusStore from '@views/image-studio/Popups/Canvas/CanvasBorder/store/canvas-border/radius.store'
 import { FrameIcon } from 'lucide-react'

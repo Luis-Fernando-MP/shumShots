@@ -2,7 +2,7 @@
 
 import Popup from '@/shared/components/Popup'
 import Button from '@/shared/ui/Button'
-import Typography from '@common/ui/Typography'
+import Typography from '@common/components/Typography'
 import { PreferenceSearchProvider } from '@views/code-studio/components/preferences/PreferenceField'
 import { PreferenceSearch, usePreferenceSearchState } from '@views/code-studio/components/preferences/PreferenceSearch'
 import usePixisPreferencesStore from '@views/code-studio/store/pixisPreferences.store'

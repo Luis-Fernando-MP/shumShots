@@ -1,6 +1,6 @@
 'use client'
 
-import { getLanguageMetaFromFileName } from '@common/monaco'
+import { getLanguageMetaFromFileName } from '@common/components/monaco'
 import { cn } from '@common/utils/cn'
 import { FileCode2 } from 'lucide-react'
 import { type FC, useMemo } from 'react'

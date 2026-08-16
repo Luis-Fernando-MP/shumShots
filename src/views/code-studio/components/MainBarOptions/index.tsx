@@ -1,7 +1,7 @@
 'use client'
 
 import Button from '@/shared/ui/Button'
-import ShotCapture from '@common/ui/ShotCapture'
+import ShotCapture from '@common/components/ShotCapture'
 import usePixisPreferencesStore from '@views/code-studio/store/pixisPreferences.store'
 import { LetterText } from 'lucide-react'
 import type { FC } from 'react'

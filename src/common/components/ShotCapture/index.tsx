@@ -2,8 +2,8 @@
 
 import Button from '@/shared/ui/Button'
 import { domCapture } from '@common/lib/snapdom'
-import Input from '@common/ui/Input'
-import { toaster } from '@common/ui/Toast'
+import Input from '@common/components/Input'
+import { toaster } from '@common/components/Toast'
 import { cn } from '@common/utils/cn'
 import { copyImage } from '@lucide/lab'
 import { CloudDownload, Icon } from 'lucide-react'

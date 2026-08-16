@@ -1,6 +1,6 @@
 'use client'
 
-import Typography from '@common/ui/Typography'
+import Typography from '@common/components/Typography'
 import type { TabScope } from '@views/image-studio/constants'
 import usePicturesStore from '@views/image-studio/Popups/CanvasImages/ImagesCount/store/images-count/pictures'
 import {

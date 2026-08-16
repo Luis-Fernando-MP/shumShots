@@ -1,4 +1,4 @@
-import { Separator } from '@common/ui/Separator'
+import { Separator } from '@common/components/Separator'
 import ThemeController from '@/shared/components/ThemeController'
 import { type FC } from 'react'
 

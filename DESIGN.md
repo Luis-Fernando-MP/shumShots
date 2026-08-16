@@ -43,10 +43,10 @@ typography:
     fontWeight: 600
     lineHeight: 1.5
 rounded:
-  sm: "0.625rem"
-  md: "0.875rem"
-  radius: "1.25rem"
-  lg: "1.625rem"
+  sm: "4px"
+  md: "4px"
+  radius: "4px"
+  lg: "4px"
 spacing:
   grid-sm: "0.46875rem"
   grid-md: "0.75rem"
@@ -109,7 +109,7 @@ The default look is cool pale paper with a rose accent used like a recording-stu
 **Key Characteristics:**
 - Semantic CSS variables (`bg-primary`, `tn-primary`, `gap-grid`, `rounded-radius`) are the only legal color/space/radius source for new UI.
 - Display type (Plus Jakarta Sans) for titles; Geist Sans for body and controls.
-- Soft, large radii on actions; slightly tighter radii on fields and chips.
+- Soft, 4px radii on actions, fields, and chips. `rounded-full` only for switch tracks/thumbs.
 - Tonal layering for depth; shadows reserved for floating layers.
 - Studio is full-viewport; the composed shot, not the marketing shell, sets the mood.
 
@@ -148,7 +148,7 @@ Default documented palette is **Aurora Day** (persisted `app-theme`). Roles rema
 
 ### Hierarchy
 
-Mapped from `Typography` (`src/common/ui/Typography`) and `@theme` type scale:
+Mapped from `Typography` (`src/common/components/Typography`) and `@theme` type scale:
 
 - **Display / Title** (`2xl` / 1.5rem / bold / display): page or popup titles (`Typography.Title`).
 - **Headline / Subtitle** (`xl` / 1.25rem / semibold / display): section titles.
@@ -189,9 +189,7 @@ Ambient studio glow is a large blurred orb in the layout, not a card shadow. Can
 
 ## Shapes
 
-`--radius: 1.25rem` is the canonical corner. Tailwind: `rounded-radius` (buttons, popovers), `rounded-md` (inputs, chips, ~0.875rem), `rounded-sm` (tiny hit targets). `rounded-lg` is the oversized step (1.625rem) — use sparingly.
-
-Buttons are pill-ish (`rounded-radius` + fixed height). Fields are slightly squarer (`rounded-md`) so the console doesn't look like a bag of pills. Chips match fields.
+`--radius: 4px` is the canonical corner for all chrome. Tailwind `rounded-sm` / `md` / `lg` / `xl` / `radius` resolve to 4px. Use `rounded-full` only for switch tracks and thumbs; `rounded-none` only when a square is required. Do not invent ad-hoc radii.
 
 Focus: `outline-2 outline-offset-2 outline-primary` on buttons. Inputs use `focus-within:border-primary` (or status color), not a glow.
 
@@ -199,10 +197,10 @@ Focus: `outline-2 outline-offset-2 outline-primary` on buttons. Inputs use `focu
 
 ## Components
 
-Use `@common/ui` primitives. Do not restyle a one-off button when `Button` / `Input` / `Chip` / `Typography` already cover the case.
+Use `@common/components` primitives. Do not restyle a one-off button when `Button` / `Input` / `Chip` / `Typography` already cover the case.
 
 ### Buttons
-- **Shape:** `rounded-radius`, `text-sm font-medium`, heights `h-8` / `h-10` / `h-12`.
+- **Shape:** `rounded-radius` (4px), `text-sm font-medium`, heights `h-8` / `h-10` / `h-12`.
 - **Primary:** `bg-primary text-primary-foreground`; hover `bg-primary/90`.
 - **Secondary:** `bg-card text-foreground`; hover `bg-muted`.
 - **Ghost:** transparent; hover `bg-muted/70`.

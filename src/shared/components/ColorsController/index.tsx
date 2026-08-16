@@ -1,7 +1,7 @@
 'use client'
 
 import { basicColors } from '@/app/defaults/colors'
-import ColorPicker from '@common/ui/ColorPicker'
+import ColorPicker from '@common/components/ColorPicker'
 import { cn } from '@common/utils/cn'
 import type { FC } from 'react'
 

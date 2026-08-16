@@ -2,8 +2,8 @@
 
 import Popup from '@/shared/components/Popup'
 import Button from '@/shared/ui/Button'
-import { Button as UiButton } from '@common/ui/Button'
-import Separator from '@common/ui/Separator'
+import { Button as UiButton } from '@common/components/Button'
+import Separator from '@common/components/Separator'
 import useCanvasLightStore from '@views/image-studio/Popups/Canvas/Light/store/light/store'
 import { SunIcon } from 'lucide-react'
 import { Fragment, type FC } from 'react'

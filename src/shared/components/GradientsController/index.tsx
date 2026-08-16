@@ -1,8 +1,8 @@
 'use client'
 
 import { circularGradients, gradients } from '@/shared/backgroundStyle'
-import SliceContainer from '@common/ui/SliceContainer'
-import Typography from '@common/ui/Typography'
+import SliceContainer from '@common/components/SliceContainer'
+import Typography from '@common/components/Typography'
 import type { FC } from 'react'
 
 interface Props {

@@ -1,7 +1,7 @@
 'use client'
 
-import { getLanguageMetaFromFileName, languageIdFromFileName, resolveMonacoFontFamily } from '@common/monaco'
-import '@common/monaco/setup'
+import { getLanguageMetaFromFileName, languageIdFromFileName, resolveMonacoFontFamily } from '@common/components/monaco'
+import '@common/components/monaco/setup'
 import { DiffEditor, Editor, type MonacoDiffEditor } from '@monaco-editor/react'
 import useMonacoEditor from '@views/code-studio/hooks/useMonacoEditor'
 import useDiffHistoryStore from '@views/code-studio/store/diffHistory.store'

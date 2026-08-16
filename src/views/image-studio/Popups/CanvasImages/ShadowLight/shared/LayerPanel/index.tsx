@@ -3,7 +3,7 @@
 import SliderControl from '@/shared/components/SliderControl'
 import ColorsController from '@/shared/components/ColorsController'
 import { extractColor } from '@/shared/components/extractColor'
-import { Button } from '@common/ui/Button'
+import { Button } from '@common/components/Button'
 import { cn } from '@common/utils/cn'
 import { LIGHT_PRESETS, type LightType } from '@views/image-studio/Popups/common/presets/light'
 import { SHADOW_PRESETS, type ShadowType } from '@views/image-studio/Popups/CanvasImages/ShadowLight/presets/shadow'
