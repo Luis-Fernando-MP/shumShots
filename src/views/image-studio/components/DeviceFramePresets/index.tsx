@@ -7,7 +7,7 @@ import useFrameStore, {
   createDefaultFrameConfig
 } from '@views/image-studio/Popups/CanvasImages/Frame/store/frame/store'
 import { CircleOffIcon } from 'lucide-react'
-import { type FC } from 'react'
+import { type FC, useEffect } from 'react'
 
 const FrameThumb: FC<{
   frame: Frame
@@ -50,8 +50,16 @@ const DeviceFramePresets: FC<Props> = ({ tabId }) => {
   const frameId = useFrameStore(
     s => s.byTab[tabId]?.frameId ?? createDefaultFrameConfig().frameId
   )
+  const frameAspect = useFrameStore(s => s.byTab[tabId]?.frameAspect ?? null)
   const setFrameId = useFrameStore(s => s.setFrameId)
   const { data, isLoading, isError } = framesQuery.list()
+
+  // Backfill aspect for frames picked before frameAspect was persisted.
+  useEffect(() => {
+    if (!frameId || frameAspect || !data?.data?.frames) return
+    const frame = data.data.frames.find(item => item.id === frameId)
+    if (frame?.aspect && frame.aspect > 0) setFrameId(tabId, frameId, frame.aspect)
+  }, [data, frameAspect, frameId, setFrameId, tabId])
 
   const groups = data?.data?.groups ?? []
 
@@ -67,7 +75,7 @@ const DeviceFramePresets: FC<Props> = ({ tabId }) => {
     <div className='gap-grid flex flex-col'>
       <button
         type='button'
-        onClick={() => setFrameId(tabId, null)}
+        onClick={() => setFrameId(tabId, null, null)}
         aria-label='Sin frame'
         className={cn(
           'border-border/70 text-muted-foreground hover:bg-muted/50 hover:text-foreground flex h-9 w-full items-center justify-center gap-2 rounded-radius border px-2 text-[11px] font-medium transition-colors',
@@ -95,7 +103,7 @@ const DeviceFramePresets: FC<Props> = ({ tabId }) => {
                 key={frame.id}
                 frame={frame}
                 active={frameId === frame.id}
-                onSelect={id => setFrameId(tabId, id)}
+                onSelect={id => setFrameId(tabId, id, frame.aspect)}
               />
             ))}
           </div>

@@ -3,12 +3,12 @@
 import Switch from '@common/ui/Switch'
 import Typography from '@common/ui/Typography'
 import SectionBlock from '@views/image-studio/Popups/common/components/SectionBlock'
-import useGridStore from '@views/image-studio/Popups/CanvasImages/ImagesCount/store/images-count/grid'
+import useLayoutStore from '@views/image-studio/Popups/CanvasImages/Layout/store/layout/store'
 import type { FC } from 'react'
 
 const ConstrainBuilder: FC = () => {
-  const constrainToParent = useGridStore(s => s.constrainToParent)
-  const setConstrainToParent = useGridStore(s => s.setConstrainToParent)
+  const constrainToParent = useLayoutStore(s => s.constrainToParent)
+  const setConstrainToParent = useLayoutStore(s => s.setConstrainToParent)
 
   return (
     <SectionBlock

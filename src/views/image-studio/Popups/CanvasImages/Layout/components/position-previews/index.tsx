@@ -1,6 +1,6 @@
 'use client'
 
-import MiniBoxes from '@views/image-studio/Popups/CanvasImages/ImagesCount/components/MiniBoxes'
+import MiniBoxes from '@views/image-studio/Popups/CanvasImages/Layout/components/MiniBoxes'
 import type { FC } from 'react'
 
 type PreviewProps = { active?: boolean; count: number }

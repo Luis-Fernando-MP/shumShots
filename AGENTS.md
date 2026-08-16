@@ -387,14 +387,14 @@ image-studio/
     Canvas/                 # affects BackgroundCanvas
       Background | CanvasBorder | Light
     CanvasImages/           # affects PictureCanvas
-      ShadowLight | Frame | Corner | ImagesCount | SlotSize
+      ShadowLight | Frame | Corner | ImagesCount | Layout | SlotSize
   utils/                    # pure cross-domain helpers only when truly shared
 ```
 
 ### Popup → canvas
 
 - `Popups/Canvas/Background`, `CanvasBorder`, `Light` → `canvas/BackgroundCanvas` (+ `useBackgroundCanvasStore`).
-- `Popups/CanvasImages/Frame`, `ShadowLight`, `Corner`, `ImagesCount`, `SlotSize` → `canvas/PictureCanvas` (+ picture hooks).
+- `Popups/CanvasImages/Frame`, `ShadowLight`, `Corner`, `ImagesCount`, `Layout`, `SlotSize` → `canvas/PictureCanvas` (+ picture hooks).
 - `ShotEditor` only composes canvases / passes `parentRef`. **No domain store imports.**
 
 ### Domain folder shape
@@ -422,7 +422,7 @@ TSX product files use `{Carpeta}/index.tsx` so they can grow `hooks/` / `utils/`
 - `common/components/border/*` — prop-driven radius/style/color/size/mat UI used by CanvasBorder and Corner.
 - `common/presets/light` — shared by `Canvas/Light` and `CanvasImages/ShadowLight` (`...LIGHT_PRESETS`).
 - `common/sections` — optional arrays domains spread into local `SECTIONS` (`[...BORDER_SECTIONS, ...local]`).
-- Positions presets live only under `CanvasImages/ImagesCount/presets/positions` (not common).
+- Positions presets live only under `CanvasImages/Layout/presets/positions` (not common).
 - Frame templates / device frames stay in their domains (not common).
 
 Prefer **TypeScript inference** + `satisfies SectionBuilder[]` / `PresetBuilder`. Avoid inventing extra type layers.

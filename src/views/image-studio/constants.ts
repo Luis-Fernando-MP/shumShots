@@ -2,7 +2,8 @@ export const TABS_SCOPES = {
   corner: 'corner',
   frame: 'frame',
   shadow: 'shadow',
-  size: 'size'
+  size: 'size',
+  layout: 'layout'
 } as const
 
 export type TabScope = (typeof TABS_SCOPES)[keyof typeof TABS_SCOPES]

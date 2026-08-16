@@ -1,12 +1,18 @@
 import { createJSONStorage, persist } from 'zustand/middleware'
 import { create, type StateCreator } from 'zustand'
 
+import {
+  clampSlotQuantity,
+  SLOT_QUANTITY_CONFIG
+} from '@views/image-studio/Popups/CanvasImages/ImagesCount/slotQuantity'
 import { moveById } from '@views/image-studio/utils/moveById'
 
 export type PictureItem = {
   id: string
   libraryId: string | null
   frameId: string | null
+  /** Cached from Frame store when a device frame is applied. */
+  frameAspect: number | null
   width: number
   height: number
   aspectRatio: number
@@ -19,8 +25,8 @@ type PicturesState = {
   setCount: (count: number) => string[]
   setSelected: (id: string) => void
   setLibraryId: (slotId: string, libraryId: string | null) => void
-  setFrameId: (id: string, frameId: string | null) => void
-  setFrameIdForAll: (frameId: string | null) => void
+  setFrameMeta: (id: string, frameId: string | null, frameAspect: number | null) => void
+  setFrameIdForAll: (frameId: string | null, frameAspect?: number | null) => void
   setPictureSize: (id: string, size: { width: number; height: number; aspectRatio: number }) => void
   reorderSlots: (activeId: string, overId: string) => void
   clearLibraryRefs: (libraryId: string) => void
@@ -41,6 +47,7 @@ const createPicture = (index: number): PictureItem => ({
   id: formatSlotId(index),
   libraryId: null,
   frameId: null,
+  frameAspect: null,
   width: 420,
   height: 315,
   aspectRatio: 4 / 3
@@ -54,21 +61,34 @@ const nextUnusedSlotId = (used: Set<string>) => {
 
 const buildPictures = (count: number, previous: PictureItem[] = []): PictureItem[] => {
   const inheritedFrameId = previous.find(item => item.frameId)?.frameId ?? null
+  const inheritedFrameAspect = previous.find(item => item.frameId)?.frameAspect ?? null
   const used = new Set<string>()
   return Array.from({ length: count }, (_, index) => {
     const existing = previous[index]
     if (existing) {
       const id = normalizeSlotId(existing.id, index)
       used.add(id)
-      return { ...existing, id }
+      return {
+        ...existing,
+        id,
+        frameAspect:
+          typeof existing.frameAspect === 'number' && existing.frameAspect > 0
+            ? existing.frameAspect
+            : null
+      }
     }
     const id = nextUnusedSlotId(used)
     used.add(id)
-    return { ...createPicture(index), id, frameId: inheritedFrameId }
+    return {
+      ...createPicture(index),
+      id,
+      frameId: inheritedFrameId,
+      frameAspect: inheritedFrameAspect
+    }
   })
 }
 
-const INITIAL_COUNT = 1
+const INITIAL_COUNT = SLOT_QUANTITY_CONFIG.ONE
 const initialPictures = buildPictures(INITIAL_COUNT)
 const STORAGE_KEY = 'pixis-picture-slots'
 
@@ -79,7 +99,7 @@ const state: StateCreator<PicturesState> = (set, get) => ({
 
   setCount: count => {
     const prev = get().pictures
-    const nextCount = Math.min(5, Math.max(1, Math.round(count)))
+    const nextCount = clampSlotQuantity(count)
     const pictures = buildPictures(nextCount, prev)
     const removedIds = prev.slice(nextCount).map(item => item.id)
     const selectedStillExists = pictures.some(item => item.id === get().selectedId)
@@ -101,14 +121,28 @@ const state: StateCreator<PicturesState> = (set, get) => ({
       pictures: s.pictures.map(item => (item.id === slotId ? { ...item, libraryId } : item))
     })),
 
-  setFrameId: (id, frameId) =>
+  setFrameMeta: (id, frameId, frameAspect) =>
     set(s => ({
-      pictures: s.pictures.map(item => (item.id === id ? { ...item, frameId } : item))
+      pictures: s.pictures.map(item =>
+        item.id === id
+          ? {
+              ...item,
+              frameId,
+              frameAspect:
+                frameId && typeof frameAspect === 'number' && frameAspect > 0 ? frameAspect : null
+            }
+          : item
+      )
     })),
 
-  setFrameIdForAll: frameId =>
+  setFrameIdForAll: (frameId, frameAspect = null) =>
     set(s => ({
-      pictures: s.pictures.map(item => ({ ...item, frameId }))
+      pictures: s.pictures.map(item => ({
+        ...item,
+        frameId,
+        frameAspect:
+          frameId && typeof frameAspect === 'number' && frameAspect > 0 ? frameAspect : null
+      }))
     })),
 
   setPictureSize: (id, size) =>
@@ -167,9 +201,17 @@ const usePicturesStore = create(
         Array.isArray(data.pictures) && data.pictures.length > 0 ? data.pictures : current.pictures
       const pictures = raw.map((item, index) => ({
         ...item,
-        id: normalizeSlotId(item.id, index)
+        id: normalizeSlotId(item.id, index),
+        frameAspect:
+          typeof item.frameAspect === 'number' && item.frameAspect > 0 ? item.frameAspect : null,
+        aspectRatio:
+          typeof item.aspectRatio === 'number' && item.aspectRatio > 0
+            ? item.aspectRatio
+            : item.width / Math.max(1, item.height || 1)
       }))
-      const count = typeof data.count === 'number' ? data.count : pictures.length || current.count
+      const count = clampSlotQuantity(
+        typeof data.count === 'number' ? data.count : pictures.length || current.count
+      )
       const selectedId =
         typeof data.selectedId === 'string'
           ? normalizeSlotId(data.selectedId, 0)

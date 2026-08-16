@@ -8,6 +8,7 @@ export const clamp01 = (value: number) => Math.min(1, Math.max(0, value))
 
 export const createDefaultFrameConfig = (): FrameTabConfig => ({
   frameId: null,
+  frameAspect: null,
   fitMode: 'cover'
 })
 

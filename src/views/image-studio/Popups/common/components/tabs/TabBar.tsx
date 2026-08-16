@@ -18,6 +18,8 @@ type Props = {
   onRemove: (id: string) => void
   addLabel?: string
   labelPrefix?: string
+  addDisabled?: boolean
+  addDisabledReason?: string
 }
 
 const TabBar: FC<Props> = ({
@@ -27,7 +29,9 @@ const TabBar: FC<Props> = ({
   onAdd,
   onRemove,
   addLabel = 'Nueva capa',
-  labelPrefix = 'Capa'
+  labelPrefix = 'Capa',
+  addDisabled = false,
+  addDisabledReason
 }) => {
   const remove = (event: MouseEvent, id: string) => {
     event.stopPropagation()
@@ -82,6 +86,8 @@ const TabBar: FC<Props> = ({
         size='sm'
         className='text-muted-foreground hover:text-foreground h-8 gap-1 border-dashed px-2.5 text-xs'
         aria-label={addLabel}
+        title={addDisabled ? addDisabledReason : undefined}
+        disabled={addDisabled}
         onClick={onAdd}
       >
         <PlusIcon className='size-3.5' />

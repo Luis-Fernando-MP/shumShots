@@ -16,11 +16,29 @@ import {
 import type FrameState from './type.frame'
 import type { FrameFitMode, FrameTabConfig, SlotPan } from './type.frame'
 
+const normalizeFrameAspect = (value: unknown): number | null =>
+  typeof value === 'number' && Number.isFinite(value) && value > 0 ? value : null
+
+const normalizeTabConfig = (raw: Partial<FrameTabConfig> | undefined): FrameTabConfig => {
+  const base = createDefaultFrameConfig()
+  if (!raw || typeof raw !== 'object') return base
+  return {
+    frameId: typeof raw.frameId === 'string' || raw.frameId === null ? raw.frameId : base.frameId,
+    frameAspect: normalizeFrameAspect(raw.frameAspect),
+    fitMode:
+      raw.fitMode === 'cover' || raw.fitMode === 'contain' || raw.fitMode === 'fill'
+        ? raw.fitMode
+        : base.fitMode
+  }
+}
+
 const syncResolvedFramesToPictures = (resolve: (slotId: string) => FrameTabConfig) => {
-  const { pictures, setFrameId } = usePicturesStore.getState()
+  const { pictures, setFrameMeta } = usePicturesStore.getState()
   for (const picture of pictures) {
-    const next = resolve(picture.id).frameId
-    if (picture.frameId !== next) setFrameId(picture.id, next)
+    const next = resolve(picture.id)
+    if (picture.frameId !== next.frameId || picture.frameAspect !== next.frameAspect) {
+      setFrameMeta(picture.id, next.frameId, next.frameAspect)
+    }
   }
 }
 
@@ -33,13 +51,17 @@ const state: StateCreator<FrameState> = (set, get) => ({
     get().syncResolvedFramesToPictures()
   },
 
-  setFrameId: (tabId, frameId) => {
+  setFrameId: (tabId, frameId, frameAspect = null) => {
     set(s => {
       const current = s.byTab[tabId] ?? createDefaultFrameConfig()
       return {
         byTab: {
           ...s.byTab,
-          [tabId]: { ...current, frameId }
+          [tabId]: {
+            ...current,
+            frameId,
+            frameAspect: frameId ? normalizeFrameAspect(frameAspect) : null
+          }
         }
       }
     })
@@ -100,7 +122,13 @@ const useFrameStore = create(
     }),
     migrate: persisted => {
       const data = (persisted ?? {}) as Record<string, unknown>
-      if (data.byTab && typeof data.byTab === 'object') return data
+      if (data.byTab && typeof data.byTab === 'object') {
+        const byTab: Record<string, FrameTabConfig> = {}
+        for (const [id, value] of Object.entries(data.byTab as Record<string, Partial<FrameTabConfig>>)) {
+          byTab[id] = normalizeTabConfig(value)
+        }
+        return { ...data, byTab }
+      }
 
       const frameId =
         typeof data.frameId === 'string' || data.frameId === null ? data.frameId : null
@@ -115,9 +143,31 @@ const useFrameStore = create(
       const layers = getTabsStore(TABS_SCOPES.frame).getState().layers
       const byTab: Record<string, FrameTabConfig> = {}
       for (const layer of layers) {
-        byTab[layer.id] = { frameId: frameId as string | null, fitMode: fitMode as FrameFitMode }
+        byTab[layer.id] = {
+          frameId: frameId as string | null,
+          frameAspect: null,
+          fitMode: fitMode as FrameFitMode
+        }
       }
       return { byTab, slotPan }
+    },
+    merge: (persisted, current) => {
+      const data = (persisted ?? {}) as Partial<{
+        byTab: Record<string, Partial<FrameTabConfig>>
+        slotPan: Record<string, SlotPan>
+      }>
+      const byTab: Record<string, FrameTabConfig> = {}
+      if (data.byTab && typeof data.byTab === 'object') {
+        for (const [id, value] of Object.entries(data.byTab)) {
+          byTab[id] = normalizeTabConfig(value)
+        }
+      }
+      return {
+        ...current,
+        byTab: Object.keys(byTab).length > 0 ? byTab : current.byTab,
+        slotPan:
+          data.slotPan && typeof data.slotPan === 'object' ? data.slotPan : current.slotPan
+      }
     },
     onRehydrateStorage: () => state => {
       if (state) state.syncResolvedFramesToPictures()

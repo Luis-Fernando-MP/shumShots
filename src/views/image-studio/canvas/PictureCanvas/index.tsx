@@ -11,14 +11,18 @@ import { layerAppliesTo } from '@views/image-studio/Popups/common/lib/fx-shared/
 import usePictureSlot from '@views/image-studio/canvas/PictureCanvas/hooks/usePictureSlot'
 import { useShadowLightDom } from '@views/image-studio/canvas/PictureCanvas/hooks/useShadowLightDom'
 import { getTabsStore } from '@views/image-studio/Popups/common/components/tabs/store'
-import { getPositionEntry } from '@views/image-studio/Popups/CanvasImages/ImagesCount/presets/positions/data'
+import { getPositionEntry } from '@views/image-studio/Popups/CanvasImages/Layout/presets/positions/data'
 import useBackgroundStore from '@views/image-studio/Popups/Canvas/Background/store/background/store'
 import { resolveSmoothCornerStyle } from '@views/image-studio/Popups/Canvas/CanvasBorder/store/canvas-border/radius.store'
 import useCornerStore, { createDefaultCornerConfig } from '@views/image-studio/Popups/CanvasImages/Corner/store/corner/store'
-import useGridStore from '@views/image-studio/Popups/CanvasImages/ImagesCount/store/images-count/grid'
+import useLayoutStore, {
+  DEFAULT_SLOT_OFFSET
+} from '@views/image-studio/Popups/CanvasImages/Layout/store/layout/store'
+import { SLOT_OFFSET_MAX_SHIFT } from '@views/image-studio/Popups/CanvasImages/Layout/store/layout/type.layout'
 import usePicturesStore, { type PictureItem } from '@views/image-studio/Popups/CanvasImages/ImagesCount/store/images-count/pictures'
 import useSizeStore, { resolveSlotSizeFromState } from '@views/image-studio/Popups/CanvasImages/SlotSize/store/slot-size/store'
 import { buildCanvasFrameStyle, insetBorderRadius } from '@views/image-studio/utils/borderFrame'
+import useSlotAltDrag from '@views/image-studio/canvas/PictureCanvas/hooks/useSlotAltDrag'
 import { type CSSProperties, type FC, memo, useCallback, useMemo, useRef, useState } from 'react'
 
 const fitFrameInSlot = (slot: { left: number; top: number; width: number; height: number }, aspect: number) => {
@@ -62,6 +66,8 @@ type SlotProps = {
   rotateY: number
   zIndex: number
   selected: boolean
+  canvasWidth: number
+  canvasHeight: number
 }
 
 const PictureSlot = memo(function PictureSlot({
@@ -74,9 +80,12 @@ const PictureSlot = memo(function PictureSlot({
   rotateX,
   rotateY,
   zIndex,
-  selected
+  selected,
+  canvasWidth,
+  canvasHeight
 }: SlotProps) {
   const { isLoading, setIsLoading, handleLoadError, handleDropFile, handleSize, select, imageUrl } = usePictureSlot(picture.id)
+  const altDrag = useSlotAltDrag(picture.id, canvasWidth, canvasHeight)
 
   const cornerLayers = getTabsStore(TABS_SCOPES.corner)(s => s.layers)
   const cornerTabId = useMemo(() => resolveLayerIdForSlot(cornerLayers, picture.id), [cornerLayers, picture.id])
@@ -99,11 +108,19 @@ const PictureSlot = memo(function PictureSlot({
   const defaultFrame = useMemo(() => createDefaultFrameConfig(), [])
   const frameConfig = useFrameStore(s => (frameTabId ? s.byTab[frameTabId] : undefined) ?? defaultFrame)
   const resolvedFrameId = frameConfig.frameId
+  const storedFrameAspect =
+    typeof frameConfig.frameAspect === 'number' && frameConfig.frameAspect > 0
+      ? frameConfig.frameAspect
+      : picture.frameAspect && picture.frameAspect > 0
+        ? picture.frameAspect
+        : null
 
   const { data: framesData } = framesQuery.list()
-  const catalogFrame = resolvedFrameId ? (framesData?.data?.frames.find(item => item.id === resolvedFrameId) ?? null) : null
-  const frameAspect = catalogFrame?.aspect ?? null
-  const hasDeviceFrame = Boolean(catalogFrame)
+  const catalogFrame = resolvedFrameId
+    ? (framesData?.data?.frames.find(item => item.id === resolvedFrameId) ?? null)
+    : null
+  const frameAspect = storedFrameAspect ?? catalogFrame?.aspect ?? null
+  const hasDeviceFrame = Boolean(resolvedFrameId)
 
   const frameBox = useMemo(() => {
     const slot = { left: 0, top: 0, width: slotWidth, height: slotHeight }
@@ -214,23 +231,37 @@ const PictureSlot = memo(function PictureSlot({
       ref={rootRef}
       role='button'
       tabIndex={0}
-      onClick={select}
+      onClick={event => {
+        if (event.altKey || altDrag.altDragging) return
+        select()
+      }}
+      onClickCapture={altDrag.onClickCapture}
       onKeyDown={event => {
         if (event.key === 'Enter' || event.key === ' ') {
           event.preventDefault()
           select()
         }
       }}
-      className={cn('absolute cursor-pointer overflow-visible outline-none', !hasDeviceFrame && 'rounded-sm', selected && 'z-10')}
+      onPointerDown={altDrag.onPointerDown}
+      onPointerMove={altDrag.onPointerMove}
+      onPointerUp={altDrag.onPointerUp}
+      onPointerCancel={altDrag.onPointerCancel}
+      className={cn(
+        'absolute overflow-visible outline-none',
+        !hasDeviceFrame && 'rounded-sm',
+        selected && 'z-10',
+        altDrag.altDragging ? 'cursor-grabbing z-20' : 'cursor-pointer'
+      )}
       style={{
         left: slotLeft + left,
         top: slotTop + top,
         width: boxWidth,
         height: boxHeight,
-        zIndex,
+        zIndex: altDrag.altDragging ? 999 : zIndex,
         transform,
         transformOrigin: 'center center'
       }}
+      title='Alt + arrastrar para mover'
     >
       <DeviceFrameShell frameId={resolvedFrameId} className='size-full overflow-visible' filterTargetRef={bindFilterTarget}>
         <div ref={boxShadowRef} className='relative size-full overflow-visible' style={contentFrameStyle}>
@@ -263,20 +294,40 @@ const PictureCanvas: FC = () => {
   const backgroundWidth = useBackgroundStore(s => s.backgroundWidth)
   const backgroundHeight = useBackgroundStore(s => s.backgroundHeight)
   const sizeLayers = useSizeStore(s => s.layers)
-  const constrainToParent = useGridStore(s => s.constrainToParent)
-  const positionId = useGridStore(s => s.positionId)
+  const constrainToParent = useLayoutStore(s => s.constrainToParent)
+  const positionId = useLayoutStore(s => s.positionId)
+  const slotOffset = useLayoutStore(s => s.slotOffset)
 
   const placements = useMemo(() => {
     const slotSizes = pictures.map(picture => resolveSlotSizeFromState(sizeLayers, picture.id))
-    const entry = getPositionEntry(positionId)
-    return entry.builder({
+    const entry = getPositionEntry(pictures.length, positionId)
+    const base = entry.builder({
       count: pictures.length,
       canvasWidth: backgroundWidth,
       canvasHeight: backgroundHeight,
       slotSizes,
       constrainToParent
     })
-  }, [backgroundHeight, backgroundWidth, constrainToParent, pictures, positionId, sizeLayers])
+    const maxShiftX = backgroundWidth * SLOT_OFFSET_MAX_SHIFT
+    const maxShiftY = backgroundHeight * SLOT_OFFSET_MAX_SHIFT
+    return base.map((placement, index) => {
+      const slotId = pictures[index]?.id
+      const offset = slotId ? (slotOffset[slotId] ?? DEFAULT_SLOT_OFFSET) : DEFAULT_SLOT_OFFSET
+      return {
+        ...placement,
+        x: placement.x + (offset.x - 0.5) * 2 * maxShiftX,
+        y: placement.y + (offset.y - 0.5) * 2 * maxShiftY
+      }
+    })
+  }, [
+    backgroundHeight,
+    backgroundWidth,
+    constrainToParent,
+    pictures,
+    positionId,
+    sizeLayers,
+    slotOffset
+  ])
 
   return (
     <div className='pointer-events-none absolute inset-0 z-[10]' id='picture-canvas-layer'>
@@ -297,6 +348,8 @@ const PictureCanvas: FC = () => {
               rotateY={placement.rotateY}
               zIndex={placement.zIndex}
               selected={picture.id === selectedId}
+              canvasWidth={backgroundWidth}
+              canvasHeight={backgroundHeight}
             />
           )
         })}

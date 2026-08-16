@@ -12,7 +12,9 @@ import {
 import useCornerStore from '@views/image-studio/Popups/CanvasImages/Corner/store/corner/store'
 import useImageLibraryStore from '@views/image-studio/Popups/CanvasImages/ImagesCount/store/images-count/imageLibrary'
 import usePicturesStore from '@views/image-studio/Popups/CanvasImages/ImagesCount/store/images-count/pictures'
-import useGridStore from '@views/image-studio/Popups/CanvasImages/ImagesCount/store/images-count/grid'
+import useLayoutStore, {
+  migrateLegacyGridPersist
+} from '@views/image-studio/Popups/CanvasImages/Layout/store/layout/store'
 import useSizeStore from '@views/image-studio/Popups/CanvasImages/SlotSize/store/slot-size/store'
 import { promoteLegacyImagePersist } from '@views/image-studio/utils/legacyImagePersist'
 import { useEffect, useState, type FC, type ReactNode } from 'react'
@@ -33,6 +35,7 @@ const ImageStudioPersistGate: FC<{ children: ReactNode }> = ({ children }) => {
     void (async () => {
       ensureTabsStores()
       await rehydrateAllTabsStores()
+      migrateLegacyGridPersist()
       await Promise.all([
         useImageLibraryStore.persist.rehydrate(),
         usePicturesStore.persist.rehydrate(),
@@ -41,7 +44,7 @@ const ImageStudioPersistGate: FC<{ children: ReactNode }> = ({ children }) => {
         useCanvasLightStore.persist.rehydrate(),
         useCornerStore.persist.rehydrate(),
         useSizeStore.persist.rehydrate(),
-        useGridStore.persist.rehydrate()
+        useLayoutStore.persist.rehydrate()
       ])
       syncDomainTabs()
       await promoteLegacyImagePersist()

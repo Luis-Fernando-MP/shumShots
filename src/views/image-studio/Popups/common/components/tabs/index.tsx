@@ -2,6 +2,7 @@
 
 import Typography from '@common/ui/Typography'
 import type { TabScope } from '@views/image-studio/constants'
+import usePicturesStore from '@views/image-studio/Popups/CanvasImages/ImagesCount/store/images-count/pictures'
 import {
   Children,
   createContext,
@@ -13,7 +14,7 @@ import {
   type ReactNode
 } from 'react'
 
-import { getTabsStore, type TabLayer } from './store'
+import { claimedSlotIds, getTabsStore, type TabLayer } from './store'
 import TabBar from './TabBar'
 import TargetSlotsPicker from './TargetSlotsPicker'
 
@@ -43,6 +44,7 @@ type TabsRootProps = {
   scope: TabScope
   children: ReactNode
   addLabel?: string
+  exclusiveTargets?: boolean
   onTabsChange?: (layers: TabLayer[], activeId: string) => void
 }
 
@@ -72,7 +74,15 @@ const isTitle = (child: ReactNode): child is ReactElement<TitleProps> =>
 const isContent = (child: ReactNode): child is ReactElement<ContentProps> =>
   isValidElement(child) && child.type === TabsContent
 
-const TabsRoot: FC<TabsRootProps> = ({ scope, children, addLabel = 'Nueva capa', onTabsChange }) => {
+const EMPTY_TARGETS: string[] = []
+
+const TabsRoot: FC<TabsRootProps> = ({
+  scope,
+  children,
+  addLabel = 'Nueva capa',
+  exclusiveTargets = false,
+  onTabsChange
+}) => {
   const store = getTabsStore(scope)
   const layers = store(s => s.layers)
   const activeLayerId = store(s => s.activeLayerId)
@@ -80,9 +90,25 @@ const TabsRoot: FC<TabsRootProps> = ({ scope, children, addLabel = 'Nueva capa',
   const addLayer = store(s => s.addLayer)
   const removeLayer = store(s => s.removeLayer)
   const setLayerTargets = store(s => s.setLayerTargets)
+  const pictures = usePicturesStore(s => s.pictures)
 
   const activeLayer = layers.find(layer => layer.id === activeLayerId) ?? layers[0]
-  const selectedSlots = activeLayer?.targetIds ?? []
+  const selectedSlots = activeLayer?.targetIds ?? EMPTY_TARGETS
+  const allSlotIds = useMemo(() => pictures.map(picture => picture.id), [pictures])
+  const claimedIds = useMemo(
+    () => (exclusiveTargets ? claimedSlotIds(layers, activeLayerId, allSlotIds) : []),
+    [allSlotIds, exclusiveTargets, layers, activeLayerId]
+  )
+  const claimedSet = useMemo(() => new Set(claimedIds), [claimedIds])
+  const unusedIds = useMemo(
+    () => allSlotIds.filter(id => !claimedSet.has(id)),
+    [allSlotIds, claimedSet]
+  )
+  const someLayerClaimsAll = exclusiveTargets && layers.some(layer => layer.targetIds.length === 0)
+  const addDisabled = exclusiveTargets && (someLayerClaimsAll || unusedIds.length === 0)
+  const addDisabledReason = someLayerClaimsAll
+    ? 'Quita “Todos los slots” de un grupo para crear otro'
+    : 'Todos los slots ya están asignados'
 
   const { title, content } = useMemo(() => {
     let titleNode: ReactNode = null
@@ -117,7 +143,8 @@ const TabsRoot: FC<TabsRootProps> = ({ scope, children, addLabel = 'Nueva capa',
               onTabsChange?.(store.getState().layers, id)
             }}
             onAdd={() => {
-              addLayer()
+              if (addDisabled) return
+              addLayer(exclusiveTargets ? unusedIds.slice(0, 1) : undefined)
               const next = store.getState()
               onTabsChange?.(next.layers, next.activeLayerId)
             }}
@@ -128,9 +155,15 @@ const TabsRoot: FC<TabsRootProps> = ({ scope, children, addLabel = 'Nueva capa',
             }}
             addLabel={addLabel}
             labelPrefix='Grupo'
+            addDisabled={addDisabled}
+            addDisabledReason={addDisabledReason}
           />
           <TargetSlotsPicker
             targetIds={selectedSlots}
+            exclusive={exclusiveTargets}
+            claimedIds={claimedIds}
+            allowAll={!exclusiveTargets || layers.length === 1}
+            lockLastChip={exclusiveTargets && layers.length > 1}
             onChange={ids => {
               setLayerTargets(ids)
               const next = store.getState()

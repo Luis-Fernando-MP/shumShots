@@ -13,11 +13,29 @@ type TabsState = {
   layers: TabLayer[]
   activeLayerId: string
   setActiveLayer: (id: string) => void
-  addLayer: () => void
+  addLayer: (targetIds?: string[]) => void
   removeLayer: (id: string) => void
   setLayerTargets: (ids: string[]) => void
   purgeSlotTargets: (slotIds: string[]) => void
+  dropEmptyLayers: () => void
   reset: () => void
+}
+
+export const claimedSlotIds = (
+  layers: TabLayer[],
+  activeId: string,
+  allSlotIds: string[]
+): string[] => {
+  const claimed = new Set<string>()
+  for (const layer of layers) {
+    if (layer.id === activeId) continue
+    if (layer.targetIds.length === 0) {
+      for (const id of allSlotIds) claimed.add(id)
+    } else {
+      for (const id of layer.targetIds) claimed.add(id)
+    }
+  }
+  return [...claimed]
 }
 
 const stores = new Map<TabScope, ReturnType<typeof createTabsStore>>()
@@ -41,8 +59,8 @@ function createTabsStore(scope: TabScope) {
           set({ activeLayerId: id })
         },
 
-        addLayer: () => {
-          const layer = createLayer()
+        addLayer: (targetIds = []) => {
+          const layer: TabLayer = { id: createId('tab'), targetIds }
           set(s => ({
             layers: [...s.layers, layer],
             activeLayerId: layer.id
@@ -78,6 +96,24 @@ function createTabsStore(scope: TabScope) {
               targetIds: layer.targetIds.filter(id => !removed.has(id))
             }))
           }))
+        },
+
+        dropEmptyLayers: () => {
+          set(s => {
+            if (s.layers.length <= 1) return s
+            const next = s.layers.filter(layer => layer.targetIds.length > 0)
+            if (next.length === s.layers.length) return s
+            if (next.length === 0) {
+              const layer = createLayer()
+              return { layers: [layer], activeLayerId: layer.id }
+            }
+            return {
+              layers: next,
+              activeLayerId: next.some(layer => layer.id === s.activeLayerId)
+                ? s.activeLayerId
+                : next[0].id
+            }
+          })
         },
 
         reset: () => {

@@ -1,6 +1,7 @@
 'use client'
 
 import { cn } from '@common/utils/cn'
+import { clampSlotQuantity } from '@views/image-studio/Popups/CanvasImages/ImagesCount/slotQuantity'
 import type { FC } from 'react'
 
 export type MiniBoxesPattern = 'grid' | 'stagger' | 'stack' | 'fan' | 'diagonal' | 'column' | 'orbit'
@@ -13,7 +14,7 @@ type Props = {
 
 const MiniBoxes: FC<Props> = ({ active, count, pattern }) => {
   const fill = cn(active ? 'bg-primary' : 'bg-foreground/30')
-  const n = Math.max(1, Math.min(5, count))
+  const n = clampSlotQuantity(count)
 
   if (pattern === 'stagger') {
     return (

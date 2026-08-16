@@ -4,22 +4,22 @@ import Popup from '@/shared/components/Popup'
 import Button from '@/shared/ui/Button'
 import { Button as UiButton } from '@common/ui/Button'
 import Separator from '@common/ui/Separator'
+import useLayoutStore from '@views/image-studio/Popups/CanvasImages/Layout/store/layout/store'
 import { LayoutGridIcon } from 'lucide-react'
 import { type FC, Fragment } from 'react'
 
 import { purgeRemovedSlots } from './builders/CountBuilder'
 import SECTIONS from './sections'
-import useGridStore from './store/images-count/grid'
+import { SLOT_QUANTITY_CONFIG } from './slotQuantity'
 import usePicturesStore from './store/images-count/pictures'
 
 const ImagesCount: FC = () => {
   const setCount = usePicturesStore(s => s.setCount)
-  const resetGrid = useGridStore(s => s.reset)
 
   const handleReset = () => {
-    const removed = setCount(1)
+    const removed = setCount(SLOT_QUANTITY_CONFIG.ONE)
     purgeRemovedSlots(removed)
-    resetGrid()
+    useLayoutStore.getState().syncPositionForCount(SLOT_QUANTITY_CONFIG.ONE)
   }
 
   return (
