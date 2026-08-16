@@ -8,7 +8,7 @@ interface PixisLayoutProps {
 const PixisLayout = ({ children }: PixisLayoutProps): JSX.Element => {
   return (
     <Hydration>
-      <div className='from-secondary to-primary pointer-events-none absolute -bottom-[30%] left-1/2 size-[500px] -translate-x-1/2 rounded-full bg-linear-to-r blur-[250px]' />
+      <div className='from-secondary to-primary pointer-events-none absolute -bottom-[50%] left-1/2 size-[700px] -translate-x-1/2 rounded-full bg-linear-to-r blur-[200px]' />
 
       {children}
     </Hydration>

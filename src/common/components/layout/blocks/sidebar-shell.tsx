@@ -18,9 +18,9 @@ interface SidebarShellProps {
 const SidebarShell = ({ children, className, edge }: SidebarShellProps) => (
   <aside
     className={cn(
-      'border-border/50 bg-card/80 backdrop-blur-panel relative flex h-dvh w-[260px] shrink-0 flex-col overflow-hidden',
-      edge === 'left' && 'rounded-r-[16px] border-y-0 border-l-0 border-r',
-      edge === 'right' && 'rounded-l-[16px] border-y-0 border-r-0 border-l',
+      'bg-card backdrop-blur-panel relative flex h-dvh w-[260px] shrink-0 flex-col overflow-hidden',
+      edge === 'left' && 'rounded-r-[16px]',
+      edge === 'right' && 'rounded-l-[16px]',
       className
     )}
     style={{ zIndex: APP_Z_INDEX.studio.sidebar }}
@@ -35,7 +35,7 @@ interface SidebarSlotProps {
 }
 
 const SidebarHeader = ({ children, className }: SidebarSlotProps) => (
-  <header className={cn('shrink-0 px-2 py-2', className)}>{children}</header>
+  <header className={cn('bg-muted/10 shrink-0 px-2 py-2', className)}>{children}</header>
 )
 
 const SidebarContent = ({ children, className }: SidebarSlotProps) => (
@@ -45,7 +45,7 @@ const SidebarContent = ({ children, className }: SidebarSlotProps) => (
 )
 
 const SidebarFooter = ({ children, className }: SidebarSlotProps) => (
-  <footer className={cn('border-border/50 shrink-0 border-t px-3 py-2.5', className)}>{children}</footer>
+  <footer className={cn('border-border/50 bg-muted/10 shrink-0 border-t px-3 py-2.5', className)}>{children}</footer>
 )
 
 SidebarHeader.displayName = 'App.sidebar.header'

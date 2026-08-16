@@ -82,15 +82,12 @@ const luminance = (rgb: string): number => {
 const mixToward = (from: string, to: string, amount: number): string => {
   const [fr, fg, fb] = from.split(',').map(value => Number(value.trim()))
   const [tr, tg, tb] = to.split(',').map(value => Number(value.trim()))
-  return [
-    Math.round(fr + (tr - fr) * amount),
-    Math.round(fg + (tg - fg) * amount),
-    Math.round(fb + (tb - fb) * amount)
-  ].join(', ')
+  return [Math.round(fr + (tr - fr) * amount), Math.round(fg + (tg - fg) * amount), Math.round(fb + (tb - fb) * amount)].join(
+    ', '
+  )
 }
 
-const primaryContrast = (tnPrimary: string): string =>
-  luminance(tnPrimary) > 140 ? '17, 17, 17' : '255, 255, 255'
+const primaryContrast = (tnPrimary: string): string => (luminance(tnPrimary) > 140 ? '17, 17, 17' : '255, 255, 255')
 
 const borderTone = (base: ThemeBase): string =>
   mixToward(base['bg-secondary'], base['fnt-primary'], luminance(base['bg-primary']) > 140 ? 0.18 : 0.28)
@@ -136,8 +133,8 @@ export const isLightTheme = (theme: Pick<Theme, 'bg-primary'>): boolean => lumin
 const quietDark = (accent: string, companion: string): Theme =>
   defineTheme({
     'bg-primary': mixToward('4, 4, 6', accent, 0.05),
-    'bg-secondary': mixToward('14, 14, 16', accent, 0.07),
-    'bg-tertiary': mixToward('26, 26, 30', accent, 0.1),
+    'bg-secondary': mixToward('18, 18, 22', accent, 0.07),
+    'bg-tertiary': mixToward('32, 32, 38', accent, 0.1),
     'fnt-primary': '248, 248, 250',
     'fnt-secondary': mixToward('148, 148, 156', accent, 0.12),
     'tn-primary': accent,
@@ -147,8 +144,8 @@ const quietDark = (accent: string, companion: string): Theme =>
 const quietLight = (accent: string, companion: string): Theme =>
   defineTheme({
     'bg-primary': mixToward('255, 255, 255', accent, 0.035),
-    'bg-secondary': mixToward('250, 250, 250', accent, 0.05),
-    'bg-tertiary': mixToward('244, 244, 245', accent, 0.07),
+    'bg-secondary': mixToward('244, 244, 246', accent, 0.05),
+    'bg-tertiary': mixToward('230, 230, 234', accent, 0.07),
     'fnt-primary': mixToward('16, 16, 18', accent, 0.08),
     'fnt-secondary': mixToward('113, 113, 122', accent, 0.1),
     'tn-primary': accent,
@@ -158,8 +155,8 @@ const quietLight = (accent: string, companion: string): Theme =>
 export const THEMES: Record<string, Theme> = {
   'Geist Light': defineTheme({
     'bg-primary': '255, 255, 255',
-    'bg-secondary': '250, 250, 250',
-    'bg-tertiary': '244, 244, 245',
+    'bg-secondary': '244, 244, 246',
+    'bg-tertiary': '230, 230, 234',
     'fnt-primary': '10, 10, 10',
     'fnt-secondary': '113, 113, 122',
     'tn-primary': '23, 23, 23',
@@ -167,8 +164,8 @@ export const THEMES: Record<string, Theme> = {
   }),
   'Geist Dark': defineTheme({
     'bg-primary': '0, 0, 0',
-    'bg-secondary': '12, 12, 14',
-    'bg-tertiary': '24, 24, 28',
+    'bg-secondary': '18, 18, 20',
+    'bg-tertiary': '34, 34, 40',
     'fnt-primary': '250, 250, 250',
     'fnt-secondary': '161, 161, 170',
     'tn-primary': '250, 250, 250',
