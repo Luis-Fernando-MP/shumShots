@@ -1,6 +1,6 @@
 'use client'
 
-import Button from '@/shared/ui/Button'
+import Button from '@common/components/Button'
 import Typography from '@common/components/Typography'
 import { cn } from '@common/utils/cn'
 import { createContext, useContext, type ReactNode } from 'react'

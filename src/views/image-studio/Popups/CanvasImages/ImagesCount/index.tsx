@@ -1,8 +1,7 @@
 'use client'
 
-import Popup from '@/shared/components/Popup'
-import Button from '@/shared/ui/Button'
-import { Button as UiButton } from '@common/components/Button'
+import Popup from '@common/components/Popup'
+import { Button } from '@common/components/Button'
 import Separator from '@common/components/Separator'
 import useLayoutStore from '@views/image-studio/Popups/CanvasImages/Layout/store/layout/store'
 import { LayoutGridIcon } from 'lucide-react'
@@ -13,6 +12,13 @@ import SECTIONS from './sections'
 import { SLOT_QUANTITY_CONFIG } from './slotQuantity'
 import usePicturesStore from './store/images-count/pictures'
 
+/**
+ * Popup para gestionar la cantidad de imágenes (slots) en el lienzo.
+ * 
+ * Permite cambiar entre 1 y 5 slots, ajustando el layout automáticamente.
+ * 
+ * @returns El componente de popup para la cuadrícula de imágenes.
+ */
 const ImagesCount: FC = () => {
   const setCount = usePicturesStore(s => s.setCount)
 
@@ -25,7 +31,7 @@ const ImagesCount: FC = () => {
   return (
     <Popup className='h-[min(820px,90vh)] w-[360px]'>
       <Popup.Trigger>
-        <Button size='icon' tooltip='Cuadrícula de imágenes'>
+        <Button variant='ghost' size='icon' tooltip='Cuadrícula de imágenes'>
           <LayoutGridIcon />
         </Button>
       </Popup.Trigger>
@@ -46,7 +52,7 @@ const ImagesCount: FC = () => {
       </Popup.Content>
 
       <Popup.Footer>
-        <UiButton
+        <Button
           type='button'
           variant='outline'
           size='sm'
@@ -54,7 +60,7 @@ const ImagesCount: FC = () => {
           onClick={handleReset}
         >
           Resetear cambios
-        </UiButton>
+        </Button>
       </Popup.Footer>
     </Popup>
   )

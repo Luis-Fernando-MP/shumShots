@@ -1,5 +1,5 @@
-import { MonacoLanguage } from '@/shared/monaco-languages'
-import Button from '@/shared/ui/Button'
+import { MonacoLanguage } from '@common/components/monaco/languages'
+import Button from '@common/components/Button'
 import { cn } from '@common/utils/cn'
 import { type FC, memo } from 'react'
 

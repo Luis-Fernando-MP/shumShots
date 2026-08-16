@@ -1,6 +1,6 @@
 'use client'
 
-import Board from '@/shared/components/Board'
+import Board from '@common/components/Board'
 import APP_Z_INDEX from '@common/constants/z-index'
 import usePixisPreferencesStore from '@views/code-studio/store/pixisPreferences.store'
 import MainBar from '@views/pixis/components/MainBar'

@@ -1,18 +1,25 @@
 'use client'
 
-import Popup from '@/shared/components/Popup'
-import Button from '@/shared/ui/Button'
-import { Button as UiButton } from '@common/components/Button'
+import Popup from '@common/components/Popup'
+import { Button } from '@common/components/Button'
 import Separator from '@common/components/Separator'
 import { TABS_SCOPES } from '@views/image-studio/constants'
 import useShadowStore from '@views/image-studio/Popups/CanvasImages/ShadowLight/store/shadow-light/store'
-import Tabs from '@views/image-studio/Popups/common/components/tabs'
 import { getTabsStore } from '@views/image-studio/Popups/common/components/tabs/store'
 import { CloudSunIcon } from 'lucide-react'
 import { Fragment, type FC, useEffect } from 'react'
 
 import SECTIONS from './sections'
+import Tabs from '@views/image-studio/Popups/common/components/tabs'
 
+/**
+ * Popup de sombras y efectos de luz para las imágenes.
+ * 
+ * Permite configurar sombras proyectadas y reflejos de luz direccional
+ * de forma independiente por cada grupo de slots.
+ * 
+ * @returns El componente de popup para las sombras y luz de la imagen.
+ */
 const ShadowLight: FC = () => {
   const syncTabs = useShadowStore(s => s.syncTabs)
   const reset = useShadowStore(s => s.reset)
@@ -26,7 +33,7 @@ const ShadowLight: FC = () => {
   return (
     <Popup className='h-[min(820px,90vh)] w-[360px]'>
       <Popup.Trigger>
-        <Button size='icon' tooltip='Sombras y luz'>
+        <Button variant='ghost' size='icon' tooltip='Sombras y luz'>
           <CloudSunIcon />
         </Button>
       </Popup.Trigger>
@@ -59,7 +66,7 @@ const ShadowLight: FC = () => {
       </Popup.Content>
 
       <Popup.Footer>
-        <UiButton
+        <Button
           type='button'
           variant='outline'
           size='sm'
@@ -70,7 +77,7 @@ const ShadowLight: FC = () => {
           }}
         >
           Resetear cambios
-        </UiButton>
+        </Button>
       </Popup.Footer>
     </Popup>
   )

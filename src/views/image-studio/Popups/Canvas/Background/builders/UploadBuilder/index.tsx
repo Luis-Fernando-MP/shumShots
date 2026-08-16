@@ -1,6 +1,6 @@
 'use client'
 
-import UploadImageController from '@/shared/components/UploadImageController'
+import UploadImageController from '@common/components/UploadImageController'
 import useBackgroundStore from '@views/image-studio/Popups/Canvas/Background/store/background/store'
 import type { FC } from 'react'
 

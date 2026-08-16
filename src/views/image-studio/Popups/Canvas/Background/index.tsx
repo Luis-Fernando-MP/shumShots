@@ -1,8 +1,7 @@
 'use client'
 
-import Popup from '@/shared/components/Popup'
-import Button from '@/shared/ui/Button'
-import { Button as UiButton } from '@common/components/Button'
+import Popup from '@common/components/Popup'
+import { Button } from '@common/components/Button'
 import Separator from '@common/components/Separator'
 import useBackgroundStore from '@views/image-studio/Popups/Canvas/Background/store/background/store'
 import { BlendIcon } from 'lucide-react'
@@ -10,13 +9,20 @@ import { Fragment, type FC } from 'react'
 
 import SECTIONS from './sections'
 
+/**
+ * Popup de configuración del fondo del lienzo.
+ * 
+ * Permite cambiar colores, degradados, filtros y wallpapers del canvas principal.
+ * 
+ * @returns El componente de popup para el fondo.
+ */
 const Background: FC = () => {
   const resetBackground = useBackgroundStore(s => s.resetBackground)
 
   return (
     <Popup className='h-[700px] w-[350px]'>
       <Popup.Trigger>
-        <Button size='icon' tooltip='Configuración del fondo'>
+        <Button variant='ghost' size='icon' tooltip='Configuración del fondo'>
           <BlendIcon />
         </Button>
       </Popup.Trigger>
@@ -37,9 +43,9 @@ const Background: FC = () => {
       </Popup.Content>
 
       <Popup.Footer>
-        <UiButton type='button' variant='outline' size='sm' className='w-full text-xs' onClick={resetBackground}>
+        <Button type='button' variant='outline' size='sm' className='w-full text-xs' onClick={resetBackground}>
           Resetear cambios
-        </UiButton>
+        </Button>
       </Popup.Footer>
     </Popup>
   )

@@ -1,18 +1,25 @@
 'use client'
 
-import Popup from '@/shared/components/Popup'
-import Button from '@/shared/ui/Button'
-import { Button as UiButton } from '@common/components/Button'
+import Popup from '@common/components/Popup'
+import { Button } from '@common/components/Button'
 import Separator from '@common/components/Separator'
 import { TABS_SCOPES } from '@views/image-studio/constants'
 import useFrameStore from '@views/image-studio/Popups/CanvasImages/Frame/store/frame/store'
-import Tabs from '@views/image-studio/Popups/common/components/tabs'
 import { getTabsStore } from '@views/image-studio/Popups/common/components/tabs/store'
 import { SmartphoneIcon } from 'lucide-react'
 import { type FC, Fragment, useEffect } from 'react'
 
 import SECTIONS from './sections'
+import Tabs from '@views/image-studio/Popups/common/components/tabs'
 
+/**
+ * Popup para aplicar marcos de dispositivos a las imágenes.
+ * 
+ * Permite elegir entre diferentes familias de dispositivos (iOS, Android, etc.)
+ * y configurarlos por capas de slots.
+ * 
+ * @returns El componente de popup para los frames de la imagen.
+ */
 const Frame: FC = () => {
   const syncTabs = useFrameStore(s => s.syncTabs)
   const reset = useFrameStore(s => s.reset)
@@ -26,7 +33,7 @@ const Frame: FC = () => {
   return (
     <Popup className='h-[min(820px,90vh)] w-[360px]'>
       <Popup.Trigger>
-        <Button size='icon' tooltip='Frames de dispositivo'>
+        <Button variant='ghost' size='icon' tooltip='Frames de dispositivo'>
           <SmartphoneIcon />
         </Button>
       </Popup.Trigger>
@@ -56,7 +63,7 @@ const Frame: FC = () => {
       </Popup.Content>
 
       <Popup.Footer>
-        <UiButton
+        <Button
           type='button'
           variant='outline'
           size='sm'
@@ -67,7 +74,7 @@ const Frame: FC = () => {
           }}
         >
           Resetear cambios
-        </UiButton>
+        </Button>
       </Popup.Footer>
     </Popup>
   )

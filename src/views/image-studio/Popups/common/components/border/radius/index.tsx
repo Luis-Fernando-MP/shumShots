@@ -1,6 +1,6 @@
 'use client'
 
-import BorderRadiusConfiguration from '@/shared/components/BorderRadiusConfiguration'
+import BorderRadiusConfiguration from '@common/components/BorderRadiusConfiguration'
 import SectionBlock from '@views/image-studio/Popups/common/components/SectionBlock'
 import type { IBorderRadiusStore } from '@views/image-studio/Popups/Canvas/CanvasBorder/store/canvas-border/radius.store'
 import type { FC } from 'react'

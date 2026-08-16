@@ -1,8 +1,7 @@
 'use client'
 
-import Popup from '@/shared/components/Popup'
-import Button from '@/shared/ui/Button'
-import { Button as UiButton } from '@common/components/Button'
+import Popup from '@common/components/Popup'
+import { Button } from '@common/components/Button'
 import Separator from '@common/components/Separator'
 import useCanvasLightStore from '@views/image-studio/Popups/Canvas/Light/store/light/store'
 import { SunIcon } from 'lucide-react'
@@ -10,13 +9,21 @@ import { Fragment, type FC } from 'react'
 
 import SECTIONS from './sections'
 
+/**
+ * Popup de configuración de iluminación del lienzo.
+ * 
+ * Permite añadir y configurar fuentes de luz (puntos, focos, ambientes)
+ * que afectan al fondo del canvas.
+ * 
+ * @returns El componente de popup para la luz del canvas.
+ */
 const Light: FC = () => {
   const reset = useCanvasLightStore(s => s.reset)
 
   return (
     <Popup className='h-[min(820px,90vh)] w-[360px]'>
       <Popup.Trigger>
-        <Button size='icon' tooltip='Luz del canvas'>
+        <Button variant='ghost' size='icon' tooltip='Luz del canvas'>
           <SunIcon />
         </Button>
       </Popup.Trigger>
@@ -39,9 +46,9 @@ const Light: FC = () => {
       </Popup.Content>
 
       <Popup.Footer>
-        <UiButton type='button' variant='outline' size='sm' className='w-full text-xs' onClick={reset}>
+        <Button type='button' variant='outline' size='sm' className='w-full text-xs' onClick={reset}>
           Resetear cambios
-        </UiButton>
+        </Button>
       </Popup.Footer>
     </Popup>
   )

@@ -1,4 +1,4 @@
-import { MonacoLanguage as MonacoLanguageType } from '@/shared/monaco-languages'
+import { MonacoLanguage as MonacoLanguageType } from '@common/components/monaco/languages'
 import Typography from '@common/components/Typography'
 import usePixisPreferencesStore from '@views/code-studio/store/pixisPreferences.store'
 import useWorkspaceStore, { selectActiveFile } from '@views/code-studio/store/workspace.store'

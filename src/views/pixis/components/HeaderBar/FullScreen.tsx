@@ -1,7 +1,7 @@
 'use client'
 
-import { acl } from '@/shared/acl'
-import Button from '@/shared/ui/Button'
+import { acl } from '@common/lib/acl'
+import Button from '@common/components/Button'
 import { MaximizeIcon, MinimizeIcon } from 'lucide-react'
 import { type FC, useState } from 'react'
 

@@ -1,4 +1,4 @@
-import type { MonacoLanguage } from '@/shared/monaco-languages'
+import type { MonacoLanguage } from '@common/components/monaco/languages'
 import type { editor } from 'monaco-editor'
 
 type Monaco = editor.IEditorOptions

@@ -1,6 +1,6 @@
 'use client'
 
-import Button from '@/shared/ui/Button'
+import { Button } from '@common/components/Button'
 import UnsplashPicker from '@common/components/UnsplashPicker'
 import Background from '@views/image-studio/Popups/Canvas/Background'
 import CanvasBorder from '@views/image-studio/Popups/Canvas/CanvasBorder'
@@ -9,6 +9,11 @@ import useBackgroundStore from '@views/image-studio/Popups/Canvas/Background/sto
 import { ImagePlusIcon } from 'lucide-react'
 import type { FC } from 'react'
 
+/**
+ * Opciones globales del lienzo (Background, Borde, Luz, Unsplash).
+ * 
+ * @returns Sección de controles para el fondo y estilo del lienzo.
+ */
 const CanvasOptions: FC = () => {
   const setBackground = useBackgroundStore(s => s.setBackground)
 

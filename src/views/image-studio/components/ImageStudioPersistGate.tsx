@@ -27,6 +27,17 @@ const syncDomainTabs = () => {
   useSizeStore.getState().syncFromTabs(sizeTabs.layers, sizeTabs.activeLayerId)
 }
 
+/**
+ * Gate de persistencia para Image Studio.
+ * 
+ * Asegura que todos los stores de dominio y de pestañas (Tabs) estén
+ * hidratados antes de renderizar la aplicación, sincronizando el estado
+ * inicial con las capas de selección.
+ * 
+ * @param props - Propiedades del componente.
+ * @param props.children - Contenido a renderizar tras la hidratación.
+ * @returns El contenido o null mientras carga.
+ */
 const ImageStudioPersistGate: FC<{ children: ReactNode }> = ({ children }) => {
   const [ready, setReady] = useState(false)
 
@@ -55,8 +66,11 @@ const ImageStudioPersistGate: FC<{ children: ReactNode }> = ({ children }) => {
     }
   }, [])
 
-  if (!ready) return null
-  return children
+  return (
+    <>
+      {ready && children}
+    </>
+  )
 }
 
 export default ImageStudioPersistGate

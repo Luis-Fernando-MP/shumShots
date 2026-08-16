@@ -1,6 +1,6 @@
 'use client'
 
-import SliderControl from '@/shared/components/SliderControl'
+import SliderControl from '@common/components/SliderControl'
 import {
   DEMO_SCENE_FILL,
   ROTATION_PRESETS,

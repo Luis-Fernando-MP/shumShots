@@ -1,0 +1,31 @@
+import IndividualDefaultBorder from '@common/components/IndividualDefaultBorder'
+import type { FC } from 'react'
+
+interface Props {
+  borderValue: number
+  changeBorder: (value: number) => void
+}
+
+const borders = [
+  { radius: 20, label: 'Simple' },
+  { radius: 40, label: 'Curvo' },
+  { radius: 80, label: 'Circular' }
+]
+
+const DefaultBorders: FC<Props> = ({ borderValue, changeBorder }) => {
+  return (
+    <section className='flex flex-row flex-wrap items-center gap-2'>
+      {borders.map(border => (
+        <IndividualDefaultBorder
+          key={border.label}
+          value={border.radius * 0.6}
+          onClick={() => changeBorder(border.radius)}
+          label={border.label}
+          selected={border.radius === borderValue}
+        />
+      ))}
+    </section>
+  )
+}
+
+export default DefaultBorders

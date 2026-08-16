@@ -1,4 +1,4 @@
-import monacoLanguagesIcons from '@/shared/monaco-languages'
+import monacoLanguagesIcons from '@common/components/monaco/languages'
 import type { FC } from 'react'
 
 import MonacoLanguage from './MonacoLanguage'

@@ -1,6 +1,6 @@
 'use client'
 
-import Button from '@/shared/ui/Button'
+import Button from '@common/components/Button'
 import { Input } from '@common/components/Input'
 import Typography from '@common/components/Typography'
 import {

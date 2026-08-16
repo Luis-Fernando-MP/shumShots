@@ -1,6 +1,6 @@
 'use client'
 
-import SizeController from '@/shared/components/SizeController'
+import SizeController from '@common/components/SizeController'
 import { cn } from '@common/utils/cn'
 import SectionBlock from '@views/image-studio/Popups/common/components/SectionBlock'
 import PresetCard from '@views/image-studio/Popups/common/components/PresetCard'

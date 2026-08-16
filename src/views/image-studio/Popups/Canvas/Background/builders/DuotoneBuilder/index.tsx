@@ -1,6 +1,6 @@
 'use client'
 
-import SliderControl from '@/shared/components/SliderControl'
+import SliderControl from '@common/components/SliderControl'
 import ColorPicker from '@common/components/ColorPicker'
 import {
   DEMO_SCENE_FILL,

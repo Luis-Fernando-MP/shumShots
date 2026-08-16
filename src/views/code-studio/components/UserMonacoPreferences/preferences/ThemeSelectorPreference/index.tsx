@@ -1,5 +1,5 @@
-import { ThemeMonacoName, monacoThemes } from '@/shared/themes/monacoThemes'
-import PaletteSphere from '@/shared/ui/PaletteSphere'
+import { ThemeMonacoName, monacoThemes } from '@common/components/monaco/themes/monacoThemes'
+import PaletteSphere from '@common/components/PaletteSphere'
 import useMonacoThemeStore from '@views/code-studio/store/monacoTheme.store'
 import type { FC } from 'react'
 

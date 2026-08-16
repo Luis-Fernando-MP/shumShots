@@ -1,6 +1,6 @@
 'use client'
 
-import ColorsController from '@/shared/components/ColorsController'
+import ColorsController from '@common/components/ColorsController'
 import SectionBlock from '@views/image-studio/Popups/common/components/SectionBlock'
 import type { BorderConfigurationState } from '@views/image-studio/Popups/common/components/createBorderStore'
 import type { FC } from 'react'

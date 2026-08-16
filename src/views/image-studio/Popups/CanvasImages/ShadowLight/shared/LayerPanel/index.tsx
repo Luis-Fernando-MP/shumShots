@@ -1,8 +1,8 @@
 'use client'
 
-import SliderControl from '@/shared/components/SliderControl'
-import ColorsController from '@/shared/components/ColorsController'
-import { extractColor } from '@/shared/components/extractColor'
+import SliderControl from '@common/components/SliderControl'
+import ColorsController from '@common/components/ColorsController'
+import { extractColor } from '@common/components/extractColor'
 import { Button } from '@common/components/Button'
 import { cn } from '@common/utils/cn'
 import { LIGHT_PRESETS, type LightType } from '@views/image-studio/Popups/common/presets/light'

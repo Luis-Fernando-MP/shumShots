@@ -1,7 +1,7 @@
 'use client'
 
-import useBoardStore from '@/shared/components/Board/board.store'
-import Dropzone from '@/shared/components/Dropzone'
+import useBoardStore from '@common/components/Board/board.store'
+import Dropzone from '@common/components/Dropzone'
 import APP_Z_INDEX from '@common/constants/z-index'
 import { framesQuery } from '@common/core'
 import { cn } from '@common/utils/cn'

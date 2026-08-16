@@ -1,7 +1,7 @@
 'use client'
 
-import Popup from '@/shared/components/Popup'
-import Button from '@/shared/ui/Button'
+import Popup from '@common/components/Popup'
+import Button from '@common/components/Button'
 import SliceContainer from '@common/components/SliceContainer'
 import Typography from '@common/components/Typography'
 import {

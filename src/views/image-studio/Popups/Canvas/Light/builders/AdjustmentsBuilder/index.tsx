@@ -1,8 +1,8 @@
 'use client'
 
-import SliderControl from '@/shared/components/SliderControl'
-import ColorsController from '@/shared/components/ColorsController'
-import { extractColor } from '@/shared/components/extractColor'
+import SliderControl from '@common/components/SliderControl'
+import ColorsController from '@common/components/ColorsController'
+import { extractColor } from '@common/components/extractColor'
 import { defaultLightLayer } from '@views/image-studio/Popups/Canvas/Light/store/light/initialState'
 import useCanvasLightStore from '@views/image-studio/Popups/Canvas/Light/store/light/store'
 import type { CanvasLightLayer } from '@views/image-studio/Popups/Canvas/Light/store/light/type.light'

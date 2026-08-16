@@ -1,6 +1,6 @@
 'use client'
 
-import ShumShots from '@/shared/ui/ShumShots'
+import ShumShots from '@common/components/ShumShots'
 import useFrameStore, {
   createDefaultFrameConfig,
   defaultSlotPan

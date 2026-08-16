@@ -1,6 +1,6 @@
 'use client'
 
-import type { DropzoneFile } from '@/shared/components/Dropzone'
+import type { DropzoneFile } from '@common/components/Dropzone'
 import { toaster } from '@common/components/Toast'
 import useLibraryImageSrc from '@views/image-studio/Popups/CanvasImages/ImagesCount/hooks/useLibraryImageSrc'
 import useImageLibraryStore from '@views/image-studio/Popups/CanvasImages/ImagesCount/store/images-count/imageLibrary'

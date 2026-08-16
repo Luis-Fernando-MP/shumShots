@@ -17,6 +17,12 @@ const GAP = 8
 const COLLAPSED_ROWS = 2
 const COLLAPSED_MAX = THUMB_H * COLLAPSED_ROWS + GAP * (COLLAPSED_ROWS - 1)
 
+/**
+ * Miniatura de wallpaper para la cuadrícula de selección.
+ * 
+ * @param props - Propiedades de la miniatura.
+ * @returns El botón con la previsualización del wallpaper.
+ */
 const WallpaperThumb: FC<{ item: Wallpaper; isActive: boolean; onSelect: (path: string) => void }> = ({
   item,
   isActive,
@@ -52,6 +58,14 @@ const WallpaperThumb: FC<{ item: Wallpaper; isActive: boolean; onSelect: (path: 
   )
 }
 
+/**
+ * Constructor de sección para elegir fondos precargados (wallpapers).
+ * 
+ * Obtiene la lista de wallpapers desde la API y permite seleccionarlos
+ * para el fondo del lienzo.
+ * 
+ * @returns La sección de wallpapers.
+ */
 const WallpapersBuilder: FC = () => {
   const background = useBackgroundStore(s => s.background)
   const setBackground = useBackgroundStore(s => s.setBackground)

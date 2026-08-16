@@ -1,6 +1,6 @@
 'use client'
 
-import GradientsController from '@/shared/components/GradientsController'
+import GradientsController from '@common/components/GradientsController'
 import useBackgroundStore from '@views/image-studio/Popups/Canvas/Background/store/background/store'
 import type { FC } from 'react'
 

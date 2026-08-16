@@ -1,6 +1,6 @@
 'use client'
 
-import SliderControl from '@/shared/components/SliderControl'
+import SliderControl from '@common/components/SliderControl'
 import { cn } from '@common/utils/cn'
 import { BLUR_PRESETS, resolvePreviewFill } from '@views/image-studio/utils/backgroundStyle'
 import useBackgroundStore from '@views/image-studio/Popups/Canvas/Background/store/background/store'

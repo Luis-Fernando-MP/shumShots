@@ -1,6 +1,6 @@
 'use client'
 
-import SliderControl from '@/shared/components/SliderControl'
+import SliderControl from '@common/components/SliderControl'
 import { Button } from '@common/components/Button'
 import { cn } from '@common/utils/cn'
 import { FILTER_PRESETS, FILTER_SLIDERS, buildFilterCss, resolvePreviewFill } from '@views/image-studio/utils/backgroundStyle'

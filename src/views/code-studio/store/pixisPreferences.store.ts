@@ -19,7 +19,7 @@ import {
 import { StateCreator, create } from 'zustand'
 import { persist } from 'zustand/middleware'
 
-import { type MonacoLanguage } from '@/shared/monaco-languages'
+import { type MonacoLanguage } from '@common/components/monaco/languages'
 
 type PixisKey = keyof PixisState
 type MonacoKey = keyof MonacoState

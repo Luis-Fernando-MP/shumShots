@@ -1,5 +1,5 @@
-import { SHUM_DEV } from '@/shared/constants'
-import { ThemeMonacoName, monacoThemes } from '@/shared/themes/monacoThemes'
+import { SHUM_DEV } from '@common/constants/pixis'
+import { ThemeMonacoName, monacoThemes } from '@common/components/monaco/themes/monacoThemes'
 import { DiffOnMount, Monaco, OnMount } from '@monaco-editor/react'
 import { buildHighlightLineDecorations, buildKeywordDecorations } from '@views/code-studio/components/UserMonacoPreferences/utils'
 import type { editor } from 'monaco-editor'

@@ -1,6 +1,6 @@
 'use client'
 
-import SliderControl from '@/shared/components/SliderControl'
+import SliderControl from '@common/components/SliderControl'
 import { Button } from '@common/components/Button'
 import Typography from '@common/components/Typography'
 import usePicturesStore from '@views/image-studio/Popups/CanvasImages/ImagesCount/store/images-count/pictures'
@@ -38,6 +38,14 @@ const poseSnippet = (pose: Required<SoloPose>) => {
   return `placeSolo({ ${body} })`
 }
 
+/**
+ * Constructor de sección para ajustes finos de posición y rotación 3D.
+ * 
+ * Permite mover el slot seleccionado en los ejes X/Y, escalarlo,
+ * ajustar el bleed y rotarlo en los tres ejes espaciales.
+ * 
+ * @returns La sección de ajustes avanzados de pose.
+ */
 const AdvancedPoseBuilder: FC = () => {
   const count = usePicturesStore(s => s.count)
   const selectedId = usePicturesStore(s => s.selectedId)
@@ -122,7 +130,7 @@ const AdvancedPoseBuilder: FC = () => {
           displayValue={`${Math.round(pose.rotateY)}°`}
         />
 
-        {advancedPose ? (
+        {advancedPose && (
           <Button
             type='button'
             variant='outline'
@@ -132,11 +140,11 @@ const AdvancedPoseBuilder: FC = () => {
           >
             Volver al estilo «{entry.title}»
           </Button>
-        ) : null}
+        )}
 
         <Typography.Small tone='secondary' className='text-xs leading-relaxed'>
           Slot {selectedLabel}. Estilo «{entry.title}» ({entry.key}
-          {advancedPose ? ', ajustado a mano' : ''}). Posición ax {round(pose.ax)} / ay {round(pose.ay)},
+          {advancedPose && ', ajustado a mano'}). Posición ax {round(pose.ax)} / ay {round(pose.ay)},
           escala {round(pose.scale, 2)}, bleed {round(pose.bleed, 2)}, rotación Z {round(pose.rotateZ)}° · X{' '}
           {round(pose.rotateX)}° · Y {round(pose.rotateY)}°. {poseSnippet(pose)}
         </Typography.Small>

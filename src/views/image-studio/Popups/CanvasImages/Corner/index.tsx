@@ -1,18 +1,25 @@
 'use client'
 
-import Popup from '@/shared/components/Popup'
-import Button from '@/shared/ui/Button'
-import { Button as UiButton } from '@common/components/Button'
+import Popup from '@common/components/Popup'
+import { Button } from '@common/components/Button'
 import Separator from '@common/components/Separator'
 import { TABS_SCOPES } from '@views/image-studio/constants'
-import Tabs from '@views/image-studio/Popups/common/components/tabs'
 import { getTabsStore } from '@views/image-studio/Popups/common/components/tabs/store'
 import { SquareRoundCornerIcon } from 'lucide-react'
 import { type FC, Fragment, useEffect } from 'react'
 
 import useCornerStore from './store/corner/store'
 import SECTIONS from './sections'
+import Tabs from '@views/image-studio/Popups/common/components/tabs'
 
+/**
+ * Popup para configurar el redondeado de esquinas de las imágenes.
+ * 
+ * Utiliza un sistema de capas (Tabs) para aplicar diferentes radios
+ * a slots específicos o a todos simultáneamente.
+ * 
+ * @returns El componente de popup para los bordes de la imagen.
+ */
 const Corner: FC = () => {
   const syncTabs = useCornerStore(s => s.syncTabs)
   const resetCorner = useCornerStore(s => s.reset)
@@ -26,7 +33,7 @@ const Corner: FC = () => {
   return (
     <Popup className='h-[760px] w-[350px]'>
       <Popup.Trigger>
-        <Button size='icon' tooltip='Bordes de la imagen'>
+        <Button variant='ghost' size='icon' tooltip='Bordes de la imagen'>
           <SquareRoundCornerIcon />
         </Button>
       </Popup.Trigger>
@@ -54,7 +61,7 @@ const Corner: FC = () => {
       </Popup.Content>
 
       <Popup.Footer>
-        <UiButton
+        <Button
           type='button'
           variant='outline'
           size='sm'
@@ -65,7 +72,7 @@ const Corner: FC = () => {
           }}
         >
           Resetear cambios
-        </UiButton>
+        </Button>
       </Popup.Footer>
     </Popup>
   )

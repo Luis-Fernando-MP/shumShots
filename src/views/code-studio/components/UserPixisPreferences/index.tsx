@@ -1,7 +1,7 @@
 'use client'
 
-import Popup from '@/shared/components/Popup'
-import Button from '@/shared/ui/Button'
+import Popup from '@common/components/Popup'
+import Button from '@common/components/Button'
 import Typography from '@common/components/Typography'
 import { PreferenceSearchProvider } from '@views/code-studio/components/preferences/PreferenceField'
 import { PreferenceSearch, usePreferenceSearchState } from '@views/code-studio/components/preferences/PreferenceSearch'

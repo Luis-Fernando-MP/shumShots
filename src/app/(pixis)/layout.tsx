@@ -1,4 +1,4 @@
-import Hydration from '@/shared/components/Hydration'
+import Hydration from '@common/components/Hydration'
 import DetailBar from '@views/pixis/components/DetailBar'
 import HeaderBar from '@views/pixis/components/HeaderBar'
 import type { JSX, ReactNode } from 'react'

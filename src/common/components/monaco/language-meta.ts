@@ -1,4 +1,4 @@
-import monacoLanguagesIcons, { type MonacoLanguage } from '@/shared/monaco-languages'
+import monacoLanguagesIcons, { type MonacoLanguage } from '@common/components/monaco/languages'
 
 const DOCKERFILE_NAMES = new Set(['dockerfile', 'containerfile'])
 

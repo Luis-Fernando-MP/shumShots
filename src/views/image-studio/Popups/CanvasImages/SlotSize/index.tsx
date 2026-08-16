@@ -1,18 +1,25 @@
 'use client'
 
-import Popup from '@/shared/components/Popup'
-import Button from '@/shared/ui/Button'
-import { Button as UiButton } from '@common/components/Button'
+import Popup from '@common/components/Popup'
+import { Button } from '@common/components/Button'
 import Separator from '@common/components/Separator'
 import { TABS_SCOPES } from '@views/image-studio/constants'
-import Tabs from '@views/image-studio/Popups/common/components/tabs'
 import { getTabsStore } from '@views/image-studio/Popups/common/components/tabs/store'
 import { ScalingIcon } from 'lucide-react'
 import { type FC, Fragment, useEffect } from 'react'
 
 import SECTIONS from './sections'
 import useSizeStore from './store/slot-size/store'
+import Tabs from '@views/image-studio/Popups/common/components/tabs'
 
+/**
+ * Popup para ajustar el tamaño de los slots de imagen.
+ * 
+ * Permite cambiar dimensiones, escala y márgenes internos
+ * por capas de selección.
+ * 
+ * @returns El componente de popup para el tamaño de slots.
+ */
 const SlotSize: FC = () => {
   const resetSize = useSizeStore(s => s.reset)
   const syncFromTabs = useSizeStore(s => s.syncFromTabs)
@@ -26,7 +33,7 @@ const SlotSize: FC = () => {
   return (
     <Popup className='h-[min(640px,90vh)] w-[360px]'>
       <Popup.Trigger>
-        <Button size='icon' tooltip='Tamaño de slots'>
+        <Button variant='ghost' size='icon' tooltip='Tamaño de slots'>
           <ScalingIcon />
         </Button>
       </Popup.Trigger>
@@ -60,7 +67,7 @@ const SlotSize: FC = () => {
       </Popup.Content>
 
       <Popup.Footer>
-        <UiButton
+        <Button
           type='button'
           variant='outline'
           size='sm'
@@ -71,7 +78,7 @@ const SlotSize: FC = () => {
           }}
         >
           Resetear cambios
-        </UiButton>
+        </Button>
       </Popup.Footer>
     </Popup>
   )

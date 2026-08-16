@@ -1,6 +1,6 @@
 'use client'
 
-import Dropzone, { type DropzoneFile } from '@/shared/components/Dropzone'
+import Dropzone, { type DropzoneFile } from '@common/components/Dropzone'
 import Input from '@common/components/Input'
 import Typography from '@common/components/Typography'
 import { cn } from '@common/utils/cn'

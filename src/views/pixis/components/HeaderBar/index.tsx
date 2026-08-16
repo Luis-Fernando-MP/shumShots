@@ -1,5 +1,5 @@
 import { Separator } from '@common/components/Separator'
-import ThemeController from '@/shared/components/ThemeController'
+import ThemeController from '@common/components/ThemeController'
 import { type FC } from 'react'
 
 import FullScreen from './FullScreen'

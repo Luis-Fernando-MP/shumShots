@@ -25,7 +25,6 @@
       "@common/*": ["./src/common/*"],
       "@features/*": ["./src/features/*"],
       "@views/*": ["./src/views/*"],
-      "@shared/*": ["./src/shared/*"],
       "@pages/*": ["./src/app/*"],
       "@editor/*": ["./src/views/image-studio/*"],
       "@editor-store/*": ["./src/views/image-studio/store/*"],

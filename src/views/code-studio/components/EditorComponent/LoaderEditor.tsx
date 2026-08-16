@@ -1,4 +1,4 @@
-import ShumShots from '@/shared/ui/ShumShots'
+import ShumShots from '@common/components/ShumShots'
 import type { FC } from 'react'
 import { LoaderIcon } from 'react-hot-toast'
 

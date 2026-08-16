@@ -1,6 +1,6 @@
 'use client'
 
-import FrameTemplatePresets from '@/shared/components/FrameTemplatePresets'
+import FrameTemplatePresets from '@common/components/FrameTemplatePresets'
 import SectionBlock from '@views/image-studio/Popups/common/components/SectionBlock'
 import useCanvasBorderStore from '@views/image-studio/Popups/Canvas/CanvasBorder/store/canvas-border/border.store'
 import useCanvasRadiusStore from '@views/image-studio/Popups/Canvas/CanvasBorder/store/canvas-border/radius.store'

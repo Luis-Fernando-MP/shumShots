@@ -1,4 +1,4 @@
-import useBoardStore from '@/shared/components/Board/board.store'
+import useBoardStore from '@common/components/Board/board.store'
 import useLayoutStore, {
   DEFAULT_SLOT_OFFSET
 } from '@views/image-studio/Popups/CanvasImages/Layout/store/layout/store'

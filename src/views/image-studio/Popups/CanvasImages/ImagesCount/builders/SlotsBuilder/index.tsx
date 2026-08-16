@@ -1,6 +1,6 @@
 'use client'
 
-import { type DropzoneFile } from '@/shared/components/Dropzone'
+import { type DropzoneFile } from '@common/components/Dropzone'
 import { Button } from '@common/components/Button'
 import {
   Select,
@@ -40,6 +40,15 @@ import { type CSSProperties, type FC, useRef } from 'react'
 
 const EMPTY_VALUE = '__empty__'
 
+/**
+ * Tarjeta de un slot individual para la lista de ordenamiento y asignación.
+ * 
+ * Permite seleccionar el slot, reordenarlo mediante drag-and-drop,
+ * asignar una imagen de la biblioteca o subir una nueva.
+ * 
+ * @param props - Propiedades de la tarjeta de slot.
+ * @returns La tarjeta interactiva del slot.
+ */
 const SortableSlotCard: FC<{
   picture: PictureItem
   selected: boolean
@@ -92,9 +101,10 @@ const SortableSlotCard: FC<{
         onClick={onSelect}
         className='bg-muted/50 relative aspect-[4/3] w-full overflow-hidden rounded-md'
       >
-        {src ? (
+        {src && (
           <img src={src} alt={image?.name ?? ''} className='size-full object-cover' />
-        ) : (
+        )}
+        {!src && (
           <span className='text-muted-foreground flex size-full flex-col items-center justify-center gap-1.5 text-xs'>
             <ImagePlusIcon className='size-4 opacity-70' />
             Vacío
@@ -111,13 +121,13 @@ const SortableSlotCard: FC<{
         </SelectTrigger>
         <SelectContent>
           <SelectItem value={EMPTY_VALUE}>Sin imagen</SelectItem>
-          {images.map(item =>
-            item.active ? (
+          {images.map(item => (
+            item.active && (
               <SelectItem key={item.id} value={item.id}>
                 {item.name}
               </SelectItem>
-            ) : null
-          )}
+            )
+          ))}
         </SelectContent>
       </Select>
 
@@ -129,7 +139,8 @@ const SortableSlotCard: FC<{
         onClick={() => fileRef.current?.click()}
       >
         <UploadIcon className='size-3.5' />
-        {image ? 'Cambiar' : 'Subir'}
+        {image && 'Cambiar'}
+        {!image && 'Subir'}
       </Button>
       <input
         ref={fileRef}
@@ -147,6 +158,14 @@ const SortableSlotCard: FC<{
   )
 }
 
+/**
+ * Constructor de sección para gestionar los slots de imagen.
+ * 
+ * Permite asignar imágenes a cada slot, reordenarlas mediante arrastre
+ * y subir nuevos archivos.
+ * 
+ * @returns La sección de gestión de slots.
+ */
 const SlotsBuilder: FC = () => {
   const pictures = usePicturesStore(s => s.pictures)
   const selectedId = usePicturesStore(s => s.selectedId)

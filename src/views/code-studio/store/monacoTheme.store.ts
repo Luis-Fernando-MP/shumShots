@@ -1,5 +1,5 @@
-import { ThemeMonacoName, monacoThemes } from '@/shared/themes/monacoThemes'
-import { ThemeMonaco } from '@/shared/themes/monacoThemes.type'
+import { ThemeMonacoName, monacoThemes } from '@common/components/monaco/themes/monacoThemes'
+import { ThemeMonaco } from '@common/components/monaco/themes/monacoThemes.type'
 import { StateCreator, create } from 'zustand'
 import { persist } from 'zustand/middleware'
 

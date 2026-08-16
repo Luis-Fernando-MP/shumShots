@@ -1,6 +1,6 @@
 'use client'
 
-import Button from '@/shared/ui/Button'
+import { Button } from '@common/components/Button'
 import { domCapture } from '@common/lib/snapdom'
 import Input from '@common/components/Input'
 import { toaster } from '@common/components/Toast'
@@ -21,37 +21,38 @@ const SCALE_MAX = 10
 
 type ShotAction = 'download' | 'copy'
 
-/** DOM id, CSS selector, ref, or lazy getter for the node to capture. */
+/** id del DOM, selector CSS, ref, o getter diferido del nodo a capturar. */
 export type ShotCaptureTarget =
   | string
   | RefObject<HTMLElement | null>
   | (() => HTMLElement | null)
 
 export type ShotCaptureProps = {
-  /** Primary capture target (e.g. container with background). */
+  /** Objetivo principal de captura (ej. contenedor con fondo). */
   target: ShotCaptureTarget
   /**
-   * Optional second target (e.g. editor without chrome).
-   * When set, download/copy ask which target to use.
+   * Objetivo alternativo opcional (ej. editor sin chrome).
+   * Si se establece, la descarga/copia pregunta cuál usar.
    */
   alternateTarget?: ShotCaptureTarget
-  /** Prompt copy when `alternateTarget` is provided. */
+  /** Texto del prompt cuando se provee un `alternateTarget`. */
   alternatePrompt?: {
     description?: string
     primaryLabel?: string
     secondaryLabel?: string
   }
-  /** Export scale multiplier. @default 5 */
+  /** Multiplicador de escala de exportación. @default 5 */
   scale?: number
   /**
-   * When false, keeps embedded images at their source resolution (no downscale
-   * to on-screen size). Prefer for image-studio exports. @default true
+   * Si es false, mantiene las imágenes incrustadas en su resolución original.
+   * Preferido para exportaciones de image-studio. @default true
    */
   compress?: boolean
-  /** Initial file name without extension. @default `'pixis'` */
+  /** Nombre de archivo inicial sin extensión. @default `'pixis'` */
   defaultFileName?: string
-  /** Toast when the target node is missing. */
+  /** Mensaje de toast cuando no se encuentra el nodo objetivo. */
   missingTitle?: string
+  /** Clases adicionales para el contenedor. */
   className?: string
 }
 
@@ -70,7 +71,10 @@ const resolveTarget = (target: ShotCaptureTarget): HTMLElement | null => {
 }
 
 /**
- * Filename input plus download / copy-to-clipboard actions for a DOM shot.
+ * Input de nombre de archivo más acciones de descarga/copiado de un shot del DOM.
+ * 
+ * @param props - Propiedades de configuración de captura.
+ * @returns El componente de control de captura.
  */
 const ShotCapture: FC<ShotCaptureProps> = ({
   target,

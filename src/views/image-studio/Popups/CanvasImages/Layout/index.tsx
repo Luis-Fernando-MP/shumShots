@@ -1,25 +1,32 @@
 'use client'
 
-import Popup from '@/shared/components/Popup'
-import Button from '@/shared/ui/Button'
-import { Button as UiButton } from '@common/components/Button'
+import Popup from '@common/components/Popup'
+import { Button } from '@common/components/Button'
 import Separator from '@common/components/Separator'
 import { TABS_SCOPES } from '@views/image-studio/constants'
-import Tabs from '@views/image-studio/Popups/common/components/tabs'
 import { getTabsStore } from '@views/image-studio/Popups/common/components/tabs/store'
 import { MoveIcon } from 'lucide-react'
 import { type FC, Fragment } from 'react'
 
 import { GLOBAL_SECTIONS, TAB_SECTIONS } from './sections'
 import useLayoutStore from './store/layout/store'
+import Tabs from '@views/image-studio/Popups/common/components/tabs'
 
+/**
+ * Popup de composición y disposición de las imágenes (Layout).
+ * 
+ * Ofrece presets de posición globales y ajustes finos por grupos
+ * de slots seleccionados.
+ * 
+ * @returns El componente de popup para la composición de imágenes.
+ */
 const Layout: FC = () => {
   const reset = useLayoutStore(s => s.reset)
 
   return (
     <Popup className='h-[min(820px,90vh)] w-[360px]'>
       <Popup.Trigger>
-        <Button size='icon' tooltip='Composición de slots'>
+        <Button variant='ghost' size='icon' tooltip='Composición de slots'>
           <MoveIcon />
         </Button>
       </Popup.Trigger>
@@ -55,7 +62,7 @@ const Layout: FC = () => {
       </Popup.Content>
 
       <Popup.Footer>
-        <UiButton
+        <Button
           type='button'
           variant='outline'
           size='sm'
@@ -66,7 +73,7 @@ const Layout: FC = () => {
           }}
         >
           Resetear cambios
-        </UiButton>
+        </Button>
       </Popup.Footer>
     </Popup>
   )

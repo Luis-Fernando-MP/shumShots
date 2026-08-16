@@ -1,6 +1,6 @@
 'use client'
 
-import Button from '@/shared/ui/Button'
+import Button from '@common/components/Button'
 import ShotCapture from '@common/components/ShotCapture'
 import usePixisPreferencesStore from '@views/code-studio/store/pixisPreferences.store'
 import { LetterText } from 'lucide-react'

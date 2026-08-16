@@ -1,4 +1,4 @@
-import monacoLanguagesIcons from '@/shared/monaco-languages'
+import monacoLanguagesIcons from '@common/components/monaco/languages'
 import { DEFAULT_MONACO_FONT_ID } from '@common/components/monaco'
 import type {
   HeaderDensity,

@@ -1,7 +1,7 @@
 'use client'
 
-import Button from '@/shared/ui/Button'
-import ShumShots from '@/shared/ui/ShumShots'
+import Button from '@common/components/Button'
+import ShumShots from '@common/components/ShumShots'
 import { Separator } from '@common/components/Separator'
 import Typography from '@common/components/Typography'
 import { cn } from '@common/utils/cn'

@@ -1,4 +1,4 @@
-import { extractColor } from '@/shared/components/extractColor'
+import { extractColor } from '@common/components/extractColor'
 
 export type BorderFinish = 'soft' | 'solid' | 'soft-frame' | 'solid-frame' | 'picture'
 

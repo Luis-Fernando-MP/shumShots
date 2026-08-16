@@ -1,6 +1,6 @@
 'use client'
 
-import BorderStylePresets from '@/shared/components/BorderStylePresets'
+import BorderStylePresets from '@common/components/BorderStylePresets'
 import SectionBlock from '@views/image-studio/Popups/common/components/SectionBlock'
 import type { BorderConfigurationState } from '@views/image-studio/Popups/common/components/createBorderStore'
 import type { FC } from 'react'

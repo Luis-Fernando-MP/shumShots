@@ -1,6 +1,6 @@
 'use client'
 
-import ColorsController from '@/shared/components/ColorsController'
+import ColorsController from '@common/components/ColorsController'
 import useBackgroundStore from '@views/image-studio/Popups/Canvas/Background/store/background/store'
 import type { FC } from 'react'
 

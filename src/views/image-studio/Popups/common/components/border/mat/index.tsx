@@ -1,7 +1,7 @@
 'use client'
 
-import ColorsController from '@/shared/components/ColorsController'
-import SliderControl from '@/shared/components/SliderControl'
+import ColorsController from '@common/components/ColorsController'
+import SliderControl from '@common/components/SliderControl'
 import { Button } from '@common/components/Button'
 import Switch from '@common/components/Switch'
 import Typography from '@common/components/Typography'

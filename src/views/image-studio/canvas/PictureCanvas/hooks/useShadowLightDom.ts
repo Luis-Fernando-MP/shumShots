@@ -1,6 +1,6 @@
 'use client'
 
-import useBoardStore from '@/shared/components/Board/board.store'
+import useBoardStore from '@common/components/Board/board.store'
 import APP_Z_INDEX from '@common/constants/z-index'
 import useShadowStore, {
   createDefaultShadowConfig

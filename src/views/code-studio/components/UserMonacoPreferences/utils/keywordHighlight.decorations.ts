@@ -1,4 +1,4 @@
-import { SHUM_DEV } from '@/shared/constants'
+import { SHUM_DEV } from '@common/constants/pixis'
 import type { KeywordGlyphStyle, KeywordHighlightStyle } from '@views/code-studio/utils/preferences'
 import type { editor } from 'monaco-editor'
 import { Bookmark, Code2, Heart, Sparkles, Star, Zap, type LucideIcon } from 'lucide-react'

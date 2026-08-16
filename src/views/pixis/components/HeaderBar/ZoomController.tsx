@@ -1,7 +1,7 @@
 'use client'
 
-import useBoardStore, { MAX_SCALE, MIN_SCALE, SCALE_EPSILON } from '@/shared/components/Board/board.store'
-import Button from '@/shared/ui/Button'
+import useBoardStore, { MAX_SCALE, MIN_SCALE, SCALE_EPSILON } from '@common/components/Board/board.store'
+import Button from '@common/components/Button'
 import { MinusIcon, PlusIcon } from 'lucide-react'
 import type { FC } from 'react'
 
