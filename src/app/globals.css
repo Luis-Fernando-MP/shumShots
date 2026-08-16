@@ -87,7 +87,7 @@
 }
 
 :root {
-  --app-font-size: 16px;
+  --app-font-size: 14px;
   --bg-primary: 0, 0, 0;
   --bg-secondary: 10, 10, 10;
   --bg-tertiary: 23, 23, 23;
