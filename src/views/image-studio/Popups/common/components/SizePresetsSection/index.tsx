@@ -7,6 +7,8 @@ import { cn } from '@common/utils/cn'
 import SectionBlock from '@views/image-studio/Popups/common/components/SectionBlock'
 import type { FC } from 'react'
 
+import FormatStage from './FormatStage'
+
 export type SizePreset = {
   id: string
   label: string
@@ -30,31 +32,6 @@ type Props = {
   forceLockAspect?: boolean
 }
 
-const FormatStage: FC<{ width: number; height: number; label: string; active: boolean }> = ({
-  width,
-  height,
-  label,
-  active
-}) => {
-  const landscape = width >= height
-
-  return (
-    <div className='flex flex-col items-center gap-1'>
-      <div className={cn('grid h-9 w-full place-content-center', chromeTile(active))}>
-        <div
-          className={cn('rounded-[2px]', active ? 'bg-foreground/70' : 'bg-foreground/45')}
-          style={{
-            aspectRatio: `${width} / ${height}`,
-            width: landscape ? '22px' : undefined,
-            height: landscape ? undefined : '22px'
-          }}
-        />
-      </div>
-      <Text.caption className='text-center'>{label}</Text.caption>
-    </div>
-  )
-}
-
 const SizePresetsSection: FC<Props> = ({
   width,
   height,
@@ -73,7 +50,7 @@ const SizePresetsSection: FC<Props> = ({
   const body = disabled ? (
     <Text.caption>{disabledHint ?? 'No disponible con el estado actual.'}</Text.caption>
   ) : (
-    <div className='flex flex-col gap-3'>
+    <section className='flex flex-col gap-3'>
       <div className='grid grid-cols-3 gap-2'>
         {presets.map(item => (
           <button key={item.id} type='button' onClick={() => setSize(item.width, item.height)}>
@@ -87,14 +64,8 @@ const SizePresetsSection: FC<Props> = ({
         ))}
       </div>
 
-      <SizeController
-        width={width}
-        height={height}
-        setWidth={setWidth}
-        setHeight={setHeight}
-        forceLockAspect={forceLockAspect}
-      />
-    </div>
+      <SizeController width={width} height={height} setWidth={setWidth} setHeight={setHeight} forceLockAspect={forceLockAspect} />
+    </section>
   )
 
   if (embedded) return body

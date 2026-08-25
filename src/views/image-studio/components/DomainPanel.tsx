@@ -18,12 +18,7 @@ interface DomainPanelProps {
  * @param props.onReset - Si se pasa, muestra el pie de reset.
  * @param props.resetLabel - Texto del botón. Default «Resetear cambios».
  */
-const DomainPanel: FC<DomainPanelProps> = ({
-  children,
-  onReset,
-  resetLabel = 'Resetear cambios',
-  className
-}) => (
+const DomainPanel: FC<DomainPanelProps> = ({ children, onReset, resetLabel = 'Resetear cambios', className }) => (
   <div className='flex h-full min-h-0 flex-col'>
     <div
       className={cn(
@@ -34,8 +29,8 @@ const DomainPanel: FC<DomainPanelProps> = ({
       {children}
     </div>
     {onReset && (
-      <div className='border-border/50 shrink-0 border-t px-3 py-2.5'>
-        <Button type='button' variant='outline' size='sm' className='w-full rounded-[12px] text-xs' onClick={onReset}>
+      <div className='px-3 py-2.5'>
+        <Button type='button' size='sm' className='w-full' onClick={onReset}>
           {resetLabel}
         </Button>
       </div>
